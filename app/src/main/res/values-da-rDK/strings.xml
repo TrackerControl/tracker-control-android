@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_description">TrackerControl lader brugere overvåge og kontrollere den udbredte, løbende, og skjulte dataindsamling i mobilapps om brugeradfærd (\'tracking\').</string>
+    <string name="app_copyright">Copyright \u00A9 2019–2022 Konrad Kollnig\n\nTrackerControl er baseret på NetGuard, udviklet af Marcel Bokhorst (M66B).</string>
     <string name="app_android">TrackerControl kræver Android 5.1 eller nyere</string>
     <string name="app_xposed">Xposed forårsager for mange nedbrud, hvilket kan medføre, at TrackerControl fjernes fra Google Play Butik. Derfor understøttes TrackerControl ikke, mens Xposed er installeret</string>
     <string name="app_eula">Brugen af denne app er på eget ansvar. Ingen app kan tilbyde 100%% beskyttelse mod sporing.</string>
     <string name="app_privacy"><a href="https://github.com/TrackerControl/tracker-control-android#privacy-notice">Privatlivspolitik</a> <a href="https://github.com/TrackerControl/tracker-control-android#cookie-policy">Cookie-politik</a></string>
+    <string name="app_ios"><a href="https://ios.trackercontrol.org">TrackerControl fås også til iOS</a></string>
     <string name="channel_foreground">Kørende tjenester</string>
     <string name="channel_notify">Generelle notifikationer</string>
     <string name="channel_access">Tilgå notifikationer</string>
@@ -13,128 +15,28 @@
     <string name="menu_app_user">Vis brugerapps</string>
     <string name="menu_app_system">Vis systemapps</string>
     <string name="menu_app_nointernet">Vis apps uden internet</string>
+    <string name="menu_app_unprotected">Vis kun ubeskyttede apps</string>
+    <string name="menu_app_frozen">Vis fastfrosne apps</string>
     <string name="menu_sort">Sortér apps</string>
     <string name="menu_sort_name">Sortér efter navn</string>
     <string name="menu_sort_uid">Sortér efter UID</string>
     <string name="menu_sort_companies_week">Sortér efter virksomheder (uge)</string>
     <string name="menu_sort_companies">Sortér efter virksomheder</string>
+    <string name="menu_sort_by_latest_detected_tracker">Sortér efter senest registrerede tracker</string>
     <string name="menu_log">Trafiklog</string>
     <string name="menu_settings">Indstillinger</string>
     <string name="menu_invite">Invitér</string>
     <string name="menu_legend">Legende</string>
     <string name="menu_support">Støt appen</string>
     <string name="menu_log_support">Forklaring</string>
-    <string name="menu_about">Om</string>
-    <!-- A blocked/allowed label followed by its share of all tracking attempts. -->
-    <string name="menu_apps">Andre apps</string>
-    <string name="menu_protocol_other">Andet</string>
-    <string name="menu_traffic_allowed">Tilladt</string>
-    <string name="menu_traffic_blocked">Blokeret</string>
-    <string name="menu_live">Live-opdateringer</string>
-    <string name="menu_refresh">Genindlæs</string>
-    <string name="menu_resolve">Vis navne</string>
-    <string name="menu_organization">Vis organisation</string>
-    <string name="menu_pcap_enabled">PCAP aktiveret</string>
-    <string name="menu_pcap_export">PCAP-eksport</string>
-    <string name="menu_clear">Ryd</string>
-    <string name="menu_export">Eksportér</string>
-    <string name="menu_reset">Nulstil</string>
-    <string name="menu_cleanup">Ryd op</string>
-    <string name="setting_pause">Auto-aktivér efter %1$s minutter</string>
-    <string name="setting_update">Søg efter opdateringer</string>
-    <plurals name="pause">
-        <item quantity="one">Sæt på pause i %d min</item>
-        <item quantity="other">Sæt på pause i %d minutter</item>
-    </plurals>
-    <string name="setting_ip6">Aktivér IPv6-trafik</string>
-    <string name="setting_call">Deaktiver ved opkald</string>
-    <string name="setting_reload_onconnectivity">Genindlæs ved hver forbindelsesændring</string>
-    <string name="setting_log_app">Søg efter nye trackere</string>
-    <string name="setting_reset_usage">Nulstil netværksforbrug</string>
-    <string name="setting_socks5_enabled">Brug SOCKS5-proxy</string>
-    <string name="setting_socks5_addr">SOCKS5-adresse: %s</string>
-    <string name="setting_socks5_port">SOCKS5-port: %s</string>
-    <string name="setting_socks5_username">SOCKS5-brugernavn: %s</string>
-    <string name="setting_socks5_password">SOCKS5-adgangskode: %s</string>
-    <!-- Secure DNS (DoH) -->
-    <!-- Block DNS-over-TLS (DoT) -->
-    <string name="setting_import">Importér indstillinger</string>
-    <string name="summary_log_app">Deaktiver for at mindske batteriforbrug. Nye trackere blokeres stadig, men vises ikke.</string>
-    <string name="msg_sure">Er du sikker?</string>
-    <string name="msg_started">Leder efter trackere…</string>
-    <string name="msg_disabled">Brug knappen ovenfor for at aktivere TrackerControl.</string>
-    <string name="msg_installed">Problemer med %1$s?</string>
-    <string name="msg_installed_tracker_libraries_found">Indeholder %d tracker-biblioteker</string>
-    <string name="msg_try">Prøv TrackerControl</string>
-    <string name="msg_update_last">Seneste opdatering: %s</string>
-    <string name="msg_inactive">Ingen aktiv internetforbindelse</string>
-    <string name="msg_queue">TrackerControl er optaget</string>
-    <string name="msg_update">Opdatering tilgængelig; tryk for at hente</string>
-    <string name="title_host_allowed">Adresse er tilladt</string>
-    <string name="title_host_blocked">Adresse er blokeret</string>
-    <string name="title_allow">Tillad</string>
-    <string name="title_block">Bloker</string>
-    <string name="title_log_copy">Kopiér</string>
-    <!-- App Overview -->
-    <!-- Dynamic content descriptions for the app-icon Internet toggle in the app list (issue #231) -->
-    <!-- Dynamic content description for the per-category tracker-blocking switch -->
-    <!-- Dynamic content description for the home-screen widget toggle (accessibility follow-up, issue #636) -->
-    <string name="ok">OK</string>
-    <string name="yes">Ja</string>
-    <string name="no">Nej</string>
-    <string name="menu_csv">Eksportér som CSV</string>
-    <string name="exporting">Eksporterer…</string>
-    <!-- App Details -->
-    <string name="title_activity_detail">Detaljer</string>
-    <string name="tab_countries">Lande</string>
-    <!-- Actions -->
-    <string name="block_tracking">Bloker trackere</string>
-    <string name="data_managment">Administrer data</string>
-    <!-- Per-app remote VPN routing -->
-    <string name="setting_wg_route_mode">Send gennem fjern-VPN</string>
-    <string name="summary_wg_route_mode">Hvilke apps der sendes gennem fjern-VPN\'et. De øvrige overvåges og filtreres fortsat fuldt ud — de forbinder blot fra enhedens eget netværk.</string>
-    <string name="wg_route_mode_all">Alle apps</string>
-    <string name="wg_route_mode_selected">Kun valgte apps</string>
-    <string name="app_route_through">Gennem fjern-VPN\'et</string>
-    <string name="app_route_through_explanation">Denne app forbinder gennem dit fjern-VPN, som ser dens trafik i stedet for dit netværk.</string>
-    <string name="app_route_direct">Direkte fra denne enhed</string>
-    <string name="app_route_direct_explanation">Denne app forbinder fra dit eget netværk. Sporingsovervågning og -blokering gælder stadig. Dens DNS-forespørgsler går til dit netværks resolver i stedet for VPN\'ets, og appen ser enhedens rigtige adresse — nogle apps har brug for det, for eksempel for at nå lokale enheder eller tjekke en captive portal.</string>
-    <string name="app_route_unavailable_no_vpn">Der er ikke opsat noget fjern-VPN, så al trafik forlader allerede enheden direkte.</string>
-    <string name="app_route_unavailable_bypassed">Denne app omgår TrackerControl helt, så der er ingen trafik at sende.</string>
-    <string name="app_route_unavailable_partial_routes">Dit fjern-VPN bærer ikke al trafik (dets AllowedIPs er ikke en fuld tunnel). Routing pr. app kræver en fuld tunnel, fordi ruter deles af alle apps.</string>
-    <!-- Per-app protection state -->
-    <string name="app_state_protected">Beskyttet</string>
-    <string name="app_state_protected_explanation">Sporere blokeres og registreres for denne app.</string>
-    <string name="app_state_trackers_allowed">Sporere tilladt</string>
-    <string name="app_state_trackers_allowed_explanation">Appen kører fortsat gennem TrackerControl, men dens sporere hverken blokeres eller registreres. Brug dette, hvis blokering ødelægger appen.</string>
-    <string name="app_state_no_internet">Intet internet</string>
-    <string name="app_state_no_internet_explanation">Alle forbindelser fra denne app blokeres. Du kan også trykke på appikonet på hovedskærmen.</string>
-    <string name="app_state_no_internet_shared_uid">Gælder også %1$s, som deler et Android-bruger-id med denne app.</string>
-    <string name="app_state_bypassed">Omgå TrackerControl</string>
-    <string name="app_state_bypassed_explanation">Appen forbinder direkte, uden om TrackerControl. Intet overvåges eller blokeres for den. Brug dette som sidste udvej, hvis appen stadig ikke virker.\n\nBemærk: \"Bloker forbindelser uden VPN\" i Androids VPN-indstillinger skal være DEAKTIVERET, for at dette virker.</string>
-    <!-- Per-app protection screen -->
-    <!-- Protection state and remote-VPN routing shown together on one row -->
-    <string name="uninstall">Afinstaller</string>
-    <string name="back">Tilbage</string>
-    <string name="your_privacy">Dit privatliv</string>
-    <!-- Tracker library screen, reached from the summary row on the Trackers tab -->
-    <!-- Onboarding -->
-    <!-- Insights Screen -->
-    <!-- Joins the alternative domain names of one tracker, e.g. "example.com or example.net". Keep the surrounding spaces. -->
-    <!-- What's New onboarding slide (not translated) -->
-    <!-- Accessibility labels -->
-    <string name="app_copyright">Copyright \u00A9 2019–2022 Konrad Kollnig\n\nTrackerControl er baseret på NetGuard, udviklet af Marcel Bokhorst (M66B).</string>
-    <string name="app_ios"><a href="https://ios.trackercontrol.org">TrackerControl fås også til iOS</a></string>
-    <string name="menu_app_unprotected">Vis kun ubeskyttede apps</string>
-    <string name="menu_app_frozen">Vis fastfrosne apps</string>
-    <string name="menu_sort_by_latest_detected_tracker">Sortér efter senest registrerede tracker</string>
     <string name="menu_troubleshooting">Fejlfinding</string>
+    <string name="menu_about">Om</string>
     <string name="timeline_empty_disabled_title">TrackerControl er deaktiveret</string>
     <string name="timeline_empty_disabled_subtitle">Aktivér TrackerControl med kontakten øverst til højre. Trackeraktivitet fra dine apps vises derefter her.</string>
     <string name="timeline_empty_enabled_title">Leder efter trackere…</string>
     <string name="timeline_empty_enabled_subtitle">De fleste apps kontakter kun trackere, mens du bruger dem. Åbn en app, og kom derefter tilbage — så vises dens trackeraktivitet her.</string>
     <string name="timeline_empty_recording_off_title">Trackerregistrering er deaktiveret</string>
-    <string name="timeline_empty_recording_off_subtitle">"Søg efter nye trackere" er deaktiveret i de avancerede indstillinger. Trackere blokeres stadig, men registreres ikke længere, så denne tidslinje forbliver tom. Aktivér det igen for at se trackeraktivitet.</string>
+    <string name="timeline_empty_recording_off_subtitle">\"Søg efter nye trackere\" er deaktiveret i de avancerede indstillinger. Trackere blokeres stadig, men registreres ikke længere, så denne tidslinje forbliver tom. Aktivér det igen for at se trackeraktivitet.</string>
     <string name="timeline_empty_recording_unavailable_title">Trackerregistrering er ikke tilgængelig</string>
     <string name="timeline_empty_recording_unavailable_subtitle">Denne version af TrackerControl stiller ikke trackeraktivitetsregistrering til rådighed. Blokering fungerer stadig, men denne tidslinje forbliver tom.</string>
     <string name="timeline_open_app">Åbn en app</string>
@@ -143,18 +45,15 @@
     <string name="timeline_hint_dismiss">Forstået</string>
     <string name="unidentified_app_uid">Ukendt app (UID %1$d)</string>
     <string name="tab_timeline">Tidslinje</string>
-    <string name="tab_apps">Apps</string>
-    <string name="tab_vpn">VPN</string>
     <string name="timeline_section_last_hour">Sidste time</string>
     <string name="timeline_section_today">I dag</string>
     <string name="timeline_section_yesterday">I går</string>
     <string name="timeline_section_this_week">Denne uge</string>
-    <string name="timeline_more_trackers">+%d flere</string>
+    <!-- Keep as a string: call-site/API migration and multi-count grammar are intentionally separate. -->
+    <string name="timeline_more_trackers" tools:ignore="PluralsCandidate">+%d flere</string>
     <string name="timeline_tracker_blocked">Blokeret</string>
     <string name="timeline_tracker_allowed">Tilladt</string>
-    <string name="insights_overview_status">%1$s %2$s · %3$s %4$s</string>
-    <string name="insights_overview_status_share">%1$s (%2$s)</string>
-    <string name="timeline_insights_status">%1$s %2$s · %3$s %4$s</string>
+    <!-- A blocked/allowed label followed by its share of all tracking attempts. -->
     <string name="feed_section_last_contact">seneste kontakt %s</string>
     <plurals name="feed_show_more_companies">
         <item quantity="one">Vis %d virksomhed mere</item>
@@ -169,7 +68,8 @@
     <string name="feed_company_collapsed">Sammenfoldet</string>
     <string name="feed_essential_explainer">Påkrævet af apps — tilladt, så %s fortsat fungerer</string>
     <string name="feed_essential_explainer_blocked">Påkrævet af apps — blokering kan få %s til at holde op med at virke</string>
-    <string name="timeline_summary_mixed">%1$d blokeret · %2$d tilladt</string>
+    <!-- Keep as a string: call-site/API migration and multi-count grammar are intentionally separate. -->
+    <string name="timeline_summary_mixed" tools:ignore="PluralsCandidate">%1$d blokeret · %2$d tilladt</string>
     <plurals name="timeline_trackers_blocked">
         <item quantity="one">%d tracker blokeret</item>
         <item quantity="other">%d trackere blokeret</item>
@@ -180,11 +80,11 @@
     </plurals>
     <string name="troubleshooting_title">Fejlfinding</string>
     <string name="troubleshooting_battery_title">Batterioptimering</string>
-    <string name="troubleshooting_battery_desc">Hvis TrackerControl holder op med at fungere i baggrunden, skal du deaktivere Androids batterioptimering for TrackerControl. Vælg "Alle apps", tryk på TrackerControl, og vælg "Optimer ikke".</string>
+    <string name="troubleshooting_battery_desc">Hvis TrackerControl holder op med at fungere i baggrunden, skal du deaktivere Androids batterioptimering for TrackerControl. Vælg \"Alle apps\", tryk på TrackerControl, og vælg \"Optimer ikke\".</string>
     <string name="troubleshooting_battery_action">Deaktivér batterioptimering</string>
     <string name="troubleshooting_battery_ok">Batterioptimering er allerede deaktiveret.</string>
     <string name="troubleshooting_datasaver_title">Datasparefunktion</string>
-    <string name="troubleshooting_datasaver_desc">Hvis TrackerControl ikke kan oprette forbindelse, når Datasparefunktion er aktiveret, skal du tillade ubegrænset dataforbrug for TrackerControl. Aktivér "Baggrundsdata" og "Ubegrænset dataforbrug".</string>
+    <string name="troubleshooting_datasaver_desc">Hvis TrackerControl ikke kan oprette forbindelse, når Datasparefunktion er aktiveret, skal du tillade ubegrænset dataforbrug for TrackerControl. Aktivér \"Baggrundsdata\" og \"Ubegrænset dataforbrug\".</string>
     <string name="troubleshooting_datasaver_action">Tillad ubegrænset data</string>
     <string name="troubleshooting_datasaver_ok">Datasparefunktionen begrænser ikke TrackerControl.</string>
     <string name="troubleshooting_local_network_title">Adgang til lokalt netværk</string>
@@ -192,20 +92,45 @@
     <string name="troubleshooting_local_network_action">Tillad adgang til lokalt netværk</string>
     <string name="troubleshooting_local_network_ok">Adgang til lokalt netværk er tilladt.</string>
     <string name="troubleshooting_app_breakage_title">En app holdt op med at virke</string>
-    <string name="troubleshooting_app_breakage_desc">Tryk på appen på hovedlisten, og tryk derefter på Beskyttelse. Prøv først "Kun minimal blokering". Hvis appen stadig har problemer, skal du vælge "Trackere tilladt". Brug kun "Omgå TrackerControl" som sidste udvej.</string>
+    <string name="troubleshooting_app_breakage_desc">Tryk på appen på hovedlisten, og tryk derefter på Beskyttelse. Prøv først \"Kun minimal blokering\". Hvis appen stadig har problemer, skal du vælge \"Trackere tilladt\". Brug kun \"Omgå TrackerControl\" som sidste udvej.</string>
     <string name="troubleshooting_categories_title">Blokering af bestemte trackerkategorier</string>
     <string name="troubleshooting_categories_desc">Du kan finjustere blokeringen for hver app ved at trykke på den og slå individuelle trackerkategorier (f.eks. Analyse, Annoncer) til eller fra under fanen Trackere.</string>
     <string name="troubleshooting_alwayson_title">VPN altid aktivt</string>
-    <string name="troubleshooting_alwayson_desc">Hvis "Bloker forbindelser uden VPN" (låsetilstand) er aktiveret i Androids VPN-indstillinger, kan TrackerControl ikke fungere korrekt. Deaktivér denne indstilling.</string>
+    <string name="troubleshooting_alwayson_desc">Hvis \"Bloker forbindelser uden VPN\" (låsetilstand) er aktiveret i Androids VPN-indstillinger, kan TrackerControl ikke fungere korrekt. Deaktivér denne indstilling.</string>
     <string name="troubleshooting_alwayson_action">Åbn VPN-indstillinger</string>
+    <string name="menu_apps">Andre apps</string>
+    <string name="menu_protocol_other">Andet</string>
+    <string name="menu_traffic_allowed">Tilladt</string>
+    <string name="menu_traffic_blocked">Blokeret</string>
+    <string name="menu_live">Live-opdateringer</string>
+    <string name="menu_refresh">Genindlæs</string>
+    <string name="menu_resolve">Vis navne</string>
+    <string name="menu_organization">Vis organisation</string>
+    <string name="menu_pcap_enabled">PCAP aktiveret</string>
+    <string name="menu_pcap_export">PCAP-eksport</string>
+    <string name="menu_clear">Ryd</string>
     <string name="menu_clear_activity">Ryd registreret aktivitet</string>
+    <string name="menu_export">Eksportér</string>
+    <string name="menu_reset">Nulstil</string>
+    <string name="menu_cleanup">Ryd op</string>
     <string name="setting_options">Generelt</string>
     <string name="setting_further_options">Flere indstillinger</string>
+    <string name="setting_pause">Auto-aktivér efter %1$s minutter</string>
+    <string name="setting_update">Søg efter opdateringer</string>
+    <plurals name="pause">
+        <item quantity="one">Sæt på pause i %d min</item>
+        <item quantity="other">Sæt på pause i %d minutter</item>
+    </plurals>
+    <string name="setting_ip6">Aktivér IPv6-trafik</string>
+    <string name="setting_call">Deaktiver ved opkald</string>
+    <string name="setting_reload_onconnectivity">Genindlæs ved hver forbindelsesændring</string>
     <string name="setting_tcp_mss_clamp">Kompatibilitetstilstand for tethering</string>
     <string name="summary_tcp_mss_clamp">Dirigér al trafik gennem TrackerControl, og begræns TCP-segmentstørrelsen for at løse tetherede forbindelser, der går i stå eller ikke får internetadgang. Adgang til lokalt netværk omgår ikke længere TrackerControl, og ydeevnen kan blive reduceret.</string>
     <string name="setting_advanced_options">Avancerede indstillinger (for eksperter)</string>
+    <string name="setting_log_app">Søg efter nye trackere</string>
     <string name="setting_log_logcat">Forskning</string>
     <string name="setting_handover">Problemfri VPN-overdragelse ved genindlæsning</string>
+    <string name="setting_reset_usage">Nulstil netværksforbrug</string>
     <string name="setting_show_resolved">Vis løste domænenavne</string>
     <string name="setting_exclude_all_tracking">Udeluk alle apps fra sporing</string>
     <string name="summary_exclude_all_tracking">Deaktivér tracker-overvågning for alle apps. Du kan derefter aktivere det igen for enkelte apps.</string>
@@ -213,11 +138,14 @@
     <string name="summary_include_all_tracking">Aktivér tracker-overvågning igen for alle apps.</string>
     <string name="setting_block_domains">Aktivér hosts-fil</string>
     <string name="setting_rcode">Svar ved hosts-blokering: %s</string>
-    <string name="setting_vpn4">VPN IPv4: %s</string>
-    <string name="setting_vpn6">VPN IPv6: %s</string>
     <string name="setting_dns">VPN-DNS: %s</string>
     <string name="setting_validate">Validér på: %s</string>
     <string name="setting_ttl">Minimums-DNS-TTL: %s s</string>
+    <string name="setting_socks5_enabled">Brug SOCKS5-proxy</string>
+    <string name="setting_socks5_addr">SOCKS5-adresse: %s</string>
+    <string name="setting_socks5_port">SOCKS5-port: %s</string>
+    <string name="setting_socks5_username">SOCKS5-brugernavn: %s</string>
+    <string name="setting_socks5_password">SOCKS5-adgangskode: %s</string>
     <string name="setting_wg_enabled">Tunneltrafik gennem WireGuard</string>
     <string name="setting_wg_profile">WireGuard-profil</string>
     <string name="setting_wg_profile_manage">Brugerdefinerede WireGuard-profiler</string>
@@ -232,11 +160,11 @@
     <string name="accessibility_wg_profile_edit">Redigér WireGuard-profil %1$s</string>
     <string name="accessibility_wg_profile_delete">Slet WireGuard-profil %1$s</string>
     <string name="setting_wireguard">WireGuard (forhåndsvisning)</string>
-    <string name="setting_wg_status">Status</string>
     <string name="setting_vpn_key_rotate_now">Rotér VPN-udbydernes nøgler nu</string>
     <string name="setting_pcap_record_size">PCAP-poststørrelse: %s B</string>
     <string name="setting_pcap_file_size">Maks. PCAP-filstørrelse: %s MB</string>
     <string name="setting_watchdog">Watchdog: hvert %s minut</string>
+    <!-- Secure DNS (DoH) -->
     <string name="setting_doh_enabled">Sikker DNS (DoH)</string>
     <string name="summary_doh_enabled">Kryptér DNS-forespørgsler med DNS-over-HTTPS. Sættes automatisk på pause, når WireGuard er aktivt, fordi disse forespørgsler i stedet bruger WireGuard-tunnelen.</string>
     <string name="warning_beta">Betafunktion. Fungerer muligvis ikke som forventet.</string>
@@ -244,12 +172,14 @@
     <string name="summary_doh_endpoint">HTTPS-URL til DNS-over-HTTPS-forespørgsler</string>
     <string name="setting_doh_dns_fallback">DNS-fallback</string>
     <string name="summary_doh_dns_fallback">Brug standard-DNS (ukrypteret), når DoH ikke er tilgængelig. Deaktivering kan få apps til at holde op med at virke, hvis DoH-serveren er nede.</string>
+    <!-- Block DNS-over-TLS (DoT) -->
     <string name="setting_block_dot">Bloker Androids Private DNS</string>
     <string name="summary_block_dot">Når Androids Private DNS er aktiveret, kan TC ikke registrere sporing og fungerer ikke korrekt.</string>
     <string name="setting_stats_frequency">Prøveinterval: %s ms</string>
     <string name="setting_stats_samples">Antal prøver: %s s</string>
     <string name="setting_backup">Sikkerhedskopi</string>
     <string name="setting_export">Eksportér indstillinger</string>
+    <string name="setting_import">Importér indstillinger</string>
     <string name="setting_hosts_update">Opdatér hosts-fil</string>
     <string name="setting_hosts_auto_update">Opdatér hosts automatisk</string>
     <string name="summary_hosts_auto_update">Opdatér automatisk hosts-filen i baggrunden</string>
@@ -257,6 +187,7 @@
     <string name="summary_update">Søg efter nye udgivelser på GitHub to gange dagligt</string>
     <string name="summary_ip6">Dirigér IP-version 6-trafik til TrackerControl, så den kan tillades eller blokeres selektivt</string>
     <string name="summary_call">Deaktivér TrackerControl ved indgående eller udgående telefonopkald. Dette kan bruges til at omgå problemer med IP- eller Wi-Fi-opkald.</string>
+    <string name="summary_log_app">Deaktiver for at mindske batteriforbrug. Nye trackere blokeres stadig, men vises ikke.</string>
     <string name="summary_block_domains">ADVARSEL: Blokerede hosts vises ikke i brugerfladen.</string>
     <string name="summary_rcode">Standardværdien er 3 (NXDOMAIN), hvilket betyder \'ikke-eksisterende domæne\'.</string>
     <string name="summary_validate">Domænenavn, der bruges til at validere internetforbindelsen på port 443 (https).</string>
@@ -283,7 +214,7 @@
     <string name="msg_wg_profile_empty">Ingen profiler endnu</string>
     <string name="msg_wg_profile_active">Aktiv</string>
     <string name="msg_wg_profile_set_active">Indstil som aktiv</string>
-    <string name="msg_wg_profile_config_hint">[Interface]\nPrivateKey = …\nAddress = …\n\n[Peer]\nPublicKey = …\nAllowedIPs = 0.0.0.0/0, ::/0\nEndpoint = …</string>
+    <string name="msg_wg_profile_config_hint" tools:ignore="TypographyEllipsis">[Interface]\nPrivateKey = …\nAddress = …\n\n[Peer]\nPublicKey = …\nAllowedIPs = 0.0.0.0/0, ::/0\nEndpoint = …</string>
     <string name="msg_wg_profile_delete_confirm">Slet denne WireGuard-profil?</string>
     <string name="msg_wg_profile_scan_hint">Ret kameraet mod den WireGuard-QR-kode, som din VPN-udbyder viser. Scanningen foregår på din enhed.</string>
     <string name="msg_wg_profile_scan_no_camera">Denne enhed har ikke noget kamera at scanne med</string>
@@ -308,27 +239,17 @@
     <string name="msg_wg_mullvad_countries_failed">Mullvad-lande kunne ikke indlæses: %s</string>
     <string name="msg_wg_proton_note">Protons dokumenterede tredjepartskonfiguration bruger WireGuard-konfigurationer, der kan downloades. TrackerControl har ikke brug for dine Proton-legitimationsoplysninger og kan ikke opdatere konfigurationen automatisk.\n\nLog ind på account.protonvpn.com, gå til Downloads → WireGuard-konfiguration, download en konfiguration, åbn den i et tekstredigeringsprogram, og kopiér og indsæt derefter indholdet her.</string>
     <string name="msg_wg_proton_open_dashboard">Åbn Proton VPN-kontrolpanel</string>
-    <string name="vpn_status_mullvad">Mullvad</string>
     <string name="vpn_status_relay">Relæ: %s</string>
     <string name="vpn_status_wireguard_connected">WireGuard forbundet</string>
     <string name="vpn_status_disconnected">Ikke forbundet</string>
-    <string name="vpn_provider_mullvad">Mullvad VPN</string>
-    <string name="vpn_provider_ivpn">IVPN</string>
     <string name="vpn_intro_title">VPN-forhåndsvisning</string>
     <string name="vpn_intro_body">En VPN sender din internettrafik gennem en anden server. Det kan skjule din IP-adresse for websteder og din netværksudbyder, og du kan vælge et land til din forbindelse. Denne fane er ny, så betragt den som en forhåndsvisning.</string>
-    <string name="vpn_intro_mullvad_title">Mullvad</string>
     <string name="vpn_intro_mullvad_body">En privatlivsfokuseret VPN-udbyder. Det koster 5 € om måneden og bruger kontonumre i stedet for e-mailadresser. Indtast et kontonummer, og vælg derefter et land i TrackerControl.</string>
-    <string name="vpn_intro_ivpn_title">IVPN</string>
     <string name="vpn_intro_ivpn_body">En privatlivsfokuseret VPN-udbyder med WireGuard-understøttelse. Indtast et IVPN-konto-id, og vælg derefter et land i TrackerControl.</string>
-    <string name="vpn_intro_proton_title">Proton VPN</string>
     <string name="vpn_intro_proton_body">Download en WireGuard-konfiguration fra din Proton VPN-konto, og indsæt den i TrackerControl. Dine Proton-legitimationsoplysninger indtastes aldrig her.</string>
-    <string name="vpn_intro_wireguard_title">WireGuard</string>
     <string name="vpn_intro_wireguard_body">Brug dette, hvis du allerede har en WireGuard-konfiguration fra en anden VPN-udbyder, din egen server eller din arbejdsplads.</string>
     <string name="vpn_enter_mullvad_account">Indtast kontonummer</string>
     <string name="vpn_enter_ivpn_account">Indtast konto-id</string>
-    <string name="vpn_mode_mullvad">Mullvad</string>
-    <string name="vpn_mode_ivpn">IVPN</string>
-    <string name="vpn_mode_wireguard">WireGuard</string>
     <string name="vpn_settings">Mullvad-indstillinger</string>
     <string name="vpn_settings_title">Mullvad-indstillinger</string>
     <string name="vpn_ivpn_settings">IVPN-indstillinger</string>
@@ -362,7 +283,6 @@
     <string name="vpn_generating">Opretter WireGuard-profil…</string>
     <string name="vpn_generation_failed">VPN-konfiguration mislykkedes: %s</string>
     <string name="vpn_retry">Prøv igen</string>
-    <string name="vpn_country_selected">OK</string>
     <string name="msg_wg_blocked_title">WireGuard-tunnel utilgængelig</string>
     <string name="msg_wg_blocked">Internetadgang er blokeret, indtil WireGuard starter, eller WireGuard-indstillingen deaktiveres.</string>
     <string name="msg_wg_blocked_detail">Internetadgang er blokeret, indtil WireGuard starter, eller WireGuard-indstillingen deaktiveres. %s</string>
@@ -372,9 +292,15 @@
     <string name="msg_wg_recovery_failed">WireGuard holdt op med at svare. TrackerControl forsøger at oprette forbindelse igen, og internetadgangen kan forblive blokeret, indtil WireGuard fungerer igen.</string>
     <string name="summary_watchdog">Kontrollér med jævne mellemrum, om TrackerControl stadig kører (indtast nul for at deaktivere denne indstilling). Dette kan medføre ekstra batteriforbrug.</string>
     <string name="summary_log_logcat">Forskningstilstand: registrerede trackere logges til ADB, og SNI-udtræk er aktiveret for bedre registrering af værtsnavne. Hent logfiler med adb logcat ved hjælp af tagget \'TC-Log\'.</string>
+    <string name="msg_sure">Er du sikker?</string>
+    <string name="msg_started">Leder efter trackere…</string>
     <string name="msg_waiting">Venter på hændelse</string>
+    <string name="msg_disabled">Brug knappen ovenfor for at aktivere TrackerControl.</string>
     <string name="msg_revoked">TrackerControl blev afbrudt, sandsynligvis af en anden VPN-app eller systemet. Den opretter automatisk forbindelse igen, når det er muligt.</string>
+    <string name="msg_installed">Problemer med %1$s?</string>
     <string name="msg_installed_description">Tillad appen at kontakte virksomheder</string>
+    <!-- Keep as a string: call-site/API migration and multi-count grammar are intentionally separate. -->
+    <string name="msg_installed_tracker_libraries_found" tools:ignore="PluralsCandidate">Indeholder %d tracker-biblioteker</string>
     <string name="msg_completed">Handling fuldført</string>
     <string name="msg_no_file_manager">Ingen filhåndtering fundet til valg af fil.</string>
     <string name="msg_no_browser">Ingen browserapp fundet til at åbne linket.</string>
@@ -388,23 +314,23 @@ Din internettrafik sendes ikke til en ekstern VPN-server.</string>
     <string name="msg_vpn_replacement_recovery_exhausted">TrackerControl kunne ikke genetablere VPN-forbindelsen. Trafikken blokeres.</string>
     <string name="msg_doh_unreachable">Sikker DNS (DoH) kan ikke nås, selvom du har en aktiv internetforbindelse. Hvis det sker gentagne gange, kan du overveje at deaktivere den under Netværksindstillinger.</string>
     <string name="msg_start_failed">Android nægtede at starte VPN-tjenesten på dette tidspunkt. Det skyldes sandsynligvis en fejl i din Android-version.</string>
+    <string name="msg_try">Prøv TrackerControl</string>
     <string name="msg_log_disabled">Trafiklogning er deaktiveret. Brug kontakten ovenfor til at aktivere logning. Trafiklogning kan medføre ekstra batteriforbrug.</string>
     <string name="msg_clear_activity">Dette fjerner den registrerede aktivitet for denne app. Indstillinger for blokering/tilladelse pr. tracker for denne app bevares.</string>
+    <string name="msg_update_last">Seneste opdatering: %s</string>
     <string name="msg_metered">Netværket har forbrugsgrænse</string>
-    <string name="title_version">Version %1$d</string>
+    <string name="msg_inactive">Ingen aktiv internetforbindelse</string>
+    <string name="msg_queue">TrackerControl er optaget</string>
+    <string name="msg_update">Opdatering tilgængelig; tryk for at hente</string>
     <string name="msg_push">Indgående push-meddelelser håndteres for det meste af systemkomponenten Google Play-tjenester, som som standard har internetadgang</string>
     <string name="msg_system">Håndtering af alle systemapps kan aktiveres i indstillingerne</string>
     <string name="msg_vpn_cancelled">VPN-forbindelse annulleret\nHar du konfigureret en anden VPN som altid aktiv VPN?</string>
     <string name="msg_unavailable">Denne funktion er ikke tilgængelig på denne Android-version</string>
     <string name="msg_always_on">En anden VPN er angivet som altid aktiv VPN</string>
-    <string name="msg_always_on_lockdown">Deaktivér "Bloker forbindelser uden VPN" i Androids VPN-indstillinger for at bruge TrackerControl</string>
+    <string name="msg_always_on_lockdown">Deaktivér \"Bloker forbindelser uden VPN\" i Androids VPN-indstillinger for at bruge TrackerControl</string>
     <string name="msg_start_forward">Start videresendelse fra %1$s port %2$d til %3$s:%4$d for \'%5$s\'?</string>
     <string name="msg_stop_forward">Stop videresendelse af %1$s port %2$d?</string>
     <string name="msg_log_logcat">Advarsel: Blokering deaktiveret på grund af ADB-logning.</string>
-    <string-array name="protocolNames">
-        <item>UDP</item>
-        <item>TCP</item>
-    </string-array>
     <string name="menu_add">Tilføj</string>
     <string name="menu_delete">Slet</string>
     <string name="setting_forwarding">Portvideresendelse</string>
@@ -420,23 +346,29 @@ Din internettrafik sendes ikke til en ekstern VPN-server.</string>
     <string name="title_metered_allowed">Trafik med forbrugsgrænse er tilladt</string>
     <string name="title_metered_blocked">Trafik med forbrugsgrænse er blokeret</string>
     <string name="title_metered_disabled">Regler for trafik med forbrugsgrænse anvendes ikke</string>
+    <string name="title_host_allowed">Adresse er tilladt</string>
+    <string name="title_host_blocked">Adresse er blokeret</string>
     <string name="title_interactive_allowed">Tillad, når skærmen er tændt</string>
     <string name="title_roaming_blocked">Bloker ved roaming</string>
     <string name="title_metered">Som standard regnes en Wi-Fi-forbindelse som uden forbrugsgrænse og en mobilforbindelse som med forbrugsgrænse</string>
     <string name="title_rate">Hastighed</string>
+    <string name="title_allow">Tillad</string>
+    <string name="title_block">Bloker</string>
     <string name="title_nobody">ingen</string>
-    <string name="title_log_whois">Whois %1$s</string>
-    <string name="title_log_port">Port %1$d</string>
+    <string name="title_log_copy">Kopiér</string>
+    <!-- App Overview -->
     <string name="tracked_app_icon">Deaktivér internetadgang for denne app</string>
     <string name="tracked_app_name">Appnavn</string>
+    <!-- Dynamic content descriptions for the app-icon Internet toggle in the app list (issue #231) -->
     <string name="toggle_block_internet_description">Bloker internetadgang for %1$s</string>
     <string name="toggle_allow_internet_description">Tillad internetadgang for %1$s</string>
     <string name="toggle_no_internet_description">%1$s har ingen internetadgang</string>
     <string name="toggle_internet_unavailable_description">Kontrol af internetadgang er ikke tilgængelig for %1$s</string>
+    <!-- Dynamic content description for the per-category tracker-blocking switch -->
     <string name="toggle_block_category_description">Trackerblokering for kategorien %1$s</string>
+    <!-- Dynamic content description for the home-screen widget toggle (accessibility follow-up, issue #636) -->
     <string name="widget_toggle_enable_description">Aktivér trackerblokering</string>
     <string name="widget_toggle_disable_description">Deaktivér trackerblokering</string>
-    <string name="accessibility_stat_description">%1$s, %2$s</string>
     <string name="accessibility_tracker_blocking_enabled">Trackerblokering aktiveret</string>
     <string name="accessibility_tracker_blocking_disabled">Trackerblokering deaktiveret</string>
     <plurals name="n_companies_found_week">
@@ -451,14 +383,25 @@ Din internettrafik sendes ikke til en ekstern VPN-server.</string>
     <string name="confirm_ipinfo">Dette kontakter den eksterne tjeneste ipinfo.io og deler oplysninger om kontaktede IP-adresser med den.</string>
     <string name="external_servers">Hent udviklerens e-mail automatisk?</string>
     <string name="confirm_google_info">Denne app kan automatisk hente appudviklerens e-mailadresse fra Google Play Butik for dig.</string>
+    <string name="ok">OK</string>
+    <string name="yes">Ja</string>
+    <string name="no">Nej</string>
+    <string name="menu_csv">Eksportér som CSV</string>
+    <string name="exporting">Eksporterer…</string>
     <string name="export_failed">Eksport mislykkedes</string>
     <string name="exported">Eksporteret til lageret!</string>
+    <!-- App Details -->
+    <string name="title_activity_detail">Detaljer</string>
     <string name="tab_trackers">Trackere</string>
+    <string name="tab_countries">Lande</string>
     <string name="tab_actions">Datarettigheder</string>
     <string name="app_info">Administrér app</string>
+    <!-- Actions -->
+    <string name="block_tracking">Bloker trackere</string>
     <string name="block_tracking_description">Mange apps sender data til tredjeparter, såkaldte trackere. TrackerControl gør det muligt at blokere disse netværksoverførsler selektivt. Brug dog dette med omtanke, da appudviklere er afhængige af disse tjenester, især til annoncering.</string>
     <string name="personalised_ads">Begræns personalisering</string>
     <string name="personalised_ads_description">Android tilbyder at begrænse apps\' adgang til din enheds Google Advertising ID. Apps kan dog ignorere denne indstilling og stadig bruge dette id. De kan også fortsætte med at indsamle dette id til analyseformål i henhold til Googles politikker. Du skal have tillid til Google og den virksomhed, der indsamler dataene.</string>
+    <string name="data_managment">Administrer data</string>
     <string name="data_management_description">EU\'s generelle databeskyttelsesforordning (GDPR) giver brugere fra EU mulighed for at administrere alle data om dem. Denne app indeholder e-mailskabeloner til at kontakte udvikleren. Udvikleren skal svare inden for en måned.</string>
     <string name="contacts">Kontakt </string>
     <string name="contacts_description">Hvis du mener, at en app overtræder databeskyttelsesprincipperne, kan du kontakte de ansvarlige enheder direkte.</string>
@@ -468,10 +411,7 @@ Din internettrafik sendes ikke til en ekstern VPN-server.</string>
     <string name="request_data">Anmod om data</string>
     <string name="request_deletion">Anmod om sletning</string>
     <string name="contact_developer">Udvikler</string>
-    <string name="contact_playstore">Google</string>
     <string name="contact_officials">EU-myndigheder</string>
-    <string name="google_dpo_mail">data-protection-office@google.com</string>
-    <string name="dpas_overview_url">https://edpb.europa.eu/about-edpb/board/members</string>
     <string name="subject_request_data">Anmodning om indsigt efter GDPR</string>
     <string name="body_request_data"><![CDATA[Til rette vedkommende:\n
 \n
@@ -523,7 +463,6 @@ Med venlig hilsen,\n\n]]></string>
     <string name="tracker_advertising">Annoncering</string>
     <string name="tracker_analytics">Analyse</string>
     <string name="tracker_content">Væsentlig</string>
-    <string name="tracker_cryptomining">Cryptomining</string>
     <string name="tracker_fingerprinting">Fingeraftryk</string>
     <string name="tracker_social">Sociale medier</string>
     <string name="tracker_email">E-mail</string>
@@ -534,28 +473,49 @@ Med venlig hilsen,\n\n]]></string>
     <string name="summary_blocking_mode_standard">Standard: Blokerer alle kendte trackere fra flere lister (X-Ray, Disconnect, DuckDuckGo). Væsentlige tjenester tillades. Hvis en app holder op med at virke, skal du justere dens beskyttelsesindstilling (se Fejlfinding i appmenuen).</string>
     <string name="summary_blocking_mode_strict">Streng: Blokerer alle kendte trackere, inklusive væsentlige tjenester og tvetydige domæner med delt IP. Mange apps vil kræve en mindre restriktiv beskyttelsesindstilling (se Fejlfinding i appmenuen).</string>
     <string name="summary_sni_wg_note">Bemærk: SNI-udtræk gælder ikke for trafik, der dirigeres gennem fjern-VPN\'en.</string>
-    <string name="blocking_mode_minimal">Minimal</string>
-    <string name="blocking_mode_standard">Standard</string>
     <string name="blocking_mode_strict">Streng</string>
     <string name="onboarding_blockingmode_title">Vælg blokeringstilstand</string>
     <string name="onboarding_blockingmode_desc">Vælg, hvordan TrackerControl skal håndtere trackere. Blokeringstilstande stopper trackere med forskellig grad af strenghed; forskningstilstand holder blokering deaktiveret og aktiverer kun SNI-udtræk til målinger. Du kan ændre dette senere under Indstillinger.</string>
     <string name="onboarding_blockingmode_minimal_label">Minimal (anbefales til nye brugere)</string>
     <string name="onboarding_blockingmode_minimal_desc">Blokerer kun bekræftede trackere, som er sikre at blokere. Begrænsede problemer med apps. God til de fleste brugere.</string>
-    <string name="onboarding_blockingmode_standard_label">Standard</string>
     <string name="onboarding_blockingmode_standard_desc">Blokerer alle kendte trackere fra flere lister. Nogle apps kan have brug for en mindre restriktiv beskyttelsesindstilling.</string>
     <string name="onboarding_blockingmode_strict_label">Streng</string>
     <string name="onboarding_blockingmode_strict_desc">Blokerer alt, inklusive væsentlige tjenester og tvetydige domæner. Betydelige problemer med apps — mange apps vil kræve en mindre restriktiv beskyttelsesindstilling.</string>
     <string name="onboarding_blockingmode_research_label">Forskning</string>
     <string name="onboarding_blockingmode_research_desc">Ingen trackerblokering. Logger overførsler til ADB og aktiverer SNI-udtræk for bedre registrering af værtsnavne. Kun til forskning: Dette lækker din IP-adresse til trackernes servere.</string>
+    <!-- Per-app remote VPN routing -->
+    <string name="setting_wg_route_mode">Send gennem fjern-VPN</string>
+    <string name="summary_wg_route_mode">Hvilke apps der sendes gennem fjern-VPN\'et. De øvrige overvåges og filtreres fortsat fuldt ud — de forbinder blot fra enhedens eget netværk.</string>
+    <string name="wg_route_mode_all">Alle apps</string>
+    <string name="wg_route_mode_selected">Kun valgte apps</string>
+    <string name="app_route_through">Gennem fjern-VPN\'et</string>
+    <string name="app_route_through_explanation">Denne app forbinder gennem dit fjern-VPN, som ser dens trafik i stedet for dit netværk.</string>
+    <string name="app_route_direct">Direkte fra denne enhed</string>
+    <string name="app_route_direct_explanation">Denne app forbinder fra dit eget netværk. Sporingsovervågning og -blokering gælder stadig. Dens DNS-forespørgsler går til dit netværks resolver i stedet for VPN\'ets, og appen ser enhedens rigtige adresse — nogle apps har brug for det, for eksempel for at nå lokale enheder eller tjekke en captive portal.</string>
+    <string name="app_route_unavailable_no_vpn">Der er ikke opsat noget fjern-VPN, så al trafik forlader allerede enheden direkte.</string>
+    <string name="app_route_unavailable_bypassed">Denne app omgår TrackerControl helt, så der er ingen trafik at sende.</string>
+    <string name="app_route_unavailable_partial_routes">Dit fjern-VPN bærer ikke al trafik (dets AllowedIPs er ikke en fuld tunnel). Routing pr. app kræver en fuld tunnel, fordi ruter deles af alle apps.</string>
+    <!-- Per-app protection state -->
     <string name="app_state_heading">Blokeringstilstand</string>
     <string name="app_state_title_minimal">Minimal blokering</string>
     <string name="app_state_title_standard">Standardblokering</string>
     <string name="app_state_title_strict">Streng blokering</string>
     <string name="app_state_subtitle_misbehaving">Opfører appen sig forkert? Skift til Minimal blokering her.</string>
+    <string name="app_state_protected">Beskyttet</string>
+    <string name="app_state_protected_explanation">Sporere blokeres og registreres for denne app.</string>
     <string name="app_state_essential_only">Kun minimal blokering</string>
     <string name="app_state_essential_only_explanation">Blokerer kun de bekræftede trackere, som Minimal-tilstand blokerer. Andre trackere registreres stadig, men tillades. Brug dette, hvis standardblokering får appen til at holde op med at virke.</string>
+    <string name="app_state_trackers_allowed">Sporere tilladt</string>
+    <string name="app_state_trackers_allowed_explanation">Appen kører fortsat gennem TrackerControl, men dens sporere hverken blokeres eller registreres. Brug dette, hvis blokering ødelægger appen.</string>
+    <string name="app_state_no_internet">Intet internet</string>
+    <string name="app_state_no_internet_explanation">Alle forbindelser fra denne app blokeres. Du kan også trykke på appikonet på hovedskærmen.</string>
+    <string name="app_state_no_internet_shared_uid">Gælder også %1$s, som deler et Android-bruger-id med denne app.</string>
+    <string name="app_state_bypassed">Omgå TrackerControl</string>
+    <string name="app_state_bypassed_explanation">Appen forbinder direkte, uden om TrackerControl. Intet overvåges eller blokeres for den. Brug dette som sidste udvej, hvis appen stadig ikke virker.\n\nBemærk: \"Bloker forbindelser uden VPN\" i Androids VPN-indstillinger skal være DEAKTIVERET, for at dette virker.</string>
+    <!-- Per-app protection screen -->
     <string name="protection_title">Beskyttelse</string>
     <string name="protection_route_heading">Fjern-VPN</string>
+    <!-- Protection state and remote-VPN routing shown together on one row -->
     <string name="protection_app_not_working">Virker appen ikke? Tryk her</string>
     <plurals name="protection_paused_resumes">
         <item quantity="one">Sat på pause — genoptages om %d min</item>
@@ -569,6 +529,7 @@ Med venlig hilsen,\n\n]]></string>
     <string name="protection_no_blocked_trackers">Intet blev blokeret for nylig — sandsynligvis ikke af TrackerControl.</string>
     <string name="protection_recording_unavailable">Trackerregistrering er ikke tilgængelig, fordi &quot;Søg efter nye trackere&quot; er deaktiveret.</string>
     <string name="protection_temporary">Midlertidig, mens appen er sat på pause</string>
+    <string name="uninstall">Afinstaller</string>
     <string name="settings_uninstall">Appindstillinger &amp; afinstallation</string>
     <string name="no_trackers_found_message_disabled">Aktivér kontakten på hovedskærmen, og start derefter appen for at finde trackere</string>
     <string name="no_trackers_found_message">Start appen for at finde trackere</string>
@@ -576,7 +537,9 @@ Med venlig hilsen,\n\n]]></string>
     <string name="no_internet_message">"Denne app har ingen internetadgang. Den kan stadig spore dig ved at udveksle data med andre apps."</string>
     <string name="no_internet">Ingen internetadgang</string>
     <string name="bypass_vpn_error">"Internet kan ikke blokeres, mens appen omgår TrackerControl."</string>
+    <string name="back">Tilbage</string>
     <string name="forever_free">Gratis for altid</string>
+    <string name="your_privacy">Dit privatliv</string>
     <string name="tracker_hostlist">Brugerdefinerede hosts</string>
     <string name="internet_blocked">Internetadgang blokeret</string>
     <string name="internet_unblocked">Internetadgang ikke blokeret</string>
@@ -594,6 +557,7 @@ Med venlig hilsen,\n\n]]></string>
     <string name="analyze_tracker_libraries">Analysér trackerbiblioteker</string>
     <string name="update_analysis">Opdatér analyse</string>
     <string name="analysis_outdated_version">\n\nBemærk: Analysen er af en tidligere appversion. De integrerede trackerbiblioteker kan være ændret siden.</string>
+    <!-- Tracker library screen, reached from the summary row on the Trackers tab -->
     <string name="libraries_title">Trackerbiblioteker</string>
     <string name="libraries_row_heading">Trackerbiblioteker</string>
     <string name="libraries_none_found">Ingen trackerbiblioteker fundet i appens kode</string>
@@ -619,18 +583,19 @@ Med venlig hilsen,\n\n]]></string>
     <string name="browsers_not_supported">Browser registreret ⚠️</string>
     <string name="browsers_not_supported_explanation">Dette ser ud til at være en browserapp.\n\nBrowserens sporingsbeskyttelse fungerer bedst inde i browseren, hvor trackere kan blokeres på side- og anmodningsniveau. TrackerControl holder browsertrafikken dirigeret gennem VPN-/WireGuard-tunnelen, men blokering af trackere på appniveau er som standard deaktiveret og kan få websteder til at holde op med at virke, hvis det aktiveres.</string>
     <string name="msg_notifications">Tryk for at give meddelelsestilladelser (til fejlmeddelelser osv.)</string>
-    <string name="msg_local_network">Tryk for at tillade adgang til det lokale netværk, som Android omtaler som "enheder i nærheden". Android 17 blokerer det som standard, så din egen DNS-server, sikre DNS-resolver, WireGuard-peer eller proxy ikke kan nås.</string>
+    <string name="msg_local_network">Tryk for at tillade adgang til det lokale netværk, som Android omtaler som \"enheder i nærheden\". Android 17 blokerer det som standard, så din egen DNS-server, sikre DNS-resolver, WireGuard-peer eller proxy ikke kan nås.</string>
     <string name="msg_local_network_title">Adgang til lokalt netværk kræves</string>
-    <string name="msg_local_network_notify">TrackerControl kan ikke nå din egen DNS-server, sikre DNS-resolver, WireGuard-peer eller proxy, så navneopløsning kan mislykkes. Android 17 kræver tilladelse til dette, som Android omtaler som "enheder i nærheden". Tryk for at åbne TrackerControl og tillade det.</string>
+    <string name="msg_local_network_notify">TrackerControl kan ikke nå din egen DNS-server, sikre DNS-resolver, WireGuard-peer eller proxy, så navneopløsning kan mislykkes. Android 17 kræver tilladelse til dette, som Android omtaler som \"enheder i nærheden\". Tryk for at åbne TrackerControl og tillade det.</string>
     <string name="msg_private_dns_title">Private DNS blokerer navneopløsning</string>
-    <string name="msg_private_dns_notify">Androids "Private DNS" er indstillet til %1$s, og TrackerControl blokerer krypteret DNS for at registrere trackere. Android falder ikke tilbage til normal DNS i denne tilstand, så intet indlæses. Tryk for at indstille Private DNS til "Automatisk" eller "Fra" — TrackerControl tilbyder sin egen sikre DNS under Indstillinger.</string>
+    <string name="msg_private_dns_notify">Androids \"Private DNS\" er indstillet til %1$s, og TrackerControl blokerer krypteret DNS for at registrere trackere. Android falder ikke tilbage til normal DNS i denne tilstand, så intet indlæses. Tryk for at indstille Private DNS til \"Automatisk\" eller \"Fra\" — TrackerControl tilbyder sin egen sikre DNS under Indstillinger.</string>
     <string name="msg_private_dns_unknown_resolver">en brugerdefineret resolver</string>
-    <string name="msg_private_dns_row">Intet indlæses: Androids "Private DNS" er indstillet til en bestemt resolver, og TrackerControl blokerer krypteret DNS for at registrere trackere. Tryk for at indstille Private DNS til "Automatisk" eller "Fra" — TrackerControl tilbyder sin egen sikre DNS under Indstillinger.</string>
+    <string name="msg_private_dns_row">Intet indlæses: Androids \"Private DNS\" er indstillet til en bestemt resolver, og TrackerControl blokerer krypteret DNS for at registrere trackere. Tryk for at indstille Private DNS til \"Automatisk\" eller \"Fra\" — TrackerControl tilbyder sin egen sikre DNS under Indstillinger.</string>
     <string name="msg_private_dns_bypass_title">Private DNS omgår trackerregistrering</string>
     <string name="msg_private_dns_bypass_notify">Trackerregistrering er deaktiveret: DNS er krypteret til %1$s, så appforbindelser kan ikke analyseres</string>
     <string name="msg_private_dns_bypass_allowed_notify">Nogle apps bruger krypteret DNS; deres trackerforbindelser er usynlige for TrackerControl.</string>
     <string name="setting_monitor_system">Overvåg systemapps</string>
-    <string name="summary_monitor_system">Dirigér systemapps (Play-tjenester, operatørtjenester osv.) gennem VPN\'en, så deres trackere registreres og blokeres, og vis dem på applisten.\n\nFra som standard: Det er mere batterivenligt at udelukke systemapps, fordi deres baggrundstrafik ikke længere vækker VPN\'en. Aktivering af dette er i konflikt med "Bloker forbindelser uden VPN" i Androids VPN-indstillinger, som skal være DEAKTIVERET.</string>
+    <string name="summary_monitor_system">Dirigér systemapps (Play-tjenester, operatørtjenester osv.) gennem VPN\'en, så deres trackere registreres og blokeres, og vis dem på applisten.\n\nFra som standard: Det er mere batterivenligt at udelukke systemapps, fordi deres baggrundstrafik ikke længere vækker VPN\'en. Aktivering af dette er i konflikt med \"Bloker forbindelser uden VPN\" i Androids VPN-indstillinger, som skal være DEAKTIVERET.</string>
+    <!-- Onboarding -->
     <string name="title_next">Næste</string>
     <string name="title_previous">Forrige</string>
     <string name="title_finish">Kom i gang</string>
@@ -650,11 +615,12 @@ Med venlig hilsen,\n\n]]></string>
     <string name="onboarding_timeline_title">Se tidslinjen blive udfyldt</string>
     <string name="onboarding_timeline_desc">TrackerControl starter på tidslinjen. Den kan være tom i begyndelsen: Apps kontakter normalt kun trackere, mens du bruger dem.\n\nNår opsætningen er færdig, kan du åbne nogle apps og derefter vende tilbage til TrackerControl for at se registreret og blokeret trackeraktivitet.</string>
     <string name="onboarding_lockdown_title">VPN-låsetilstand</string>
-    <string name="onboarding_lockdown_desc">Android har en indstilling kaldet "Bloker forbindelser uden VPN", som forhindrer apps i at oprette forbindelse, før TrackerControl er klar.\n\nHvis den er aktiveret, kan apps muligvis ikke indlæses. Vi anbefaler, at denne indstilling er <b>deaktiveret</b> for den bedste oplevelse.</string>
+    <string name="onboarding_lockdown_desc">Android har en indstilling kaldet \"Bloker forbindelser uden VPN\", som forhindrer apps i at oprette forbindelse, før TrackerControl er klar.\n\nHvis den er aktiveret, kan apps muligvis ikke indlæses. Vi anbefaler, at denne indstilling er <b>deaktiveret</b> for den bedste oplevelse.</string>
     <string name="onboarding_lockdown_action">Åbn VPN-indstillinger</string>
     <string name="onboarding_lockdown_sure">Hvis du fortsætter med låsetilstand aktiveret, kan det give forbindelsesproblemer. Er du sikker?</string>
     <string name="onboarding_action_disabled">Deaktiveret</string>
     <string name="onboarding_action_granted">Givet</string>
+    <!-- Insights Screen -->
     <string name="insights_title">Dit privatlivsindblik</string>
     <string name="insights_subtitle_7days">Seneste 7 dage</string>
     <string name="insights_tracking_attempts">Kontaktede tracker-værter</string>
@@ -664,19 +630,25 @@ Med venlig hilsen,\n\n]]></string>
     <string name="insights_apps_with_trackers">Apps med trackere</string>
     <string name="insights_pervasive_trackers">Mest udbredte trackere</string>
     <string name="insights_top_domains">Vigtigste trackerdomæner</string>
+    <!-- Joins the alternative domain names of one tracker, e.g. "example.com or example.net". Keep the surrounding spaces. -->
     <string name="insights_domain_alias_separator">" eller "</string>
-    <string name="insights_in_apps">i %d apps</string>
+    <!-- Keep as a string: call-site/API migration and multi-count grammar are intentionally separate. -->
+    <string name="insights_in_apps" tools:ignore="PluralsCandidate">i %d apps</string>
     <plurals name="insights_apps_count">
         <item quantity="one">i %d app</item>
         <item quantity="other">i %d apps</item>
     </plurals>
     <string name="insights_no_data">Ingen sporingsdata endnu. Brug dine apps, og kom tilbage!</string>
-    <string name="insights_shocking_fact">Dine apps kontaktede %1$d sporingsvirksomheder via %2$d tracker-værter i denne uge!</string>
+    <!-- Keep as a string: call-site/API migration and multi-count grammar are intentionally separate. -->
+    <string name="insights_shocking_fact" tools:ignore="PluralsCandidate">Dine apps kontaktede %1$d sporingsvirksomheder via %2$d tracker-værter i denne uge!</string>
+    <!-- Retained for Play Store copy; call-site/API migration and multi-count grammar are intentionally separate. -->
     <string name="insights_share">Del med venner</string>
     <string name="insights_share_trackers_blocked">Tracker-værter blokeret</string>
-    <string name="insights_share_url">TrackerControl.org</string>
-    <string name="insights_share_message">Jeg blokerede %1$d tracker-værter fra %2$d virksomheder i denne uge med TrackerControl! Tag dit privatliv tilbage: https://trackercontrol.org</string>
+    <!-- Keep as a string: call-site/API migration and multi-count grammar are intentionally separate. -->
+    <string name="insights_share_message" tools:ignore="PluralsCandidate">Jeg blokerede %1$d tracker-værter fra %2$d virksomheder i denne uge med TrackerControl! Tag dit privatliv tilbage: https://trackercontrol.org</string>
+    <!-- Retained for Play Store copy; call-site/API migration and multi-count grammar are intentionally separate. -->
     <string name="insights_see_more">Se mere →</string>
+    <!-- What's New onboarding slide (not translated) -->
     <string name="title_blocklists">Ekstra hosts-filer</string>
     <string name="summary_manage_blocklists">Disse er kun en reserve. TrackerControl indeholder sine egne hostlister, der giver indsigt i virksomhederne bag sporingen.</string>
     <string name="title_add_blocklist">Tilføj hosts-fil</string>
@@ -685,13 +657,12 @@ Med venlig hilsen,\n\n]]></string>
     <string name="msg_invalid_url">Ugyldig URL</string>
     <string name="msg_apply_blocklists_failed">Kunne ikke anvende hosts-filer</string>
     <string name="msg_last_update">Seneste opdatering: %s</string>
+    <!-- Accessibility labels -->
     <string name="switch_tracker_control_description">Trackerblokering</string>
-    <string name="vpn_enabled_switch_description">VPN</string>
     <string name="blocklist_delete_description">Slet blokeringsliste</string>
     <string name="blocklist_enable_description">Aktivér blokeringsliste %s</string>
     <string name="log_connection_allowed">Tilladt</string>
     <string name="log_connection_blocked">Blokeret</string>
-    <string name="log_connection_wifi">Wi-Fi</string>
     <string name="log_connection_other">Andet netværk</string>
     <string name="log_screen_on">Skærm tændt</string>
 </resources>

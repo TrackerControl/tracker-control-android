@@ -1,98 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_description">ট্র্যাকারকন্ট্রোল মোবাইল অ্যাপ সমুহের বিস্তৃত, চলমান এবং লুকিয়ে ব্যবহারকারীদের তথ্য সংগ্রহ নিয়ন্ত্রণ ও নিরীক্ষণ করতে দেয় |</string>
+    <string name="app_copyright">কপিরাইট \u00A9 ২০১৯–২০২২ Konrad Kollnig\n\nTrackerControl, Marcel Bokhorst (M66B) তৈরি NetGuard-এর উপর ভিত্তি করে তৈরি।</string>
     <string name="app_android">ট্র্যাকারকন্ট্রোল ব্যবহার এর জন্য এন্ড্রোইড সংস্করণ ৫.১ বা তার পরবর্তী প্রওয়াজন </string>
+    <string name="app_xposed">Xposed-এর কারণে অতিরিক্ত ক্র্যাশ হতে পারে, যার ফলে Google Play Store থেকে TrackerControl সরিয়ে নেওয়া হতে পারে। তাই Xposed ইনস্টল থাকা অবস্থায় TrackerControl সমর্থিত নয়</string>
+    <string name="app_eula">এই অ্যাপ ব্যবহার আপনার নিজস্ব ঝুঁকিতে। কোনও অ্যাপই ট্র্যাকিং থেকে ১০০% সুরক্ষা দিতে পারে না।</string>
     <string name="app_privacy"><a href="https://github.com/TrackerControl/tracker-control-android#privacy-notice">গোপনীয়তা নীতি</a> <a href="https://github.com/TrackerControl/tracker-control-android#cookie-policy">Cookie Policy</a></string>
+    <string name="app_ios"><a href="https://ios.trackercontrol.org">TrackerControl iOS-এর জন্যও উপলব্ধ</a></string>
     <string name="channel_foreground">চলমান পরিষেবাগুলি </string>
     <string name="channel_notify">সাধারণ বিজ্ঞপ্তি</string>
+    <string name="channel_access">অ্যাক্সেসের বিজ্ঞপ্তি</string>
     <string name="menu_search">অ্যাপ এর জন্য খুঁজুন</string>
     <string name="menu_filter">অ্যাপ গুলো বাছাইকরুন </string>
     <string name="menu_app_user">ব্যবহারকারী অ্যাপগুলি প্রদর্শন করুন</string>
     <string name="menu_app_system">সিস্টেম অ্যাপ্স প্রদর্শন করুন</string>
     <string name="menu_app_nointernet">ইন্টারনেট এ সংযুক্ত হয়ন এমন অ্যাপ্স প্রদর্শন করুন</string>
+    <string name="menu_app_unprotected">শুধু অরক্ষিত অ্যাপ দেখান</string>
+    <string name="menu_app_frozen">হিমায়িত অ্যাপ দেখান</string>
     <string name="menu_sort">অ্যাপ সমূহ সাজাও</string>
     <string name="menu_sort_name">নাম অনুযায়ী সাজান</string>
     <string name="menu_sort_uid">Uid অনুযায়ী সাজান</string>
+    <string name="menu_sort_companies_week">কোম্পানি অনুযায়ী সাজান (সপ্তাহ)</string>
+    <string name="menu_sort_companies">কোম্পানি অনুযায়ী সাজান</string>
+    <string name="menu_sort_by_latest_detected_tracker">সর্বশেষ শনাক্ত ট্র্যাকার অনুযায়ী সাজান</string>
+    <string name="menu_log">ট্র্যাফিক লগ</string>
     <string name="menu_settings">সুরসংযোজন</string>
     <string name="menu_invite">আমন্ত্রণ</string>
     <string name="menu_legend">কিংবদন্তি</string>
     <string name="menu_support">এই এপপ্ কে সাহায্য করুন</string>
     <string name="menu_log_support">ব্যাখ্যা</string>
-    <string name="menu_about">সম্পর্কে</string>
-    <!-- A blocked/allowed label followed by its share of all tracking attempts. -->
-    <string name="menu_apps">অন্যান্য অ্যাপ্স</string>
-    <string name="menu_protocol_other">অন্যান্য</string>
-    <string name="menu_traffic_allowed">অনুমোদিত</string>
-    <string name="menu_traffic_blocked">অবরুদ্ধ</string>
-    <string name="menu_live">সরাসরি হালনাগাদ</string>
-    <string name="menu_refresh">সতেজকরণ করুন</string>
-    <string name="menu_resolve">নাম সমূহ দেখান</string>
-    <string name="menu_organization">সংগঠন দেখান</string>
-    <string name="menu_pcap_enabled">PCAP সক্রিয়</string>
-    <string name="menu_pcap_export">PCAP আনয়ন করা</string>
-    <string name="menu_clear">সাফ</string>
-    <string name="menu_export">রপ্তানি</string>
-    <string name="menu_reset">পুন:স্থাপন</string>
-    <string name="menu_cleanup">পরিষ্কার করা</string>
-    <string name="setting_update">হালনাগাদের জন্য পরীক্ষা করুন</string>
-    <plurals name="pause">
-        <item quantity="one">%d মিনিট পরে মনে করান</item>
-        <item quantity="other">%d মিনিট পরে মনে করান</item>
-    </plurals>
-    <!-- Secure DNS (DoH) -->
-    <!-- Block DNS-over-TLS (DoT) -->
-    <string name="summary_update">প্রতিদিন ২ বার নতুন এপপ্স এর update চেক করুন</string>
-    <string name="summary_block_domains">সতর্কতা : Blocked hosts UI এ দেখানো হবেনা </string>
-    <string name="msg_sure">আপনি কি নিশ্চিত?</string>
-    <string name="msg_waiting">পুনরায় চেষ্টার অপেক্ষায়</string>
-    <!-- App Overview -->
-    <!-- Dynamic content descriptions for the app-icon Internet toggle in the app list (issue #231) -->
-    <!-- Dynamic content description for the per-category tracker-blocking switch -->
-    <!-- Dynamic content description for the home-screen widget toggle (accessibility follow-up, issue #636) -->
-    <!-- App Details -->
-    <!-- Actions -->
-    <!-- Per-app remote VPN routing -->
-    <string name="setting_wg_route_mode">দূরবর্তী VPN দিয়ে পাঠান</string>
-    <string name="summary_wg_route_mode">কোন অ্যাপগুলি দূরবর্তী VPN দিয়ে যাবে। যেগুলি যায় না সেগুলিতেও ট্র্যাকার পর্যবেক্ষণ ও ব্লকিং পুরোপুরি চলে — সেগুলি কেবল এই ডিভাইসের নিজের নেটওয়ার্ক থেকে সংযোগ করে।</string>
-    <string name="wg_route_mode_all">সব অ্যাপ</string>
-    <string name="wg_route_mode_selected">শুধু নির্বাচিত অ্যাপ</string>
-    <string name="app_route_through">দূরবর্তী VPN দিয়ে</string>
-    <string name="app_route_through_explanation">এই অ্যাপটি আপনার দূরবর্তী VPN দিয়ে সংযোগ করে, যা আপনার নেটওয়ার্কের বদলে এর ট্রাফিক দেখে।</string>
-    <string name="app_route_direct">সরাসরি এই ডিভাইস থেকে</string>
-    <string name="app_route_direct_explanation">এই অ্যাপটি আপনার নিজের নেটওয়ার্ক থেকে সংযোগ করে। ট্র্যাকার পর্যবেক্ষণ ও ব্লকিং তবুও প্রযোজ্য। এর DNS অনুরোধ VPN-এর বদলে আপনার নেটওয়ার্কের রিজলভারে যায় এবং এটি এই ডিভাইসের প্রকৃত ঠিকানা দেখে — কিছু অ্যাপের এটি দরকার, যেমন স্থানীয় ডিভাইসে পৌঁছাতে বা ক্যাপটিভ পোর্টাল যাচাই করতে।</string>
-    <string name="app_route_unavailable_no_vpn">কোনও দূরবর্তী VPN সেট করা নেই, তাই সব ট্রাফিক ইতিমধ্যেই সরাসরি এই ডিভাইস থেকে যাচ্ছে।</string>
-    <string name="app_route_unavailable_bypassed">এই অ্যাপটি TrackerControl সম্পূর্ণ এড়িয়ে যায়, তাই পাঠানোর মতো কোনও ট্রাফিক নেই।</string>
-    <string name="app_route_unavailable_partial_routes">আপনার দূরবর্তী VPN সব ট্রাফিক বহন করে না (এর AllowedIPs পূর্ণ টানেল নয়)। অ্যাপভিত্তিক রাউটিংয়ের জন্য পূর্ণ টানেল দরকার, কারণ রুটগুলি সব অ্যাপ ভাগ করে নেয়।</string>
-    <!-- Per-app protection state -->
-    <string name="app_state_protected">সুরক্ষিত</string>
-    <string name="app_state_protected_explanation">এই অ্যাপের জন্য ট্র্যাকার ব্লক ও রেকর্ড করা হয়।</string>
-    <string name="app_state_trackers_allowed">ট্র্যাকার অনুমোদিত</string>
-    <string name="app_state_trackers_allowed_explanation">অ্যাপটি TrackerControl-এর মধ্য দিয়েই চলতে থাকে, তবে এর ট্র্যাকারগুলি ব্লকও করা হয় না, রেকর্ডও করা হয় না। ব্লক করার ফলে অ্যাপ কাজ না করলে এটি ব্যবহার করুন।</string>
-    <string name="app_state_no_internet">ইন্টারনেট নেই</string>
-    <string name="app_state_no_internet_explanation">এই অ্যাপের সব সংযোগ ব্লক করা হয়েছে। আপনি প্রধান স্ক্রিনে অ্যাপের আইকনেও ট্যাপ করতে পারেন।</string>
-    <string name="app_state_no_internet_shared_uid">%1$s-এর ক্ষেত্রেও প্রযোজ্য, যেটি এই অ্যাপের সঙ্গে একই Android ব্যবহারকারী আইডি ভাগ করে।</string>
-    <string name="app_state_bypassed">TrackerControl এড়িয়ে যান</string>
-    <string name="app_state_bypassed_explanation">অ্যাপটি TrackerControl-এর বাইরে সরাসরি সংযোগ করে। এর জন্য কিছুই পর্যবেক্ষণ বা ব্লক করা হয় না। অ্যাপ তবুও কাজ না করলে শেষ উপায় হিসেবে এটি ব্যবহার করুন।\n\nদ্রষ্টব্য: এটি কাজ করতে হলে Android-এর VPN সেটিংসে \"VPN ছাড়া সংযোগ ব্লক করুন\" বন্ধ থাকতে হবে।</string>
-    <!-- Per-app protection screen -->
-    <!-- Protection state and remote-VPN routing shown together on one row -->
-    <!-- Tracker library screen, reached from the summary row on the Trackers tab -->
-    <!-- Onboarding -->
-    <!-- Insights Screen -->
-    <!-- Joins the alternative domain names of one tracker, e.g. "example.com or example.net". Keep the surrounding spaces. -->
-    <!-- What's New onboarding slide (not translated) -->
-    <!-- Accessibility labels -->
-    <string name="app_copyright">কপিরাইট \u00A9 ২০১৯–২০২২ Konrad Kollnig\n\nTrackerControl, Marcel Bokhorst (M66B) তৈরি NetGuard-এর উপর ভিত্তি করে তৈরি।</string>
-    <string name="app_xposed">Xposed-এর কারণে অতিরিক্ত ক্র্যাশ হতে পারে, যার ফলে Google Play Store থেকে TrackerControl সরিয়ে নেওয়া হতে পারে। তাই Xposed ইনস্টল থাকা অবস্থায় TrackerControl সমর্থিত নয়</string>
-    <string name="app_eula">এই অ্যাপ ব্যবহার আপনার নিজস্ব ঝুঁকিতে। কোনও অ্যাপই ট্র্যাকিং থেকে ১০০% সুরক্ষা দিতে পারে না।</string>
-    <string name="app_ios"><a href="https://ios.trackercontrol.org">TrackerControl iOS-এর জন্যও উপলব্ধ</a></string>
-    <string name="channel_access">অ্যাক্সেসের বিজ্ঞপ্তি</string>
-    <string name="menu_app_unprotected">শুধু অরক্ষিত অ্যাপ দেখান</string>
-    <string name="menu_app_frozen">হিমায়িত অ্যাপ দেখান</string>
-    <string name="menu_sort_companies_week">কোম্পানি অনুযায়ী সাজান (সপ্তাহ)</string>
-    <string name="menu_sort_companies">কোম্পানি অনুযায়ী সাজান</string>
-    <string name="menu_sort_by_latest_detected_tracker">সর্বশেষ শনাক্ত ট্র্যাকার অনুযায়ী সাজান</string>
-    <string name="menu_log">ট্র্যাফিক লগ</string>
     <string name="menu_troubleshooting">সমস্যা সমাধান</string>
+    <string name="menu_about">সম্পর্কে</string>
     <string name="timeline_empty_disabled_title">TrackerControl বন্ধ</string>
     <string name="timeline_empty_disabled_subtitle">উপরের ডানদিকে থাকা সুইচ দিয়ে TrackerControl চালু করুন। এরপর আপনার অ্যাপের ট্র্যাকার কার্যকলাপ এখানে দেখা যাবে।</string>
     <string name="timeline_empty_enabled_title">ট্র্যাকার খোঁজা হচ্ছে…</string>
@@ -108,17 +46,15 @@
     <string name="unidentified_app_uid">অপরিচিত অ্যাপ (UID %1$d)</string>
     <string name="tab_timeline">টাইমলাইন</string>
     <string name="tab_apps">অ্যাপ</string>
-    <string name="tab_vpn">VPN</string>
     <string name="timeline_section_last_hour">গত ঘণ্টা</string>
     <string name="timeline_section_today">আজ</string>
     <string name="timeline_section_yesterday">গতকাল</string>
     <string name="timeline_section_this_week">এই সপ্তাহ</string>
-    <string name="timeline_more_trackers">আরও +%dটি</string>
+    <!-- Keep as a string: call-site/API migration and multi-count grammar are intentionally separate. -->
+    <string name="timeline_more_trackers" tools:ignore="PluralsCandidate">আরও +%dটি</string>
     <string name="timeline_tracker_blocked">ব্লক করা হয়েছে</string>
     <string name="timeline_tracker_allowed">অনুমোদিত</string>
-    <string name="insights_overview_status">%1$s %2$s · %3$s %4$s</string>
-    <string name="insights_overview_status_share">%1$s (%2$s)</string>
-    <string name="timeline_insights_status">%1$s %2$s · %3$s %4$s</string>
+    <!-- A blocked/allowed label followed by its share of all tracking attempts. -->
     <string name="feed_section_last_contact">সর্বশেষ যোগাযোগ %s</string>
     <plurals name="feed_show_more_companies">
         <item quantity="one">আরও %dটি কোম্পানি দেখান</item>
@@ -133,7 +69,8 @@
     <string name="feed_company_collapsed">সংকুচিত</string>
     <string name="feed_essential_explainer">অ্যাপের প্রয়োজন—%s সচল রাখতে অনুমোদিত</string>
     <string name="feed_essential_explainer_blocked">অ্যাপের প্রয়োজন—এগুলো ব্লক করলে %s কাজ নাও করতে পারে</string>
-    <string name="timeline_summary_mixed">%1$dটি ব্লক · %2$dটি অনুমোদিত</string>
+    <!-- Keep as a string: call-site/API migration and multi-count grammar are intentionally separate. -->
+    <string name="timeline_summary_mixed" tools:ignore="PluralsCandidate">%1$dটি ব্লক · %2$dটি অনুমোদিত</string>
     <plurals name="timeline_trackers_blocked">
         <item quantity="one">%dটি ট্র্যাকার ব্লক করা হয়েছে</item>
         <item quantity="other">%dটি ট্র্যাকার ব্লক করা হয়েছে</item>
@@ -162,10 +99,29 @@
     <string name="troubleshooting_alwayson_title">সর্বদা-চালু VPN</string>
     <string name="troubleshooting_alwayson_desc">Android VPN সেটিংসে “VPN ছাড়া সংযোগ ব্লক করুন” (লকডাউন) চালু থাকলে TrackerControl সঠিকভাবে কাজ করতে পারে না। এই বিকল্পটি বন্ধ করুন।</string>
     <string name="troubleshooting_alwayson_action">VPN সেটিংস খুলুন</string>
+    <string name="menu_apps">অন্যান্য অ্যাপ্স</string>
+    <string name="menu_protocol_other">অন্যান্য</string>
+    <string name="menu_traffic_allowed">অনুমোদিত</string>
+    <string name="menu_traffic_blocked">অবরুদ্ধ</string>
+    <string name="menu_live">সরাসরি হালনাগাদ</string>
+    <string name="menu_refresh">সতেজকরণ করুন</string>
+    <string name="menu_resolve">নাম সমূহ দেখান</string>
+    <string name="menu_organization">সংগঠন দেখান</string>
+    <string name="menu_pcap_enabled">PCAP সক্রিয়</string>
+    <string name="menu_pcap_export">PCAP আনয়ন করা</string>
+    <string name="menu_clear">সাফ</string>
     <string name="menu_clear_activity">রেকর্ড করা কার্যকলাপ মুছুন</string>
+    <string name="menu_export">রপ্তানি</string>
+    <string name="menu_reset">পুন:স্থাপন</string>
+    <string name="menu_cleanup">পরিষ্কার করা</string>
     <string name="setting_options">সাধারণ</string>
     <string name="setting_further_options">আরও বিকল্প</string>
     <string name="setting_pause">%1$s মিনিট পরে স্বয়ংক্রিয়ভাবে চালু করুন</string>
+    <string name="setting_update">হালনাগাদের জন্য পরীক্ষা করুন</string>
+    <plurals name="pause">
+        <item quantity="one">%d মিনিট পরে মনে করান</item>
+        <item quantity="other">%d মিনিট পরে মনে করান</item>
+    </plurals>
     <string name="setting_ip6">IPv6 ট্র্যাফিক চালু করুন</string>
     <string name="setting_call">কলের সময় বন্ধ করুন</string>
     <string name="setting_reload_onconnectivity">প্রতিবার সংযোগ পরিবর্তনে পুনরায় লোড করুন</string>
@@ -183,9 +139,6 @@
     <string name="summary_include_all_tracking">সব অ্যাপের জন্য ট্র্যাকার পর্যবেক্ষণ আবার চালু করুন।</string>
     <string name="setting_block_domains">hosts ফাইল চালু করুন</string>
     <string name="setting_rcode">hosts ব্লকিং প্রতিক্রিয়া: %s</string>
-    <string name="setting_vpn4">VPN IPv4: %s</string>
-    <string name="setting_vpn6">VPN IPv6: %s</string>
-    <string name="setting_dns">VPN DNS: %s</string>
     <string name="setting_validate">যাচাই করুন: %s</string>
     <string name="setting_ttl">সর্বনিম্ন DNS TTL: %s s</string>
     <string name="setting_socks5_enabled">SOCKS5 প্রক্সি ব্যবহার করুন</string>
@@ -212,6 +165,7 @@
     <string name="setting_pcap_record_size">PCAP রেকর্ডের আকার: %s B</string>
     <string name="setting_pcap_file_size">PCAP সর্বোচ্চ ফাইলের আকার: %s MB</string>
     <string name="setting_watchdog">ওয়াচডগ: প্রতি %s মিনিটে</string>
+    <!-- Secure DNS (DoH) -->
     <string name="setting_doh_enabled">সুরক্ষিত DNS (DoH)</string>
     <string name="summary_doh_enabled">DNS-over-HTTPS ব্যবহার করে DNS অনুরোধ এনক্রিপ্ট করুন। WireGuard সক্রিয় থাকলে স্বয়ংক্রিয়ভাবে বিরতি দেওয়া হয়, কারণ তখন ওই অনুরোধগুলি WireGuard টানেল ব্যবহার করে।</string>
     <string name="warning_beta">বিটা বৈশিষ্ট্য। প্রত্যাশামতো কাজ নাও করতে পারে।</string>
@@ -219,6 +173,7 @@
     <string name="summary_doh_endpoint">DNS-over-HTTPS অনুরোধের জন্য HTTPS URL</string>
     <string name="setting_doh_dns_fallback">DNS ফলব্যাক</string>
     <string name="summary_doh_dns_fallback">DoH উপলব্ধ না থাকলে সাধারণ (এনক্রিপ্ট না করা) DNS ব্যবহার করুন। বন্ধ করলে DoH সার্ভার বন্ধ থাকলে অ্যাপ কাজ নাও করতে পারে।</string>
+    <!-- Block DNS-over-TLS (DoT) -->
     <string name="setting_block_dot">Android-এর Private DNS ব্লক করুন</string>
     <string name="summary_block_dot">Android-এর Private DNS চালু থাকলে TC কোনও ট্র্যাকিং শনাক্ত করতে পারে না এবং সঠিকভাবে কাজ করে না।</string>
     <string name="setting_stats_frequency">নমুনার ব্যবধান: %s ms</string>
@@ -230,9 +185,11 @@
     <string name="setting_hosts_auto_update">hosts স্বয়ংক্রিয়ভাবে আপডেট করুন</string>
     <string name="summary_hosts_auto_update">ব্যাকগ্রাউন্ডে hosts ফাইল স্বয়ংক্রিয়ভাবে আপডেট করুন</string>
     <string name="summary_pause">বিজ্ঞপ্তি থেকে বিরতি দেওয়ার পর, নির্বাচিত সংখ্যক মিনিট পরে TrackerControl স্বয়ংক্রিয়ভাবে আবার চালু করুন (এই বিকল্প বন্ধ করতে ০ লিখুন)।</string>
+    <string name="summary_update">প্রতিদিন ২ বার নতুন এপপ্স এর update চেক করুন</string>
     <string name="summary_ip6">IP সংস্করণ ৬-এর ট্র্যাফিক TrackerControl-এ পাঠান, যাতে তা বেছে বেছে অনুমোদন বা ব্লক করা যায়</string>
     <string name="summary_call">ইনকামিং বা আউটগোয়িং ফোন কলের সময় TrackerControl বন্ধ করুন। IP/Wi-Fi কলিংয়ের সমস্যা এড়াতে এটি ব্যবহার করা যায়।</string>
     <string name="summary_log_app">ব্যাটারি ব্যবহার কমাতে বন্ধ করুন। নতুন ট্র্যাকার এখনও ব্লক হবে, কিন্তু দেখানো হবে না।</string>
+    <string name="summary_block_domains">সতর্কতা : Blocked hosts UI এ দেখানো হবেনা </string>
     <string name="summary_rcode">ডিফল্ট মান ৩ (NXDOMAIN), যার অর্থ ‘অস্তিত্বহীন ডোমেন’।</string>
     <string name="summary_validate">পোর্ট ৪৪৩ (https)-এ ইন্টারনেট সংযোগ যাচাই করতে ব্যবহৃত ডোমেন নাম।</string>
     <string name="summary_socks5_enabled">শুধু TCP ট্র্যাফিক প্রক্সি সার্ভারে পাঠানো হবে</string>
@@ -258,7 +215,7 @@
     <string name="msg_wg_profile_empty">এখনও কোনও প্রোফাইল নেই</string>
     <string name="msg_wg_profile_active">সক্রিয়</string>
     <string name="msg_wg_profile_set_active">সক্রিয় হিসেবে সেট করুন</string>
-    <string name="msg_wg_profile_config_hint">[Interface]\nPrivateKey = …\nAddress = …\n\n[Peer]\nPublicKey = …\nAllowedIPs = 0.0.0.0/0, ::/0\nEndpoint = …</string>
+    <string name="msg_wg_profile_config_hint" tools:ignore="TypographyEllipsis">[Interface]\nPrivateKey = …\nAddress = …\n\n[Peer]\nPublicKey = …\nAllowedIPs = 0.0.0.0/0, ::/0\nEndpoint = …</string>
     <string name="msg_wg_profile_delete_confirm">এই WireGuard প্রোফাইলটি মুছবেন?</string>
     <string name="msg_wg_profile_scan_hint">আপনার VPN প্রদানকারীর দেখানো WireGuard QR কোডের দিকে ক্যামেরা তাক করুন। স্ক্যানটি আপনার ডিভাইসেই হয়।</string>
     <string name="msg_wg_profile_scan_no_camera">স্ক্যান করার জন্য এই ডিভাইসে কোনও ক্যামেরা নেই</string>
@@ -283,27 +240,17 @@
     <string name="msg_wg_mullvad_countries_failed">Mullvad-এর দেশগুলি লোড করা যায়নি: %s</string>
     <string name="msg_wg_proton_note">Proton-এর নথিভুক্ত তৃতীয় পক্ষের সেটআপে ডাউনলোডযোগ্য WireGuard কনফিগারেশন ব্যবহার করা হয়। TrackerControl-এর আপনার Proton পরিচয়পত্রের প্রয়োজন নেই এবং স্বয়ংক্রিয়ভাবে কনফিগারেশন রিফ্রেশ করতে পারে না।\n\naccount.protonvpn.com-এ সাইন ইন করুন, Downloads → WireGuard configuration-এ যান, একটি কনফিগারেশন ডাউনলোড করুন, টেক্সট এডিটরে খুলুন, তারপর এর বিষয়বস্তু এখানে কপি করে পেস্ট করুন।</string>
     <string name="msg_wg_proton_open_dashboard">Proton VPN ড্যাশবোর্ড খুলুন</string>
-    <string name="vpn_status_mullvad">Mullvad</string>
     <string name="vpn_status_relay">রিলে: %s</string>
     <string name="vpn_status_wireguard_connected">WireGuard সংযুক্ত</string>
     <string name="vpn_status_disconnected">সংযুক্ত নয়</string>
-    <string name="vpn_provider_mullvad">Mullvad VPN</string>
-    <string name="vpn_provider_ivpn">IVPN</string>
     <string name="vpn_intro_title">VPN প্রিভিউ</string>
     <string name="vpn_intro_body">একটি VPN আপনার ইন্টারনেট ট্র্যাফিক অন্য একটি সার্ভারের মাধ্যমে পাঠায়। এতে ওয়েবসাইট ও নেটওয়ার্ক প্রদানকারীর কাছ থেকে আপনার IP ঠিকানা লুকানো যায় এবং সংযোগের জন্য একটি দেশ বেছে নেওয়া যায়। এই ট্যাবটি নতুন, তাই এটিকে প্রিভিউ হিসেবে ব্যবহার করুন।</string>
-    <string name="vpn_intro_mullvad_title">Mullvad</string>
     <string name="vpn_intro_mullvad_body">গোপনীয়তাকেন্দ্রিক একটি VPN প্রদানকারী। প্রতি মাসে এর খরচ €৫ এবং ইমেল ঠিকানার বদলে অ্যাকাউন্ট নম্বর ব্যবহার করে। একটি অ্যাকাউন্ট নম্বর লিখে TrackerControl-এ একটি দেশ বেছে নিন।</string>
-    <string name="vpn_intro_ivpn_title">IVPN</string>
     <string name="vpn_intro_ivpn_body">WireGuard সমর্থনকারী গোপনীয়তাকেন্দ্রিক একটি VPN প্রদানকারী। একটি IVPN অ্যাকাউন্ট ID লিখে TrackerControl-এ একটি দেশ বেছে নিন।</string>
-    <string name="vpn_intro_proton_title">Proton VPN</string>
     <string name="vpn_intro_proton_body">আপনার Proton VPN অ্যাকাউন্ট থেকে একটি WireGuard কনফিগারেশন ডাউনলোড করে TrackerControl-এ পেস্ট করুন। আপনার Proton পরিচয়পত্র এখানে কখনও লেখা হয় না।</string>
-    <string name="vpn_intro_wireguard_title">WireGuard</string>
     <string name="vpn_intro_wireguard_body">অন্য কোনও VPN প্রদানকারী, নিজের সার্ভার বা কর্মস্থল থেকে WireGuard কনফিগারেশন থাকলে এটি ব্যবহার করুন।</string>
     <string name="vpn_enter_mullvad_account">অ্যাকাউন্ট নম্বর লিখুন</string>
     <string name="vpn_enter_ivpn_account">অ্যাকাউন্ট ID লিখুন</string>
-    <string name="vpn_mode_mullvad">Mullvad</string>
-    <string name="vpn_mode_ivpn">IVPN</string>
-    <string name="vpn_mode_wireguard">WireGuard</string>
     <string name="vpn_settings">Mullvad সেটিংস</string>
     <string name="vpn_settings_title">Mullvad সেটিংস</string>
     <string name="vpn_ivpn_settings">IVPN সেটিংস</string>
@@ -347,12 +294,15 @@
     <string name="msg_wg_recovery_failed">WireGuard সাড়া দেওয়া বন্ধ করেছে। TrackerControl পুনরায় সংযোগের চেষ্টা করছে, এবং WireGuard ঠিক না হওয়া পর্যন্ত ইন্টারনেট অ্যাক্সেস ব্লক থাকতে পারে।</string>
     <string name="summary_watchdog">TrackerControl এখনও চলছে কি না পর্যায়ক্রমে পরীক্ষা করুন (এই বিকল্প বন্ধ করতে শূন্য লিখুন)। এতে অতিরিক্ত ব্যাটারি ব্যবহার হতে পারে।</string>
     <string name="summary_log_logcat">গবেষণা মোড: শনাক্ত ট্র্যাকারগুলি ADB-তে লগ হয় এবং উন্নত হোস্টনাম শনাক্তকরণের জন্য SNI extraction চালু থাকে। \'TC-Log\' ট্যাগ ব্যবহার করে adb logcat দিয়ে লগ নিন।</string>
+    <string name="msg_sure">আপনি কি নিশ্চিত?</string>
     <string name="msg_started">ট্র্যাকার খোঁজা হচ্ছে…</string>
+    <string name="msg_waiting">পুনরায় চেষ্টার অপেক্ষায়</string>
     <string name="msg_disabled">TrackerControl চালু করতে উপরের সুইচটি ব্যবহার করুন।</string>
     <string name="msg_revoked">TrackerControl সংযোগ বিচ্ছিন্ন হয়েছে, সম্ভবত অন্য কোনও VPN অ্যাপ বা সিস্টেমের কারণে। সম্ভব হলে এটি স্বয়ংক্রিয়ভাবে আবার সংযুক্ত হবে।</string>
     <string name="msg_installed">%1$s-এ সমস্যা হচ্ছে?</string>
     <string name="msg_installed_description">অ্যাপকে কোম্পানিগুলির সঙ্গে যোগাযোগ করতে অনুমতি দিন</string>
-    <string name="msg_installed_tracker_libraries_found">%dটি ট্র্যাকার লাইব্রেরি রয়েছে</string>
+    <!-- Keep as a string: call-site/API migration and multi-count grammar are intentionally separate. -->
+    <string name="msg_installed_tracker_libraries_found" tools:ignore="PluralsCandidate">%dটি ট্র্যাকার লাইব্রেরি রয়েছে</string>
     <string name="msg_completed">কাজ সম্পন্ন হয়েছে</string>
     <string name="msg_no_file_manager">ফাইল বাছাই করার জন্য কোনও ফাইল ম্যানেজার পাওয়া যায়নি।</string>
     <string name="msg_no_browser">লিঙ্ক খোলার জন্য কোনও ব্রাউজার অ্যাপ পাওয়া যায়নি।</string>
@@ -382,10 +332,6 @@
     <string name="msg_start_forward">%1$s পোর্ট %2$d থেকে %3$s:%4$d-এ \'%5$s\'-এর ফরওয়ার্ডিং শুরু করবেন?</string>
     <string name="msg_stop_forward">%1$s পোর্ট %2$d-এর ফরওয়ার্ডিং বন্ধ করবেন?</string>
     <string name="msg_log_logcat">সতর্কতা: ADB লগিংয়ের কারণে ব্লকিং বন্ধ।</string>
-    <string-array name="protocolNames">
-        <item>UDP</item>
-        <item>TCP</item>
-    </string-array>
     <string name="menu_add">যোগ করুন</string>
     <string name="menu_delete">মুছুন</string>
     <string name="setting_forwarding">পোর্ট ফরওয়ার্ডিং</string>
@@ -409,20 +355,22 @@
     <string name="title_rate">হার</string>
     <string name="title_allow">অনুমোদন</string>
     <string name="title_block">ব্লক</string>
-    <string name="title_nobody">nobody</string>
     <string name="title_log_whois">%1$s-এর Whois</string>
     <string name="title_log_port">পোর্ট %1$d</string>
     <string name="title_log_copy">কপি</string>
+    <!-- App Overview -->
     <string name="tracked_app_icon">এই অ্যাপের ইন্টারনেট অ্যাক্সেস বন্ধ করুন</string>
     <string name="tracked_app_name">অ্যাপের নাম</string>
+    <!-- Dynamic content descriptions for the app-icon Internet toggle in the app list (issue #231) -->
     <string name="toggle_block_internet_description">%1$s-এর ইন্টারনেট অ্যাক্সেস ব্লক করুন</string>
     <string name="toggle_allow_internet_description">%1$s-এর ইন্টারনেট অ্যাক্সেস অনুমোদন করুন</string>
     <string name="toggle_no_internet_description">%1$s-এর ইন্টারনেট অ্যাক্সেস নেই</string>
     <string name="toggle_internet_unavailable_description">%1$s-এর ইন্টারনেট অ্যাক্সেস নিয়ন্ত্রণ উপলব্ধ নয়</string>
+    <!-- Dynamic content description for the per-category tracker-blocking switch -->
     <string name="toggle_block_category_description">%1$s শ্রেণির ট্র্যাকার ব্লক করা</string>
+    <!-- Dynamic content description for the home-screen widget toggle (accessibility follow-up, issue #636) -->
     <string name="widget_toggle_enable_description">ট্র্যাকার ব্লকিং চালু করুন</string>
     <string name="widget_toggle_disable_description">ট্র্যাকার ব্লকিং বন্ধ করুন</string>
-    <string name="accessibility_stat_description">%1$s, %2$s</string>
     <string name="accessibility_tracker_blocking_enabled">ট্র্যাকার ব্লকিং চালু</string>
     <string name="accessibility_tracker_blocking_disabled">ট্র্যাকার ব্লকিং বন্ধ</string>
     <plurals name="n_companies_found_week">
@@ -444,11 +392,13 @@
     <string name="exporting">এক্সপোর্ট হচ্ছে..</string>
     <string name="export_failed">এক্সপোর্ট ব্যর্থ</string>
     <string name="exported">স্টোরেজে এক্সপোর্ট হয়েছে!</string>
+    <!-- App Details -->
     <string name="title_activity_detail">বিস্তারিত</string>
     <string name="tab_trackers">ট্র্যাকার</string>
     <string name="tab_countries">দেশ</string>
     <string name="tab_actions">ডেটা অধিকার</string>
     <string name="app_info">অ্যাপ পরিচালনা</string>
+    <!-- Actions -->
     <string name="block_tracking">ট্র্যাকার ব্লক করুন</string>
     <string name="block_tracking_description">অনেক অ্যাপ তথাকথিত ট্র্যাকারদের, অর্থাৎ তৃতীয় পক্ষকে, ডেটা পাঠায়। TrackerControl এই নেটওয়ার্ক সংযোগগুলি বেছে বেছে ব্লক করতে দেয়। তবে বিচক্ষণতার সঙ্গে ব্যবহার করুন, কারণ অ্যাপ ডেভেলপাররা বিশেষ করে বিজ্ঞাপনের জন্য এসব পরিষেবার উপর নির্ভর করেন।</string>
     <string name="personalised_ads">ব্যক্তিগতকরণ সীমিত করুন</string>
@@ -463,10 +413,7 @@
     <string name="request_data">ডেটা অনুরোধ করুন</string>
     <string name="request_deletion">মুছে ফেলার অনুরোধ করুন</string>
     <string name="contact_developer">ডেভেলপার</string>
-    <string name="contact_playstore">Google</string>
     <string name="contact_officials">EU কর্মকর্তা</string>
-    <string name="google_dpo_mail">data-protection-office@google.com</string>
-    <string name="dpas_overview_url">https://edpb.europa.eu/about-edpb/board/members</string>
     <string name="subject_request_data">GDPR বিষয়ভিত্তিক অ্যাক্সেস অনুরোধ</string>
     <string name="body_request_data"><![CDATA[যাঁদের জন্য প্রযোজ্য:
 
@@ -548,15 +495,39 @@ EU General Data Protection Regulation (GDPR)-এর ১৭ অনুচ্ছে
     <string name="onboarding_blockingmode_strict_desc">অপরিহার্য পরিষেবা ও অস্পষ্ট ডোমেনসহ সবকিছু ব্লক করে। অ্যাপের সমস্যা অনেক—অনেক অ্যাপে কম কঠোর Protection সেটিং প্রয়োজন হবে।</string>
     <string name="onboarding_blockingmode_research_label">গবেষণা</string>
     <string name="onboarding_blockingmode_research_desc">কোনও ট্র্যাকার ব্লকিং নেই। ADB-তে ট্রান্সমিশন লগ করে এবং উন্নত হোস্টনাম শনাক্তের জন্য SNI extraction চালু করে। শুধু গবেষণার জন্য: এতে ট্র্যাকার সার্ভারে আপনার IP ঠিকানা ফাঁস হয়।</string>
+    <!-- Per-app remote VPN routing -->
+    <string name="setting_wg_route_mode">দূরবর্তী VPN দিয়ে পাঠান</string>
+    <string name="summary_wg_route_mode">কোন অ্যাপগুলি দূরবর্তী VPN দিয়ে যাবে। যেগুলি যায় না সেগুলিতেও ট্র্যাকার পর্যবেক্ষণ ও ব্লকিং পুরোপুরি চলে — সেগুলি কেবল এই ডিভাইসের নিজের নেটওয়ার্ক থেকে সংযোগ করে।</string>
+    <string name="wg_route_mode_all">সব অ্যাপ</string>
+    <string name="wg_route_mode_selected">শুধু নির্বাচিত অ্যাপ</string>
+    <string name="app_route_through">দূরবর্তী VPN দিয়ে</string>
+    <string name="app_route_through_explanation">এই অ্যাপটি আপনার দূরবর্তী VPN দিয়ে সংযোগ করে, যা আপনার নেটওয়ার্কের বদলে এর ট্রাফিক দেখে।</string>
+    <string name="app_route_direct">সরাসরি এই ডিভাইস থেকে</string>
+    <string name="app_route_direct_explanation">এই অ্যাপটি আপনার নিজের নেটওয়ার্ক থেকে সংযোগ করে। ট্র্যাকার পর্যবেক্ষণ ও ব্লকিং তবুও প্রযোজ্য। এর DNS অনুরোধ VPN-এর বদলে আপনার নেটওয়ার্কের রিজলভারে যায় এবং এটি এই ডিভাইসের প্রকৃত ঠিকানা দেখে — কিছু অ্যাপের এটি দরকার, যেমন স্থানীয় ডিভাইসে পৌঁছাতে বা ক্যাপটিভ পোর্টাল যাচাই করতে।</string>
+    <string name="app_route_unavailable_no_vpn">কোনও দূরবর্তী VPN সেট করা নেই, তাই সব ট্রাফিক ইতিমধ্যেই সরাসরি এই ডিভাইস থেকে যাচ্ছে।</string>
+    <string name="app_route_unavailable_bypassed">এই অ্যাপটি TrackerControl সম্পূর্ণ এড়িয়ে যায়, তাই পাঠানোর মতো কোনও ট্রাফিক নেই।</string>
+    <string name="app_route_unavailable_partial_routes">আপনার দূরবর্তী VPN সব ট্রাফিক বহন করে না (এর AllowedIPs পূর্ণ টানেল নয়)। অ্যাপভিত্তিক রাউটিংয়ের জন্য পূর্ণ টানেল দরকার, কারণ রুটগুলি সব অ্যাপ ভাগ করে নেয়।</string>
+    <!-- Per-app protection state -->
     <string name="app_state_heading">ব্লকিং মোড</string>
     <string name="app_state_title_minimal">ন্যূনতম ব্লকিং</string>
     <string name="app_state_title_standard">মানক ব্লকিং</string>
     <string name="app_state_title_strict">কঠোর ব্লকিং</string>
     <string name="app_state_subtitle_misbehaving">অ্যাপ ঠিকমতো কাজ করছে না? এখানে ন্যূনতম ব্লিংয়ে বদলান।</string>
+    <string name="app_state_protected">সুরক্ষিত</string>
+    <string name="app_state_protected_explanation">এই অ্যাপের জন্য ট্র্যাকার ব্লক ও রেকর্ড করা হয়।</string>
     <string name="app_state_essential_only">শুধু ন্যূনতম ব্লকিং</string>
     <string name="app_state_essential_only_explanation">শুধু ন্যূনতম মোডে ব্লক হওয়া নিশ্চিত ট্র্যাকারগুলিই ব্লক করে। অন্য ট্র্যাকার এখনও রেকর্ড হয়, কিন্তু অনুমোদিত থাকে। মানক ব্লকিংয়ে অ্যাপ নষ্ট হলে এটি ব্যবহার করুন।</string>
+    <string name="app_state_trackers_allowed">ট্র্যাকার অনুমোদিত</string>
+    <string name="app_state_trackers_allowed_explanation">অ্যাপটি TrackerControl-এর মধ্য দিয়েই চলতে থাকে, তবে এর ট্র্যাকারগুলি ব্লকও করা হয় না, রেকর্ডও করা হয় না। ব্লক করার ফলে অ্যাপ কাজ না করলে এটি ব্যবহার করুন।</string>
+    <string name="app_state_no_internet">ইন্টারনেট নেই</string>
+    <string name="app_state_no_internet_explanation">এই অ্যাপের সব সংযোগ ব্লক করা হয়েছে। আপনি প্রধান স্ক্রিনে অ্যাপের আইকনেও ট্যাপ করতে পারেন।</string>
+    <string name="app_state_no_internet_shared_uid">%1$s-এর ক্ষেত্রেও প্রযোজ্য, যেটি এই অ্যাপের সঙ্গে একই Android ব্যবহারকারী আইডি ভাগ করে।</string>
+    <string name="app_state_bypassed">TrackerControl এড়িয়ে যান</string>
+    <string name="app_state_bypassed_explanation">অ্যাপটি TrackerControl-এর বাইরে সরাসরি সংযোগ করে। এর জন্য কিছুই পর্যবেক্ষণ বা ব্লক করা হয় না। অ্যাপ তবুও কাজ না করলে শেষ উপায় হিসেবে এটি ব্যবহার করুন।\n\nদ্রষ্টব্য: এটি কাজ করতে হলে Android-এর VPN সেটিংসে \"VPN ছাড়া সংযোগ ব্লক করুন\" বন্ধ থাকতে হবে।</string>
+    <!-- Per-app protection screen -->
     <string name="protection_title">সুরক্ষা</string>
     <string name="protection_route_heading">দূরবর্তী VPN</string>
+    <!-- Protection state and remote-VPN routing shown together on one row -->
     <string name="protection_app_not_working">অ্যাপ কাজ করছে না? এখানে ট্যাপ করুন</string>
     <plurals name="protection_paused_resumes">
         <item quantity="one">বিরতিতে — %d মিনিটে আবার শুরু হবে</item>
@@ -575,9 +546,9 @@ EU General Data Protection Regulation (GDPR)-এর ১৭ অনুচ্ছে
     <string name="no_trackers_found_message_disabled">প্রধান স্ক্রিনে সুইচ চালু করুন, তারপর ট্র্যাকার খুঁজতে অ্যাপ চালু করুন</string>
     <string name="no_trackers_found_message">ট্র্যাকার খুঁজতে অ্যাপ চালু করুন</string>
     <string name="no_trackers_found_action">চালু করুন</string>
-    <string name="no_internet_message">“এই অ্যাপের ইন্টারনেট অ্যাক্সেস নেই। অন্য অ্যাপের সঙ্গে ডেটা বিনিময় করে এটি এখনও আপনাকে ট্র্যাক করতে পারে।”</string>
+    <string name="no_internet_message">"“এই অ্যাপের ইন্টারনেট অ্যাক্সেস নেই। অন্য অ্যাপের সঙ্গে ডেটা বিনিময় করে এটি এখনও আপনাকে ট্র্যাক করতে পারে।”"</string>
     <string name="no_internet">ইন্টারনেট অ্যাক্সেস নেই</string>
-    <string name="bypass_vpn_error">“অ্যাপটি TrackerControl এড়িয়ে চললে ইন্টারনেট ব্লক করা যায় না।”</string>
+    <string name="bypass_vpn_error">"“অ্যাপটি TrackerControl এড়িয়ে চললে ইন্টারনেট ব্লক করা যায় না।”"</string>
     <string name="back">পেছনে</string>
     <string name="forever_free">চিরকাল বিনামূল্যে</string>
     <string name="your_privacy">আপনার গোপনীয়তা</string>
@@ -598,6 +569,7 @@ EU General Data Protection Regulation (GDPR)-এর ১৭ অনুচ্ছে
     <string name="analyze_tracker_libraries">ট্র্যাকার লাইব্রেরি বিশ্লেষণ করুন</string>
     <string name="update_analysis">বিশ্লেষণ আপডেট করুন</string>
     <string name="analysis_outdated_version">\n\nদ্রষ্টব্য: বিশ্লেষণটি আগের অ্যাপ সংস্করণের। ইন্টিগ্রেট করা ট্র্যাকিং লাইব্রেরি পরিবর্তিত হয়ে থাকতে পারে।</string>
+    <!-- Tracker library screen, reached from the summary row on the Trackers tab -->
     <string name="libraries_title">ট্র্যাকার লাইব্রেরি</string>
     <string name="libraries_row_heading">ট্র্যাকার লাইব্রেরি</string>
     <string name="libraries_none_found">অ্যাপের কোডে কোনও ট্র্যাকার লাইব্রেরি পাওয়া যায়নি</string>
@@ -635,6 +607,7 @@ EU General Data Protection Regulation (GDPR)-এর ১৭ অনুচ্ছে
     <string name="msg_private_dns_bypass_allowed_notify">কিছু অ্যাপ এনক্রিপ্ট করা DNS ব্যবহার করছে; তাদের ট্র্যাকার যোগাযোগ TrackerControl-এর কাছে অদৃশ্য।</string>
     <string name="setting_monitor_system">সিস্টেম অ্যাপ পর্যবেক্ষণ করুন</string>
     <string name="summary_monitor_system">সিস্টেম অ্যাপ (Play Services, ক্যারিয়ার পরিষেবা ইত্যাদি) VPN-এর মাধ্যমে রাউট করুন, যাতে তাদের ট্র্যাকার শনাক্ত ও ব্লক হয়, এবং অ্যাপের তালিকায় তাদের দেখান।\n\nডিফল্টভাবে বন্ধ: সিস্টেম অ্যাপ বাদ দিলে ব্যাটারির জন্য ভালো, কারণ তাদের ব্যাকগ্রাউন্ড ট্র্যাফিক আর VPN-কে জাগায় না। এটি চালু করলে Android VPN সেটিংসের “VPN ছাড়া সংযোগ ব্লক করুন”-এর সঙ্গে বিরোধ হয়, যা অবশ্যই বন্ধ থাকতে হবে।</string>
+    <!-- Onboarding -->
     <string name="title_next">পরবর্তী</string>
     <string name="title_previous">আগের</string>
     <string name="title_finish">শুরু করুন</string>
@@ -659,6 +632,7 @@ EU General Data Protection Regulation (GDPR)-এর ১৭ অনুচ্ছে
     <string name="onboarding_lockdown_sure">লকডাউন চালু রেখে এগোলে সংযোগের সমস্যা হতে পারে। নিশ্চিত?</string>
     <string name="onboarding_action_disabled">বন্ধ</string>
     <string name="onboarding_action_granted">অনুমোদিত</string>
+    <!-- Insights Screen -->
     <string name="insights_title">আপনার গোপনীয়তার অন্তর্দৃষ্টি</string>
     <string name="insights_subtitle_7days">গত ৭ দিন</string>
     <string name="insights_tracking_attempts">যোগাযোগ করা ট্র্যাকার হোস্ট</string>
@@ -668,19 +642,25 @@ EU General Data Protection Regulation (GDPR)-এর ১৭ অনুচ্ছে
     <string name="insights_apps_with_trackers">ট্র্যাকারসহ অ্যাপ</string>
     <string name="insights_pervasive_trackers">সবচেয়ে ব্যাপক ট্র্যাকার</string>
     <string name="insights_top_domains">শীর্ষ ট্র্যাকার ডোমেন</string>
+    <!-- Joins the alternative domain names of one tracker, e.g. "example.com or example.net". Keep the surrounding spaces. -->
     <string name="insights_domain_alias_separator">" অথবা "</string>
-    <string name="insights_in_apps">%dটি অ্যাপে</string>
+    <!-- Keep as a string: call-site/API migration and multi-count grammar are intentionally separate. -->
+    <string name="insights_in_apps" tools:ignore="PluralsCandidate">%dটি অ্যাপে</string>
     <plurals name="insights_apps_count">
         <item quantity="one">%dটি অ্যাপে</item>
         <item quantity="other">%dটি অ্যাপে</item>
     </plurals>
     <string name="insights_no_data">এখনও কোনও ট্র্যাকিং ডেটা নেই। আপনার অ্যাপ ব্যবহার করে আবার দেখুন!</string>
-    <string name="insights_shocking_fact">এই সপ্তাহে আপনার অ্যাপ %2$dটি ট্র্যাকার হোস্টের মাধ্যমে %1$dটি ট্র্যাকিং কোম্পানির সঙ্গে যোগাযোগ করেছে!</string>
+    <!-- Keep as a string: call-site/API migration and multi-count grammar are intentionally separate. -->
+    <string name="insights_shocking_fact" tools:ignore="PluralsCandidate">এই সপ্তাহে আপনার অ্যাপ %2$dটি ট্র্যাকার হোস্টের মাধ্যমে %1$dটি ট্র্যাকিং কোম্পানির সঙ্গে যোগাযোগ করেছে!</string>
+    <!-- Retained for Play Store copy; call-site/API migration and multi-count grammar are intentionally separate. -->
     <string name="insights_share">বন্ধুদের সঙ্গে শেয়ার করুন</string>
     <string name="insights_share_trackers_blocked">ব্লক করা ট্র্যাকার হোস্ট</string>
-    <string name="insights_share_url">TrackerControl.org</string>
-    <string name="insights_share_message">এই সপ্তাহে TrackerControl ব্যবহার করে আমি %2$dটি কোম্পানির %1$dটি ট্র্যাকার হোস্ট ব্লক করেছি! আপনার গোপনীয়তা ফিরিয়ে নিন: https://trackercontrol.org</string>
+    <!-- Keep as a string: call-site/API migration and multi-count grammar are intentionally separate. -->
+    <string name="insights_share_message" tools:ignore="PluralsCandidate">এই সপ্তাহে TrackerControl ব্যবহার করে আমি %2$dটি কোম্পানির %1$dটি ট্র্যাকার হোস্ট ব্লক করেছি! আপনার গোপনীয়তা ফিরিয়ে নিন: https://trackercontrol.org</string>
+    <!-- Retained for Play Store copy; call-site/API migration and multi-count grammar are intentionally separate. -->
     <string name="insights_see_more">আরও দেখুন →</string>
+    <!-- What's New onboarding slide (not translated) -->
     <string name="title_blocklists">অতিরিক্ত hosts ফাইল</string>
     <string name="summary_manage_blocklists">এগুলি শুধু ফলব্যাকের জন্য। TrackerControl নিজস্ব hosts তালিকা অন্তর্ভুক্ত করে, যা ট্র্যাকিংয়ের পেছনের কোম্পানি সম্পর্কে অন্তর্দৃষ্টি দেয়।</string>
     <string name="title_add_blocklist">hosts ফাইল যোগ করুন</string>
@@ -689,13 +669,12 @@ EU General Data Protection Regulation (GDPR)-এর ১৭ অনুচ্ছে
     <string name="msg_invalid_url">অবৈধ URL</string>
     <string name="msg_apply_blocklists_failed">hosts ফাইল প্রয়োগ ব্যর্থ</string>
     <string name="msg_last_update">সর্বশেষ আপডেট: %s</string>
+    <!-- Accessibility labels -->
     <string name="switch_tracker_control_description">ট্র্যাকার ব্লকিং</string>
-    <string name="vpn_enabled_switch_description">VPN</string>
     <string name="blocklist_delete_description">ব্লকলিস্ট মুছুন</string>
     <string name="blocklist_enable_description">%s ব্লকলিস্ট চালু করুন</string>
     <string name="log_connection_allowed">অনুমোদিত</string>
     <string name="log_connection_blocked">ব্লক করা</string>
-    <string name="log_connection_wifi">Wi-Fi</string>
     <string name="log_connection_other">অন্য নেটওয়ার্ক</string>
     <string name="log_screen_on">স্ক্রিন চালু</string>
 </resources>

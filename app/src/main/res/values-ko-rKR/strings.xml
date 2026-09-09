@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_description">TrackerControl은 사용자가 널리 퍼진, 진행중인, 숨겨진 모바일 앱들의 사용자 데이터 수집(추적) 을 확인하고 관리할 수 있게 해줍니다</string>
+    <string name="app_copyright">저작권 \u00A9 2019–2022 Konrad Kollnig\n\nTrackerControl은 Marcel Bokhorst(M66B)가 개발한 NetGuard를 기반으로 합니다.</string>
     <string name="app_android">TrackerControl은 Android 5.1 이상을 요구합니다</string>
+    <string name="app_xposed">Xposed는 충돌을 너무 많이 일으켜 TrackerControl이 Google Play 스토어에서 삭제될 수 있으므로, Xposed가 설치된 동안에는 TrackerControl을 지원하지 않습니다.</string>
     <string name="app_eula">이 앱의 사용으로 인한 문제는 당신에게 달려있습니다. 어떤 앱도 추적에 대해 100% 보호를 제공할 수 없습니다.</string>
     <string name="app_privacy"><a href="https://github.com/TrackerControl/tracker-control-android#privacy-notice">Privacy Policy</a> <a href="https://github.com/TrackerControl/tracker-control-android#cookie-policy">쿠키 정책</a></string>
+    <string name="app_ios"><a href="https://ios.trackercontrol.org">TrackerControl은 iOS에서도 사용할 수 있습니다</a></string>
     <string name="channel_foreground">실행중인 서비스</string>
     <string name="channel_notify">일반 알림</string>
     <string name="channel_access">접근 알림</string>
@@ -12,105 +15,28 @@
     <string name="menu_app_user">사용자 앱 표시</string>
     <string name="menu_app_system">시스템 앱 표시</string>
     <string name="menu_app_nointernet">인터넷 미사용 앱 표시</string>
+    <string name="menu_app_unprotected">보호되지 않은 앱만 표시</string>
+    <string name="menu_app_frozen">정지된 앱 표시</string>
     <string name="menu_sort">앱 정렬</string>
     <string name="menu_sort_name">이름순 정렬</string>
     <string name="menu_sort_uid">UID순 정렬</string>
     <string name="menu_sort_companies_week">회사별 정렬 (주)</string>
     <string name="menu_sort_companies">회사별 정렬</string>
+    <string name="menu_sort_by_latest_detected_tracker">최근 감지된 트래커순 정렬</string>
     <string name="menu_log">트래픽 로그</string>
     <string name="menu_settings">설정</string>
     <string name="menu_invite">초대</string>
+    <string name="menu_legend">범례</string>
     <string name="menu_support">앱 지원하기</string>
     <string name="menu_log_support">설명</string>
-    <string name="menu_about">소개</string>
-    <!-- A blocked/allowed label followed by its share of all tracking attempts. -->
-    <string name="menu_apps">다른 앱</string>
-    <string name="menu_protocol_other">기타</string>
-    <string name="menu_traffic_allowed">허용됨</string>
-    <string name="menu_traffic_blocked">차단됨</string>
-    <string name="menu_live">실시간 업데이트</string>
-    <string name="menu_refresh">새로고침</string>
-    <string name="menu_resolve">이름 표시</string>
-    <string name="menu_organization">조직 표시</string>
-    <string name="menu_pcap_enabled">PCAP 활성화됨</string>
-    <string name="menu_pcap_export">PCAP 내보내기</string>
-    <string name="menu_clear">초기화</string>
-    <string name="menu_export">내보내기</string>
-    <string name="menu_reset">재설정</string>
-    <string name="menu_cleanup">비우기</string>
-    <string name="setting_pause">%1$s분 후 다시 활성화</string>
-    <string name="setting_update">업데이트 확인</string>
-    <plurals name="pause">
-        <item quantity="other">%d분동안 중지</item>
-    </plurals>
-    <string name="setting_ip6">IPv6 트래픽 사용</string>
-    <string name="setting_call">통화 중 비활성화</string>
-    <string name="setting_reload_onconnectivity">연결 변경 시마다 새로 고침</string>
-    <string name="setting_log_app">새 트래커 찾기</string>
-    <string name="setting_handover">재시작 시 끊김 없이 VPN 전환</string>
-    <string name="setting_reset_usage">네트워크 사용량 초기화</string>
-    <string name="setting_block_domains">hosts 파일 활성화</string>
-    <!-- Secure DNS (DoH) -->
-    <!-- Block DNS-over-TLS (DoT) -->
-    <string name="setting_backup">백업</string>
-    <string name="setting_import">설정 불러오기</string>
-    <string name="setting_hosts_update">hosts 파일 업데이트</string>
-    <string name="summary_pause">알림으로부터 일시 정지 이후, 자동으로 TrackerControl을 선택된 분 이후에 다시 활성화 (0을 입력하면 비활성화)</string>
-    <string name="summary_update">하루에 두 번씩 GitHub에서 새로운 릴리스 확인</string>
-    <string name="summary_ip6">IPv6을 NetGuard로 라우팅하여 선택적으로 허용 및 차단할 수 있도록 합니다.</string>
-    <string name="summary_call">전화를 수발신할 때 TrackerControl을 비활성화합니다. IP/Wi-Fi 전화 이용 시 발생하는 문제를 해결할 때 사용할 수 있습니다.</string>
-    <string name="summary_log_app">배터리 사용량을 줄이기 위해 비활성화하세요. 새로운 트래커는 차단되지만, 보여지지 않습니다.</string>
-    <string name="msg_sure">확실한가요?</string>
-    <!-- App Overview -->
-    <!-- Dynamic content descriptions for the app-icon Internet toggle in the app list (issue #231) -->
-    <!-- Dynamic content description for the per-category tracker-blocking switch -->
-    <!-- Dynamic content description for the home-screen widget toggle (accessibility follow-up, issue #636) -->
-    <!-- App Details -->
-    <!-- Actions -->
-    <!-- Per-app remote VPN routing -->
-    <string name="setting_wg_route_mode">원격 VPN으로 보내기</string>
-    <string name="summary_wg_route_mode">어떤 앱을 원격 VPN으로 보낼지 정합니다. 보내지 않는 앱도 트래커 감시와 차단은 그대로 적용되며, 이 기기의 네트워크로 직접 연결할 뿐입니다.</string>
-    <string name="wg_route_mode_all">모든 앱</string>
-    <string name="wg_route_mode_selected">선택한 앱만</string>
-    <string name="app_route_through">원격 VPN을 통해</string>
-    <string name="app_route_through_explanation">이 앱은 원격 VPN을 통해 연결하며, 내 네트워크 대신 VPN이 트래픽을 봅니다.</string>
-    <string name="app_route_direct">이 기기에서 직접</string>
-    <string name="app_route_direct_explanation">이 앱은 내 네트워크로 연결합니다. 트래커 감시와 차단은 계속 적용됩니다. DNS 질의는 VPN이 아니라 내 네트워크의 리졸버로 가고, 앱은 이 기기의 실제 주소를 봅니다. 로컬 기기 접근이나 캡티브 포털 확인처럼 이것이 필요한 앱도 있습니다.</string>
-    <string name="app_route_unavailable_no_vpn">설정된 원격 VPN이 없어 모든 트래픽이 이미 이 기기에서 직접 나갑니다.</string>
-    <string name="app_route_unavailable_bypassed">이 앱은 TrackerControl을 완전히 우회하므로 보낼 트래픽이 없습니다.</string>
-    <string name="app_route_unavailable_partial_routes">원격 VPN이 모든 트래픽을 나르지 않습니다(AllowedIPs가 전체 터널이 아닙니다). 경로는 모든 앱이 공유하므로 앱별 라우팅에는 전체 터널이 필요합니다.</string>
-    <!-- Per-app protection state -->
-    <string name="app_state_protected">보호됨</string>
-    <string name="app_state_protected_explanation">이 앱의 트래커를 차단하고 기록합니다.</string>
-    <string name="app_state_trackers_allowed">트래커 허용</string>
-    <string name="app_state_trackers_allowed_explanation">앱은 계속 TrackerControl을 통해 연결되지만 트래커는 차단되지도 기록되지도 않습니다. 차단으로 앱이 제대로 동작하지 않을 때 사용하세요.</string>
-    <string name="app_state_no_internet">인터넷 없음</string>
-    <string name="app_state_no_internet_explanation">이 앱의 모든 연결이 차단됩니다. 메인 화면에서 앱 아이콘을 눌러도 됩니다.</string>
-    <string name="app_state_no_internet_shared_uid">이 앱과 Android 사용자 ID를 공유하는 %1$s에도 적용됩니다.</string>
-    <string name="app_state_bypassed">TrackerControl 우회</string>
-    <string name="app_state_bypassed_explanation">앱이 TrackerControl을 거치지 않고 직접 연결합니다. 이 앱에 대해서는 아무것도 감시하거나 차단하지 않습니다. 앱이 여전히 동작하지 않을 때 최후의 수단으로 사용하세요.\n\n참고: 이 기능이 동작하려면 Android VPN 설정에서 \"VPN 없이 연결 차단\"이 사용 중지되어 있어야 합니다.</string>
-    <!-- Per-app protection screen -->
-    <!-- Protection state and remote-VPN routing shown together on one row -->
-    <!-- Tracker library screen, reached from the summary row on the Trackers tab -->
-    <!-- Onboarding -->
-    <!-- Insights Screen -->
-    <!-- Joins the alternative domain names of one tracker, e.g. "example.com or example.net". Keep the surrounding spaces. -->
-    <!-- What's New onboarding slide (not translated) -->
-    <!-- Accessibility labels -->
-    <string name="app_copyright">저작권 \u00A9 2019–2022 Konrad Kollnig\n\nTrackerControl은 Marcel Bokhorst(M66B)가 개발한 NetGuard를 기반으로 합니다.</string>
-    <string name="app_xposed">Xposed는 충돌을 너무 많이 일으켜 TrackerControl이 Google Play 스토어에서 삭제될 수 있으므로, Xposed가 설치된 동안에는 TrackerControl을 지원하지 않습니다.</string>
-    <string name="app_ios"><a href="https://ios.trackercontrol.org">TrackerControl은 iOS에서도 사용할 수 있습니다</a></string>
-    <string name="menu_app_unprotected">보호되지 않은 앱만 표시</string>
-    <string name="menu_app_frozen">정지된 앱 표시</string>
-    <string name="menu_sort_by_latest_detected_tracker">최근 감지된 트래커순 정렬</string>
-    <string name="menu_legend">범례</string>
     <string name="menu_troubleshooting">문제 해결</string>
+    <string name="menu_about">소개</string>
     <string name="timeline_empty_disabled_title">TrackerControl이 꺼져 있습니다</string>
     <string name="timeline_empty_disabled_subtitle">오른쪽 위의 스위치를 사용해 TrackerControl을 활성화하세요. 그러면 앱의 트래커 활동이 여기에 표시됩니다.</string>
     <string name="timeline_empty_enabled_title">트래커 감시 중…</string>
     <string name="timeline_empty_enabled_subtitle">대부분의 앱은 사용 중일 때만 트래커에 연결합니다. 앱을 연 다음 돌아오면 트래커 활동이 여기에 표시됩니다.</string>
     <string name="timeline_empty_recording_off_title">트래커 기록이 꺼져 있습니다</string>
-    <string name="timeline_empty_recording_off_subtitle">고급 설정에서 "새 트래커 찾기"가 꺼져 있습니다. 트래커는 계속 차단되지만 더 이상 기록되지 않으므로 이 타임라인은 비어 있습니다. 다시 켜면 트래커 활동을 볼 수 있습니다.</string>
+    <string name="timeline_empty_recording_off_subtitle">고급 설정에서 \"새 트래커 찾기\"가 꺼져 있습니다. 트래커는 계속 차단되지만 더 이상 기록되지 않으므로 이 타임라인은 비어 있습니다. 다시 켜면 트래커 활동을 볼 수 있습니다.</string>
     <string name="timeline_empty_recording_unavailable_title">트래커 기록을 사용할 수 없음</string>
     <string name="timeline_empty_recording_unavailable_subtitle">이 TrackerControl 버전에서는 트래커 활동 기록을 제공하지 않습니다. 차단은 계속 작동하지만 이 타임라인은 비어 있습니다.</string>
     <string name="timeline_open_app">앱 열기</string>
@@ -120,17 +46,15 @@
     <string name="unidentified_app_uid">식별되지 않은 앱(UID %1$d)</string>
     <string name="tab_timeline">타임라인</string>
     <string name="tab_apps">앱</string>
-    <string name="tab_vpn">VPN</string>
     <string name="timeline_section_last_hour">지난 1시간</string>
     <string name="timeline_section_today">오늘</string>
     <string name="timeline_section_yesterday">어제</string>
     <string name="timeline_section_this_week">이번 주</string>
-    <string name="timeline_more_trackers">트래커 %d개 더 보기</string>
+    <!-- Keep as a string: call-site/API migration and multi-count grammar are intentionally separate. -->
+    <string name="timeline_more_trackers" tools:ignore="PluralsCandidate">트래커 %d개 더 보기</string>
     <string name="timeline_tracker_blocked">차단됨</string>
     <string name="timeline_tracker_allowed">허용됨</string>
-    <string name="insights_overview_status">%1$s %2$s · %3$s %4$s</string>
-    <string name="insights_overview_status_share">%1$s (%2$s)</string>
-    <string name="timeline_insights_status">%1$s %2$s · %3$s %4$s</string>
+    <!-- A blocked/allowed label followed by its share of all tracking attempts. -->
     <string name="feed_section_last_contact">마지막 접촉 %s</string>
     <plurals name="feed_show_more_companies">
         <item quantity="other">회사 %d개 더 보기</item>
@@ -144,7 +68,8 @@
     <string name="feed_company_collapsed">접힘</string>
     <string name="feed_essential_explainer">앱 작동에 필요 — %s가 계속 작동하도록 허용됨</string>
     <string name="feed_essential_explainer_blocked">앱 작동에 필요 — 차단하면 %s가 작동하지 않을 수 있음</string>
-    <string name="timeline_summary_mixed">차단 %1$d개 · 허용 %2$d개</string>
+    <!-- Keep as a string: call-site/API migration and multi-count grammar are intentionally separate. -->
+    <string name="timeline_summary_mixed" tools:ignore="PluralsCandidate">차단 %1$d개 · 허용 %2$d개</string>
     <plurals name="timeline_trackers_blocked">
         <item quantity="other">트래커 %d개 차단됨</item>
     </plurals>
@@ -153,11 +78,11 @@
     </plurals>
     <string name="troubleshooting_title">문제 해결</string>
     <string name="troubleshooting_battery_title">배터리 최적화</string>
-    <string name="troubleshooting_battery_desc">TrackerControl이 백그라운드에서 작동을 멈추면 TrackerControl의 Android 배터리 최적화를 해제하세요. "모든 앱"을 선택하고 TrackerControl을 누른 다음 "최적화하지 않음"을 선택하세요.</string>
+    <string name="troubleshooting_battery_desc">TrackerControl이 백그라운드에서 작동을 멈추면 TrackerControl의 Android 배터리 최적화를 해제하세요. \"모든 앱\"을 선택하고 TrackerControl을 누른 다음 \"최적화하지 않음\"을 선택하세요.</string>
     <string name="troubleshooting_battery_action">배터리 최적화 해제</string>
     <string name="troubleshooting_battery_ok">배터리 최적화가 이미 해제되어 있습니다.</string>
     <string name="troubleshooting_datasaver_title">데이터 절약 모드</string>
-    <string name="troubleshooting_datasaver_desc">데이터 절약 모드가 켜져 있을 때 TrackerControl이 연결되지 않으면 TrackerControl의 데이터 사용을 제한 없이 허용하세요. "백그라운드 데이터"와 "제한 없는 데이터 사용"을 활성화하세요.</string>
+    <string name="troubleshooting_datasaver_desc">데이터 절약 모드가 켜져 있을 때 TrackerControl이 연결되지 않으면 TrackerControl의 데이터 사용을 제한 없이 허용하세요. \"백그라운드 데이터\"와 \"제한 없는 데이터 사용\"을 활성화하세요.</string>
     <string name="troubleshooting_datasaver_action">제한 없는 데이터 허용</string>
     <string name="troubleshooting_datasaver_ok">데이터 절약 모드가 TrackerControl을 제한하지 않습니다.</string>
     <string name="troubleshooting_local_network_title">로컬 네트워크 접근</string>
@@ -165,28 +90,51 @@
     <string name="troubleshooting_local_network_action">로컬 네트워크 접근 허용</string>
     <string name="troubleshooting_local_network_ok">로컬 네트워크 접근이 허용되어 있습니다.</string>
     <string name="troubleshooting_app_breakage_title">앱이 작동하지 않음</string>
-    <string name="troubleshooting_app_breakage_desc">메인 목록에서 앱을 누른 다음 보호를 누르세요. 먼저 "최소 차단만"을 시도하세요. 그래도 문제가 있으면 "트래커 허용"을 선택하세요. "TrackerControl 우회"는 최후의 수단으로만 사용하세요.</string>
+    <string name="troubleshooting_app_breakage_desc">메인 목록에서 앱을 누른 다음 보호를 누르세요. 먼저 \"최소 차단만\"을 시도하세요. 그래도 문제가 있으면 \"트래커 허용\"을 선택하세요. \"TrackerControl 우회\"는 최후의 수단으로만 사용하세요.</string>
     <string name="troubleshooting_categories_title">특정 트래커 범주 차단</string>
     <string name="troubleshooting_categories_desc">앱을 누르고 트래커 탭에서 개별 트래커 범주(예: 분석, 광고)를 켜거나 꺼 각 앱의 차단을 세밀하게 조정할 수 있습니다.</string>
     <string name="troubleshooting_alwayson_title">항상 켜짐 VPN</string>
-    <string name="troubleshooting_alwayson_desc">Android VPN 설정에서 "VPN 없이 연결 차단"(잠금)이 활성화되어 있으면 TrackerControl이 제대로 작동하지 않습니다. 이 옵션을 비활성화하세요.</string>
+    <string name="troubleshooting_alwayson_desc">Android VPN 설정에서 \"VPN 없이 연결 차단\"(잠금)이 활성화되어 있으면 TrackerControl이 제대로 작동하지 않습니다. 이 옵션을 비활성화하세요.</string>
     <string name="troubleshooting_alwayson_action">VPN 설정 열기</string>
+    <string name="menu_apps">다른 앱</string>
+    <string name="menu_protocol_other">기타</string>
+    <string name="menu_traffic_allowed">허용됨</string>
+    <string name="menu_traffic_blocked">차단됨</string>
+    <string name="menu_live">실시간 업데이트</string>
+    <string name="menu_refresh">새로고침</string>
+    <string name="menu_resolve">이름 표시</string>
+    <string name="menu_organization">조직 표시</string>
+    <string name="menu_pcap_enabled">PCAP 활성화됨</string>
+    <string name="menu_pcap_export">PCAP 내보내기</string>
+    <string name="menu_clear">초기화</string>
     <string name="menu_clear_activity">기록된 활동 초기화</string>
+    <string name="menu_export">내보내기</string>
+    <string name="menu_reset">재설정</string>
+    <string name="menu_cleanup">비우기</string>
     <string name="setting_options">일반</string>
     <string name="setting_further_options">추가 옵션</string>
+    <string name="setting_pause">%1$s분 후 다시 활성화</string>
+    <string name="setting_update">업데이트 확인</string>
+    <plurals name="pause">
+        <item quantity="other">%d분동안 중지</item>
+    </plurals>
+    <string name="setting_ip6">IPv6 트래픽 사용</string>
+    <string name="setting_call">통화 중 비활성화</string>
+    <string name="setting_reload_onconnectivity">연결 변경 시마다 새로 고침</string>
     <string name="setting_tcp_mss_clamp">테더링 호환 모드</string>
     <string name="summary_tcp_mss_clamp">연결이 멈추거나 인터넷에 접속하지 못하는 테더링 연결을 해결하기 위해 모든 트래픽을 TrackerControl로 라우팅하고 TCP 세그먼트 크기를 제한합니다. 이제 로컬 네트워크 접근도 TrackerControl을 우회하지 않으며 성능이 저하될 수 있습니다.</string>
     <string name="setting_advanced_options">고급 옵션(전문가용)</string>
+    <string name="setting_log_app">새 트래커 찾기</string>
     <string name="setting_log_logcat">연구</string>
+    <string name="setting_handover">재시작 시 끊김 없이 VPN 전환</string>
+    <string name="setting_reset_usage">네트워크 사용량 초기화</string>
     <string name="setting_show_resolved">확인된 도메인 이름 표시</string>
     <string name="setting_exclude_all_tracking">모든 앱을 추적에서 제외</string>
     <string name="summary_exclude_all_tracking">모든 앱의 트래커 감시를 비활성화합니다. 이후 개별 앱에서 다시 활성화할 수 있습니다.</string>
     <string name="setting_include_all_tracking">모든 앱을 추적에 포함</string>
     <string name="summary_include_all_tracking">모든 앱의 트래커 감시를 다시 활성화합니다.</string>
+    <string name="setting_block_domains">hosts 파일 활성화</string>
     <string name="setting_rcode">호스트 차단 응답: %s</string>
-    <string name="setting_vpn4">VPN IPv4: %s</string>
-    <string name="setting_vpn6">VPN IPv6: %s</string>
-    <string name="setting_dns">VPN DNS: %s</string>
     <string name="setting_validate">검증 위치: %s</string>
     <string name="setting_ttl">최소 DNS TTL: %s초</string>
     <string name="setting_socks5_enabled">SOCKS5 프록시 사용</string>
@@ -213,6 +161,7 @@
     <string name="setting_pcap_record_size">PCAP 기록 크기: %sB</string>
     <string name="setting_pcap_file_size">PCAP 최대 파일 크기: %sMB</string>
     <string name="setting_watchdog">감시자: %s분마다</string>
+    <!-- Secure DNS (DoH) -->
     <string name="setting_doh_enabled">보안 DNS(DoH)</string>
     <string name="summary_doh_enabled">DNS-over-HTTPS를 사용해 DNS 질의를 암호화합니다. WireGuard가 활성화되면 해당 질의가 대신 WireGuard 터널을 사용하므로 자동으로 일시 중지됩니다.</string>
     <string name="warning_beta">베타 기능입니다. 예상대로 작동하지 않을 수 있습니다.</string>
@@ -220,15 +169,24 @@
     <string name="summary_doh_endpoint">DNS-over-HTTPS 질의에 사용할 HTTPS URL</string>
     <string name="setting_doh_dns_fallback">DNS 대체</string>
     <string name="summary_doh_dns_fallback">DoH를 사용할 수 없을 때 표준(암호화되지 않은) DNS를 사용합니다. DoH 서버가 중단되면 앱이 작동하지 않을 수 있으므로 비활성화할 때 주의하세요.</string>
+    <!-- Block DNS-over-TLS (DoT) -->
     <string name="setting_block_dot">Android의 비공개 DNS 차단</string>
     <string name="summary_block_dot">Android의 비공개 DNS가 활성화되어 있으면 TC가 추적을 감지할 수 없고 제대로 작동하지 않습니다.</string>
     <string name="setting_stats_frequency">샘플 간격: %sms</string>
     <string name="setting_stats_samples">샘플 수: %ss</string>
+    <string name="setting_backup">백업</string>
     <string name="setting_export">설정 내보내기</string>
+    <string name="setting_import">설정 불러오기</string>
+    <string name="setting_hosts_update">hosts 파일 업데이트</string>
     <string name="setting_hosts_auto_update">hosts 자동 업데이트</string>
     <string name="summary_hosts_auto_update">백그라운드에서 hosts 파일을 자동으로 업데이트합니다</string>
+    <string name="summary_pause">알림으로부터 일시 정지 이후, 자동으로 TrackerControl을 선택된 분 이후에 다시 활성화 (0을 입력하면 비활성화)</string>
+    <string name="summary_update">하루에 두 번씩 GitHub에서 새로운 릴리스 확인</string>
+    <string name="summary_ip6">IPv6을 NetGuard로 라우팅하여 선택적으로 허용 및 차단할 수 있도록 합니다.</string>
+    <string name="summary_call">전화를 수발신할 때 TrackerControl을 비활성화합니다. IP/Wi-Fi 전화 이용 시 발생하는 문제를 해결할 때 사용할 수 있습니다.</string>
+    <string name="summary_log_app">배터리 사용량을 줄이기 위해 비활성화하세요. 새로운 트래커는 차단되지만, 보여지지 않습니다.</string>
     <string name="summary_block_domains">경고: 차단된 호스트는 UI에 표시되지 않습니다.</string>
-    <string name="summary_rcode">기본값은 3(NXDOMAIN)이며, 이는 "존재하지 않는 도메인"을 의미합니다.</string>
+    <string name="summary_rcode">기본값은 3(NXDOMAIN)이며, 이는 \"존재하지 않는 도메인\"을 의미합니다.</string>
     <string name="summary_validate">포트 443(https)에서 인터넷 연결을 검증하는 데 사용할 도메인 이름입니다.</string>
     <string name="summary_socks5_enabled">TCP 트래픽만 프록시 서버로 전송됩니다</string>
     <string name="summary_wg_enabled">기기 IP를 숨깁니다. TCP 및 UDP 송신 트래픽을 터널링합니다. 중단 중에는 앱에 네트워크 오류가 표시되며 직접 연결로 전환되지 않습니다. 터널이 유휴 상태일 때(배터리 절약을 위해 연결 유지가 비활성화됨) 서버에서 시작한 전화 연결은 작동하지 않을 수 있습니다.</string>
@@ -253,7 +211,7 @@
     <string name="msg_wg_profile_empty">아직 프로필이 없습니다</string>
     <string name="msg_wg_profile_active">활성</string>
     <string name="msg_wg_profile_set_active">활성으로 설정</string>
-    <string name="msg_wg_profile_config_hint">[Interface]\nPrivateKey = …\nAddress = …\n\n[Peer]\nPublicKey = …\nAllowedIPs = 0.0.0.0/0, ::/0\nEndpoint = …</string>
+    <string name="msg_wg_profile_config_hint" tools:ignore="TypographyEllipsis">[Interface]\nPrivateKey = …\nAddress = …\n\n[Peer]\nPublicKey = …\nAllowedIPs = 0.0.0.0/0, ::/0\nEndpoint = …</string>
     <string name="msg_wg_profile_delete_confirm">이 WireGuard 프로필을 삭제하시겠습니까?</string>
     <string name="msg_wg_profile_scan_hint">VPN 제공업체가 표시한 WireGuard QR 코드에 카메라를 대세요. 스캔은 기기에서 수행됩니다.</string>
     <string name="msg_wg_profile_scan_no_camera">이 기기에는 스캔할 카메라가 없습니다</string>
@@ -276,27 +234,17 @@
     <string name="msg_wg_mullvad_countries_failed">Mullvad 국가를 불러올 수 없습니다: %s</string>
     <string name="msg_wg_proton_note">Proton의 공식 문서에 따른 타사 설정은 다운로드 가능한 WireGuard 구성을 사용합니다. TrackerControl에는 Proton 자격 증명이 필요하지 않으며 구성을 자동으로 새로 고칠 수 없습니다.\n\naccount.protonvpn.com에 로그인하고 Downloads → WireGuard configuration으로 이동해 구성을 다운로드한 다음 텍스트 편집기에서 열고 내용을 복사하여 여기에 붙여 넣으세요.</string>
     <string name="msg_wg_proton_open_dashboard">Proton VPN 대시보드 열기</string>
-    <string name="vpn_status_mullvad">Mullvad</string>
     <string name="vpn_status_relay">릴레이: %s</string>
     <string name="vpn_status_wireguard_connected">WireGuard 연결됨</string>
     <string name="vpn_status_disconnected">연결되지 않음</string>
-    <string name="vpn_provider_mullvad">Mullvad VPN</string>
-    <string name="vpn_provider_ivpn">IVPN</string>
     <string name="vpn_intro_title">VPN 미리보기</string>
     <string name="vpn_intro_body">VPN은 인터넷 트래픽을 다른 서버를 통해 전송합니다. 웹사이트와 네트워크 제공업체로부터 IP 주소를 숨기고 연결 국가를 선택할 수 있습니다. 이 탭은 새 기능이므로 미리보기로 사용하세요.</string>
-    <string name="vpn_intro_mullvad_title">Mullvad</string>
     <string name="vpn_intro_mullvad_body">개인정보 보호에 중점을 둔 VPN 제공업체입니다. 월 €5이며 이메일 주소 대신 계정 번호를 사용합니다. 계정 번호를 입력한 다음 TrackerControl에서 국가를 선택하세요.</string>
-    <string name="vpn_intro_ivpn_title">IVPN</string>
     <string name="vpn_intro_ivpn_body">WireGuard를 지원하는 개인정보 보호 중심 VPN 제공업체입니다. IVPN 계정 ID를 입력한 다음 TrackerControl에서 국가를 선택하세요.</string>
-    <string name="vpn_intro_proton_title">Proton VPN</string>
     <string name="vpn_intro_proton_body">Proton VPN 계정에서 WireGuard 구성을 다운로드하여 TrackerControl에 붙여 넣으세요. Proton 자격 증명은 여기에 입력하지 않습니다.</string>
-    <string name="vpn_intro_wireguard_title">WireGuard</string>
     <string name="vpn_intro_wireguard_body">다른 VPN 제공업체, 자체 서버 또는 직장에서 받은 WireGuard 구성이 이미 있는 경우 사용하세요.</string>
     <string name="vpn_enter_mullvad_account">계정 번호 입력</string>
     <string name="vpn_enter_ivpn_account">계정 ID 입력</string>
-    <string name="vpn_mode_mullvad">Mullvad</string>
-    <string name="vpn_mode_ivpn">IVPN</string>
-    <string name="vpn_mode_wireguard">WireGuard</string>
     <string name="vpn_settings">Mullvad 설정</string>
     <string name="vpn_settings_title">Mullvad 설정</string>
     <string name="vpn_ivpn_settings">IVPN 설정</string>
@@ -340,13 +288,15 @@
     <string name="msg_wg_recovery_failed">WireGuard가 응답하지 않습니다. TrackerControl이 다시 연결을 시도 중이며, WireGuard가 복구될 때까지 인터넷 접근이 차단될 수 있습니다.</string>
     <string name="summary_watchdog">TrackerControl이 계속 실행 중인지 주기적으로 확인합니다(이 옵션을 비활성화하려면 0을 입력하세요). 배터리 사용량이 늘어날 수 있습니다.</string>
     <string name="summary_log_logcat">연구 모드: 식별된 트래커가 ADB에 기록되고 호스트 이름을 더 정확히 감지하기 위해 SNI 추출이 활성화됩니다. \'TC-Log\' 태그를 사용해 adb logcat으로 로그를 가져오세요.</string>
+    <string name="msg_sure">확실한가요?</string>
     <string name="msg_started">트래커 찾는 중…</string>
     <string name="msg_waiting">이벤트 대기 중</string>
     <string name="msg_disabled">위 스위치를 사용해 TrackerControl을 활성화하세요.</string>
     <string name="msg_revoked">TrackerControl의 연결이 끊겼습니다. 다른 VPN 앱이나 시스템 때문일 가능성이 있습니다. 가능하면 자동으로 다시 연결됩니다.</string>
     <string name="msg_installed">%1$s에 문제가 있나요?</string>
     <string name="msg_installed_description">앱이 회사에 연결하도록 허용</string>
-    <string name="msg_installed_tracker_libraries_found">트래커 라이브러리 %d개 포함</string>
+    <!-- Keep as a string: call-site/API migration and multi-count grammar are intentionally separate. -->
+    <string name="msg_installed_tracker_libraries_found" tools:ignore="PluralsCandidate">트래커 라이브러리 %d개 포함</string>
     <string name="msg_completed">작업 완료</string>
     <string name="msg_no_file_manager">파일을 선택할 파일 관리자를 찾지 못했습니다.</string>
     <string name="msg_no_browser">링크를 열 브라우저 앱을 찾지 못했습니다.</string>
@@ -374,14 +324,10 @@
     <string name="msg_vpn_cancelled">VPN 연결이 취소되었습니다\n다른 VPN을 항상 켜짐 VPN으로 설정했나요?</string>
     <string name="msg_unavailable">이 기능은 이 Android 버전에서 사용할 수 없습니다</string>
     <string name="msg_always_on">다른 VPN이 항상 켜짐 VPN으로 설정되어 있습니다</string>
-    <string name="msg_always_on_lockdown">TrackerControl을 사용하려면 Android VPN 설정에서 "VPN 없이 연결 차단"을 끄세요</string>
+    <string name="msg_always_on_lockdown">TrackerControl을 사용하려면 Android VPN 설정에서 \"VPN 없이 연결 차단\"을 끄세요</string>
     <string name="msg_start_forward">\'%5$s\'의 %1$s 포트 %2$d에서 %3$s:%4$d로 전달을 시작하시겠습니까?</string>
     <string name="msg_stop_forward">%1$s 포트 %2$d의 전달을 중지하시겠습니까?</string>
     <string name="msg_log_logcat">경고: ADB 기록 때문에 차단이 비활성화되었습니다.</string>
-    <string-array name="protocolNames">
-        <item>UDP</item>
-        <item>TCP</item>
-    </string-array>
     <string name="menu_add">추가</string>
     <string name="menu_delete">삭제</string>
     <string name="setting_forwarding">포트 전달</string>
@@ -409,16 +355,19 @@
     <string name="title_log_whois">%1$s Whois</string>
     <string name="title_log_port">포트 %1$d</string>
     <string name="title_log_copy">복사</string>
+    <!-- App Overview -->
     <string name="tracked_app_icon">이 애플리케이션의 인터넷 접근 비활성화</string>
     <string name="tracked_app_name">애플리케이션 이름</string>
+    <!-- Dynamic content descriptions for the app-icon Internet toggle in the app list (issue #231) -->
     <string name="toggle_block_internet_description">%1$s의 인터넷 접근 차단</string>
     <string name="toggle_allow_internet_description">%1$s의 인터넷 접근 허용</string>
     <string name="toggle_no_internet_description">%1$s에 인터넷 접근 권한 없음</string>
     <string name="toggle_internet_unavailable_description">%1$s의 인터넷 접근 제어를 사용할 수 없음</string>
+    <!-- Dynamic content description for the per-category tracker-blocking switch -->
     <string name="toggle_block_category_description">%1$s 범주의 트래커 차단</string>
+    <!-- Dynamic content description for the home-screen widget toggle (accessibility follow-up, issue #636) -->
     <string name="widget_toggle_enable_description">트래커 차단 활성화</string>
     <string name="widget_toggle_disable_description">트래커 차단 비활성화</string>
-    <string name="accessibility_stat_description">%1$s, %2$s</string>
     <string name="accessibility_tracker_blocking_enabled">트래커 차단 활성화됨</string>
     <string name="accessibility_tracker_blocking_disabled">트래커 차단 비활성화됨</string>
     <plurals name="n_companies_found_week">
@@ -438,11 +387,13 @@
     <string name="exporting">내보내는 중..</string>
     <string name="export_failed">내보내기 실패</string>
     <string name="exported">저장소로 내보냈습니다!</string>
+    <!-- App Details -->
     <string name="title_activity_detail">세부정보</string>
     <string name="tab_trackers">트래커</string>
     <string name="tab_countries">국가</string>
     <string name="tab_actions">데이터 권리</string>
     <string name="app_info">앱 관리</string>
+    <!-- Actions -->
     <string name="block_tracking">트래커 차단</string>
     <string name="block_tracking_description">많은 앱이 타사, 이른바 트래커에 데이터를 보냅니다. TrackerControl을 사용하면 이러한 네트워크 전송을 선택적으로 차단할 수 있습니다. 하지만 앱 개발자는 특히 광고를 위해 이러한 서비스에 의존하므로 신중하게 사용하세요.</string>
     <string name="personalised_ads">맞춤 설정 제한</string>
@@ -457,10 +408,7 @@
     <string name="request_data">데이터 요청</string>
     <string name="request_deletion">삭제 요청</string>
     <string name="contact_developer">개발자</string>
-    <string name="contact_playstore">Google</string>
     <string name="contact_officials">EU 기관</string>
-    <string name="google_dpo_mail">data-protection-office@google.com</string>
-    <string name="dpas_overview_url">https://edpb.europa.eu/about-edpb/board/members</string>
     <string name="subject_request_data">GDPR 정보주체 접근 요청</string>
     <string name="body_request_data"><![CDATA[관계자 귀하:\n
 \n
@@ -536,15 +484,39 @@ EU 일반 데이터 보호 규정(GDPR) 제17조에 명시된 삭제 권리를 �
     <string name="onboarding_blockingmode_strict_desc">필수 서비스와 모호한 도메인을 포함한 모든 항목을 차단합니다. 앱 문제가 크게 발생할 수 있어 많은 앱에 덜 제한적인 보호 설정이 필요합니다.</string>
     <string name="onboarding_blockingmode_research_label">연구</string>
     <string name="onboarding_blockingmode_research_desc">트래커를 차단하지 않습니다. 전송을 ADB에 기록하고 호스트 이름을 더 정확히 감지하기 위해 SNI 추출을 활성화합니다. 연구 전용입니다. 트래커 서버에 IP 주소가 유출됩니다.</string>
+    <!-- Per-app remote VPN routing -->
+    <string name="setting_wg_route_mode">원격 VPN으로 보내기</string>
+    <string name="summary_wg_route_mode">어떤 앱을 원격 VPN으로 보낼지 정합니다. 보내지 않는 앱도 트래커 감시와 차단은 그대로 적용되며, 이 기기의 네트워크로 직접 연결할 뿐입니다.</string>
+    <string name="wg_route_mode_all">모든 앱</string>
+    <string name="wg_route_mode_selected">선택한 앱만</string>
+    <string name="app_route_through">원격 VPN을 통해</string>
+    <string name="app_route_through_explanation">이 앱은 원격 VPN을 통해 연결하며, 내 네트워크 대신 VPN이 트래픽을 봅니다.</string>
+    <string name="app_route_direct">이 기기에서 직접</string>
+    <string name="app_route_direct_explanation">이 앱은 내 네트워크로 연결합니다. 트래커 감시와 차단은 계속 적용됩니다. DNS 질의는 VPN이 아니라 내 네트워크의 리졸버로 가고, 앱은 이 기기의 실제 주소를 봅니다. 로컬 기기 접근이나 캡티브 포털 확인처럼 이것이 필요한 앱도 있습니다.</string>
+    <string name="app_route_unavailable_no_vpn">설정된 원격 VPN이 없어 모든 트래픽이 이미 이 기기에서 직접 나갑니다.</string>
+    <string name="app_route_unavailable_bypassed">이 앱은 TrackerControl을 완전히 우회하므로 보낼 트래픽이 없습니다.</string>
+    <string name="app_route_unavailable_partial_routes">원격 VPN이 모든 트래픽을 나르지 않습니다(AllowedIPs가 전체 터널이 아닙니다). 경로는 모든 앱이 공유하므로 앱별 라우팅에는 전체 터널이 필요합니다.</string>
+    <!-- Per-app protection state -->
     <string name="app_state_heading">차단 모드</string>
     <string name="app_state_title_minimal">최소 차단</string>
     <string name="app_state_title_standard">표준 차단</string>
     <string name="app_state_title_strict">엄격한 차단</string>
     <string name="app_state_subtitle_misbehaving">앱이 제대로 작동하지 않나요? 여기에서 최소 차단으로 전환하세요.</string>
+    <string name="app_state_protected">보호됨</string>
+    <string name="app_state_protected_explanation">이 앱의 트래커를 차단하고 기록합니다.</string>
     <string name="app_state_essential_only">최소 차단만</string>
     <string name="app_state_essential_only_explanation">최소 모드에서 차단하는 확인된 트래커만 차단합니다. 다른 트래커는 계속 기록되지만 허용됩니다. 표준 차단으로 앱이 작동하지 않을 때 사용하세요.</string>
+    <string name="app_state_trackers_allowed">트래커 허용</string>
+    <string name="app_state_trackers_allowed_explanation">앱은 계속 TrackerControl을 통해 연결되지만 트래커는 차단되지도 기록되지도 않습니다. 차단으로 앱이 제대로 동작하지 않을 때 사용하세요.</string>
+    <string name="app_state_no_internet">인터넷 없음</string>
+    <string name="app_state_no_internet_explanation">이 앱의 모든 연결이 차단됩니다. 메인 화면에서 앱 아이콘을 눌러도 됩니다.</string>
+    <string name="app_state_no_internet_shared_uid">이 앱과 Android 사용자 ID를 공유하는 %1$s에도 적용됩니다.</string>
+    <string name="app_state_bypassed">TrackerControl 우회</string>
+    <string name="app_state_bypassed_explanation">앱이 TrackerControl을 거치지 않고 직접 연결합니다. 이 앱에 대해서는 아무것도 감시하거나 차단하지 않습니다. 앱이 여전히 동작하지 않을 때 최후의 수단으로 사용하세요.\n\n참고: 이 기능이 동작하려면 Android VPN 설정에서 \"VPN 없이 연결 차단\"이 사용 중지되어 있어야 합니다.</string>
+    <!-- Per-app protection screen -->
     <string name="protection_title">보호</string>
     <string name="protection_route_heading">원격 VPN</string>
+    <!-- Protection state and remote-VPN routing shown together on one row -->
     <string name="protection_app_not_working">앱이 작동하지 않나요? 여기를 누르세요</string>
     <plurals name="protection_paused_resumes">
         <item quantity="other">일시 중지됨 — %d분 후 다시 시작</item>
@@ -552,10 +524,10 @@ EU 일반 데이터 보호 규정(GDPR) 제17조에 명시된 삭제 권리를 �
     <string name="protection_resume">지금 다시 시작</string>
     <string name="protection_pause_shared_uid">이 앱을 일시 중지하면 Android 사용자 ID를 공유하는 %1$s도 일시 중지됩니다.</string>
     <string name="protection_pause_lockdown_warning">Android 잠금이 활성화되어 있습니다. 이 앱을 일시 중지하면 보호가 다시 시작될 때까지 연결이 차단됩니다.</string>
-    <string name="protection_lockdown_note">Android는 여기에서 잠금 상태를 표시하지 않습니다. "VPN 없이 연결 차단"이 활성화되어 있으면 일시 중지된 앱이 네트워크에 접근하지 못할 수 있습니다.</string>
+    <string name="protection_lockdown_note">Android는 여기에서 잠금 상태를 표시하지 않습니다. \"VPN 없이 연결 차단\"이 활성화되어 있으면 일시 중지된 앱이 네트워크에 접근하지 못할 수 있습니다.</string>
     <string name="protection_blocked_last_24h">지난 24시간 동안 차단됨</string>
     <string name="protection_no_blocked_trackers">최근 차단된 항목이 없습니다 — TrackerControl 때문이 아닐 가능성이 큽니다.</string>
-    <string name="protection_recording_unavailable">"새 트래커 찾기"가 꺼져 있어 트래커 기록을 사용할 수 없습니다.</string>
+    <string name="protection_recording_unavailable">\"새 트래커 찾기\"가 꺼져 있어 트래커 기록을 사용할 수 없습니다.</string>
     <string name="protection_temporary">일시적, 일시 중지 중</string>
     <string name="uninstall">제거</string>
     <string name="settings_uninstall">앱 설정 및 제거</string>
@@ -585,6 +557,7 @@ EU 일반 데이터 보호 규정(GDPR) 제17조에 명시된 삭제 권리를 �
     <string name="analyze_tracker_libraries">트래커 라이브러리 분석</string>
     <string name="update_analysis">분석 업데이트</string>
     <string name="analysis_outdated_version">\n\n참고: 분석 대상은 이전 앱 버전입니다. 통합된 추적 라이브러리가 변경되었을 수 있습니다.</string>
+    <!-- Tracker library screen, reached from the summary row on the Trackers tab -->
     <string name="libraries_title">트래커 라이브러리</string>
     <string name="libraries_row_heading">트래커 라이브러리</string>
     <string name="libraries_none_found">앱 코드에서 트래커 라이브러리를 찾지 못했습니다</string>
@@ -609,18 +582,19 @@ EU 일반 데이터 보호 규정(GDPR) 제17조에 명시된 삭제 권리를 �
     <string name="browsers_not_supported">브라우저 감지됨 ⚠️</string>
     <string name="browsers_not_supported_explanation">브라우저 앱으로 보입니다.\n\n브라우저 추적 보호는 페이지와 요청 수준에서 트래커를 차단할 수 있는 브라우저 내부에서 가장 잘 작동합니다. TrackerControl은 브라우저 트래픽을 VPN/WireGuard 터널을 통해 라우팅하지만, 앱 수준 트래커 차단은 기본적으로 꺼져 있으며 활성화하면 사이트가 작동하지 않을 수 있습니다.</string>
     <string name="msg_notifications">눌러 알림 권한을 허용하세요(오류 메시지 등)</string>
-    <string name="msg_local_network">눌러 로컬 네트워크 접근을 허용하세요. Android에서는 이를 "주변 기기"로 요청합니다. Android 17에서는 기본적으로 차단하므로 자체 DNS 서버, 보안 DNS 리졸버, WireGuard 피어 또는 프록시에 연결할 수 없습니다.</string>
+    <string name="msg_local_network">눌러 로컬 네트워크 접근을 허용하세요. Android에서는 이를 \"주변 기기\"로 요청합니다. Android 17에서는 기본적으로 차단하므로 자체 DNS 서버, 보안 DNS 리졸버, WireGuard 피어 또는 프록시에 연결할 수 없습니다.</string>
     <string name="msg_local_network_title">로컬 네트워크 접근 필요</string>
-    <string name="msg_local_network_notify">TrackerControl이 자체 DNS 서버, 보안 DNS 리졸버, WireGuard 피어 또는 프록시에 연결할 수 없어 이름 확인에 실패할 수 있습니다. Android 17에서는 이를 위해 권한이 필요하며 "주변 기기"로 요청합니다. 눌러 TrackerControl을 열고 허용하세요.</string>
+    <string name="msg_local_network_notify">TrackerControl이 자체 DNS 서버, 보안 DNS 리졸버, WireGuard 피어 또는 프록시에 연결할 수 없어 이름 확인에 실패할 수 있습니다. Android 17에서는 이를 위해 권한이 필요하며 \"주변 기기\"로 요청합니다. 눌러 TrackerControl을 열고 허용하세요.</string>
     <string name="msg_private_dns_title">비공개 DNS가 이름 확인을 차단함</string>
-    <string name="msg_private_dns_notify">Android의 "비공개 DNS"가 %1$s로 설정되어 있으며 TrackerControl은 트래커를 감지하기 위해 암호화된 DNS를 차단합니다. 이 모드에서는 Android가 일반 DNS로 대체하지 않으므로 아무것도 로드되지 않습니다. 눌러 비공개 DNS를 "자동" 또는 "사용 안 함"으로 설정하세요 — TrackerControl은 설정에서 자체 보안 DNS를 제공합니다.</string>
+    <string name="msg_private_dns_notify">Android의 \"비공개 DNS\"가 %1$s로 설정되어 있으며 TrackerControl은 트래커를 감지하기 위해 암호화된 DNS를 차단합니다. 이 모드에서는 Android가 일반 DNS로 대체하지 않으므로 아무것도 로드되지 않습니다. 눌러 비공개 DNS를 \"자동\" 또는 \"사용 안 함\"으로 설정하세요 — TrackerControl은 설정에서 자체 보안 DNS를 제공합니다.</string>
     <string name="msg_private_dns_unknown_resolver">사용자 지정 리졸버</string>
-    <string name="msg_private_dns_row">아무것도 로드되지 않습니다: Android의 "비공개 DNS"가 특정 리졸버로 설정되어 있으며 TrackerControl은 트래커를 감지하기 위해 암호화된 DNS를 차단합니다. 눌러 비공개 DNS를 "자동" 또는 "사용 안 함"으로 설정하세요 — TrackerControl은 설정에서 자체 보안 DNS를 제공합니다.</string>
+    <string name="msg_private_dns_row">아무것도 로드되지 않습니다: Android의 \"비공개 DNS\"가 특정 리졸버로 설정되어 있으며 TrackerControl은 트래커를 감지하기 위해 암호화된 DNS를 차단합니다. 눌러 비공개 DNS를 \"자동\" 또는 \"사용 안 함\"으로 설정하세요 — TrackerControl은 설정에서 자체 보안 DNS를 제공합니다.</string>
     <string name="msg_private_dns_bypass_title">비공개 DNS가 트래커 감지를 우회함</string>
     <string name="msg_private_dns_bypass_notify">트래커 감지가 꺼져 있습니다: DNS가 %1$s로 암호화되어 앱 연결을 분석할 수 없습니다</string>
     <string name="msg_private_dns_bypass_allowed_notify">일부 앱이 암호화된 DNS를 사용하고 있어 해당 앱의 트래커 접촉은 TrackerControl에 보이지 않습니다.</string>
     <string name="setting_monitor_system">시스템 앱 감시</string>
-    <string name="summary_monitor_system">시스템 앱(Play 서비스, 이동통신사 서비스 등)을 VPN으로 라우팅하여 트래커를 감지하고 차단하며 앱 목록에 표시합니다.\n\n기본적으로 꺼져 있습니다. 시스템 앱을 제외하면 백그라운드 트래픽이 더 이상 VPN을 깨우지 않으므로 배터리에 유리합니다. 이 기능을 켜면 Android VPN 설정의 "VPN 없이 연결 차단"과 충돌하며, 해당 설정은 비활성화해야 합니다.</string>
+    <string name="summary_monitor_system">시스템 앱(Play 서비스, 이동통신사 서비스 등)을 VPN으로 라우팅하여 트래커를 감지하고 차단하며 앱 목록에 표시합니다.\n\n기본적으로 꺼져 있습니다. 시스템 앱을 제외하면 백그라운드 트래픽이 더 이상 VPN을 깨우지 않으므로 배터리에 유리합니다. 이 기능을 켜면 Android VPN 설정의 \"VPN 없이 연결 차단\"과 충돌하며, 해당 설정은 비활성화해야 합니다.</string>
+    <!-- Onboarding -->
     <string name="title_next">다음</string>
     <string name="title_previous">이전</string>
     <string name="title_finish">시작하기</string>
@@ -640,11 +614,12 @@ EU 일반 데이터 보호 규정(GDPR) 제17조에 명시된 삭제 권리를 �
     <string name="onboarding_timeline_title">타임라인이 채워지는 모습을 확인하세요</string>
     <string name="onboarding_timeline_desc">TrackerControl은 타임라인에서 시작합니다. 처음에는 비어 있을 수 있습니다. 앱은 보통 사용하는 동안에만 트래커에 연결합니다.\n\n설정을 마친 뒤 앱 몇 개를 열었다가 TrackerControl로 돌아와 감지되고 차단된 추적 활동을 확인하세요.</string>
     <string name="onboarding_lockdown_title">VPN 잠금 설정</string>
-    <string name="onboarding_lockdown_desc">Android에는 TrackerControl이 준비되기 전에 앱이 연결하는 것을 막는 "VPN 없이 연결 차단" 설정이 있습니다.\n\n활성화하면 앱이 로드되지 않을 수 있습니다. 최상의 사용 경험을 위해 이 설정을 <b>비활성화</b>하는 것이 좋습니다.</string>
+    <string name="onboarding_lockdown_desc">Android에는 TrackerControl이 준비되기 전에 앱이 연결하는 것을 막는 \"VPN 없이 연결 차단\" 설정이 있습니다.\n\n활성화하면 앱이 로드되지 않을 수 있습니다. 최상의 사용 경험을 위해 이 설정을 <b>비활성화</b>하는 것이 좋습니다.</string>
     <string name="onboarding_lockdown_action">VPN 설정 열기</string>
     <string name="onboarding_lockdown_sure">잠금을 활성화한 채 계속하면 연결 문제가 발생할 수 있습니다. 계속하시겠습니까?</string>
     <string name="onboarding_action_disabled">비활성화됨</string>
     <string name="onboarding_action_granted">허용됨</string>
+    <!-- Insights Screen -->
     <string name="insights_title">개인정보 인사이트</string>
     <string name="insights_subtitle_7days">최근 7일</string>
     <string name="insights_tracking_attempts">접촉한 트래커 호스트</string>
@@ -654,18 +629,24 @@ EU 일반 데이터 보호 규정(GDPR) 제17조에 명시된 삭제 권리를 �
     <string name="insights_apps_with_trackers">트래커가 있는 앱</string>
     <string name="insights_pervasive_trackers">가장 널리 퍼진 트래커</string>
     <string name="insights_top_domains">주요 트래커 도메인</string>
+    <!-- Joins the alternative domain names of one tracker, e.g. "example.com or example.net". Keep the surrounding spaces. -->
     <string name="insights_domain_alias_separator">" 또는 "</string>
-    <string name="insights_in_apps">앱 %d개에서</string>
+    <!-- Keep as a string: call-site/API migration and multi-count grammar are intentionally separate. -->
+    <string name="insights_in_apps" tools:ignore="PluralsCandidate">앱 %d개에서</string>
     <plurals name="insights_apps_count">
         <item quantity="other">앱 %d개에서</item>
     </plurals>
     <string name="insights_no_data">아직 추적 데이터가 없습니다. 앱을 사용한 뒤 다시 확인하세요!</string>
-    <string name="insights_shocking_fact">이번 주 앱이 트래커 호스트 %2$d개를 통해 추적 회사 %1$d곳에 접촉했습니다!</string>
+    <!-- Keep as a string: call-site/API migration and multi-count grammar are intentionally separate. -->
+    <string name="insights_shocking_fact" tools:ignore="PluralsCandidate">이번 주 앱이 트래커 호스트 %2$d개를 통해 추적 회사 %1$d곳에 접촉했습니다!</string>
+    <!-- Retained for Play Store copy; call-site/API migration and multi-count grammar are intentionally separate. -->
     <string name="insights_share">친구와 공유</string>
     <string name="insights_share_trackers_blocked">차단된 트래커 호스트</string>
-    <string name="insights_share_url">TrackerControl.org</string>
-    <string name="insights_share_message">이번 주 TrackerControl을 사용해 %2$d개 회사의 트래커 호스트 %1$d개를 차단했습니다! 개인정보를 되찾으세요: https://trackercontrol.org</string>
+    <!-- Keep as a string: call-site/API migration and multi-count grammar are intentionally separate. -->
+    <string name="insights_share_message" tools:ignore="PluralsCandidate">이번 주 TrackerControl을 사용해 %2$d개 회사의 트래커 호스트 %1$d개를 차단했습니다! 개인정보를 되찾으세요: https://trackercontrol.org</string>
+    <!-- Retained for Play Store copy; call-site/API migration and multi-count grammar are intentionally separate. -->
     <string name="insights_see_more">더 보기 →</string>
+    <!-- What's New onboarding slide (not translated) -->
     <string name="title_blocklists">추가 호스트 파일</string>
     <string name="summary_manage_blocklists">이 파일은 대체용으로만 사용됩니다. TrackerControl에는 추적 배후의 회사에 대한 인사이트를 제공하는 자체 호스트 목록이 포함되어 있습니다.</string>
     <string name="title_add_blocklist">호스트 파일 추가</string>
@@ -674,13 +655,12 @@ EU 일반 데이터 보호 규정(GDPR) 제17조에 명시된 삭제 권리를 �
     <string name="msg_invalid_url">잘못된 URL</string>
     <string name="msg_apply_blocklists_failed">호스트 파일을 적용하지 못했습니다</string>
     <string name="msg_last_update">마지막 업데이트: %s</string>
+    <!-- Accessibility labels -->
     <string name="switch_tracker_control_description">트래커 차단</string>
-    <string name="vpn_enabled_switch_description">VPN</string>
     <string name="blocklist_delete_description">차단 목록 삭제</string>
     <string name="blocklist_enable_description">차단 목록 %s 활성화</string>
     <string name="log_connection_allowed">허용됨</string>
     <string name="log_connection_blocked">차단됨</string>
-    <string name="log_connection_wifi">Wi-Fi</string>
     <string name="log_connection_other">기타 네트워크</string>
     <string name="log_screen_on">화면 켜짐</string>
 </resources>

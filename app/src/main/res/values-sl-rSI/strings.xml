@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_description">TrackerControl uporabnikom omogoča nadzirati razširjeno in prikrito zbiranje podatkov v programih o uporabnikovem vedenju (\'sledenje\').</string>
     <string name="app_copyright">Avtorske pravice \u00A9 2019–2022 Konrad Kollnig\n\nTrackerControl je osnovan na NetGuardu, ki ga je razvil Marcel Bokhorst (M66B).</string>
     <string name="app_android">TrackerControl zahteva Android 5.1 ali novejšega.</string>
@@ -51,7 +51,8 @@
     <string name="timeline_section_today">Danes</string>
     <string name="timeline_section_yesterday">Včeraj</string>
     <string name="timeline_section_this_week">Ta teden</string>
-    <string name="timeline_more_trackers">in še %d</string>
+    <!-- Keep as a string: call-site/API migration and multi-count grammar are intentionally separate. -->
+    <string name="timeline_more_trackers" tools:ignore="PluralsCandidate">in še %d</string>
     <string name="timeline_tracker_blocked">Blokirano</string>
     <string name="timeline_tracker_allowed">Dovoljeno</string>
     <string name="insights_overview_status">%1$s %2$s · %3$s %4$s</string>
@@ -74,7 +75,8 @@
     <string name="feed_company_collapsed">Strnjeno</string>
     <string name="feed_essential_explainer">Programi te potrebujejo — dovoljeno, da %s lahko deluje.</string>
     <string name="feed_essential_explainer_blocked">Programi te potrebujejo — če jih blokirate, %s morda ne bo deloval.</string>
-    <string name="timeline_summary_mixed">Blokirano: %1$d · Dovoljeno: %2$d</string>
+    <!-- Keep as a string: call-site/API migration and multi-count grammar are intentionally separate. -->
+    <string name="timeline_summary_mixed" tools:ignore="PluralsCandidate">Blokirano: %1$d · Dovoljeno: %2$d</string>
     <plurals name="timeline_trackers_blocked">
         <item quantity="one">Blokiranih sledilcev: %d</item>
         <item quantity="two">Blokiranih sledilcev: %d</item>
@@ -227,7 +229,7 @@
     <string name="msg_wg_profile_empty">Noben profil še ni bil ustvarjen.</string>
     <string name="msg_wg_profile_active">Dejaven</string>
     <string name="msg_wg_profile_set_active">Nastavi kot dejaven</string>
-    <string name="msg_wg_profile_config_hint">[Interface]\nZasebni ključ = …\nNaslov = …\n\n[Peer]\nJavni ključ = …\nDovoljeni IP-ji = 0.0.0.0/0, ::/0\nKončna točka = …</string>
+    <string name="msg_wg_profile_config_hint" tools:ignore="TypographyEllipsis">[Interface]\nZasebni ključ = …\nNaslov = …\n\n[Peer]\nJavni ključ = …\nDovoljeni IP-ji = 0.0.0.0/0, ::/0\nKončna točka = …</string>
     <string name="msg_wg_profile_delete_confirm">Izbriši za profil WireGuard?</string>
     <string name="msg_wg_profile_scan_hint">Usmerite fotoaparat v kodo WireGuard, ki jo prikazuje vaš ponudnik VPN-a.  Branje se izvede na vaši napravi.</string>
     <string name="msg_wg_profile_scan_no_camera">Ta naprava nima fotoaparata, s katerim bi bilo mogoče brati.</string>
@@ -327,7 +329,8 @@
     <string name="msg_revoked">TrackerControl je bil onemogočen verjetno z uporabo drugega programa, osnovanega na VPN-u.</string>
     <string name="msg_installed">Težave s/z %1$s?</string>
     <string name="msg_installed_description">Dovoli programom, da navežejo stik s podjetji</string>
-    <string name="msg_installed_tracker_libraries_found">Vsebuje %d sledilnih knjižnic.</string>
+    <!-- Keep as a string: call-site/API migration and multi-count grammar are intentionally separate. -->
+    <string name="msg_installed_tracker_libraries_found" tools:ignore="PluralsCandidate">Vsebuje %d sledilnih knjižnic.</string>
     <string name="msg_completed">Dejanje je končano.</string>
     <string name="msg_no_file_manager">Upravljalnika datotek za izbiro datoteke ni bilo mogoče najti.</string>
     <string name="msg_no_browser">Brskalnika za odpiranje povezave ni bilo mogoče najti.</string>
@@ -455,6 +458,40 @@ Vaš internetni promet se ne pošilja na oddaljeni strežnik VPN.</string>
     <string name="google_dpo_mail">data-protection-office@google.com</string>
     <string name="dpas_overview_url">https://edpb.europa.eu/about-edpb/about-edpb/members_sl</string>
     <string name="subject_request_data">GDPR Subject Access Request</string>
+    <string name="body_request_data"><![CDATA[Spoštovani: \n
+\n
+\n
+Kot upravljavca podatkov aplikacije za Android %1$s (ID: %2$s) vas prosim, da potrdite, ali obdelujete kakršne koli osebne podatke o meni.\n
+Če jih, mi prosim posredujte vse zahtevane informacije iz 15. člena Splošne uredbe EU o varstvu podatkov (GDPR), vključno z:\n
+\n
+• kopijo mojih osebnih podatkov;\n
+• nameni obdelave;\n
+• vrstami zadevnih osebnih podatkov;\n
+• prejemniki, ki jim razkrivate moje osebne podatke, in zaščitnimi ukrepi, ki jih zagotavljate;\n
+• obdobjem hrambe mojih osebnih podatkov oziroma merili za določitev tega obdobja;\n
+• informacijami o viru mojih osebnih podatkov; in\n
+• obstojem avtomatiziranega odločanja (vključno z oblikovanjem profilov) ter, če obstaja:\n
+    - logiko, uporabljeno pri odločanju;\n
+    - pomenom in predvidenimi posledicami zame;\n
+    - ukrepi, ki ste jih sprejeli za preprečevanje napak, pristranskosti in diskriminacije; ter\n
+    - pojasnilom, kako lahko izrazim svoje stališče in izpodbijam odločitev.\n
+\n
+Ta zahteva se nanaša na vsako obdelavo mojih osebnih podatkov pri vas, vključno z obdelavo, ki jo v vašem imenu izvajajo obdelovalci.\n
+\n
+Prosimo, odgovor posredujte po varni poti po elektronski pošti. Odgovor pričakujem v enem mesecu od prejema svoje zahteve.\n
+\n
+S spoštovanjem,\n\n]]></string>
+    <string name="body_delete_data"><![CDATA[Spoštovani: \n
+\n
+\n
+Uveljavljam svojo pravico do izbrisa, kot je določena v 17. členu Splošne uredbe EU o varstvu podatkov (GDPR). Kot upravljavca podatkov aplikacije za Android %1$s (ID: %2$s) vas prosim, da brez nepotrebnega odlašanja izbrišete naslednje osebne podatke, ki jih obdelujete o meni:\n
+• Vse podatke.\n
+\n
+Razlog za mojo zahtevo za izbris je, da umikam oziroma sem umaknil/-a svojo privolitev za obdelavo osebnih podatkov. Ta zahteva se nanaša na vsako obdelavo mojih osebnih podatkov pri vas, vključno z obdelavo, ki jo v vašem imenu izvajajo obdelovalci.\n
+\n
+Prosimo, odgovor posredujte po varni poti po elektronski pošti. Odgovor pričakujem v enem mesecu od prejema svoje zahteve.\n
+\n
+S spoštovanjem,\n\n]]></string>
     <string name="crash_dialog_text">Žal se je TrackerControl sesul.  Ali bi nam hoteli poslati e-pošto s podrobnostmi?</string>
     <string name="crash_dialog_comment">Opombe?</string>
     <string name="instructions_monitoring_private_dns">Preklopite stikalo in uporabljajte programe.  Zasebni DNS mora biti omogočen.</string>
@@ -648,7 +685,8 @@ Vaš internetni promet se ne pošilja na oddaljeni strežnik VPN.</string>
     <string name="insights_top_domains">Domene z največ sledilci</string>
     <!-- Joins the alternative domain names of one tracker, e.g. "example.com or example.net". Keep the surrounding spaces. -->
     <string name="insights_domain_alias_separator">" ali "</string>
-    <string name="insights_in_apps">v %d-ih programih</string>
+    <!-- Keep as a string: call-site/API migration and multi-count grammar are intentionally separate. -->
+    <string name="insights_in_apps" tools:ignore="PluralsCandidate">v %d-ih programih</string>
     <plurals name="insights_apps_count">
         <item quantity="one">v %d-em programu</item>
         <item quantity="two">v %d-h programih</item>
@@ -656,11 +694,15 @@ Vaš internetni promet se ne pošilja na oddaljeni strežnik VPN.</string>
         <item quantity="other">v %d-h programih</item>
     </plurals>
     <string name="insights_no_data">Podatki o sledenju še niso na voljo.  Uporabljajte svoje programe in zopet preverite!</string>
-    <string name="insights_shocking_fact">Ta teden so vaši programi navezali stiki s/z %1$d-imi sledilnimi podjetji preko %2$d gostiteljev sledenja!</string>
+    <!-- Keep as a string: call-site/API migration and multi-count grammar are intentionally separate. -->
+    <string name="insights_shocking_fact" tools:ignore="PluralsCandidate">Ta teden so vaši programi navezali stiki s/z %1$d-imi sledilnimi podjetji preko %2$d gostiteljev sledenja!</string>
+    <!-- Retained for Play Store copy; call-site/API migration and multi-count grammar are intentionally separate. -->
     <string name="insights_share">Deli s priijatelji</string>
     <string name="insights_share_trackers_blocked">Blokiranih sledilnih gostiteljev</string>
     <string name="insights_share_url">TrackerControl.org</string>
-    <string name="insights_share_message">S programom TrackerControl sem ta teden blokiral %1$d sledilnih gostiteljev od %2$d podjetij!  Prevzemite nadzor nad svojo zasebnostjo: https://trackercontrol.org.</string>
+    <!-- Keep as a string: call-site/API migration and multi-count grammar are intentionally separate. -->
+    <string name="insights_share_message" tools:ignore="PluralsCandidate">S programom TrackerControl sem ta teden blokiral %1$d sledilnih gostiteljev od %2$d podjetij!  Prevzemite nadzor nad svojo zasebnostjo: https://trackercontrol.org.</string>
+    <!-- Retained for Play Store copy; call-site/API migration and multi-count grammar are intentionally separate. -->
     <string name="insights_see_more">Več →</string>
     <!-- What's New onboarding slide (not translated) -->
     <string name="title_blocklists">Dodatne datoteke gostiteljev</string>
@@ -681,38 +723,4 @@ Vaš internetni promet se ne pošilja na oddaljeni strežnik VPN.</string>
     <string name="log_connection_wifi">Wi-Fi</string>
     <string name="log_connection_other">Drugo omrežje</string>
     <string name="log_screen_on">Zaslon je vkl.</string>
-    <string name="body_request_data"><![CDATA[Spoštovani: \n
-\n
-\n
-Kot upravljavca podatkov aplikacije za Android %1$s (ID: %2$s) vas prosim, da potrdite, ali obdelujete kakršne koli osebne podatke o meni.\n
-Če jih, mi prosim posredujte vse zahtevane informacije iz 15. člena Splošne uredbe EU o varstvu podatkov (GDPR), vključno z:\n
-\n
-• kopijo mojih osebnih podatkov;\n
-• nameni obdelave;\n
-• vrstami zadevnih osebnih podatkov;\n
-• prejemniki, ki jim razkrivate moje osebne podatke, in zaščitnimi ukrepi, ki jih zagotavljate;\n
-• obdobjem hrambe mojih osebnih podatkov oziroma merili za določitev tega obdobja;\n
-• informacijami o viru mojih osebnih podatkov; in\n
-• obstojem avtomatiziranega odločanja (vključno z oblikovanjem profilov) ter, če obstaja:\n
-    - logiko, uporabljeno pri odločanju;\n
-    - pomenom in predvidenimi posledicami zame;\n
-    - ukrepi, ki ste jih sprejeli za preprečevanje napak, pristranskosti in diskriminacije; ter\n
-    - pojasnilom, kako lahko izrazim svoje stališče in izpodbijam odločitev.\n
-\n
-Ta zahteva se nanaša na vsako obdelavo mojih osebnih podatkov pri vas, vključno z obdelavo, ki jo v vašem imenu izvajajo obdelovalci.\n
-\n
-Prosimo, odgovor posredujte po varni poti po elektronski pošti. Odgovor pričakujem v enem mesecu od prejema svoje zahteve.\n
-\n
-S spoštovanjem,\n\n]]></string>
-    <string name="body_delete_data"><![CDATA[Spoštovani: \n
-\n
-\n
-Uveljavljam svojo pravico do izbrisa, kot je določena v 17. členu Splošne uredbe EU o varstvu podatkov (GDPR). Kot upravljavca podatkov aplikacije za Android %1$s (ID: %2$s) vas prosim, da brez nepotrebnega odlašanja izbrišete naslednje osebne podatke, ki jih obdelujete o meni:\n
-• Vse podatke.\n
-\n
-Razlog za mojo zahtevo za izbris je, da umikam oziroma sem umaknil/-a svojo privolitev za obdelavo osebnih podatkov. Ta zahteva se nanaša na vsako obdelavo mojih osebnih podatkov pri vas, vključno z obdelavo, ki jo v vašem imenu izvajajo obdelovalci.\n
-\n
-Prosimo, odgovor posredujte po varni poti po elektronski pošti. Odgovor pričakujem v enem mesecu od prejema svoje zahteve.\n
-\n
-S spoštovanjem,\n\n]]></string>
 </resources>
