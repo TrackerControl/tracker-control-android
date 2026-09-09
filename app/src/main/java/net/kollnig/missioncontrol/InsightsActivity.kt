@@ -28,12 +28,14 @@ import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
+import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.ui.platform.ComposeView
 import androidx.core.content.FileProvider
+import androidx.core.graphics.createBitmap
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -167,7 +169,7 @@ class InsightsActivity : AppCompatActivity() {
         return try {
             // Inflate and populate view
             val inflater = LayoutInflater.from(this)
-            val shareView = inflater.inflate(R.layout.layout_insights_share, null)
+            val shareView = inflater.inflate(R.layout.layout_insights_share, FrameLayout(this), false)
 
             val tvTotalBlocked = shareView.findViewById<TextView>(R.id.tvShareTotalBlocked)
             val llBlockedStat = shareView.findViewById<LinearLayout>(R.id.llShareBlockedStat)
@@ -230,7 +232,7 @@ class InsightsActivity : AppCompatActivity() {
             shareView.layout(0, 0, shareView.measuredWidth, shareView.measuredHeight)
 
             // Draw to bitmap
-            val bitmap = Bitmap.createBitmap(shareView.measuredWidth, shareView.measuredHeight, Bitmap.Config.ARGB_8888)
+            val bitmap = createBitmap(shareView.measuredWidth, shareView.measuredHeight, Bitmap.Config.ARGB_8888)
             val canvas = Canvas(bitmap)
             shareView.draw(canvas)
 

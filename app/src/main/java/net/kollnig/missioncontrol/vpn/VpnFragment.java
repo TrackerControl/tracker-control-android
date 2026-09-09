@@ -1,5 +1,6 @@
 package net.kollnig.missioncontrol.vpn;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -548,6 +549,9 @@ public class VpnFragment extends Fragment implements SharedPreferences.OnSharedP
         }
     }
 
+    // Provider/profile state recomputes the whole adapter presentation; no
+    // exact changed range exists for this refresh.
+    @SuppressLint("NotifyDataSetChanged")
     private void refreshUi() {
         if (!isAdded() || adapter == null)
             return;
@@ -828,6 +832,9 @@ public class VpnFragment extends Fragment implements SharedPreferences.OnSharedP
 
         private final List<VpnCountry> countries = new ArrayList<>();
 
+        // Country replacement is a whole-dataset recomputation; the exact
+        // inserted/removed ranges are intentionally not inferred here.
+        @SuppressLint("NotifyDataSetChanged")
         void setCountries(List<VpnCountry> next) {
             countries.clear();
             countries.addAll(next);

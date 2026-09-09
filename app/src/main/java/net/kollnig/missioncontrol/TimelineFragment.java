@@ -20,6 +20,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -231,6 +232,9 @@ public class TimelineFragment extends Fragment {
         loadInsights(generation);
     }
 
+    // The query uses the application context and rejects stale view generations
+    // before touching UI; migrating this bounded legacy AsyncTask is out of scope.
+    @android.annotation.SuppressLint("StaticFieldLeak")
     private void loadTimeline(final int generation) {
         if (!isCurrentView(generation))
             return;
@@ -336,7 +340,7 @@ public class TimelineFragment extends Fragment {
     private File generateShareImage(Context context, InsightsData data) {
         try {
             LayoutInflater inflater = LayoutInflater.from(context);
-            View shareView = inflater.inflate(R.layout.layout_insights_share, null);
+            View shareView = inflater.inflate(R.layout.layout_insights_share, new FrameLayout(context), false);
 
             TextView tvTotalBlocked = shareView.findViewById(R.id.tvShareTotalBlocked);
             LinearLayout llBlockedStat = shareView.findViewById(R.id.llShareBlockedStat);

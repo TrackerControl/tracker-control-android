@@ -1,6 +1,7 @@
 package net.kollnig.missioncontrol;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.DialogInterface;
@@ -134,6 +135,8 @@ public class ActivityOnboarding extends AppCompatActivity {
         refreshSlides();
     }
 
+    // Slide state is recomputed as a whole, so no exact changed range exists.
+    @SuppressLint("NotifyDataSetChanged")
     private void setupSlides() {
         if (slidesInitialized) {
             return;
@@ -280,6 +283,9 @@ public class ActivityOnboarding extends AppCompatActivity {
         updateButtons(viewPager.getCurrentItem());
     }
 
+    // Refreshing onboarding recomputes every slide; the exact changed range is
+    // not available to this stateful pager adapter.
+    @SuppressLint("NotifyDataSetChanged")
     private void refreshSlides() {
         if (!slidesInitialized) {
             setupSlides();

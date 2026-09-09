@@ -20,6 +20,7 @@
 
 package eu.faircode.netguard;
 
+import android.annotation.SuppressLint;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Intent;
@@ -105,7 +106,7 @@ public class ActivityLog extends AppCompatActivity implements SharedPreferences.
         });
 
         // Action bar custom view with switch
-        View actionView = getLayoutInflater().inflate(R.layout.actionlog, null, false);
+        View actionView = getLayoutInflater().inflate(R.layout.actionlog, toolbar, false);
         MaterialSwitch swEnabled = actionView.findViewById(R.id.swEnabled);
 
         getSupportActionBar().setDisplayShowCustomEnabled(true);
@@ -360,6 +361,9 @@ public class ActivityLog extends AppCompatActivity implements SharedPreferences.
     }
 
     @Override
+    // The clear task is a bounded database operation and gates its UI callback;
+    // migrating the legacy AsyncTask is deliberately outside this lint change.
+    @SuppressLint("StaticFieldLeak")
     public boolean onOptionsItemSelected(MenuItem item) {
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         final File pcap_file = new File(getDir("data", MODE_PRIVATE), "netguard.pcap");
@@ -541,6 +545,9 @@ public class ActivityLog extends AppCompatActivity implements SharedPreferences.
         }
     }
 
+    // The one-shot export callback is lifecycle-gated by running; executor
+    // migration is intentionally outside this focused lint change.
+    @SuppressLint("StaticFieldLeak")
     private void handleExportPCAP(final Intent data) {
         new AsyncTask<Object, Object, Throwable>() {
             @Override
@@ -596,10 +603,12 @@ public class ActivityLog extends AppCompatActivity implements SharedPreferences.
 
             @Override
             protected void onPostExecute(Throwable ex) {
-                if (ex == null)
-                    Toast.makeText(ActivityLog.this, R.string.msg_completed, Toast.LENGTH_LONG).show();
-                else
-                    Toast.makeText(ActivityLog.this, ex.toString(), Toast.LENGTH_LONG).show();
+                if (running) {
+                    if (ex == null)
+                        Toast.makeText(ActivityLog.this, R.string.msg_completed, Toast.LENGTH_LONG).show();
+                    else
+                        Toast.makeText(ActivityLog.this, ex.toString(), Toast.LENGTH_LONG).show();
+                }
             }
         }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }

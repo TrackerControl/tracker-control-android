@@ -20,6 +20,7 @@
 
 package eu.faircode.netguard;
 
+import android.annotation.SuppressLint;
 import android.Manifest;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -278,7 +279,7 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         }
 
         // Action bar
-        final View actionView = getLayoutInflater().inflate(R.layout.actionmain, null, false);
+        final View actionView = getLayoutInflater().inflate(R.layout.actionmain, toolbar, false);
         tvTitle = actionView.findViewById(R.id.tvTitle);
         ivIcon = actionView.findViewById(R.id.ivIcon);
         ivQueue = actionView.findViewById(R.id.ivQueue);
@@ -623,6 +624,9 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
     }
 
     @Override
+    // Resuming recomputes the complete visible rule presentation, so no exact
+    // changed range exists for this notification.
+    @SuppressLint("NotifyDataSetChanged")
     protected void onResume() {
         Log.i(TAG, "Resume");
 
@@ -718,6 +722,9 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
                 state != ServiceSinkhole.PRIVATE_DNS_WARNING_NONE ? View.VISIBLE : View.GONE);
     }
 
+    // The query is one-shot and its callback is gated by running/generation;
+    // migrating this legacy AsyncTask is outside this focused lint change.
+    @SuppressLint("StaticFieldLeak")
     private void refreshPrivateDnsBypassBanner() {
         updatePrivateDnsBypassBanner();
         final int generation = ++privateDnsWarningQueryGeneration;
@@ -803,6 +810,9 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
     }
 
     @Override
+    // Returning from a details screen can change any rule, so the exact changed
+    // rows are not known at this point.
+    @SuppressLint("NotifyDataSetChanged")
     protected void onActivityResult(int requestCode, int resultCode, final Intent data) {
         Log.i(TAG, "onActivityResult request=" + requestCode + " result=" + resultCode + " ok="
                 + (resultCode == RESULT_OK));
@@ -845,6 +855,9 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         }
     }
 
+    // The one-shot export callback already checks running; executor migration
+    // is intentionally outside this focused lint change.
+    @SuppressLint("StaticFieldLeak")
     private void handleExport(Intent data) {
         new AsyncTask<Object, Object, Throwable>() {
             @Override
@@ -1030,6 +1043,9 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         public void onChanged() {
             runOnUiThread(new Runnable() {
                 @Override
+                // Access changes recompute all visible rows; their exact range
+                // is not available to this listener.
+                @SuppressLint("NotifyDataSetChanged")
                 public void run() {
                     if (adapter != null && adapter.isLive())
                         adapter.notifyDataSetChanged();
@@ -1392,6 +1408,9 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         }
     }
 
+    // This bounded rule query gates all UI work with running; migrating the
+    // legacy AsyncTask is deliberately outside this focused lint change.
+    @SuppressLint("StaticFieldLeak")
     private void updateApplicationList(final String search) {
         Log.i(TAG, "Update search=" + search);
 

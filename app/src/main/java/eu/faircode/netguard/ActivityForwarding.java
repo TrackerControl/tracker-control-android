@@ -20,6 +20,7 @@
 
 package eu.faircode.netguard;
 
+import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.database.Cursor;
 import android.os.AsyncTask;
@@ -150,6 +151,9 @@ public class ActivityForwarding extends AppCompatActivity {
     }
 
     @Override
+    // These one-shot rule/database tasks are tied to this dialog and gate their
+    // callbacks with running; migrating legacy AsyncTask is out of scope here.
+    @SuppressLint("StaticFieldLeak")
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.menu_add) {
                 LayoutInflater inflater = LayoutInflater.from(this);
@@ -175,6 +179,8 @@ public class ActivityForwarding extends AppCompatActivity {
 
                     @Override
                     protected void onPostExecute(List<Rule> rules) {
+                        if (!running)
+                            return;
                         ArrayAdapter spinnerArrayAdapter =
                                 new ArrayAdapter(ActivityForwarding.this,
                                         android.R.layout.simple_spinner_item, rules);

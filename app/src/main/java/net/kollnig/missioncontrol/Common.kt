@@ -22,10 +22,10 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.Configuration
-import android.net.Uri
 import android.view.View
 import com.google.android.material.color.MaterialColors
 import com.google.android.material.snackbar.Snackbar
+import androidx.core.net.toUri
 import eu.faircode.netguard.Util
 import java.io.BufferedReader
 import java.io.IOException
@@ -99,7 +99,7 @@ object Common {
         var url = url
         if (!url.startsWith("http://") && !url.startsWith("https://")) url = "http://" + url
 
-        return Intent(Intent.ACTION_VIEW, Uri.parse(url))
+        return Intent(Intent.ACTION_VIEW, url.toUri())
     }
 
     /**

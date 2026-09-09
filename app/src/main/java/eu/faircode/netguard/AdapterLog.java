@@ -20,6 +20,7 @@
 
 package eu.faircode.netguard;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
@@ -148,6 +149,9 @@ public class AdapterLog extends CursorAdapter {
     }
 
     @Override
+    // These bounded hostname/organisation lookups guard stale row results with
+    // bindToken; migrating the legacy AsyncTasks is out of scope here.
+    @SuppressLint("StaticFieldLeak")
     public void bindView(final View view, final Context context, final Cursor cursor) {
         // Get values
         long time = cursor.getLong(colTime);

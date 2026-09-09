@@ -25,6 +25,7 @@ import static net.kollnig.missioncontrol.DetailsActivity.INTENT_EXTRA_APP_PACKAG
 import static net.kollnig.missioncontrol.DetailsActivity.INTENT_EXTRA_APP_UID;
 import static eu.faircode.netguard.ActivityMain.REQUEST_DETAILS_UPDATED;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -203,18 +204,24 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
         }
     }
 
+    // Network-state changes recompute every visible row; no exact range exists.
+    @SuppressLint("NotifyDataSetChanged")
     public void setWifiActive() {
         wifiActive = true;
         otherActive = false;
         notifyDataSetChanged();
     }
 
+    // Network-state changes recompute every visible row; no exact range exists.
+    @SuppressLint("NotifyDataSetChanged")
     public void setMobileActive() {
         wifiActive = false;
         otherActive = true;
         notifyDataSetChanged();
     }
 
+    // Network-state changes recompute every visible row; no exact range exists.
+    @SuppressLint("NotifyDataSetChanged")
     public void setDisconnected() {
         wifiActive = false;
         otherActive = false;
@@ -378,6 +385,9 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
         super.onViewRecycled(holder);
     }
 
+    // A root rule updates its UID-related rows recursively, so the exact range
+    // is not known when the complete presentation is refreshed.
+    @SuppressLint("NotifyDataSetChanged")
     private void updateRule(Context context, Rule rule, boolean root, List<Rule> listAll) {
         SharedPreferences apply = context.getSharedPreferences("apply", Context.MODE_PRIVATE);
         SharedPreferences tracker_protect = context.getSharedPreferences("tracker_protect", Context.MODE_PRIVATE);
