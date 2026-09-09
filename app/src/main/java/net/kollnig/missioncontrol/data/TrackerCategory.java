@@ -110,6 +110,10 @@ public class TrackerCategory {
      * @return Name of tracker category to be shown in UI
      */
     public String getDisplayName(Context c) {
+        return getDisplayName(c, category);
+    }
+
+    public static String getDisplayName(Context c, String category) {
         Integer res = LABELS.get(category);
         return c.getString(res != null ? res : R.string.tracker_uncategorised);
     }

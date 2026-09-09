@@ -73,6 +73,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import net.kollnig.missioncontrol.R
 import net.kollnig.missioncontrol.data.InsightsData
 import net.kollnig.missioncontrol.data.TimelineEntry
+import net.kollnig.missioncontrol.data.TrackerCategory
 import java.text.NumberFormat
 
 /** The four reasons an empty Timeline can be shown. */
@@ -874,7 +875,7 @@ private fun timelineRows(entries: List<TimelineEntry>, context: Context): List<T
             TimelineTrackerContact(
                 key = "contact:${entry.uid}:${tracker.companyName}:${tracker.blocked}",
                 companyName = tracker.companyName,
-                category = tracker.category,
+                category = TrackerCategory.getDisplayName(context, tracker.category),
                 blocked = tracker.blocked,
                 statusLabel = statusLabel
             )
