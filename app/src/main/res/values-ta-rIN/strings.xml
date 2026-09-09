@@ -282,7 +282,7 @@
     <string name="msg_wg_profile_empty">இன்னும் சுயவிவரங்கள் இல்லை</string>
     <string name="msg_wg_profile_active">செயலில் உள்ளது</string>
     <string name="msg_wg_profile_set_active">செயலில் உள்ளதாக அமை</string>
-    <string name="msg_wg_profile_config_hint">[Interface]\nPrivateKey = ...\nAddress = ...\n\n[Peer]\nPublicKey = ...\nAllowedIPs = 0.0.0.0/0, ::/0\nEndpoint = ...</string>
+    <string name="msg_wg_profile_config_hint">[Interface]\nPrivateKey = …\nAddress = …\n\n[Peer]\nPublicKey = …\nAllowedIPs = 0.0.0.0/0, ::/0\nEndpoint = …</string>
     <string name="msg_wg_profile_delete_confirm">இந்த WireGuard சுயவிவரத்தை நீக்கவா?</string>
     <string name="msg_wg_profile_scan_hint">உங்கள் VPN வழங்குநர் காட்டும் WireGuard QR குறியீட்டை நோக்கிக் கேமராவைப் பிடிக்கவும். ஸ்கேன் உங்கள் சாதனத்திலேயே நடைபெறும்.</string>
     <string name="msg_wg_profile_scan_no_camera">ஸ்கேன் செய்ய இந்தச் சாதனத்தில் கேமரா இல்லை</string>
@@ -362,8 +362,8 @@
     <string name="vpn_choose_country_first">முதலில் ஒரு நாட்டைத் தேர்ந்தெடுக்கவும்</string>
     <string name="vpn_choose_profile_first">முதலில் WireGuard சுயவிவரத்தைத் தேர்ந்தெடுக்கவும்</string>
     <string name="vpn_setup_required">முதலில் Mullvad-ஐ அமைக்கவும் அல்லது WireGuard சுயவிவரத்தை இறக்குமதி செய்யவும்</string>
-    <string name="vpn_loading_countries">நாடுகள் ஏற்றப்படுகின்றன...</string>
-    <string name="vpn_generating">WireGuard சுயவிவரம் உருவாக்கப்படுகிறது...</string>
+    <string name="vpn_loading_countries">நாடுகள் ஏற்றப்படுகின்றன…</string>
+    <string name="vpn_generating">WireGuard சுயவிவரம் உருவாக்கப்படுகிறது…</string>
     <string name="vpn_generation_failed">VPN அமைப்பு தோல்வியடைந்தது: %s</string>
     <string name="vpn_retry">மீண்டும் முயற்சி</string>
     <string name="vpn_country_selected">சரி</string>
@@ -377,7 +377,7 @@
     <string name="summary_watchdog">TrackerControl இன்னும் இயங்குகிறதா என்பதை அவ்வப்போது சரிபார்க்கவும் (இந்த விருப்பத்தை முடக்க பூஜ்ஜியத்தை உள்ளிடவும்). இது கூடுதல் மின்கலப் பயன்பாட்டை ஏற்படுத்தலாம்.</string>
     <string name="summary_log_logcat">ஆய்வு முறை: அடையாளம் காணப்பட்ட டிராக்கர்கள் ADB-யில் பதிவு செய்யப்படுகின்றன; சிறந்த ஹோஸ்ட்பெயர் கண்டறிதலுக்காக SNI பிரித்தெடுப்பு இயக்கப்பட்டுள்ளது. \'TC-Log\' குறிச்சொல்லைப் பயன்படுத்தி adb logcat மூலம் பதிவுகளைப் பெறவும்.</string>
     <string name="msg_sure">நிச்சயமாகவா?</string>
-    <string name="msg_started">டிராக்கர்களைத் தேடுகிறது...</string>
+    <string name="msg_started">டிராக்கர்களைத் தேடுகிறது…</string>
     <string name="msg_waiting">நிகழ்வுக்காகக் காத்திருக்கிறது</string>
     <string name="msg_disabled">TrackerControl-ஐ இயக்க மேலுள்ள சுவிட்சைப் பயன்படுத்தவும்.</string>
     <string name="msg_revoked">TrackerControl துண்டிக்கப்பட்டது; இது வேறொரு VPN பயன்பாடு அல்லது கணினியால் ஏற்பட்டிருக்கலாம். சாத்தியமானபோது தானாக மீண்டும் இணையும்.</string>

@@ -279,7 +279,7 @@
     <string name="msg_wg_profile_empty">아직 프로필이 없습니다</string>
     <string name="msg_wg_profile_active">활성</string>
     <string name="msg_wg_profile_set_active">활성으로 설정</string>
-    <string name="msg_wg_profile_config_hint">[Interface]\nPrivateKey = ...\nAddress = ...\n\n[Peer]\nPublicKey = ...\nAllowedIPs = 0.0.0.0/0, ::/0\nEndpoint = ...</string>
+    <string name="msg_wg_profile_config_hint">[Interface]\nPrivateKey = …\nAddress = …\n\n[Peer]\nPublicKey = …\nAllowedIPs = 0.0.0.0/0, ::/0\nEndpoint = …</string>
     <string name="msg_wg_profile_delete_confirm">이 WireGuard 프로필을 삭제하시겠습니까?</string>
     <string name="msg_wg_profile_scan_hint">VPN 제공업체가 표시한 WireGuard QR 코드에 카메라를 대세요. 스캔은 기기에서 수행됩니다.</string>
     <string name="msg_wg_profile_scan_no_camera">이 기기에는 스캔할 카메라가 없습니다</string>
@@ -357,8 +357,8 @@
     <string name="vpn_choose_country_first">먼저 국가를 선택하세요</string>
     <string name="vpn_choose_profile_first">먼저 WireGuard 프로필을 선택하세요</string>
     <string name="vpn_setup_required">먼저 Mullvad를 설정하거나 WireGuard 프로필을 가져오세요</string>
-    <string name="vpn_loading_countries">국가 불러오는 중...</string>
-    <string name="vpn_generating">WireGuard 프로필 생성 중...</string>
+    <string name="vpn_loading_countries">국가 불러오는 중…</string>
+    <string name="vpn_generating">WireGuard 프로필 생성 중…</string>
     <string name="vpn_generation_failed">VPN 설정 실패: %s</string>
     <string name="vpn_retry">다시 시도</string>
     <string name="vpn_country_selected">확인</string>
@@ -371,7 +371,7 @@
     <string name="msg_wg_recovery_failed">WireGuard가 응답하지 않습니다. TrackerControl이 다시 연결을 시도 중이며, WireGuard가 복구될 때까지 인터넷 접근이 차단될 수 있습니다.</string>
     <string name="summary_watchdog">TrackerControl이 계속 실행 중인지 주기적으로 확인합니다(이 옵션을 비활성화하려면 0을 입력하세요). 배터리 사용량이 늘어날 수 있습니다.</string>
     <string name="summary_log_logcat">연구 모드: 식별된 트래커가 ADB에 기록되고 호스트 이름을 더 정확히 감지하기 위해 SNI 추출이 활성화됩니다. \'TC-Log\' 태그를 사용해 adb logcat으로 로그를 가져오세요.</string>
-    <string name="msg_started">트래커 찾는 중...</string>
+    <string name="msg_started">트래커 찾는 중…</string>
     <string name="msg_waiting">이벤트 대기 중</string>
     <string name="msg_disabled">위 스위치를 사용해 TrackerControl을 활성화하세요.</string>
     <string name="msg_revoked">TrackerControl의 연결이 끊겼습니다. 다른 VPN 앱이나 시스템 때문일 가능성이 있습니다. 가능하면 자동으로 다시 연결됩니다.</string>

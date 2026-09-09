@@ -295,7 +295,7 @@ O seu tráfico de internet non será enviado a ningún servidor VPN remoto.</str
     <string name="msg_wg_profile_empty">Elemento perfís elemento</string>
     <string name="msg_wg_profile_active">Activa</string>
     <string name="msg_wg_profile_set_active">Establecer activa</string>
-    <string name="msg_wg_profile_config_hint">[Interface]\nPrivateKey = ...\nAddress = ...\n\n[Peer]\nPublicKey = ...\nAllowedIPs = 0.0.0.0/0, ::/0\nEndpoint = ...</string>
+    <string name="msg_wg_profile_config_hint">[Interface]\nPrivateKey = …\nAddress = …\n\n[Peer]\nPublicKey = …\nAllowedIPs = 0.0.0.0/0, ::/0\nEndpoint = …</string>
     <string name="msg_wg_profile_delete_confirm">Eliminar esta WireGuard perfil?</string>
     <string name="msg_wg_profile_scan_hint">WireGuard perfil escanear indicación.</string>
     <string name="msg_wg_profile_scan_no_camera">Esta dispositivo elemento elemento cámara a escanear con</string>
@@ -375,8 +375,8 @@ O seu tráfico de internet non será enviado a ningún servidor VPN remoto.</str
     <string name="vpn_choose_country_first">Elixir un país primeiro</string>
     <string name="vpn_choose_profile_first">Elixir un WireGuard perfil primeiro</string>
     <string name="vpn_setup_required">VPN elemento necesario.</string>
-    <string name="vpn_loading_countries">Cargando países...</string>
-    <string name="vpn_generating">Elemento WireGuard perfil...</string>
+    <string name="vpn_loading_countries">Cargando países…</string>
+    <string name="vpn_generating">Elemento WireGuard perfil…</string>
     <string name="vpn_generation_failed">VPN elemento fallou: %s</string>
     <string name="vpn_retry">Volver intentar</string>
     <string name="vpn_country_selected">Aceptar</string>
@@ -388,7 +388,7 @@ O seu tráfico de internet non será enviado a ningún servidor VPN remoto.</str
     <string name="msg_wg_provider_rejected">%1$s elemento a establecer elemento esta dispositivo: %2$s</string>
     <string name="msg_wg_recovery_failed">WireGuard recuperación fallou.</string>
     <string name="summary_log_logcat">Máis información sobre Rexistro elemento.\'Elemento\'.</string>
-    <string name="msg_started">Elemento para rastreadores...</string>
+    <string name="msg_started">Elemento para rastreadores…</string>
     <string name="msg_installed_tracker_libraries_found">Elemento %d rastreador bibliotecas</string>
     <string name="msg_no_file_manager">Elemento ficheiro elemento elemento a elemento un ficheiro.</string>
     <string name="msg_no_browser">Elemento navegador aplicación elemento a abrir  elemento.</string>

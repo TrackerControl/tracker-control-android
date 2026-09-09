@@ -520,7 +520,7 @@ Vennlig hilsen,\n\n]]></string>
     <string name="msg_wg_profile_empty">Ingen profiler ennå</string>
     <string name="msg_wg_profile_active">Aktiv</string>
     <string name="msg_wg_profile_set_active">Angi som aktiv</string>
-    <string name="msg_wg_profile_config_hint">[Interface]\nPrivateKey = ...\nAddress = ...\n\n[Peer]\nPublicKey = ...\nAllowedIPs = 0.0.0.0/0, ::/0\nEndpoint = ...</string>
+    <string name="msg_wg_profile_config_hint">[Interface]\nPrivateKey = …\nAddress = …\n\n[Peer]\nPublicKey = …\nAllowedIPs = 0.0.0.0/0, ::/0\nEndpoint = …</string>
     <string name="msg_wg_profile_delete_confirm">Slett denne WireGuard-profilen?</string>
     <string name="msg_wg_profile_scan_hint">Rett kameraet mot WireGuard-QR-koden som vises av VPN-leverandøren din. Skanningen skjer på enheten.</string>
     <string name="msg_wg_profile_scan_no_camera">Denne enheten har ikke noe kamera å skanne med</string>

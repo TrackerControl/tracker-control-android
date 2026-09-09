@@ -397,7 +397,6 @@
     <plurals name="feed_show_more_companies">
         <item quantity="one">הצג עוד %d חברה</item>
         <item quantity="two">הצג עוד %d חברות</item>
-        <item quantity="many">הצג עוד %d חברות</item>
         <item quantity="other">הצג עוד %d חברות</item>
     </plurals>
     <string name="feed_allow_company_in_app">אפשר את %1$s ב-%2$s</string>
@@ -413,13 +412,11 @@
     <plurals name="timeline_trackers_blocked">
         <item quantity="one">%d עוקב נחסם</item>
         <item quantity="two">%d עוקבים נחסמו</item>
-        <item quantity="many">%d עוקבים נחסמו</item>
         <item quantity="other">%d עוקבים נחסמו</item>
     </plurals>
     <plurals name="timeline_trackers_allowed">
         <item quantity="one">%d עוקב אושר</item>
         <item quantity="two">%d עוקבים אושרו</item>
-        <item quantity="many">%d עוקבים אושרו</item>
         <item quantity="other">%d עוקבים אושרו</item>
     </plurals>
     <string name="troubleshooting_title">פתרון בעיות</string>
@@ -507,7 +504,7 @@
     <string name="msg_wg_profile_empty">עדיין אין פרופילים</string>
     <string name="msg_wg_profile_active">פעיל</string>
     <string name="msg_wg_profile_set_active">הגדר כפעיל</string>
-    <string name="msg_wg_profile_config_hint">[Interface]\nPrivateKey = ...\nAddress = ...\n\n[Peer]\nPublicKey = ...\nAllowedIPs = 0.0.0.0/0, ::/0\nEndpoint = ...</string>
+    <string name="msg_wg_profile_config_hint">[Interface]\nPrivateKey = …\nAddress = …\n\n[Peer]\nPublicKey = …\nAllowedIPs = 0.0.0.0/0, ::/0\nEndpoint = …</string>
     <string name="msg_wg_profile_delete_confirm">למחוק את פרופיל WireGuard הזה?</string>
     <string name="msg_wg_profile_scan_hint">כוון את המצלמה אל קוד ה-QR של WireGuard שמציג ספק ה-VPN שלך. הסריקה מתבצעת במכשיר שלך.</string>
     <string name="msg_wg_profile_scan_no_camera">למכשיר הזה אין מצלמה לסריקה</string>
@@ -519,13 +516,11 @@
     <plurals name="msg_wg_profile_imported">
         <item quantity="one">%1$d פרופיל WireGuard יובא</item>
         <item quantity="two">%1$d פרופילי WireGuard יובאו</item>
-        <item quantity="many">%1$d פרופילי WireGuard יובאו</item>
         <item quantity="other">%1$d פרופילי WireGuard יובאו</item>
     </plurals>
     <plurals name="msg_wg_profile_import_skipped">
         <item quantity="one">%1$d קובץ דולג: אינו תצורת WireGuard חוקית</item>
         <item quantity="two">%1$d קבצים דולגו: אינם תצורות WireGuard חוקיות</item>
-        <item quantity="many">%1$d קבצים דולגו: אינם תצורות WireGuard חוקיות</item>
         <item quantity="other">%1$d קבצים דולגו: אינן תצורות WireGuard חוקיות</item>
     </plurals>
     <string name="msg_wg_mullvad_account">מספר חשבון Mullvad</string>
@@ -591,8 +586,8 @@
     <string name="vpn_choose_country_first">בחר מדינה תחילה</string>
     <string name="vpn_choose_profile_first">בחר תחילה פרופיל WireGuard</string>
     <string name="vpn_setup_required">הגדר את Mullvad או ייבא תחילה פרופיל WireGuard</string>
-    <string name="vpn_loading_countries">טוען מדינות...</string>
-    <string name="vpn_generating">יוצר פרופיל WireGuard...</string>
+    <string name="vpn_loading_countries">טוען מדינות…</string>
+    <string name="vpn_generating">יוצר פרופיל WireGuard…</string>
     <string name="vpn_generation_failed">הגדרת ה-VPN נכשלה: %s</string>
     <string name="vpn_retry">נסה שוב</string>
     <string name="vpn_country_selected">אישור</string>
@@ -604,7 +599,7 @@
     <string name="msg_wg_provider_rejected">%1$s סירב להגדיר את המכשיר הזה: %2$s</string>
     <string name="msg_wg_recovery_failed">WireGuard הפסיק להגיב. TrackerControl מנסה להתחבר מחדש, והגישה לאינטרנט עלולה להישאר חסומה עד ש-WireGuard יתאושש.</string>
     <string name="summary_log_logcat">מצב מחקר: עוקבים שזוהו נרשמים ל-ADB וחילוץ SNI מופעל לזיהוי מדויק יותר של שמות מארחים. אחזר יומנים באמצעות adb logcat עם התגית \'TC-Log\'.</string>
-    <string name="msg_started">מחפש עוקבים...</string>
+    <string name="msg_started">מחפש עוקבים…</string>
     <string name="msg_no_file_manager">לא נמצא מנהל קבצים לבחירת קובץ.</string>
     <string name="msg_no_browser">לא נמצאה אפליקציית דפדפן לפתיחת הקישור.</string>
     <string name="msg_native_fd_recovery_exhausted">ל-VPN אזלו מתארי הקבצים שוב ושוב. ההגנה הופסקה לאחר שכל ניסיונות ההפעלה האוטומטיים נכשלו.</string>
@@ -667,7 +662,6 @@
     <plurals name="protection_paused_resumes">
         <item quantity="one">מושהה — יתחדש בעוד %d דקה</item>
         <item quantity="two">מושהה — יתחדש בעוד %d דקות</item>
-        <item quantity="many">מושהה — יתחדש בעוד %d דקות</item>
         <item quantity="other">מושהה — יתחדש בעוד %d דקות</item>
     </plurals>
     <string name="protection_resume">חדש עכשיו</string>
@@ -700,7 +694,6 @@
     <plurals name="libraries_found">
         <item quantity="one">נמצאה %d ספריית עוקבים בקוד האפליקציה</item>
         <item quantity="two">נמצאו %d ספריות עוקבים בקוד האפליקציה</item>
-        <item quantity="many">נמצאו %d ספריות עוקבים בקוד האפליקציה</item>
         <item quantity="other">נמצאו %d ספריות עוקבים בקוד האפליקציה</item>
     </plurals>
     <string name="analysis_queued">הניתוח בתור…</string>
@@ -783,7 +776,6 @@
     <plurals name="insights_apps_count">
         <item quantity="one">ב-%d אפליקציה</item>
         <item quantity="two">ב-%d אפליקציות</item>
-        <item quantity="many">ב-%d אפליקציות</item>
         <item quantity="other">ב-%d אפליקציות</item>
     </plurals>
     <string name="insights_no_data">עדיין אין נתוני מעקב. השתמש באפליקציות שלך ובדוק שוב!</string>

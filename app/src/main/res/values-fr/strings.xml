@@ -603,6 +603,7 @@ Cordialement,\n\n]]></string>
     <string name="feed_section_last_contact">dernier contact %s</string>
     <plurals name="feed_show_more_companies">
         <item quantity="one">Afficher %d entreprise supplémentaire</item>
+        <item quantity="many">Afficher %d entreprises supplémentaires</item>
         <item quantity="other">Afficher %d entreprises supplémentaires</item>
     </plurals>
     <string name="feed_allow_company_in_app">Autoriser %1$s dans %2$s</string>
@@ -616,10 +617,12 @@ Cordialement,\n\n]]></string>
     <string name="feed_essential_explainer_blocked">Nécessaire aux applications — le blocage peut empêcher %s de fonctionner</string>
     <plurals name="timeline_trackers_blocked">
         <item quantity="one">%d tracker bloqué</item>
+        <item quantity="many">%d trackers bloqués</item>
         <item quantity="other">%d trackers bloqués</item>
     </plurals>
     <plurals name="timeline_trackers_allowed">
         <item quantity="one">%d tracker autorisé</item>
+        <item quantity="many">%d trackers autorisés</item>
         <item quantity="other">%d trackers autorisés</item>
     </plurals>
     <string name="troubleshooting_local_network_title">Accès au réseau local</string>
@@ -659,10 +662,12 @@ Cordialement,\n\n]]></string>
     <string name="msg_wg_profile_import_failed">Impossible de lire le fichier sélectionné : %1$s</string>
     <plurals name="msg_wg_profile_imported">
         <item quantity="one">%1$d profil WireGuard importé</item>
+        <item quantity="many">%1$d profils WireGuard importés</item>
         <item quantity="other">%1$d profils WireGuard importés</item>
     </plurals>
     <plurals name="msg_wg_profile_import_skipped">
         <item quantity="one">%1$d fichier ignoré : configuration WireGuard non valide</item>
+        <item quantity="many">%1$d fichiers ignorés : configurations WireGuard non valides</item>
         <item quantity="other">%1$d fichiers ignorés : configurations WireGuard non valides</item>
     </plurals>
     <string name="msg_wg_mullvad_note">TrackerControl crée un profil WireGuard Mullvad. Le numéro de compte est enregistré localement pour les futurs profils Mullvad. Les jetons ne sont pas stockés et supprimer le profil ici ne supprime pas l’appareil de Mullvad.</string>
@@ -729,6 +734,7 @@ Cordialement,\n\n]]></string>
     <string name="protection_app_not_working">L’application ne fonctionne pas ? Touchez ici</string>
     <plurals name="protection_paused_resumes">
         <item quantity="one">En pause — reprend dans %d min</item>
+        <item quantity="many">En pause — reprend dans %d min</item>
         <item quantity="other">En pause — reprend dans %d min</item>
     </plurals>
     <string name="protection_resume">Reprendre maintenant</string>
@@ -754,6 +760,7 @@ Cordialement,\n\n]]></string>
     <string name="open_tracker_website">Ouvrir le site web de %1$s</string>
     <plurals name="libraries_found">
         <item quantity="one">%d bibliothèque de trackers trouvée dans le code de l’application</item>
+        <item quantity="many">%d bibliothèques de trackers trouvées dans le code de l’application</item>
         <item quantity="other">%d bibliothèques de trackers trouvées dans le code de l’application</item>
     </plurals>
     <string name="allowed_shared_ip">Autorisé — IP partagée ; activez le mode Strict pour bloquer</string>
@@ -802,6 +809,7 @@ Cordialement,\n\n]]></string>
     <string name="insights_domain_alias_separator">« ou »</string>
     <plurals name="insights_apps_count">
         <item quantity="one">dans %d application</item>
+        <item quantity="many">dans %d applications</item>
         <item quantity="other">dans %d applications</item>
     </plurals>
     <string name="insights_share_message">Cette semaine, j’ai bloqué %1$d hôtes de trackers appartenant à %2$d entreprises avec TrackerControl ! Reprenez le contrôle de votre vie privée : https://trackercontrol.org</string>

@@ -485,7 +485,7 @@
     <string name="msg_wg_profile_empty">Δεν υπάρχουν ακόμη προφίλ</string>
     <string name="msg_wg_profile_active">Ενεργό</string>
     <string name="msg_wg_profile_set_active">Ορισμός ως ενεργού</string>
-    <string name="msg_wg_profile_config_hint">[Interface]\nPrivateKey = ...\nAddress = ...\n\n[Peer]\nPublicKey = ...\nAllowedIPs = 0.0.0.0/0, ::/0\nEndpoint = ...</string>
+    <string name="msg_wg_profile_config_hint">[Interface]\nPrivateKey = …\nAddress = …\n\n[Peer]\nPublicKey = …\nAllowedIPs = 0.0.0.0/0, ::/0\nEndpoint = …</string>
     <string name="msg_wg_profile_delete_confirm">Να διαγραφεί αυτό το προφίλ WireGuard;</string>
     <string name="msg_wg_profile_scan_hint">Στρέψτε την κάμερα στον κωδικό QR του WireGuard που εμφανίζει ο πάροχος VPN σας. Η σάρωση γίνεται στη συσκευή σας.</string>
     <string name="msg_wg_profile_scan_no_camera">Αυτή η συσκευή δεν διαθέτει κάμερα για σάρωση</string>
@@ -565,8 +565,8 @@
     <string name="vpn_choose_country_first">Επιλέξτε πρώτα μια χώρα</string>
     <string name="vpn_choose_profile_first">Επιλέξτε πρώτα ένα προφίλ WireGuard</string>
     <string name="vpn_setup_required">Ρυθμίστε πρώτα το Mullvad ή εισαγάγετε ένα προφίλ WireGuard</string>
-    <string name="vpn_loading_countries">Φόρτωση χωρών...</string>
-    <string name="vpn_generating">Δημιουργία προφίλ WireGuard...</string>
+    <string name="vpn_loading_countries">Φόρτωση χωρών…</string>
+    <string name="vpn_generating">Δημιουργία προφίλ WireGuard…</string>
     <string name="vpn_generation_failed">Η ρύθμιση VPN απέτυχε: %s</string>
     <string name="vpn_retry">Επανάληψη</string>
     <string name="vpn_country_selected">OK</string>
@@ -578,7 +578,7 @@
     <string name="msg_wg_provider_rejected">Το %1$s αρνήθηκε να ρυθμίσει αυτή τη συσκευή: %2$s</string>
     <string name="msg_wg_recovery_failed">Το WireGuard σταμάτησε να ανταποκρίνεται. Το TrackerControl προσπαθεί να επανασυνδεθεί και η πρόσβαση στο διαδίκτυο μπορεί να παραμείνει αποκλεισμένη μέχρι να αποκατασταθεί το WireGuard.</string>
     <string name="summary_log_logcat">Λειτουργία έρευνας: οι εντοπισμένοι ιχνηλάτες καταγράφονται στο ADB και η εξαγωγή SNI είναι ενεργοποιημένη για καλύτερο εντοπισμό ονομάτων κεντρικών υπολογιστών. Ανακτήστε τα αρχεία καταγραφής με adb logcat χρησιμοποιώντας την ετικέτα \'TC-Log\'.</string>
-    <string name="msg_started">Αναζήτηση ιχνηλατών...</string>
+    <string name="msg_started">Αναζήτηση ιχνηλατών…</string>
     <string name="msg_no_file_manager">Δεν βρέθηκε διαχειριστής αρχείων για την επιλογή αρχείου.</string>
     <string name="msg_no_browser">Δεν βρέθηκε εφαρμογή περιήγησης για το άνοιγμα του συνδέσμου.</string>
     <string name="msg_native_fd_recovery_exhausted">Το VPN εξάντλησε επανειλημμένα τους περιγραφείς αρχείων. Η προστασία σταμάτησε αφού απέτυχαν όλες οι προσπάθειες αυτόματης επανεκκίνησης.</string>

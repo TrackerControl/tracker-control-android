@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_description">TrackerControl permite a los usuarios monitorizar y controlar la recopilación de datos extendida, continua y oculta en las aplicaciones móviles sobre el comportamiento del usuario (\'rastreo\').</string>
     <string name="app_android">TrackerControl requiere Android 5.1 o superior</string>
     <string name="app_xposed">Xposed genera demasiados crasheos, lo cual podría ocasionar que se retire TrackerControl de la tienda de Google Play. Por lo tanto, no habrá soporte para TrackerControl mientras Xposed esté instalado.</string>
@@ -430,6 +430,7 @@ Atentamente,\n\n]]></string>
     <string name="feed_section_last_contact">último contacto %s</string>
     <plurals name="feed_show_more_companies">
         <item quantity="one">Mostrar %d empresa más</item>
+        <item quantity="many">Mostrar %d empresas más</item>
         <item quantity="other">Mostrar %d empresas más</item>
     </plurals>
     <string name="feed_allow_company_in_app">Permitir %1$s en %2$s</string>
@@ -443,10 +444,12 @@ Atentamente,\n\n]]></string>
     <string name="feed_essential_explainer_blocked">Necesario para las aplicaciones — bloquearlo puede impedir que %s funcione</string>
     <plurals name="timeline_trackers_blocked">
         <item quantity="one">%d rastreador bloqueado</item>
+        <item quantity="many">%d rastreadores bloqueados</item>
         <item quantity="other">%d rastreadores bloqueados</item>
     </plurals>
     <plurals name="timeline_trackers_allowed">
         <item quantity="one">%d rastreador permitido</item>
+        <item quantity="many">%d rastreadores permitidos</item>
         <item quantity="other">%d rastreadores permitidos</item>
     </plurals>
     <string name="troubleshooting_local_network_title">Acceso a la red local</string>
@@ -500,7 +503,7 @@ Atentamente,\n\n]]></string>
     <string name="summary_hosts_auto_update">Actualizar automáticamente el archivo hosts en segundo plano</string>
     <string name="summary_system">Mostrar aplicaciones del sistema en la lista de aplicaciones</string>
     <string name="summary_wg_enabled">Oculta la IP del dispositivo. Tuneliza el tráfico TCP y UDP de salida. Las aplicaciones verán errores de red durante las interrupciones — se bloquea de forma segura, sin pasar a una conexión directa. Las conexiones iniciadas por el servidor al teléfono pueden no funcionar mientras el túnel está inactivo (el keepalive está desactivado para ahorrar batería).</string>
-    <string name="summary_wg_config">Pega una configuración [Interface] / [Peer] de tu proveedor</string>
+    <string tools:ignore="Typos" name="summary_wg_config">Pega una configuración [Interface] / [Peer] de tu proveedor</string>
     <string name="summary_wg_profile">Elegir una configuración de WireGuard guardada</string>
     <string name="summary_wg_profile_none">No hay perfiles guardados</string>
     <string name="summary_wg_profile_manage">Añadir, editar o eliminar configuraciones de WireGuard personalizadas</string>
@@ -522,7 +525,7 @@ Atentamente,\n\n]]></string>
     <string name="msg_wg_profile_empty">Todavía no hay perfiles</string>
     <string name="msg_wg_profile_active">Activo</string>
     <string name="msg_wg_profile_set_active">Activar</string>
-    <string name="msg_wg_profile_config_hint">[Interface]\nPrivateKey = ...\nAddress = ...\n\n[Peer]\nPublicKey = ...\nAllowedIPs = 0.0.0.0/0, ::/0\nEndpoint = ...</string>
+    <string tools:ignore="Typos" name="msg_wg_profile_config_hint">[Interface]\nPrivateKey = …\nAddress = …\n\n[Peer]\nPublicKey = …\nAllowedIPs = 0.0.0.0/0, ::/0\nEndpoint = …</string>
     <string name="msg_wg_profile_delete_confirm">¿Eliminar este perfil de WireGuard?</string>
     <string name="msg_wg_profile_scan_hint">Apunta la cámara al código QR de WireGuard mostrado por tu proveedor de VPN. El escaneo se realiza en tu dispositivo.</string>
     <string name="msg_wg_profile_scan_no_camera">Este dispositivo no tiene cámara para escanear</string>
@@ -533,10 +536,12 @@ Atentamente,\n\n]]></string>
     <string name="msg_wg_profile_import_failed">No se pudo leer el archivo seleccionado: %1$s</string>
     <plurals name="msg_wg_profile_imported">
         <item quantity="one">Se ha importado %1$d perfil de WireGuard</item>
+        <item quantity="many">Se han importado %1$d perfiles de WireGuard</item>
         <item quantity="other">Se han importado %1$d perfiles de WireGuard</item>
     </plurals>
     <plurals name="msg_wg_profile_import_skipped">
         <item quantity="one">Se ha omitido %1$d archivo: no es una configuración de WireGuard válida</item>
+        <item quantity="many">Se han omitido %1$d archivos: no son configuraciones de WireGuard válidas</item>
         <item quantity="other">Se han omitido %1$d archivos: no son configuraciones de WireGuard válidas</item>
     </plurals>
     <string name="msg_wg_mullvad_account">Número de cuenta de Mullvad</string>
@@ -602,8 +607,8 @@ Atentamente,\n\n]]></string>
     <string name="vpn_choose_country_first">Elige primero un país</string>
     <string name="vpn_choose_profile_first">Elige primero un perfil WireGuard</string>
     <string name="vpn_setup_required">Configura Mullvad o importa primero un perfil WireGuard</string>
-    <string name="vpn_loading_countries">Cargando países...</string>
-    <string name="vpn_generating">Creando perfil WireGuard...</string>
+    <string name="vpn_loading_countries">Cargando países…</string>
+    <string name="vpn_generating">Creando perfil WireGuard…</string>
     <string name="vpn_generation_failed">Error al configurar la VPN: %s</string>
     <string name="vpn_retry">Reintentar</string>
     <string name="vpn_country_selected">Aceptar</string>
@@ -676,6 +681,7 @@ Atentamente,\n\n]]></string>
     <string name="protection_app_not_working">¿La aplicación no funciona? Toca aquí</string>
     <plurals name="protection_paused_resumes">
         <item quantity="one">En pausa — se reanuda en %d min</item>
+        <item quantity="many">En pausa — se reanuda en %d min</item>
         <item quantity="other">En pausa — se reanuda en %d min</item>
     </plurals>
     <string name="protection_resume">Reanudar ahora</string>
@@ -707,6 +713,7 @@ Atentamente,\n\n]]></string>
     <string name="open_tracker_website">Abrir el sitio web de %1$s</string>
     <plurals name="libraries_found">
         <item quantity="one">Se ha encontrado %d biblioteca de rastreadores en el código de la aplicación</item>
+        <item quantity="many">Se han encontrado %d bibliotecas de rastreadores en el código de la aplicación</item>
         <item quantity="other">Se han encontrado %d bibliotecas de rastreadores en el código de la aplicación</item>
     </plurals>
     <string name="analysis_queued">Análisis en cola…</string>
@@ -787,6 +794,7 @@ Atentamente,\n\n]]></string>
     <string name="insights_in_apps">en %d aplicaciones</string>
     <plurals name="insights_apps_count">
         <item quantity="one">en %d aplicación</item>
+        <item quantity="many">en %d aplicaciones</item>
         <item quantity="other">en %d aplicaciones</item>
     </plurals>
     <string name="insights_no_data">Aún no hay datos de seguimiento. ¡Usa tus aplicaciones y vuelve a consultar!</string>

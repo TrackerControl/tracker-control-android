@@ -554,7 +554,7 @@ Privátní DNS musí být vypnutá.</string>
     <string name="msg_wg_profile_empty">Zatím žádné profily</string>
     <string name="msg_wg_profile_active">Aktivní</string>
     <string name="msg_wg_profile_set_active">Nastavit jako aktivní</string>
-    <string name="msg_wg_profile_config_hint">[Interface]\nPrivateKey = ...\nAddress = ...\n\n[Peer]\nPublicKey = ...\nAllowedIPs = 0.0.0.0/0, ::/0\nEndpoint = ...</string>
+    <string name="msg_wg_profile_config_hint">[Interface]\nPrivateKey = …\nAddress = …\n\n[Peer]\nPublicKey = …\nAllowedIPs = 0.0.0.0/0, ::/0\nEndpoint = …</string>
     <string name="msg_wg_profile_delete_confirm">Odstranit tento profil WireGuard?</string>
     <string name="msg_wg_profile_scan_hint">Namiřte fotoaparát na QR kód WireGuard zobrazený vaším poskytovatelem VPN. Skenování probíhá v zařízení.</string>
     <string name="msg_wg_profile_scan_no_camera">Toto zařízení nemá fotoaparát, kterým by bylo možné skenovat</string>
@@ -638,8 +638,8 @@ Privátní DNS musí být vypnutá.</string>
     <string name="vpn_choose_country_first">Nejdříve vyberte zemi</string>
     <string name="vpn_choose_profile_first">Nejdříve vyberte profil WireGuard</string>
     <string name="vpn_setup_required">Nejdříve nastavte Mullvad nebo importujte profil WireGuard</string>
-    <string name="vpn_loading_countries">Načítání zemí...</string>
-    <string name="vpn_generating">Vytváření profilu WireGuard...</string>
+    <string name="vpn_loading_countries">Načítání zemí…</string>
+    <string name="vpn_generating">Vytváření profilu WireGuard…</string>
     <string name="vpn_generation_failed">Nastavení VPN se nezdařilo: %s</string>
     <string name="vpn_retry">Opakovat</string>
     <string name="vpn_country_selected">OK</string>

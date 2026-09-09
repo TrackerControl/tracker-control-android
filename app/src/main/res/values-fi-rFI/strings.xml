@@ -596,7 +596,7 @@ Ystävällisin terveisin,\n\n]]></string>
     <string name="msg_wg_profile_empty">Asia profiilit asia</string>
     <string name="msg_wg_profile_active">Aktiivinen</string>
     <string name="msg_wg_profile_set_active">Asia aktiivinen</string>
-    <string name="msg_wg_profile_config_hint">[Interface]\nPrivateKey = ...\nAddress = ...\n\n[Peer]\nPublicKey = ...\nAllowedIPs = 0.0.0.0/0, ::/0\nEndpoint = ...</string>
+    <string name="msg_wg_profile_config_hint">[Interface]\nPrivateKey = …\nAddress = …\n\n[Peer]\nPublicKey = …\nAllowedIPs = 0.0.0.0/0, ::/0\nEndpoint = …</string>
     <string name="msg_wg_profile_delete_confirm">Poista asia WireGuard profiili?</string>
     <string name="msg_wg_profile_scan_hint">WireGuard profiili skannaa asia.</string>
     <string name="msg_wg_profile_scan_no_camera">Asia asia asia asia kamera asia skannaa asia</string>
@@ -676,8 +676,8 @@ Ystävällisin terveisin,\n\n]]></string>
     <string name="vpn_choose_country_first">Valitse asia maa ensimmäinen</string>
     <string name="vpn_choose_profile_first">Valitse asia WireGuard profiili ensimmäinen</string>
     <string name="vpn_setup_required">VPN asia vaaditaan.</string>
-    <string name="vpn_loading_countries">Ladataan maat...</string>
-    <string name="vpn_generating">Asia WireGuard profiili...</string>
+    <string name="vpn_loading_countries">Ladataan maat…</string>
+    <string name="vpn_generating">Asia WireGuard profiili…</string>
     <string name="vpn_generation_failed">VPN asia epäonnistui: %s</string>
     <string name="vpn_retry">Yritä uudelleen</string>
     <string name="vpn_country_selected">Asia</string>

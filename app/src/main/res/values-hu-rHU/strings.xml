@@ -523,7 +523,7 @@ Tisztelettel,\n\n]]></string>
     <string name="msg_wg_profile_empty">Még nincsenek profilok</string>
     <string name="msg_wg_profile_active">Aktív</string>
     <string name="msg_wg_profile_set_active">Aktiválás</string>
-    <string name="msg_wg_profile_config_hint">[Interface]\nPrivateKey = ...\nAddress = ...\n\n[Peer]\nPublicKey = ...\nAllowedIPs = 0.0.0.0/0, ::/0\nEndpoint = ...</string>
+    <string name="msg_wg_profile_config_hint">[Interface]\nPrivateKey = …\nAddress = …\n\n[Peer]\nPublicKey = …\nAllowedIPs = 0.0.0.0/0, ::/0\nEndpoint = …</string>
     <string name="msg_wg_profile_delete_confirm">Törli ezt a WireGuard-profilt?</string>
     <string name="msg_wg_profile_scan_hint">Irányítsa a kamerát a VPN-szolgáltatója által megjelenített WireGuard QR-kódra. A beolvasás az eszközön történik.</string>
     <string name="msg_wg_profile_scan_no_camera">Ezen az eszközön nincs kamera a beolvasáshoz</string>
@@ -603,8 +603,8 @@ Tisztelettel,\n\n]]></string>
     <string name="vpn_choose_country_first">Először válasszon országot</string>
     <string name="vpn_choose_profile_first">Először válasszon WireGuard-profilt</string>
     <string name="vpn_setup_required">Először állítsa be a Mullvadot, vagy importáljon WireGuard-profilt</string>
-    <string name="vpn_loading_countries">Országok betöltése...</string>
-    <string name="vpn_generating">WireGuard-profil létrehozása...</string>
+    <string name="vpn_loading_countries">Országok betöltése…</string>
+    <string name="vpn_generating">WireGuard-profil létrehozása…</string>
     <string name="vpn_generation_failed">A VPN beállítása sikertelen: %s</string>
     <string name="vpn_retry">Újra</string>
     <string name="vpn_country_selected">OK</string>

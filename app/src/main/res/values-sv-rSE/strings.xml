@@ -65,7 +65,7 @@
     <string name="timeline_empty">Ingen senaste spårningsaktivitet.\n\nAktivera TrackerControl för att se vilka appar som spårar dig.</string>
     <string name="timeline_empty_disabled_title">TrackerControl är avstängd</string>
     <string name="timeline_empty_disabled_subtitle">Aktivera TrackerControl med omkopplaren uppe till höger. Spårningsaktivitet från dina appar kommer då att visas här.</string>
-    <string name="timeline_empty_enabled_title">Håller utkik efter spårare...</string>
+    <string name="timeline_empty_enabled_title">Håller utkik efter spårare…</string>
     <string name="timeline_empty_enabled_subtitle">De flesta appar kontaktar bara spårare medan du använder dem. Öppna en app och kom sedan tillbaka - dess spårningsaktivitet visas här.</string>
     <string name="timeline_empty_recording_off_title">Tracker-inspelning är avstängd</string>
     <string name="timeline_empty_recording_off_subtitle">"Sök efter nya spårare" är avstängt i Avancerade inställningar. Spårare är fortfarande blockerade, men de registreras inte längre, så denna tidslinje förblir tom. Slå på den igen för att se spårningsaktivitet igen.</string>
@@ -257,7 +257,7 @@
     <string name="summary_wg_status_off">Av</string>
     <string name="summary_wg_status_missing_config">Av — ingen konfiguration inställd</string>
     <string name="summary_wg_status_connected">Ansluten</string>
-    <string name="summary_wg_status_handshaking">Handskakning...</string>
+    <string name="summary_wg_status_handshaking">Handskakning…</string>
     <string name="summary_wg_status_blocked">Blockerad — %s</string>
     <string name="summary_wg_status_starting">Startande</string>
     <string name="summary_vpn_key_rotate_now">Tvinga Mullvad och IVPN WireGuard-nyckelrotation för felsökning</string>
@@ -271,7 +271,7 @@
     <string name="msg_wg_profile_empty">Inga profiler än</string>
     <string name="msg_wg_profile_active">Aktiv</string>
     <string name="msg_wg_profile_set_active">Ställ in aktiv</string>
-    <string name="msg_wg_profile_config_hint">[Interface]\nPrivateKey = ...\nAddress = ...\n\n[Peer]\nPublicKey = ...\nAllowedIPs = 0.0.0.0/0, ::/0\nEndpoint = ...</string>
+    <string name="msg_wg_profile_config_hint">[Interface]\nPrivateKey = …\nAddress = …\n\n[Peer]\nPublicKey = …\nAllowedIPs = 0.0.0.0/0, ::/0\nEndpoint = …</string>
     <string name="msg_wg_profile_delete_confirm">Ta bort den här WireGuard-profilen?</string>
     <string name="msg_wg_profile_scan_hint">Rikta kameran mot WireGuard QR-koden som visas av din VPN-leverantör. Skanningen sker på din enhet.</string>
     <string name="msg_wg_profile_scan_no_camera">Den här enheten har ingen kamera att skanna med</string>
@@ -291,7 +291,7 @@
     <string name="msg_wg_mullvad_account">Mullvad kontonummer</string>
     <string name="msg_wg_mullvad_recommended">Rekommenderad plats</string>
     <string name="msg_wg_mullvad_note">TrackerControl skapar en Mullvad WireGuard-profil. Kontonumret sparas lokalt för framtida Mullvad-profiler. Tokens lagras inte, och om du tar bort profilen här tas inte enheten bort från Mullvad.</string>
-    <string name="msg_wg_mullvad_generating">Skapar WireGuard-profil...</string>
+    <string name="msg_wg_mullvad_generating">Skapar WireGuard-profil…</string>
     <string name="msg_wg_mullvad_failed">Mullvad-installationen misslyckades: %s</string>
     <string name="msg_wg_mullvad_countries_failed">Kunde inte ladda Mullvad länder: %s</string>
     <string name="msg_wg_proton_note">Protons dokumenterade tredjepartsinställning använder nedladdningsbara WireGuard-konfigurationer. TrackerControl behöver inte dina Proton-uppgifter och kan inte uppdatera konfigurationen automatiskt.\n\nLogga in på account.protonvpn.com, gå till Nedladdningar → WireGuard-konfiguration, ladda ner en konfiguration, öppna den i en textredigerare, kopiera och klistra sedan in innehållet här.</string>
@@ -351,8 +351,8 @@
     <string name="vpn_choose_country_first">Välj ett land först</string>
     <string name="vpn_choose_profile_first">Välj en WireGuard-profil först</string>
     <string name="vpn_setup_required">Konfigurera Mullvad eller importera en WireGuard-profil först</string>
-    <string name="vpn_loading_countries">Laddar länder...</string>
-    <string name="vpn_generating">Skapar WireGuard-profil...</string>
+    <string name="vpn_loading_countries">Laddar länder…</string>
+    <string name="vpn_generating">Skapar WireGuard-profil…</string>
     <string name="vpn_generation_failed">VPN-installationen misslyckades: %s</string>
     <string name="vpn_retry">Försöka igen</string>
     <string name="vpn_country_selected">OK</string>
@@ -366,7 +366,7 @@
     <string name="summary_watchdog">Kontrollera med jämna mellanrum om TrackerControl fortfarande körs (skriv in noll för att inaktivera det här alternativet). Detta kan leda till extra batterianvändning.</string>
     <string name="summary_log_logcat">Forskningsläge: identifierade spårare loggas till ADB och SNI-extraktion är aktiverad för bättre värdnamnsdetektering. Hämta loggar med adb logcat med taggen \'TC-Log\'.</string>
     <string name="msg_sure">Är du säker?</string>
-    <string name="msg_started">Letar efter spårare...</string>
+    <string name="msg_started">Letar efter spårare…</string>
     <string name="msg_waiting">Väntar på händelse</string>
     <string name="msg_disabled">Använd omkopplaren ovan för att aktivera TrackerControl.</string>
     <string name="msg_revoked">TrackerControl kopplades bort, troligen av en annan VPN-app eller systemet. Den återansluter automatiskt när det är möjligt.</string>

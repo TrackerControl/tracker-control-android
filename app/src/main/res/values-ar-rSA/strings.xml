@@ -543,7 +543,7 @@
     <string name="msg_wg_profile_empty">عنصر ملفات تعريف عنصر</string>
     <string name="msg_wg_profile_active">نشط</string>
     <string name="msg_wg_profile_set_active">عنصر نشط</string>
-    <string name="msg_wg_profile_config_hint">[Interface]\nPrivateKey = ...\nAddress = ...\n\n[Peer]\nPublicKey = ...\nAllowedIPs = 0.0.0.0/0, ::/0\nEndpoint = ...</string>
+    <string name="msg_wg_profile_config_hint">[Interface]\nPrivateKey = …\nAddress = …\n\n[Peer]\nPublicKey = …\nAllowedIPs = 0.0.0.0/0, ::/0\nEndpoint = …</string>
     <string name="msg_wg_profile_delete_confirm">حذف عنصر WireGuard ملف تعريف?</string>
     <string name="msg_wg_profile_scan_hint">WireGuard ملف تعريف مسح عنصر.</string>
     <string name="msg_wg_profile_scan_no_camera">عنصر عنصر عنصر عنصر كاميرا عنصر مسح عنصر</string>
@@ -631,8 +631,8 @@
     <string name="vpn_choose_country_first">اختيار عنصر بلد أول</string>
     <string name="vpn_choose_profile_first">اختيار عنصر WireGuard ملف تعريف أول</string>
     <string name="vpn_setup_required">VPN عنصر مطلوب.</string>
-    <string name="vpn_loading_countries">جار التحميل بلدان...</string>
-    <string name="vpn_generating">عنصر WireGuard ملف تعريف...</string>
+    <string name="vpn_loading_countries">جار التحميل بلدان…</string>
+    <string name="vpn_generating">عنصر WireGuard ملف تعريف…</string>
     <string name="vpn_generation_failed">VPN عنصر فشل: %s</string>
     <string name="vpn_retry">إعادة المحاولة</string>
     <string name="vpn_country_selected">عنصر</string>

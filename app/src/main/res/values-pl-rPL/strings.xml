@@ -534,7 +534,7 @@ Z poważaniem,\n\n]]></string>
     <string name="msg_wg_profile_empty">Brak profili</string>
     <string name="msg_wg_profile_active">Aktywny</string>
     <string name="msg_wg_profile_set_active">Ustaw jako aktywny</string>
-    <string name="msg_wg_profile_config_hint">[Interface]\nPrivateKey = ...\nAddress = ...\n\n[Peer]\nPublicKey = ...\nAllowedIPs = 0.0.0.0/0, ::/0\nEndpoint = ...</string>
+    <string name="msg_wg_profile_config_hint">[Interface]\nPrivateKey = …\nAddress = …\n\n[Peer]\nPublicKey = …\nAllowedIPs = 0.0.0.0/0, ::/0\nEndpoint = …</string>
     <string name="msg_wg_profile_delete_confirm">Usunąć ten profil WireGuard?</string>
     <string name="msg_wg_profile_scan_hint">Skieruj aparat na kod QR WireGuard wyświetlony przez dostawcę VPN. Skanowanie odbywa się na urządzeniu.</string>
     <string name="msg_wg_profile_scan_no_camera">To urządzenie nie ma aparatu do skanowania</string>
@@ -618,8 +618,8 @@ Z poważaniem,\n\n]]></string>
     <string name="vpn_choose_country_first">Najpierw wybierz kraj</string>
     <string name="vpn_choose_profile_first">Najpierw wybierz profil WireGuard</string>
     <string name="vpn_setup_required">Najpierw skonfiguruj Mullvad lub zaimportuj profil WireGuard</string>
-    <string name="vpn_loading_countries">Ładowanie krajów...</string>
-    <string name="vpn_generating">Tworzenie profilu WireGuard...</string>
+    <string name="vpn_loading_countries">Ładowanie krajów…</string>
+    <string name="vpn_generating">Tworzenie profilu WireGuard…</string>
     <string name="vpn_generation_failed">Konfiguracja VPN nie powiodła się: %s</string>
     <string name="vpn_retry">Spróbuj ponownie</string>
     <string name="vpn_country_selected">OK</string>

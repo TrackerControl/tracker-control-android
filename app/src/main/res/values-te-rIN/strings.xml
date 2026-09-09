@@ -268,7 +268,7 @@
     <string name="msg_wg_profile_empty">ఇంకా ప్రొఫైల్‌లు లేవు</string>
     <string name="msg_wg_profile_active">సక్రియం</string>
     <string name="msg_wg_profile_set_active">సక్రియంగా సెట్ చేయి</string>
-    <string name="msg_wg_profile_config_hint">[Interface]\nPrivateKey = ...\nAddress = ...\n\n[Peer]\nPublicKey = ...\nAllowedIPs = 0.0.0.0/0, ::/0\nEndpoint = ...</string>
+    <string name="msg_wg_profile_config_hint">[Interface]\nPrivateKey = …\nAddress = …\n\n[Peer]\nPublicKey = …\nAllowedIPs = 0.0.0.0/0, ::/0\nEndpoint = …</string>
     <string name="msg_wg_profile_delete_confirm">ఈ WireGuard ప్రొఫైల్‌ను తొలగించాలా?</string>
     <string name="msg_wg_profile_scan_hint">మీ VPN ప్రొవైడర్ చూపించిన WireGuard QR కోడ్ వైపు కెమెరాను చూపండి. స్కాన్ మీ పరికరంలోనే జరుగుతుంది.</string>
     <string name="msg_wg_profile_scan_no_camera">స్కాన్ చేయడానికి ఈ పరికరంలో కెమెరా లేదు</string>
@@ -348,8 +348,8 @@
     <string name="vpn_choose_country_first">ముందుగా ఒక దేశాన్ని ఎంచుకోండి</string>
     <string name="vpn_choose_profile_first">ముందుగా WireGuard ప్రొఫైల్‌ను ఎంచుకోండి</string>
     <string name="vpn_setup_required">ముందుగా Mullvadను సెటప్ చేయండి లేదా WireGuard ప్రొఫైల్‌ను దిగుమతి చేయండి</string>
-    <string name="vpn_loading_countries">దేశాలను లోడ్ చేస్తోంది...</string>
-    <string name="vpn_generating">WireGuard ప్రొఫైల్‌ను సృష్టిస్తోంది...</string>
+    <string name="vpn_loading_countries">దేశాలను లోడ్ చేస్తోంది…</string>
+    <string name="vpn_generating">WireGuard ప్రొఫైల్‌ను సృష్టిస్తోంది…</string>
     <string name="vpn_generation_failed">VPN సెటప్ విఫలమైంది: %s</string>
     <string name="vpn_retry">మళ్లీ ప్రయత్నించు</string>
     <string name="vpn_country_selected">సరే</string>
@@ -364,7 +364,7 @@
     <string name="summary_log_logcat">పరిశోధన మోడ్: గుర్తించిన ట్రాకర్‌లు ADBకి లాగ్ చేయబడతాయి; మెరుగైన హోస్ట్‌నేమ్ గుర్తింపు కోసం SNI వెలికితీత ప్రారంభించబడుతుంది. \'TC-Log\' ట్యాగ్‌తో adb logcat ఉపయోగించి లాగ్‌లను పొందండి.</string>
 
     <string name="msg_sure">మీకు ఖచ్చితంగా తెలుసా?</string>
-    <string name="msg_started">ట్రాకర్‌ల కోసం చూస్తోంది...</string>
+    <string name="msg_started">ట్రాకర్‌ల కోసం చూస్తోంది…</string>
     <string name="msg_waiting">ఈవెంట్ కోసం వేచి ఉంది</string>
     <string name="msg_disabled">TrackerControlను ప్రారంభించడానికి పై స్విచ్‌ను ఉపయోగించండి.</string>
     <string name="msg_revoked">TrackerControl డిస్‌కనెక్ట్ చేయబడింది; బహుశా మరో VPN యాప్ లేదా సిస్టమ్ కారణంగా. వీలైనప్పుడు ఇది స్వయంచాలకంగా మళ్లీ కనెక్ట్ అవుతుంది.</string>

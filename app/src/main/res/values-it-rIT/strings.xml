@@ -396,7 +396,7 @@ Cordiali saluti,\n\n]]></string>
     <string name="timeline_empty_recording_unavailable_subtitle">Cronologia vuoto registrazione non disponibile sottotitolo.</string>
     <string name="timeline_open_app">Apri un app</string>
     <string name="timeline_open_settings">Apri impostazioni</string>
-    <string name="timeline_hint_tap_entry">Cronologia suggerimento elemento elemento.</string>
+    <string name="timeline_hint_tap_entry">Un\'app non funziona? Tocca la sua voce per modificarne la protezione.</string>
     <string name="timeline_hint_dismiss">Elemento elemento</string>
     <string name="unidentified_app_uid">Non identificata app (UID %1$d)</string>
     <string name="tab_timeline">Cronologia</string>
@@ -415,6 +415,7 @@ Cordiali saluti,\n\n]]></string>
     <string name="feed_section_last_contact">ultimo contatto %s</string>
     <plurals name="feed_show_more_companies">
         <item quantity="one">Mostra %d azienda in più</item>
+        <item quantity="many">Mostra %d aziende in più</item>
         <item quantity="other">Mostra %d aziende in più</item>
     </plurals>
     <string name="feed_allow_company_in_app">Consenti %1$s in %2$s</string>
@@ -429,19 +430,21 @@ Cordiali saluti,\n\n]]></string>
     <string name="timeline_summary_mixed">%1$d bloccato · %2$d consentito</string>
     <plurals name="timeline_trackers_blocked">
         <item quantity="one">%d tracker bloccati</item>
+        <item quantity="many">%d tracker bloccati</item>
         <item quantity="other">%d tracker bloccati</item>
     </plurals>
     <plurals name="timeline_trackers_allowed">
         <item quantity="one">%d tracker consentiti</item>
+        <item quantity="many">%d tracker consentiti</item>
         <item quantity="other">%d tracker consentiti</item>
     </plurals>
     <string name="troubleshooting_title">Risoluzione problemi</string>
     <string name="troubleshooting_battery_title">Elemento elemento</string>
-    <string name="troubleshooting_battery_desc">Ulteriori informazioni su Risoluzione problemi elemento elemento.\'elemento elemento elemento per TrackerControl. Elemento \"Tutte app\", elemento TrackerControl, e elemento \"Elemento\'elemento elemento\".</string>
-    <string name="troubleshooting_battery_action">Elemento elemento elemento</string>
+    <string name="troubleshooting_battery_desc">Se TrackerControl smette di funzionare in background, disattiva l\'ottimizzazione della batteria di Android per TrackerControl. Seleziona \"Tutte le app\", tocca TrackerControl e seleziona \"Non ottimizzare\".</string>
+    <string name="troubleshooting_battery_action">Disattiva l\'ottimizzazione della batteria</string>
     <string name="troubleshooting_battery_ok">Elemento elemento è già disabilitato.</string>
     <string name="troubleshooting_datasaver_title">Risparmio dati</string>
-    <string name="troubleshooting_datasaver_desc">Ulteriori informazioni su Risoluzione problemi elemento elemento.\"Elemento data\" e \"Illimitato data utilizzo\".</string>
+    <string name="troubleshooting_datasaver_desc">Se TrackerControl non riesce a connettersi quando Risparmio dati è attivo, consenti l\'utilizzo illimitato dei dati per TrackerControl. Attiva \"Dati in background\" e \"Utilizzo dati senza restrizioni\".</string>
     <string name="troubleshooting_datasaver_action">Consenti illimitato data</string>
     <string name="troubleshooting_datasaver_ok">Data saver è non elemento TrackerControl.</string>
     <string name="troubleshooting_local_network_title">Locale rete accesso</string>
@@ -510,20 +513,20 @@ Cordiali saluti,\n\n]]></string>
     <string name="summary_wg_status_blocked">Bloccato — %s</string>
     <string name="summary_wg_status_starting">Avvio</string>
     <string name="summary_vpn_key_rotate_now">Ulteriori informazioni su VPN elemento ruota ora.</string>
-    <string name="msg_vpn_key_rotation_started">VPN elemento elemento avviato</string>
+    <string name="msg_vpn_key_rotation_started">Rotazione della chiave VPN avviata</string>
     <string name="msg_wg_config_invalid">Non valida WireGuard configurazione: %s</string>
     <string name="msg_wg_profile_name">Profilo nome</string>
     <string name="msg_wg_profile_default_name">Predefinito</string>
     <string name="msg_wg_profile_saved">WireGuard profilo elemento</string>
     <string name="msg_wg_profile_deleted">WireGuard profilo elemento</string>
-    <string name="msg_wg_profile_no_config">Elemento un WireGuard configurazione elemento elemento un profilo</string>
+    <string name="msg_wg_profile_no_config">Incolla una configurazione WireGuard prima di salvare un profilo</string>
     <string name="msg_wg_profile_empty">Elemento profili elemento</string>
     <string name="msg_wg_profile_active">Attivo</string>
     <string name="msg_wg_profile_set_active">Imposta attivo</string>
-    <string name="msg_wg_profile_config_hint">[Interface]\nPrivateKey = ...\nAddress = ...\n\n[Peer]\nPublicKey = ...\nAllowedIPs = 0.0.0.0/0, ::/0\nEndpoint = ...</string>
+    <string name="msg_wg_profile_config_hint">[Interface]\nPrivateKey = …\nAddress = …\n\n[Peer]\nPublicKey = …\nAllowedIPs = 0.0.0.0/0, ::/0\nEndpoint = …</string>
     <string name="msg_wg_profile_delete_confirm">Elimina questa WireGuard profilo?</string>
     <string name="msg_wg_profile_scan_hint">WireGuard profilo scansiona suggerimento.</string>
-    <string name="msg_wg_profile_scan_no_camera">Questa dispositivo elemento elemento fotocamera a scansiona con</string>
+    <string name="msg_wg_profile_scan_no_camera">Questo dispositivo non ha una fotocamera con cui eseguire la scansione</string>
     <string name="msg_wg_profile_scan_no_camera_permission">WireGuard profilo scansiona elemento fotocamera autorizzazione.</string>
     <string name="msg_wg_profile_scan_failed">Elemento non avvia  fotocamera: %1$s</string>
     <string name="msg_wg_profile_scan_not_config">Questa QR elemento è non un WireGuard configurazione: %1$s</string>
@@ -531,10 +534,12 @@ Cordiali saluti,\n\n]]></string>
     <string name="msg_wg_profile_import_failed">Elemento non elemento  selezionato file: %1$s</string>
     <plurals name="msg_wg_profile_imported">
         <item quantity="one">%1$d profilo</item>
+        <item quantity="many">%1$d profili</item>
         <item quantity="other">%1$d profili</item>
     </plurals>
     <plurals name="msg_wg_profile_import_skipped">
         <item quantity="one">%1$d app</item>
+        <item quantity="many">%1$d app</item>
         <item quantity="other">%1$d app</item>
     </plurals>
     <string name="msg_wg_mullvad_account">Mullvad account numero</string>
@@ -600,8 +605,8 @@ Cordiali saluti,\n\n]]></string>
     <string name="vpn_choose_country_first">Scegli un paese prima</string>
     <string name="vpn_choose_profile_first">Scegli un WireGuard profilo prima</string>
     <string name="vpn_setup_required">VPN elemento necessario.</string>
-    <string name="vpn_loading_countries">Caricamento paesi...</string>
-    <string name="vpn_generating">Elemento WireGuard profilo...</string>
+    <string name="vpn_loading_countries">Caricamento paesi…</string>
+    <string name="vpn_generating">Elemento WireGuard profilo…</string>
     <string name="vpn_generation_failed">VPN elemento fallito: %s</string>
     <string name="vpn_retry">Riprova</string>
     <string name="vpn_country_selected">OK</string>
@@ -609,12 +614,12 @@ Cordiali saluti,\n\n]]></string>
     <string name="msg_wg_blocked">WireGuard bloccato.</string>
     <string name="msg_wg_blocked_detail">WireGuard bloccato dettaglio.%s</string>
     <string name="msg_wg_identity_renewed_title">VPN dispositivo elemento</string>
-    <string name="msg_wg_identity_renewed">%1$sWireGuard elemento elemento.%1$s profili su questa dispositivo.</string>
+    <string name="msg_wg_identity_renewed">%1$s non riconosceva più questo dispositivo, quindi TrackerControl ne ha registrato uno nuovo e ha aggiornato i profili %1$s su questo dispositivo.</string>
     <string name="msg_wg_provider_rejected">%1$s elemento a imposta elemento questa dispositivo: %2$s</string>
     <string name="msg_wg_recovery_failed">WireGuard recupero fallito.</string>
     <string name="summary_log_logcat">Ulteriori informazioni su Registro elemento.\'Elemento\'.</string>
-    <string name="msg_started">Elemento per tracker...</string>
-    <string name="msg_no_file_manager">Elemento file elemento elemento a elemento un file.</string>
+    <string name="msg_started">Elemento per tracker…</string>
+    <string name="msg_no_file_manager">Nessun gestore di file trovato per selezionare un file.</string>
     <string name="msg_no_browser">Elemento browser app elemento a apri  elemento.</string>
     <string name="msg_native_fd_recovery_exhausted">Elemento elemento recupero elemento.</string>
     <string name="msg_native_fd_error">Elemento elemento errore.</string>
@@ -628,7 +633,7 @@ Cordiali saluti,\n\n]]></string>
     <string name="msg_private_dns">Elemento elemento \"Privato DNS\"Privato DNS.</string>
     <string name="toggle_block_internet_description">Blocca Internet accesso per %1$s</string>
     <string name="toggle_allow_internet_description">Consenti Internet accesso per %1$s</string>
-    <string name="toggle_no_internet_description">%1$s elemento elemento Internet accesso</string>
+    <string name="toggle_no_internet_description">%1$s non ha accesso a Internet</string>
     <string name="toggle_internet_unavailable_description">Internet accesso elemento non disponibile per %1$s</string>
     <string name="toggle_block_category_description">Tracker blocco per categoria %1$s</string>
     <string name="widget_toggle_enable_description">Abilita tracker blocco</string>
@@ -638,8 +643,8 @@ Cordiali saluti,\n\n]]></string>
     <string name="accessibility_tracker_blocking_disabled">Tracker blocco disabilitato</string>
     <string name="tab_actions">Data Elemento</string>
     <string name="launch_app_failed">Questa app può\'elemento essere elemento</string>
-    <string name="countries_map_highlighted">Elemento elemento elemento: %1$s</string>
-    <string name="countries_map_none">Elemento elemento elemento sono elemento.</string>
+    <string name="countries_map_highlighted">Destinazioni di tracciamento evidenziate: %1$s</string>
+    <string name="countries_map_none">Nessuna destinazione di tracciamento evidenziata.</string>
     <string name="tracker_consent">Consenso elemento</string>
     <string name="setting_block_ambiguous_trackers">Blocca ambiguo tracker</string>
     <string name="summary_block_ambiguous_trackers">Ulteriori informazioni su Blocca ambiguo tracker.</string>
@@ -675,10 +680,11 @@ Cordiali saluti,\n\n]]></string>
     <string name="protection_app_not_working">App non funziona? Elemento elemento</string>
     <plurals name="protection_paused_resumes">
         <item quantity="one">%d minuto</item>
+        <item quantity="many">%d minuti</item>
         <item quantity="other">%d minuti</item>
     </plurals>
     <string name="protection_resume">Riprendi ora</string>
-    <string name="protection_pause_shared_uid">Elemento questa app elemento elemento %1$s elemento elemento condividi un Android utente Elemento.</string>
+    <string name="protection_pause_shared_uid">Mettere in pausa questa app mette in pausa anche %1$s perché condividono un ID utente Android.</string>
     <string name="protection_pause_lockdown_warning">Protezione pausa blocco avviso.</string>
     <string name="protection_lockdown_note">Protezione blocco elemento.</string>
     <string name="protection_blocked_last_24h">Bloccato in  ultimo 24 elemento</string>
@@ -697,7 +703,7 @@ Cordiali saluti,\n\n]]></string>
     <string name="libraries_title">Tracker librerie</string>
     <string name="libraries_row_heading">Tracker librerie</string>
     <string name="libraries_none_found">Elemento tracker librerie elemento in  app elemento</string>
-    <string name="libraries_not_analysed">Non elemento elemento</string>
+    <string name="libraries_not_analysed">Non ancora analizzate</string>
     <string name="libraries_analysing">Elemento app elemento\u2026</string>
     <string name="libraries_analysis_failed">Analisi fallito \u2014 elemento a riprova</string>
     <string name="libraries_outdated_suffix">%1$s (indietro app versione)</string>
@@ -706,6 +712,7 @@ Cordiali saluti,\n\n]]></string>
     <string name="open_tracker_website">Apri %1$s sito web</string>
     <plurals name="libraries_found">
         <item quantity="one">%d libreria</item>
+        <item quantity="many">%d librerie</item>
         <item quantity="other">%d librerie</item>
     </plurals>
     <string name="analysis_queued">Analisi in coda…</string>
@@ -719,7 +726,7 @@ Cordiali saluti,\n\n]]></string>
     <string name="msg_local_network_notify">Locale rete notifiche.\"elemento elemento\". Elemento a apri TrackerControl e consenti elemento.</string>
     <string name="msg_private_dns_title">Privato DNS elemento nome elemento</string>
     <string name="msg_private_dns_notify">Android\'elemento \"Privato DNS\" è imposta a %1$sPrivato DNS notifiche.\"Elemento\" o \"Elemento\"Privato DNS notifiche.</string>
-    <string name="msg_private_dns_unknown_resolver">un elemento elemento</string>
+    <string name="msg_private_dns_unknown_resolver">un resolver personalizzato</string>
     <string name="msg_private_dns_row">Elemento sarà elemento: Android\'elemento \"Privato DNS\"Privato DNS elemento.\"Elemento\" o \"Elemento\"Privato DNS elemento.</string>
     <string name="msg_private_dns_bypass_title">Privato DNS elemento tracker rilevamento</string>
     <string name="msg_private_dns_bypass_notify">Tracker rilevamento è elemento: DNS è elemento a %1$s, elemento app elemento può\'elemento essere elemento</string>
@@ -754,7 +761,7 @@ Cordiali saluti,\n\n]]></string>
     <string name="onboarding_network_action">Elemento Illimitato Accesso</string>
     <string name="onboarding_network_sure">Segui le istruzioni per configurare Rete elemento.</string>
     <string name="onboarding_lockdown_title">VPN Blocco Elemento</string>
-    <string name="onboarding_lockdown_desc">Android elemento un elemento elemento \"Blocca elemento senza VPN\"Segui le istruzioni per configurare Blocco elemento.\n\nSegui le istruzioni per configurare Blocco elemento.<b>disabilitato</b> per  elemento elemento. per  elemento elemento.</string>
+    <string name="onboarding_lockdown_desc">Android dispone di un\'impostazione chiamata \"Blocca connessioni senza VPN\" che impedisce alle app di connettersi prima che TrackerControl sia pronto.\n\nSe abilitata, può impedire il caricamento delle app. Per un\'esperienza ottimale, consigliamo di mantenere questa impostazione <b>disabilitata</b>.</string>
     <string name="onboarding_lockdown_action">Apri VPN Impostazioni</string>
     <string name="onboarding_lockdown_sure">Segui le istruzioni per configurare Blocco elemento.</string>
     <string name="onboarding_dns_title">Segui le istruzioni per configurare DNS.</string>
@@ -762,7 +769,7 @@ Cordiali saluti,\n\n]]></string>
     <string name="onboarding_dns_action">Abilita Secure DNS</string>
     <string name="onboarding_dns_action_disable">Elemento Secure DNS</string>
     <string name="onboarding_blocking_title">Blocca Tracker</string>
-    <string name="onboarding_blocking_desc">Elemento e blocca elemento elemento in tuo app.\n\n• <b>Elemento</b>Segui le istruzioni per configurare Blocco elemento.<b>2,000,000 app</b>.\n• .\n• <b>GDPR</b>Segui le istruzioni per configurare Blocco elemento.<b>elemento data elemento elemento</b>.\n• .\n• <b>Elemento</b>Segui le istruzioni per configurare Blocco elemento.</string>
+    <string name="onboarding_blocking_desc">Rivela e blocca il tracciamento diffuso nelle tue app.\n\n• <b>Liste di blocco</b>: combinano Firefox Disconnect con la nostra analisi esclusiva di <b>2.000.000 di app</b>.\n• <b>GDPR</b>: esercita i tuoi diritti con <b>richieste di cancellazione dei dati con un clic</b>.\n• <b>Trasparenza</b>: scopri esattamente quali aziende e Paesi raccolgono i tuoi dati.</string>
     <string name="onboarding_blocking_action">Abilita Blocco</string>
     <string name="onboarding_blocking_action_disable">Elemento Blocco</string>
     <string name="onboarding_blocking_sure">Segui le istruzioni per configurare Blocco elemento.</string>
@@ -787,6 +794,7 @@ Cordiali saluti,\n\n]]></string>
     <string name="insights_in_apps">in %d app</string>
     <plurals name="insights_apps_count">
         <item quantity="one">%d app</item>
+        <item quantity="many">%d app</item>
         <item quantity="other">%d app</item>
     </plurals>
     <string name="insights_no_data">Analisi elemento dati.</string>
@@ -800,13 +808,13 @@ Cordiali saluti,\n\n]]></string>
     <string name="insights_share_message_playstore">Questa settimana ho rilevato %1$d host di tracker da %2$d aziende usando TrackerControl! Riprenditi la tua privacy: https://trackercontrol.org</string>
     <string name="insights_see_more">Vedi Altro →</string>
     <string name="insights_view_timeline">Elemento elemento tracker attività</string>
-    <string name="title_blocklists">Aggiuntivo elemento elemento</string>
+    <string name="title_blocklists">File host aggiuntivi</string>
     <string name="summary_manage_blocklists">Ulteriori informazioni su Gestisci elemento.</string>
     <string name="title_add_blocklist">Elemento elemento file</string>
     <string name="title_delete_blocklist">Elimina elemento file</string>
     <string name="msg_delete_blocklist_confirm">Elimina elemento conferma.</string>
     <string name="msg_invalid_url">Non valida URL</string>
-    <string name="msg_apply_blocklists_failed">Fallito a elemento elemento elemento</string>
+    <string name="msg_apply_blocklists_failed">Impossibile applicare i file host</string>
     <string name="msg_last_update">Ultimo aggiornamento: %s</string>
     <string name="switch_tracker_control_description">Tracker blocco</string>
     <string name="vpn_enabled_switch_description">VPN</string>

@@ -524,7 +524,7 @@ Sareko trafikoan antzematen diren aztarnariak TrackerControl-ekin blokeatu daite
     <string name="msg_wg_profile_empty">Elementua profilak elementua</string>
     <string name="msg_wg_profile_active">Aktiboa</string>
     <string name="msg_wg_profile_set_active">Ezarri aktiboa</string>
-    <string name="msg_wg_profile_config_hint">[Interface]\nPrivateKey = ...\nAddress = ...\n\n[Peer]\nPublicKey = ...\nAllowedIPs = 0.0.0.0/0, ::/0\nEndpoint = ...</string>
+    <string name="msg_wg_profile_config_hint">[Interface]\nPrivateKey = …\nAddress = …\n\n[Peer]\nPublicKey = …\nAllowedIPs = 0.0.0.0/0, ::/0\nEndpoint = …</string>
     <string name="msg_wg_profile_delete_confirm">Ezabatu hau WireGuard profila?</string>
     <string name="msg_wg_profile_scan_hint">WireGuard profila eskaneatu iradokizuna.</string>
     <string name="msg_wg_profile_scan_no_camera">Hau gailua elementua elementua kamera ra eskaneatu ekin</string>
@@ -604,8 +604,8 @@ Sareko trafikoan antzematen diren aztarnariak TrackerControl-ekin blokeatu daite
     <string name="vpn_choose_country_first">Aukeratu  herrialdea lehenengo</string>
     <string name="vpn_choose_profile_first">Aukeratu  WireGuard profila lehenengo</string>
     <string name="vpn_setup_required">VPN elementua beharrezkoa.</string>
-    <string name="vpn_loading_countries">Kargatzen herrialdeak...</string>
-    <string name="vpn_generating">Elementua WireGuard profila...</string>
+    <string name="vpn_loading_countries">Kargatzen herrialdeak…</string>
+    <string name="vpn_generating">Elementua WireGuard profila…</string>
     <string name="vpn_generation_failed">VPN elementua hutsegin du: %s</string>
     <string name="vpn_retry">Berriro saiatu</string>
     <string name="vpn_country_selected">Ados</string>
@@ -617,7 +617,7 @@ Sareko trafikoan antzematen diren aztarnariak TrackerControl-ekin blokeatu daite
     <string name="msg_wg_provider_rejected">%1$s elementua ra ezarri elementua hau gailua: %2$s</string>
     <string name="msg_wg_recovery_failed">WireGuard berreskuratzea hutsegin du.</string>
     <string name="summary_log_logcat">Erregistroa elementuari buruzko informazio gehiago.\'Elementua\'.</string>
-    <string name="msg_started">Elementua rentzat jarraitzaileak...</string>
+    <string name="msg_started">Elementua rentzat jarraitzaileak…</string>
     <string name="msg_no_file_manager">Elementua fitxategia elementua elementua ra elementua  fitxategia.</string>
     <string name="msg_no_browser">Elementua nabigatzailea aplikazio elementua ra ireki  elementua.</string>
     <string name="msg_native_fd_recovery_exhausted">Elementua elementua berreskuratzea elementua.</string>

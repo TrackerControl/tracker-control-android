@@ -515,7 +515,7 @@
     <string name="msg_wg_profile_empty">Chưa có cấu hình nào</string>
     <string name="msg_wg_profile_active">Đang hoạt động</string>
     <string name="msg_wg_profile_set_active">Đặt làm cấu hình hoạt động</string>
-    <string name="msg_wg_profile_config_hint">[Interface]\nPrivateKey = ...\nAddress = ...\n\n[Peer]\nPublicKey = ...\nAllowedIPs = 0.0.0.0/0, ::/0\nEndpoint = ...</string>
+    <string name="msg_wg_profile_config_hint">[Interface]\nPrivateKey = …\nAddress = …\n\n[Peer]\nPublicKey = …\nAllowedIPs = 0.0.0.0/0, ::/0\nEndpoint = …</string>
     <string name="msg_wg_profile_delete_confirm">Xoá cấu hình WireGuard này?</string>
     <string name="msg_wg_profile_scan_hint">Hướng camera vào mã QR WireGuard do nhà cung cấp VPN hiển thị. Quá trình quét diễn ra trên thiết bị của bạn.</string>
     <string name="msg_wg_profile_scan_no_camera">Thiết bị này không có camera để quét</string>
@@ -565,7 +565,7 @@
     <string name="msg_wg_provider_rejected">%1$s từ chối thiết lập thiết bị này: %2$s</string>
     <string name="msg_wg_recovery_failed">WireGuard ngừng phản hồi. TrackerControl đang thử kết nối lại và quyền truy cập Internet có thể vẫn bị chặn cho đến khi WireGuard khôi phục.</string>
     <string name="summary_log_logcat">Chế độ nghiên cứu: trình theo dõi được nhận diện sẽ được ghi vào ADB và bật trích xuất SNI để phát hiện tên máy chủ tốt hơn. Lấy nhật ký bằng adb logcat với thẻ \'TC-Log\'.</string>
-    <string name="msg_started">Đang tìm trình theo dõi...</string>
+    <string name="msg_started">Đang tìm trình theo dõi…</string>
     <string name="msg_no_file_manager">Không tìm thấy trình quản lý tệp để chọn tệp.</string>
     <string name="msg_no_browser">Không tìm thấy ứng dụng trình duyệt để mở liên kết.</string>
     <string name="msg_native_fd_recovery_exhausted">VPN liên tục hết bộ mô tả tệp. Tính năng bảo vệ đã dừng sau khi mọi lần tự động khởi động lại đều thất bại.</string>

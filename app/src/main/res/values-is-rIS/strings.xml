@@ -271,7 +271,7 @@
     <string name="msg_wg_profile_empty">Atriði snið atriði</string>
     <string name="msg_wg_profile_active">Virkt</string>
     <string name="msg_wg_profile_set_active">Stilla virkt</string>
-    <string name="msg_wg_profile_config_hint">[Interface]\nPrivateKey = ...\nAddress = ...\n\n[Peer]\nPublicKey = ...\nAllowedIPs = 0.0.0.0/0, ::/0\nEndpoint = ...</string>
+    <string name="msg_wg_profile_config_hint">[Interface]\nPrivateKey = …\nAddress = …\n\n[Peer]\nPublicKey = …\nAllowedIPs = 0.0.0.0/0, ::/0\nEndpoint = …</string>
     <string name="msg_wg_profile_delete_confirm">Eyða þessi WireGuard snið?</string>
     <string name="msg_wg_profile_scan_hint">WireGuard snið skanna vísbending.</string>
     <string name="msg_wg_profile_scan_no_camera">Þessi tæki atriði atriði myndavél til skanna með</string>
@@ -351,8 +351,8 @@
     <string name="vpn_choose_country_first">Velja  land fyrst</string>
     <string name="vpn_choose_profile_first">Velja  WireGuard snið fyrst</string>
     <string name="vpn_setup_required">VPN atriði nauðsynlegt.</string>
-    <string name="vpn_loading_countries">Hleður lönd...</string>
-    <string name="vpn_generating">Atriði WireGuard snið...</string>
+    <string name="vpn_loading_countries">Hleður lönd…</string>
+    <string name="vpn_generating">Atriði WireGuard snið…</string>
     <string name="vpn_generation_failed">VPN atriði mistókst: %s</string>
     <string name="vpn_retry">Reyna aftur</string>
     <string name="vpn_country_selected">Í lagi</string>
@@ -366,7 +366,7 @@
     <string name="summary_watchdog">Nánari upplýsingar um Vöktun.</string>
     <string name="summary_log_logcat">Nánari upplýsingar um Annáll atriði.\'Atriði\'.</string>
     <string name="msg_sure">Eru þú atriði?</string>
-    <string name="msg_started">Atriði fyrir rekjarar...</string>
+    <string name="msg_started">Atriði fyrir rekjarar…</string>
     <string name="msg_waiting">Bíður fyrir atriði</string>
     <string name="msg_disabled">Atriði  rofi atriði til virkja TrackerControl.</string>
     <string name="msg_revoked">Afturkallað.</string>

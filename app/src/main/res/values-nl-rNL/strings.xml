@@ -539,7 +539,7 @@ Het internetverkeer wordt niet naar een externe VPN-server gestuurd.</string>
     <string name="msg_wg_profile_default_name">Standaard</string>
     <string name="msg_wg_profile_saved">WireGuard-profiel opgeslagen</string>
     <string name="msg_wg_profile_no_config">Plak een WireGuard-configuratie voordat je een profiel opslaat</string>
-    <string name="msg_wg_profile_config_hint">[Interface]\nPrivateKey = ...\nAddress = ...\n\n[Peer]\nPublicKey = ...\nAllowedIPs = 0.0.0.0/0, ::/0\nEndpoint = ...</string>
+    <string name="msg_wg_profile_config_hint">[Interface]\nPrivateKey = …\nAddress = …\n\n[Peer]\nPublicKey = …\nAllowedIPs = 0.0.0.0/0, ::/0\nEndpoint = …</string>
     <string name="msg_wg_profile_delete_confirm">Dit WireGuard-profiel verwijderen?</string>
     <string name="msg_wg_profile_scan_hint">Richt de camera op de WireGuard-QR-code die je VPN-provider toont. Het scannen gebeurt op je apparaat.</string>
     <string name="msg_wg_profile_scan_no_camera">Dit apparaat heeft geen camera om mee te scannen</string>
@@ -599,8 +599,8 @@ Het internetverkeer wordt niet naar een externe VPN-server gestuurd.</string>
     <string name="vpn_choose_country_first">Kies eerst een land</string>
     <string name="vpn_choose_profile_first">Kies eerst een WireGuard-profiel</string>
     <string name="vpn_setup_required">Stel Mullvad in of importeer eerst een WireGuard-profiel</string>
-    <string name="vpn_loading_countries">Landen laden...</string>
-    <string name="vpn_generating">WireGuard-profiel wordt aangemaakt...</string>
+    <string name="vpn_loading_countries">Landen laden…</string>
+    <string name="vpn_generating">WireGuard-profiel wordt aangemaakt…</string>
     <string name="vpn_generation_failed">VPN-configuratie mislukt: %s</string>
     <string name="vpn_retry">Opnieuw proberen</string>
     <string name="vpn_country_selected">OK</string>

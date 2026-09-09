@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_description">TrackerControl, kullanıcıların mobil uygulamalarda kullanıcı davranışıyla ilgili yaygın, devam eden, gizli veri toplama işlemini (\'tracking\') görmesine ve kontrol etmesine olanak tanır.</string>
     <string name="app_android">TrackerControl, Android 5.1 veya sonraki bir sürümünü gerektirir</string>
     <string name="app_xposed">Xposed çok fazla çökmeye neden oluyor ve bu da TrackerControl\'ün Google Play Store\'dan kaldırılmasına neden olabilir, bu nedenle Xposed yüklüyken TrackerControl desteklenmez</string>
@@ -91,7 +91,7 @@
     <string name="summary_install">Yeni yüklenen uygulamalar için durum çubuğu bildirimini göster</string>
     <string name="summary_pause">Bildirimi duraklattıktan sonra, seçilen dakika sayısından sonra TrackerControl\'ü otomatik olarak yeniden etkinleştirin (bu seçeneği devre dışı bırakmak için 0 girin).</string>
     <string name="summary_update">Yeni sürümler için GitHub üzerinden günde iki defa kontrol et</string>
-    <string name="summary_tethering">Android sürümüne bağlı olarak, internet paylaşımı çalışabilir yada çalışmayabilir. Paylaşılan internet trafiği filtrelenemez.</string>
+    <string name="summary_tethering">Android sürümüne bağlı olarak, internet paylaşımı çalışabilir ya da çalışmayabilir. Paylaşılan internet trafiği filtrelenemez.</string>
     <string name="summary_subnet">Alt ağ yönlendirmesini etkinleştir; Wi-Fi aramasını etkinleştirebilir, fakat Android\'de hatalara sebep olup pil kullanımını arttırabilir</string>
     <string name="summary_lan">Uygulamaların 10.0.0.0/8, 172.16.0.0/12 ve 192.168.0.0/16 gibi yerel ağ adreslerine bağlanmasına izin ver</string>
     <string name="summary_ip6">IP sürüm 6 trafiğini, seçici olarak izin verilebilmesi veya engellenebilmesi için TrackerControl\'e yönlendirin</string>
@@ -191,7 +191,7 @@ Bu nedenle, lütfen bir sonraki iletişim kutusunda bir VPN bağlantısına izin
     <string name="title_enable_filtering">İzin verilen adresler kaydedilsin</string>
     <string name="title_enable_notify">Yeni kaydedilen adresler bildirilsin</string>
     <string name="title_enable_help0">Bu ayarlar tüm uygulamalar için uygulanan genel ayarlardır</string>
-    <string name="title_enable_help1">Adresleri ayrı ayrı yönetmek için filtreleme gereklidir</string>
+    <string tools:ignore="Typos" name="title_enable_help1">Adresleri ayrı ayrı yönetmek için filtreleme gereklidir</string>
     <string name="title_enable_help2">Günlük (az) veya filtreleme (fazla) pil kullanımını arttırabilir ve ağ hızını etkileyebilir</string>
     <string name="title_rate">Değerlendirme</string>
     <string name="title_allow">İzin ver</string>
@@ -453,7 +453,7 @@ Saygılarımla,\n\n]]></string>
     <string name="troubleshooting_app_breakage_title">Bir uygulama çalışmayı durdurdu</string>
     <string name="troubleshooting_app_breakage_desc">Ana listedeki uygulamaya, ardından Koruma’ya dokunun. Önce “Yalnızca minimal engelleme”yi deneyin. Uygulamada hâlâ sorun varsa “İzleyicilere izin ver”i seçin. “TrackerControl’ü atla”yı yalnızca son çare olarak kullanın.</string>
     <string name="troubleshooting_categories_title">Belirli izleyici kategorilerini engelleme</string>
-    <string name="troubleshooting_categories_desc">Her uygulamaya dokunarak ve İzleyiciler sekmesinde tek tek izleyici kategorilerini (ör. Analitik, Reklamlar) açıp kapatarak engellemeyi ayrıntılı biçimde ayarlayabilirsiniz.</string>
+    <string tools:ignore="Typos" name="troubleshooting_categories_desc">Her uygulamaya dokunarak ve İzleyiciler sekmesinde tek tek izleyici kategorilerini (ör. Analitik, Reklamlar) açıp kapatarak engellemeyi ayrıntılı biçimde ayarlayabilirsiniz.</string>
     <string name="troubleshooting_alwayson_title">Her zaman açık VPN</string>
     <string name="troubleshooting_alwayson_desc">Android VPN ayarlarında “VPN olmadan bağlantıları engelle” (kilitleme) etkinse TrackerControl düzgün çalışamaz. Bu seçeneği devre dışı bırakın.</string>
     <string name="troubleshooting_alwayson_action">VPN ayarlarını aç</string>
@@ -466,7 +466,7 @@ Saygılarımla,\n\n]]></string>
     <string name="setting_system">Sistem uygulamalarını göster</string>
     <string name="setting_log_logcat">Araştırma</string>
     <string name="setting_exclude_all_tracking">Tüm uygulamaları izleme dışında tut</string>
-    <string name="summary_exclude_all_tracking">Tüm uygulamalar için izleyici izlemeyi devre dışı bırakın. Daha sonra tek tek uygulamalar için yeniden etkinleştirebilirsiniz.</string>
+    <string tools:ignore="Typos" name="summary_exclude_all_tracking">Tüm uygulamalar için izleyici izlemeyi devre dışı bırakın. Daha sonra tek tek uygulamalar için yeniden etkinleştirebilirsiniz.</string>
     <string name="setting_include_all_tracking">Tüm uygulamaları izlemeye dahil et</string>
     <string name="summary_include_all_tracking">Tüm uygulamalar için izleyici izlemeyi yeniden etkinleştirin.</string>
     <string name="setting_wg_enabled">Trafiği WireGuard üzerinden tünelle</string>
@@ -522,7 +522,7 @@ Saygılarımla,\n\n]]></string>
     <string name="msg_wg_profile_empty">Henüz profil yok</string>
     <string name="msg_wg_profile_active">Etkin</string>
     <string name="msg_wg_profile_set_active">Etkin olarak ayarla</string>
-    <string name="msg_wg_profile_config_hint">[Interface]\nPrivateKey = ...\nAddress = ...\n\n[Peer]\nPublicKey = ...\nAllowedIPs = 0.0.0.0/0, ::/0\nEndpoint = ...</string>
+    <string name="msg_wg_profile_config_hint">[Interface]\nPrivateKey = …\nAddress = …\n\n[Peer]\nPublicKey = …\nAllowedIPs = 0.0.0.0/0, ::/0\nEndpoint = …</string>
     <string name="msg_wg_profile_delete_confirm">Bu WireGuard profili silinsin mi?</string>
     <string name="msg_wg_profile_scan_hint">Kamerayı VPN sağlayıcınızın gösterdiği WireGuard QR koduna doğrultun. Tarama cihazınızda gerçekleşir.</string>
     <string name="msg_wg_profile_scan_no_camera">Bu cihazda tarama yapabileceğiniz bir kamera yok</string>
@@ -602,8 +602,8 @@ Saygılarımla,\n\n]]></string>
     <string name="vpn_choose_country_first">Önce bir ülke seçin</string>
     <string name="vpn_choose_profile_first">Önce bir WireGuard profili seçin</string>
     <string name="vpn_setup_required">Önce Mullvad’ı ayarlayın veya bir WireGuard profili içe aktarın</string>
-    <string name="vpn_loading_countries">Ülkeler yükleniyor...</string>
-    <string name="vpn_generating">WireGuard profili oluşturuluyor...</string>
+    <string name="vpn_loading_countries">Ülkeler yükleniyor…</string>
+    <string name="vpn_generating">WireGuard profili oluşturuluyor…</string>
     <string name="vpn_generation_failed">VPN kurulumu başarısız: %s</string>
     <string name="vpn_retry">Yeniden dene</string>
     <string name="vpn_country_selected">Tamam</string>
@@ -617,10 +617,10 @@ Saygılarımla,\n\n]]></string>
     <string name="summary_log_logcat">Araştırma modu: tanımlanan izleyiciler ADB’ye kaydedilir ve ana bilgisayar adlarının daha iyi algılanması için SNI çıkarımı etkinleştirilir. Günlükleri adb logcat kullanarak ‘TC-Log’ etiketiyle alın.</string>
     <string name="msg_no_file_manager">Dosya seçmek için dosya yöneticisi bulunamadı.</string>
     <string name="msg_no_browser">Bağlantıyı açacak tarayıcı uygulaması bulunamadı.</string>
-    <string name="msg_native_fd_recovery_exhausted">VPN’in dosya tanımlayıcıları tekrar tekrar tükendi. Tüm otomatik yeniden başlatma denemeleri başarısız olduğundan koruma durduruldu.</string>
+    <string tools:ignore="Typos" name="msg_native_fd_recovery_exhausted">VPN’in dosya tanımlayıcıları tekrar tekrar tükendi. Tüm otomatik yeniden başlatma denemeleri başarısız olduğundan koruma durduruldu.</string>
     <string name="msg_native_fd_error">VPN’in dosya tanımlayıcıları tükendi. Kullanılmayan uygulamaları kapatın veya cihazınızı yeniden başlatın, ardından korumayı yeniden başlatın.</string>
     <string name="msg_vpn_replacement_recovery_exhausted">TrackerControl VPN’i yeniden kuramadı. Trafik engelleniyor.</string>
-    <string name="msg_doh_unreachable">Etkin bir internet bağlantınız olmasına rağmen Güvenli DNS’e (DoH) ulaşılamıyor. Bu tekrar tekrar olursa Ağ ayarlarından devre dışı bırakmayı düşünün.</string>
+    <string tools:ignore="Typos" name="msg_doh_unreachable">Etkin bir internet bağlantınız olmasına rağmen Güvenli DNS’e (DoH) ulaşılamıyor. Bu tekrar tekrar olursa Ağ ayarlarından devre dışı bırakmayı düşünün.</string>
     <string name="msg_doze">Tutarlı sonuçlar için Android pil optimizasyonları TrackerControl için devre dışı bırakılmalıdır.\n\nBir sonraki iletişim kutusunda üstten “Tüm uygulamalar”ı seçin, listedeki TrackerControl’e dokunun ve “Optimize etme”yi seçip onaylayın.</string>
     <string name="msg_clear_activity">Bu, bu uygulama için kaydedilen etkinliği kaldırır. Uygulamanın izleyici başına engelleme/izin verme ayarları korunur.</string>
     <string name="msg_downloading">İndiriliyor…</string>
@@ -687,7 +687,7 @@ Saygılarımla,\n\n]]></string>
     <string name="protection_recording_unavailable">“Yeni izleyicileri ara” kapalı olduğu için izleyici kaydı kullanılamıyor.</string>
     <string name="protection_temporary">Geçici, duraklatılırken</string>
     <string name="bypass_vpn_error">“Uygulama TrackerControl’ü atlarken internet engellenemez.”</string>
-    <string name="category_unblocked_warning">Bu kategoriyle izin verildi — tek tek şirketleri değiştirmek için kategoriyi engelleyin.</string>
+    <string tools:ignore="Typos" name="category_unblocked_warning">Bu kategoriyle izin verildi — tek tek şirketleri değiştirmek için kategoriyi engelleyin.</string>
     <string name="analyzing_classes">Sınıflar analiz ediliyor…</string>
     <string name="analyzing_classes_progress">Sınıflar analiz ediliyor… %d%%</string>
     <string name="analysis_already_running">Analiz zaten devam ediyor</string>

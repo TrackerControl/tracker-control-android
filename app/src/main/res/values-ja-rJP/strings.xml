@@ -477,7 +477,7 @@
     <string name="msg_wg_profile_empty">プロファイルはまだありません</string>
     <string name="msg_wg_profile_active">アクティブ</string>
     <string name="msg_wg_profile_set_active">アクティブに設定</string>
-    <string name="msg_wg_profile_config_hint">[Interface]\nPrivateKey = ...\nAddress = ...\n\n[Peer]\nPublicKey = ...\nAllowedIPs = 0.0.0.0/0, ::/0\nEndpoint = ...</string>
+    <string name="msg_wg_profile_config_hint">[Interface]\nPrivateKey = …\nAddress = …\n\n[Peer]\nPublicKey = …\nAllowedIPs = 0.0.0.0/0, ::/0\nEndpoint = …</string>
     <string name="msg_wg_profile_delete_confirm">この WireGuard プロファイルを削除しますか？</string>
     <string name="msg_wg_profile_scan_hint">VPN プロバイダーが表示する WireGuard QR コードにカメラを向けてください。スキャンは端末上で行われます。</string>
     <string name="msg_wg_profile_scan_no_camera">この端末にはスキャンに使用できるカメラがありません</string>
@@ -555,8 +555,8 @@
     <string name="vpn_choose_country_first">まず国を選択してください</string>
     <string name="vpn_choose_profile_first">まず WireGuard プロファイルを選択してください</string>
     <string name="vpn_setup_required">まず Mullvad を設定するか、WireGuard プロファイルをインポートしてください</string>
-    <string name="vpn_loading_countries">国を読み込み中...</string>
-    <string name="vpn_generating">WireGuard プロファイルを作成中...</string>
+    <string name="vpn_loading_countries">国を読み込み中…</string>
+    <string name="vpn_generating">WireGuard プロファイルを作成中…</string>
     <string name="vpn_generation_failed">VPN の設定に失敗しました: %s</string>
     <string name="vpn_retry">再試行</string>
     <string name="vpn_country_selected">OK</string>
@@ -568,7 +568,7 @@
     <string name="msg_wg_provider_rejected">%1$s はこの端末の設定を拒否しました: %2$s</string>
     <string name="msg_wg_recovery_failed">WireGuard が応答しなくなりました。TrackerControl は再接続を試みています。WireGuard が復旧するまで、インターネットアクセスはブロックされたままになる可能性があります。</string>
     <string name="summary_log_logcat">研究モード: 識別されたトラッカーを ADB に記録し、ホスト名の検出精度を高めるため SNI 抽出を有効にします。adb logcat でタグ \'TC-Log\' を使用してログを取得してください。</string>
-    <string name="msg_started">トラッカーを検索中...</string>
+    <string name="msg_started">トラッカーを検索中…</string>
     <string name="msg_no_file_manager">ファイルを選択するファイルマネージャーが見つかりません。</string>
     <string name="msg_no_browser">リンクを開くブラウザーアプリが見つかりません。</string>
     <string name="msg_native_fd_recovery_exhausted">VPN でファイルディスクリプターが繰り返し不足しました。自動再起動をすべて試しても失敗したため、保護を停止しました。</string>

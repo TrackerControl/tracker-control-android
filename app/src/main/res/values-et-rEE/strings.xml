@@ -423,7 +423,7 @@
     <string name="msg_wg_profile_empty">Profiile pole veel</string>
     <string name="msg_wg_profile_active">Aktiivne</string>
     <string name="msg_wg_profile_set_active">Määra aktiivseks</string>
-    <string name="msg_wg_profile_config_hint">[Interface]\nPrivateKey = ...\nAddress = ...\n\n[Peer]\nPublicKey = ...\nAllowedIPs = 0.0.0.0/0, ::/0\nEndpoint = ...</string>
+    <string name="msg_wg_profile_config_hint">[Interface]\nPrivateKey = …\nAddress = …\n\n[Peer]\nPublicKey = …\nAllowedIPs = 0.0.0.0/0, ::/0\nEndpoint = …</string>
     <string name="msg_wg_profile_delete_confirm">Kas kustutada see WireGuardi profiil?</string>
     <string name="msg_wg_profile_scan_hint">Suunake kaamera VPN-i teenusepakkuja kuvatud WireGuardi QR-koodile. Skannimine toimub sinu seadmes.</string>
     <string name="msg_wg_profile_scan_no_camera">Sellel seadmel pole skannimiseks kaamerat</string>

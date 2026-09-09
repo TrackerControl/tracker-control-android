@@ -485,7 +485,7 @@
     <string name="msg_wg_profile_empty">Noch keine Profile</string>
     <string name="msg_wg_profile_active">Aktiv</string>
     <string name="msg_wg_profile_set_active">Als aktiv festlegen</string>
-    <string name="msg_wg_profile_config_hint">[Interface]\nPrivateKey = ...\nAddress = ...\n\n[Peer]\nPublicKey = ...\nAllowedIPs = 0.0.0.0/0, ::/0\nEndpoint = ...</string>
+    <string name="msg_wg_profile_config_hint">[Interface]\nPrivateKey = …\nAddress = …\n\n[Peer]\nPublicKey = …\nAllowedIPs = 0.0.0.0/0, ::/0\nEndpoint = …</string>
     <string name="msg_wg_profile_delete_confirm">Dieses WireGuard-Profil löschen?</string>
     <string name="msg_wg_profile_scan_hint">Richten Sie die Kamera auf den WireGuard-QR-Code Ihres VPN-Anbieters. Der Scan erfolgt auf Ihrem Gerät.</string>
     <string name="msg_wg_profile_scan_no_camera">Dieses Gerät hat keine Kamera zum Scannen</string>

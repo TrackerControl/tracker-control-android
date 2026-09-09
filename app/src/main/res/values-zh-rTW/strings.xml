@@ -190,7 +190,7 @@
     <!-- Joins the alternative domain names of one tracker, e.g. "example.com or example.net". Keep the surrounding spaces. -->
     <!-- What's New onboarding slide (not translated) -->
     <!-- Accessibility labels -->
-    <string name="app_copyright">版權所有 \u00A9 2019-2022 Konrad Kollnig\n\nTrackerControl 基於 NetGuard, 由 Marcel Bokhorst (M66B) 開發。</string>
+    <string name="app_copyright">版權所有 \u00A9 2019–2022 Konrad Kollnig\n\nTrackerControl 基於 NetGuard, 由 Marcel Bokhorst (M66B) 開發。</string>
     <string name="app_ios"><a href="https://ios.trackercontrol.org">iOS 系統也可使用 TrackerControl</a></string>
     <string name="channel_access">讀取通知</string>
     <string name="menu_app_unprotected">僅顯示未受保護的應用程式</string>
@@ -341,7 +341,7 @@
     <string name="msg_wg_profile_empty">暫無設定</string>
     <string name="msg_wg_profile_active">活躍</string>
     <string name="msg_wg_profile_set_active">設定為活躍</string>
-    <string name="msg_wg_profile_config_hint">[Interface]\nPrivateKey = ...\nAddress = ...\n\n[Peer]\nPublicKey = ...\nAllowedIPs = 0.0.0.0/0, ::/0\nEndpoint = ...</string>
+    <string name="msg_wg_profile_config_hint">[Interface]\nPrivateKey = …\nAddress = …\n\n[Peer]\nPublicKey = …\nAllowedIPs = 0.0.0.0/0, ::/0\nEndpoint = …</string>
     <string name="msg_wg_profile_delete_confirm">要刪除這個 WireGuard 設定檔嗎？</string>
     <string name="msg_wg_profile_scan_hint">將相機指向您的 VPN 供應商顯示的 WireGuard QR 碼。掃描發生在您的裝置上。</string>
     <string name="msg_wg_profile_scan_no_camera">此裝置沒有可用來掃描的相機</string>
@@ -419,7 +419,7 @@
     <string name="vpn_choose_country_first">先選擇一個地區</string>
     <string name="vpn_choose_profile_first">請先選擇一個WireGuard設定</string>
     <string name="vpn_setup_required">設定Mullvad或先匯入WireGuard 設定檔</string>
-    <string name="vpn_loading_countries">正在載入地區...</string>
+    <string name="vpn_loading_countries">正在載入地區…</string>
     <string name="vpn_generating">正在建立WireGuard設定檔……</string>
     <string name="vpn_generation_failed">VPN 設定失敗: %s</string>
     <string name="vpn_retry">重試</string>
@@ -434,7 +434,7 @@
     <string name="summary_watchdog">定期檢查TrackerControl是否仍在執行(輸入零停用此選項)。這可能會導致額外的電池使用。</string>
     <string name="summary_log_logcat">研究模式：已識別的追蹤器會記錄到 ADB 並啟用 SNI 提取以更好地偵測主機名稱。用 TC-Log 標籤透過 adb logcat 取得日誌。</string>
     <string name="msg_sure">你確定嗎？</string>
-    <string name="msg_started">正在查詢追蹤器...</string>
+    <string name="msg_started">正在查詢追蹤器…</string>
     <string name="msg_waiting">等待事件</string>
     <string name="msg_disabled">使用上面的開關來啟用TrackerControl</string>
     <string name="msg_revoked">TrackerControl已被停用，可能是透過使用另一個基於VPN的應用程式</string>
@@ -549,7 +549,7 @@
     <string name="ok">好</string>
     <string name="yes">是</string>
     <string name="no">否</string>
-    <string name="exporting">正在匯出...</string>
+    <string name="exporting">正在匯出…</string>
     <string name="share_csv">分享</string>
     <string name="tab_actions">資料權</string>
     <string name="body_request_data">致有關人士：\n

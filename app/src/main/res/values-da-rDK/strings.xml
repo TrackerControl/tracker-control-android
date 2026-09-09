@@ -317,7 +317,7 @@
     <string name="msg_wg_profile_empty">Ingen profiler endnu</string>
     <string name="msg_wg_profile_active">Aktiv</string>
     <string name="msg_wg_profile_set_active">Indstil som aktiv</string>
-    <string name="msg_wg_profile_config_hint">[Interface]\nPrivateKey = ...\nAddress = ...\n\n[Peer]\nPublicKey = ...\nAllowedIPs = 0.0.0.0/0, ::/0\nEndpoint = ...</string>
+    <string name="msg_wg_profile_config_hint">[Interface]\nPrivateKey = …\nAddress = …\n\n[Peer]\nPublicKey = …\nAllowedIPs = 0.0.0.0/0, ::/0\nEndpoint = …</string>
     <string name="msg_wg_profile_delete_confirm">Slet denne WireGuard-profil?</string>
     <string name="msg_wg_profile_scan_hint">Ret kameraet mod den WireGuard-QR-kode, som din VPN-udbyder viser. Scanningen foregår på din enhed.</string>
     <string name="msg_wg_profile_scan_no_camera">Denne enhed har ikke noget kamera at scanne med</string>
@@ -397,8 +397,8 @@
     <string name="vpn_choose_country_first">Vælg først et land</string>
     <string name="vpn_choose_profile_first">Vælg først en WireGuard-profil</string>
     <string name="vpn_setup_required">Konfigurér Mullvad eller importér først en WireGuard-profil</string>
-    <string name="vpn_loading_countries">Indlæser lande...</string>
-    <string name="vpn_generating">Opretter WireGuard-profil...</string>
+    <string name="vpn_loading_countries">Indlæser lande…</string>
+    <string name="vpn_generating">Opretter WireGuard-profil…</string>
     <string name="vpn_generation_failed">VPN-konfiguration mislykkedes: %s</string>
     <string name="vpn_retry">Prøv igen</string>
     <string name="vpn_country_selected">OK</string>

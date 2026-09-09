@@ -487,6 +487,7 @@ O seu tráfego de internet não está sendo enviado para um servidor VPN remoto.
     <string name="feed_section_last_contact">último contato %s</string>
     <plurals name="feed_show_more_companies">
         <item quantity="one">Mostrar mais %d empresa</item>
+        <item quantity="many">Mostrar mais %d empresas</item>
         <item quantity="other">Mostrar mais %d empresas</item>
     </plurals>
     <string name="feed_allow_company_in_app">Permitir %1$s em %2$s</string>
@@ -500,10 +501,12 @@ O seu tráfego de internet não está sendo enviado para um servidor VPN remoto.
     <string name="feed_essential_explainer_blocked">Necessário para os apps — bloqueá-los pode interromper %s</string>
     <plurals name="timeline_trackers_blocked">
         <item quantity="one">%d rastreador bloqueado</item>
+        <item quantity="many">%d rastreadores bloqueados</item>
         <item quantity="other">%d rastreadores bloqueados</item>
     </plurals>
     <plurals name="timeline_trackers_allowed">
         <item quantity="one">%d rastreador permitido</item>
+        <item quantity="many">%d rastreadores permitidos</item>
         <item quantity="other">%d rastreadores permitidos</item>
     </plurals>
     <string name="troubleshooting_local_network_title">Acesso à rede local</string>
@@ -564,7 +567,7 @@ O seu tráfego de internet não está sendo enviado para um servidor VPN remoto.
     <string name="msg_wg_profile_empty">Ainda não há perfis</string>
     <string name="msg_wg_profile_active">Ativo</string>
     <string name="msg_wg_profile_set_active">Definir como ativo</string>
-    <string name="msg_wg_profile_config_hint">[Interface]\nPrivateKey = ...\nAddress = ...\n\n[Peer]\nPublicKey = ...\nAllowedIPs = 0.0.0.0/0, ::/0\nEndpoint = ...</string>
+    <string name="msg_wg_profile_config_hint">[Interface]\nPrivateKey = …\nAddress = …\n\n[Peer]\nPublicKey = …\nAllowedIPs = 0.0.0.0/0, ::/0\nEndpoint = …</string>
     <string name="msg_wg_profile_delete_confirm">Excluir este perfil do WireGuard?</string>
     <string name="msg_wg_profile_scan_hint">Aponte a câmera para o código QR do WireGuard exibido pelo seu provedor de VPN. A leitura acontece no seu dispositivo.</string>
     <string name="msg_wg_profile_scan_no_camera">Este dispositivo não tem câmera para fazer a leitura</string>
@@ -575,10 +578,12 @@ O seu tráfego de internet não está sendo enviado para um servidor VPN remoto.
     <string name="msg_wg_profile_import_failed">Não foi possível ler o arquivo selecionado: %1$s</string>
     <plurals name="msg_wg_profile_imported">
         <item quantity="one">%1$d perfil do WireGuard importado</item>
+        <item quantity="many">%1$d perfis do WireGuard importados</item>
         <item quantity="other">%1$d perfis do WireGuard importados</item>
     </plurals>
     <plurals name="msg_wg_profile_import_skipped">
         <item quantity="one">%1$d arquivo ignorado: não é uma configuração válida do WireGuard</item>
+        <item quantity="many">%1$d arquivos ignorados: não são configurações válidas do WireGuard</item>
         <item quantity="other">%1$d arquivos ignorados: não são configurações válidas do WireGuard</item>
     </plurals>
     <string name="msg_wg_mullvad_account">Número da conta Mullvad</string>
@@ -644,8 +649,8 @@ O seu tráfego de internet não está sendo enviado para um servidor VPN remoto.
     <string name="vpn_choose_country_first">Escolha um país primeiro</string>
     <string name="vpn_choose_profile_first">Escolha um perfil do WireGuard primeiro</string>
     <string name="vpn_setup_required">Configure o Mullvad ou importe um perfil do WireGuard primeiro</string>
-    <string name="vpn_loading_countries">Carregando países...</string>
-    <string name="vpn_generating">Criando perfil do WireGuard...</string>
+    <string name="vpn_loading_countries">Carregando países…</string>
+    <string name="vpn_generating">Criando perfil do WireGuard…</string>
     <string name="vpn_generation_failed">Falha na configuração da VPN: %s</string>
     <string name="vpn_retry">Tentar novamente</string>
     <string name="vpn_country_selected">OK</string>
@@ -701,6 +706,7 @@ O seu tráfego de internet não está sendo enviado para um servidor VPN remoto.
     <string name="protection_app_not_working">O app não funciona? Toque aqui</string>
     <plurals name="protection_paused_resumes">
         <item quantity="one">Pausado — retoma em %d min</item>
+        <item quantity="many">Pausado — retoma em %d min</item>
         <item quantity="other">Pausado — retoma em %d min</item>
     </plurals>
     <string name="protection_resume">Retomar agora</string>
@@ -727,6 +733,7 @@ O seu tráfego de internet não está sendo enviado para um servidor VPN remoto.
     <string name="open_tracker_website">Abrir o site de %1$s</string>
     <plurals name="libraries_found">
         <item quantity="one">%d biblioteca de rastreador encontrada no código do app</item>
+        <item quantity="many">%d bibliotecas de rastreadores encontradas no código do app</item>
         <item quantity="other">%d bibliotecas de rastreadores encontradas no código do app</item>
     </plurals>
     <string name="analysis_queued">Análise na fila…</string>
@@ -770,6 +777,7 @@ O seu tráfego de internet não está sendo enviado para um servidor VPN remoto.
     <string name="insights_domain_alias_separator">" ou "</string>
     <plurals name="insights_apps_count">
         <item quantity="one">em %d app</item>
+        <item quantity="many">em %d apps</item>
         <item quantity="other">em %d apps</item>
     </plurals>
     <string name="insights_share_trackers_blocked">Hosts de rastreadores bloqueados</string>

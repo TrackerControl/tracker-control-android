@@ -597,7 +597,7 @@
     <string name="msg_wg_profile_empty">Элемент профили элемент</string>
     <string name="msg_wg_profile_active">Активно</string>
     <string name="msg_wg_profile_set_active">Элемент активно</string>
-    <string name="msg_wg_profile_config_hint">[Interface]\nPrivateKey = ...\nAddress = ...\n\n[Peer]\nPublicKey = ...\nAllowedIPs = 0.0.0.0/0, ::/0\nEndpoint = ...</string>
+    <string name="msg_wg_profile_config_hint">[Interface]\nPrivateKey = …\nAddress = …\n\n[Peer]\nPublicKey = …\nAllowedIPs = 0.0.0.0/0, ::/0\nEndpoint = …</string>
     <string name="msg_wg_profile_delete_confirm">Удалить элемент WireGuard профиль?</string>
     <string name="msg_wg_profile_scan_hint">WireGuard профиль сканировать элемент.</string>
     <string name="msg_wg_profile_scan_no_camera">Элемент элемент элемент элемент камера элемент сканировать элемент</string>
@@ -681,8 +681,8 @@
     <string name="vpn_choose_country_first">Выбрать элемент страна первый</string>
     <string name="vpn_choose_profile_first">Выбрать элемент WireGuard профиль первый</string>
     <string name="vpn_setup_required">VPN элемент требуется.</string>
-    <string name="vpn_loading_countries">Загрузка страны...</string>
-    <string name="vpn_generating">Элемент WireGuard профиль...</string>
+    <string name="vpn_loading_countries">Загрузка страны…</string>
+    <string name="vpn_generating">Элемент WireGuard профиль…</string>
     <string name="vpn_generation_failed">VPN элемент не удалось: %s</string>
     <string name="vpn_retry">Повторить</string>
     <string name="vpn_country_selected">Элемент</string>

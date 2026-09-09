@@ -315,7 +315,7 @@
     <string name="msg_wg_profile_empty">Nu există încă profiluri</string>
     <string name="msg_wg_profile_active">Activ</string>
     <string name="msg_wg_profile_set_active">Setează ca activ</string>
-    <string name="msg_wg_profile_config_hint">[Interface]\nPrivateKey = ...\nAddress = ...\n\n[Peer]\nPublicKey = ...\nAllowedIPs = 0.0.0.0/0, ::/0\nEndpoint = ...</string>
+    <string name="msg_wg_profile_config_hint">[Interface]\nPrivateKey = …\nAddress = …\n\n[Peer]\nPublicKey = …\nAllowedIPs = 0.0.0.0/0, ::/0\nEndpoint = …</string>
     <string name="msg_wg_profile_delete_confirm">Ștergi acest profil WireGuard?</string>
     <string name="msg_wg_profile_scan_hint">Îndreaptă camera către codul QR WireGuard afișat de furnizorul VPN. Scanarea are loc pe dispozitivul tău.</string>
     <string name="msg_wg_profile_scan_no_camera">Acest dispozitiv nu are cameră pentru scanare</string>
@@ -397,8 +397,8 @@
     <string name="vpn_choose_country_first">Alege mai întâi o țară</string>
     <string name="vpn_choose_profile_first">Alege mai întâi un profil WireGuard</string>
     <string name="vpn_setup_required">Configurează Mullvad sau importă mai întâi un profil WireGuard</string>
-    <string name="vpn_loading_countries">Se încarcă țările...</string>
-    <string name="vpn_generating">Se creează profilul WireGuard...</string>
+    <string name="vpn_loading_countries">Se încarcă țările…</string>
+    <string name="vpn_generating">Se creează profilul WireGuard…</string>
     <string name="vpn_generation_failed">Configurarea VPN a eșuat: %s</string>
     <string name="vpn_retry">Încearcă din nou</string>
     <string name="vpn_country_selected">OK</string>
@@ -411,7 +411,7 @@
     <string name="msg_wg_recovery_failed">WireGuard nu mai răspunde. TrackerControl încearcă să se reconecteze, iar accesul la internet poate rămâne blocat până când WireGuard își revine.</string>
     <string name="summary_watchdog">Verifică periodic dacă TrackerControl rulează în continuare (introdu zero pentru a dezactiva această opțiune). Aceasta poate crește consumul bateriei.</string>
     <string name="summary_log_logcat">Mod cercetare: urmăritorii identificați sunt înregistrați în ADB, iar extragerea SNI este activată pentru o detectare mai bună a numelor de gazdă. Preia jurnalele cu adb logcat folosind eticheta „TC-Log”.</string>
-    <string name="msg_started">Se caută urmăritori...</string>
+    <string name="msg_started">Se caută urmăritori…</string>
     <string name="msg_waiting">Se așteaptă un eveniment</string>
     <string name="msg_disabled">Folosește comutatorul de mai sus pentru a activa TrackerControl.</string>
     <string name="msg_revoked">TrackerControl a fost deconectat, probabil de o altă aplicație VPN sau de sistem. Se va reconecta automat când este posibil.</string>

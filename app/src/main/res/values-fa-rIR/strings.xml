@@ -274,7 +274,7 @@
     <string name="msg_wg_profile_empty">هنوز نمایه‌ای وجود ندارد</string>
     <string name="msg_wg_profile_active">فعال</string>
     <string name="msg_wg_profile_set_active">فعال کردن</string>
-    <string name="msg_wg_profile_config_hint">[Interface]\nPrivateKey = ...\nAddress = ...\n\n[Peer]\nPublicKey = ...\nAllowedIPs = 0.0.0.0/0, ::/0\nEndpoint = ...</string>
+    <string name="msg_wg_profile_config_hint">[Interface]\nPrivateKey = …\nAddress = …\n\n[Peer]\nPublicKey = …\nAllowedIPs = 0.0.0.0/0, ::/0\nEndpoint = …</string>
     <string name="msg_wg_profile_delete_confirm">این نمایهٔ WireGuard حذف شود؟</string>
     <string name="msg_wg_profile_scan_hint">دوربین را روی کد QR WireGuard که ارائه‌دهندهٔ VPN شما نمایش می‌دهد بگیرید. اسکن روی دستگاه شما انجام می‌شود.</string>
     <string name="msg_wg_profile_scan_no_camera">این دستگاه دوربینی برای اسکن ندارد</string>

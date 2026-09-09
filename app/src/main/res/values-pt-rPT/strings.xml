@@ -311,7 +311,7 @@ caso positivo, por favor me forneça todas as informações necessárias estipul
     - as medidas que você tomou para prevenir erros, viés e discriminação; e\n
     - explique como posso expressar meu ponto de vista e desafiar uma decisão.\n
 \n
-Esta solicitação se refere a qualquer processamento de meus dados pessoais por você, incluindo qualquer processador processador processando dados pessoais em seu nome.\n
+Esta solicitação se refere a qualquer processamento de meus dados pessoais por você, incluindo qualquer processador que processe dados pessoais em seu nome.\n
 \n
 Por favor, forneça sua resposta por meio de e-mail seguro. Aguardo com expectativa uma resposta no prazo de um mês a contar do recebimento do meu pedido.\n
 \n
@@ -409,6 +409,7 @@ disso,\n\n]]></string>
     <string name="feed_section_last_contact">último contacto %s</string>
     <plurals name="feed_show_more_companies">
         <item quantity="one">Mostrar mais %d empresa</item>
+        <item quantity="many">Mostrar mais %d empresas</item>
         <item quantity="other">Mostrar mais %d empresas</item>
     </plurals>
     <string name="feed_allow_company_in_app">Permitir %1$s em %2$s</string>
@@ -423,10 +424,12 @@ disso,\n\n]]></string>
     <string name="timeline_summary_mixed">%1$d bloqueados · %2$d permitidos</string>
     <plurals name="timeline_trackers_blocked">
         <item quantity="one">%d rastreador bloqueado</item>
+        <item quantity="many">%d rastreadores bloqueados</item>
         <item quantity="other">%d rastreadores bloqueados</item>
     </plurals>
     <plurals name="timeline_trackers_allowed">
         <item quantity="one">%d rastreador permitido</item>
+        <item quantity="many">%d rastreadores permitidos</item>
         <item quantity="other">%d rastreadores permitidos</item>
     </plurals>
     <string name="troubleshooting_battery_desc">Se o TrackerControl deixar de funcionar em segundo plano, desative a otimização da bateria do Android para o TrackerControl. Selecione \"Todas as aplicações\", toque em TrackerControl e selecione \"Não otimizar\".</string>
@@ -493,7 +496,7 @@ disso,\n\n]]></string>
     <string name="msg_wg_profile_empty">Ainda não existem perfis</string>
     <string name="msg_wg_profile_active">Ativo</string>
     <string name="msg_wg_profile_set_active">Tornar ativo</string>
-    <string name="msg_wg_profile_config_hint">[Interface]\nPrivateKey = ...\nAddress = ...\n\n[Peer]\nPublicKey = ...\nAllowedIPs = 0.0.0.0/0, ::/0\nEndpoint = ...</string>
+    <string name="msg_wg_profile_config_hint">[Interface]\nPrivateKey = …\nAddress = …\n\n[Peer]\nPublicKey = …\nAllowedIPs = 0.0.0.0/0, ::/0\nEndpoint = …</string>
     <string name="msg_wg_profile_delete_confirm">Eliminar este perfil WireGuard?</string>
     <string name="msg_wg_profile_scan_hint">Aponte a câmara para o código QR do WireGuard apresentado pelo seu fornecedor de VPN. A leitura ocorre no seu dispositivo.</string>
     <string name="msg_wg_profile_scan_no_camera">Este dispositivo não tem uma câmara para ler o código</string>
@@ -504,10 +507,12 @@ disso,\n\n]]></string>
     <string name="msg_wg_profile_import_failed">Não foi possível ler o ficheiro selecionado: %1$s</string>
     <plurals name="msg_wg_profile_imported">
         <item quantity="one">%1$d perfil WireGuard importado</item>
+        <item quantity="many">%1$d perfis WireGuard importados</item>
         <item quantity="other">%1$d perfis WireGuard importados</item>
     </plurals>
     <plurals name="msg_wg_profile_import_skipped">
         <item quantity="one">%1$d ficheiro ignorado: não é uma configuração WireGuard válida</item>
+        <item quantity="many">%1$d ficheiros ignorados: não são configurações WireGuard válidas</item>
         <item quantity="other">%1$d ficheiros ignorados: não são configurações WireGuard válidas</item>
     </plurals>
     <string name="msg_wg_mullvad_account">Número da conta Mullvad</string>
@@ -565,8 +570,8 @@ disso,\n\n]]></string>
     <string name="vpn_choose_country_first">Escolha primeiro um país</string>
     <string name="vpn_choose_profile_first">Escolha primeiro um perfil WireGuard</string>
     <string name="vpn_setup_required">Configure o Mullvad ou importe primeiro um perfil WireGuard</string>
-    <string name="vpn_loading_countries">A carregar países...</string>
-    <string name="vpn_generating">A criar o perfil WireGuard...</string>
+    <string name="vpn_loading_countries">A carregar países…</string>
+    <string name="vpn_generating">A criar o perfil WireGuard…</string>
     <string name="vpn_generation_failed">Falha na configuração da VPN: %s</string>
     <string name="vpn_retry">Tentar novamente</string>
     <string name="vpn_country_selected">OK</string>
@@ -578,7 +583,7 @@ disso,\n\n]]></string>
     <string name="msg_wg_provider_rejected">%1$s recusou configurar este dispositivo: %2$s</string>
     <string name="msg_wg_recovery_failed">O WireGuard deixou de responder. O TrackerControl está a tentar voltar a ligar-se e o acesso à Internet pode continuar bloqueado até o WireGuard recuperar.</string>
     <string name="summary_log_logcat">Modo de investigação: os rastreadores identificados são registados no ADB e a extração de SNI está ativada para melhorar a deteção de nomes de anfitrião. Obtenha os registos com adb logcat utilizando a etiqueta \'TC-Log\'.</string>
-    <string name="msg_started">A procurar rastreadores...</string>
+    <string name="msg_started">A procurar rastreadores…</string>
     <string name="msg_no_file_manager">Não foi encontrado nenhum gestor de ficheiros para escolher um ficheiro.</string>
     <string name="msg_no_browser">Não foi encontrada nenhuma aplicação de navegador para abrir a ligação.</string>
     <string name="msg_native_fd_recovery_exhausted">A VPN ficou repetidamente sem descritores de ficheiro. A proteção foi interrompida depois de falharem todas as tentativas de reinício automático.</string>
@@ -604,10 +609,12 @@ disso,\n\n]]></string>
     <string name="accessibility_tracker_blocking_disabled">Bloqueio de rastreadores desativado</string>
     <plurals name="n_companies_found_week">
         <item quantity="one">contactou %d empresa na semana passada</item>
+        <item quantity="many">contactou %d empresas na semana passada</item>
         <item quantity="other">contactou %d empresas na semana passada</item>
     </plurals>
     <plurals name="n_companies_found">
         <item quantity="one">contactou %d empresa até agora</item>
+        <item quantity="many">contactou %d empresas até agora</item>
         <item quantity="other">contactou %d empresas até agora</item>
     </plurals>
     <string name="confirm_ipinfo">Isto contactará o serviço externo ipinfo.io e partilhará com esse serviço dados sobre os endereços IP contactados.</string>
@@ -656,6 +663,7 @@ disso,\n\n]]></string>
     <string name="protection_app_not_working">A aplicação não funciona? Toque aqui</string>
     <plurals name="protection_paused_resumes">
         <item quantity="one">Em pausa — retoma dentro de %d min</item>
+        <item quantity="many">Em pausa — retoma dentro de %d min</item>
         <item quantity="other">Em pausa — retoma dentro de %d min</item>
     </plurals>
     <string name="protection_resume">Retomar agora</string>
@@ -699,6 +707,7 @@ disso,\n\n]]></string>
     <string name="open_tracker_website">Abrir o site %1$s</string>
     <plurals name="libraries_found">
         <item quantity="one">%d biblioteca de rastreadores encontrada no código da aplicação</item>
+        <item quantity="many">%d bibliotecas de rastreadores encontradas no código da aplicação</item>
         <item quantity="other">%d bibliotecas de rastreadores encontradas no código da aplicação</item>
     </plurals>
     <string name="analysis_queued">Análise na fila…</string>
@@ -788,6 +797,7 @@ disso,\n\n]]></string>
     <string name="insights_in_apps">em %d aplicações</string>
     <plurals name="insights_apps_count">
         <item quantity="one">em %d aplicação</item>
+        <item quantity="many">em %d aplicações</item>
         <item quantity="other">em %d aplicações</item>
     </plurals>
     <string name="insights_no_data">Ainda não existem dados de rastreamento. Utilize as suas aplicações e volte a consultar!</string>
