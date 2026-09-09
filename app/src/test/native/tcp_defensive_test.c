@@ -267,6 +267,15 @@ static void test_tcp_epoll_add_failure_does_not_retain_session(void) {
     epoll_result = 0;
 }
 
+// Whether this host can create an AF_INET6 socket at all.
+static int host_supports_ipv6(void) {
+    int probe = socket(PF_INET6, SOCK_STREAM, 0);
+    if (probe < 0)
+        return 0;
+    close(probe);
+    return 1;
+}
+
 static void test_tcp_connect_address_is_zero_initialised(void) {
     struct tcp_session session = {0};
     session.version = 4;
@@ -296,6 +305,12 @@ static void test_tcp_connect_address_is_zero_initialised(void) {
     inet_pton(AF_INET6, "2001:db8::10", &session.daddr.ip6);
     session.dest = htons(443);
     connect_calls = 0;
+    if (!host_supports_ipv6()) {
+        // Some containers offer no AF_INET6 at all; that is a property of the
+        // host, not of the code under test.
+        puts("SKIP: host has no IPv6 support");
+        return;
+    }
     int socket6 = open_tcp_socket(&args, &session, NULL);
     CHECK(socket6 >= 0 && connect_calls == 1 && last_connect_family == AF_INET6,
           "TCP opener connects with an IPv6 sockaddr");

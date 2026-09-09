@@ -80,6 +80,7 @@ internal class WgConnectivityChecker(private val prod: () -> Unit) {
     private var numProds: Int = 0
     private var tunWriteFailuresTotal = 0L
     private var tunWriteFailureStartedAt: Long? = null
+    private var tunWriteFailureRunIdentity: Long? = null
     private var tunWriteFailuresSuspended = false
 
     /**
@@ -145,6 +146,7 @@ internal class WgConnectivityChecker(private val prod: () -> Unit) {
     fun onSuspended(now: Long) {
         resetProd()
         tunWriteFailureStartedAt = null
+        tunWriteFailureRunIdentity = null
         tunWriteFailuresSuspended = true
         when (val s = state) {
             is ConnState.Connected -> state = s.copy(rxTimestamp = now, txTimestamp = now)
@@ -190,6 +192,12 @@ internal class WgConnectivityChecker(private val prod: () -> Unit) {
             tunWriteFailuresSuspended = false
             return false
         }
+        if (stats.tunWriteFailuresTotal < 0L || stats.tunWriteFailuresStreak < 0L ||
+            stats.tunWriteFailuresStreak > stats.tunWriteFailuresTotal) {
+            // Negative or impossible samples cannot prove a continuous run.
+            resetTunWriteFailures(stats.tunWriteFailuresTotal)
+            return false
+        }
         if (stats.tunWriteFailuresStreak == 0L) {
             resetTunWriteFailures(stats.tunWriteFailuresTotal)
             return false
@@ -204,12 +212,24 @@ internal class WgConnectivityChecker(private val prod: () -> Unit) {
             // No newly observed failed write means the previous qualification
             // window has gone stale, even if the native streak is nonzero.
             tunWriteFailureStartedAt = null
+            tunWriteFailureRunIdentity = null
             return false
         }
 
         tunWriteFailuresTotal = stats.tunWriteFailuresTotal
         if (stats.tunWriteFailuresStreak < TUN_WRITE_FAILURE_STREAK_THRESHOLD) {
             tunWriteFailureStartedAt = null
+            tunWriteFailureRunIdentity = null
+            return false
+        }
+
+        // total - streak is the cumulative failure count before this run. It
+        // stays constant across a continuous run and changes after a full
+        // write resets the native streak between samples.
+        val runIdentity = stats.tunWriteFailuresTotal - stats.tunWriteFailuresStreak
+        if (runIdentity != tunWriteFailureRunIdentity) {
+            tunWriteFailureRunIdentity = runIdentity
+            tunWriteFailureStartedAt = now
             return false
         }
         val startedAt = tunWriteFailureStartedAt ?: now.also {
@@ -221,6 +241,7 @@ internal class WgConnectivityChecker(private val prod: () -> Unit) {
     private fun resetTunWriteFailures(total: Long) {
         tunWriteFailuresTotal = total
         tunWriteFailureStartedAt = null
+        tunWriteFailureRunIdentity = null
     }
 
     /**

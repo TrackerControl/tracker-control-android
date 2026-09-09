@@ -71,6 +71,29 @@ int tcp_window_probe_delay(struct tcp_session *cur, long long now,
                          : 0;
 }
 
+/* Release the upstream socket once neither direction can carry another byte:
+ * the client's FIN has been consumed (its write half is shut down and nothing
+ * is queued) and the peer has sent EOF.  A fully closed socket left in the
+ * epoll set reports EPOLLHUP, which is delivered whether or not it was
+ * requested, so every epoll_wait() would return immediately and spin the
+ * event loop until the session is reaped — up to TCP_CLOSE_TIMEOUT seconds
+ * when the client never acknowledges our FIN.  Closing the descriptor removes
+ * it from the set; the session itself lives on until check_tcp_session()
+ * accounts and reaps it. */
+static void release_finished_upstream(struct ng_session *s, const char *session) {
+    struct tcp_session *cur = &s->tcp;
+    if (s->socket < 0 || !cur->upstream_read_eof || !cur->client_fin_consumed ||
+        cur->forward != NULL)
+        return;
+
+    if (close(s->socket))
+        log_android(ANDROID_LOG_ERROR, "%s close error %d: %s",
+                    session, errno, strerror(errno));
+    else
+        log_android(ANDROID_LOG_WARN, "%s upstream socket finished", session);
+    s->socket = -1;
+}
+
 static int consume_client_fin(const struct arguments *args,
                                struct ng_session *s, const char *session) {
     struct tcp_session *cur = &s->tcp;
@@ -103,6 +126,7 @@ static int consume_client_fin(const struct arguments *args,
         cur->state = TCP_CLOSE_WAIT;
 
     log_android(ANDROID_LOG_WARN, "%s consumed client FIN", session);
+    release_finished_upstream(s, session);
     return 1;
 }
 
@@ -133,7 +157,9 @@ static int mark_upstream_eof(const struct arguments *args,
     cur->window_probe_delay = 0;
     cur->window_probe_deadline = 0;
     log_android(ANDROID_LOG_WARN, "%s recv eof", session);
-    return send_server_fin(args, s, session) < 0 ? -1 : 1;
+    int sent = send_server_fin(args, s, session);
+    release_finished_upstream(s, session);
+    return sent < 0 ? -1 : 1;
 }
 
 void clear_tcp_data(struct tcp_session *cur) {
@@ -1174,9 +1200,24 @@ jboolean handle_tcp(const struct arguments *args,
             // Queue data to forward
             if (datalen) {
                 if (cur->socket < 0) {
-                    log_android(ANDROID_LOG_ERROR, "%s data while local closed", session);
-                    write_rst(args, &cur->tcp);
-                    return 0;
+                    uint32_t seq = ntohl(tcphdr->seq);
+                    uint32_t end = seq + (uint32_t) datalen;
+                    // A released upstream cannot accept new bytes, but a
+                    // retransmission of bytes consumed before the FIN still
+                    // needs the ordinary FIN/ACK handling below.  Sequence
+                    // comparisons are wrap-safe; datalen is uint16_t, so the
+                    // segment cannot span more than one sequence space.
+                    if (!cur->tcp.client_fin_consumed ||
+                        compare_u32(seq, cur->tcp.client_fin_seq) >= 0 ||
+                        compare_u32(end, cur->tcp.client_fin_seq) > 0) {
+                        log_android(ANDROID_LOG_ERROR,
+                                    "%s data while local closed", session);
+                        write_rst(args, &cur->tcp);
+                        return 0;
+                    }
+                    log_android(ANDROID_LOG_WARN,
+                                "%s duplicate consumed data after local close", session);
+                    datalen = 0;
                 }
                 if (cur->tcp.client_fin_seen) {
                     uint32_t seq = ntohl(tcphdr->seq);

@@ -206,6 +206,67 @@ class WgConnectivityCheckerTest {
         assertEquals(true, c.lastTickSawRx)
     }
 
+    /** A successful write between polls changes total - streak and restarts qualification. */
+    @Test
+    fun hiddenSuccessfulWritesRestartTunFailurePersistence() {
+        val c = newChecker()
+        c.seed(0, stats(0, 0))
+
+        var total = 0L
+        for (second in 1..8) {
+            val streak = 8L
+            total += streak
+            assertEquals(
+                WgVerdict.HEALTHY,
+                c.tick(second * 1000L, stats(second * 100L, second * 10L, true,
+                    total, streak))
+            )
+        }
+        // A second set of bursts has increasing streaks but a successful write
+        // between every poll, so total - streak changes on every sample.
+        for (second in 9..16) {
+            val streak = second.toLong()
+            total += streak
+            assertEquals(
+                WgVerdict.HEALTHY,
+                c.tick(second * 1000L, stats(second * 100L, second * 10L, true,
+                    total, streak))
+            )
+        }
+    }
+
+    /** After a real write reset, a new continuous run needs a fresh five-second window. */
+    @Test
+    fun resumedContinuousTunFailuresNeedFreshPersistenceWindow() {
+        val c = newChecker()
+        c.seed(0, stats(0, 0))
+
+        assertEquals(WgVerdict.HEALTHY, c.tick(1000, stats(100, 10, true, 8, 8)))
+        assertEquals(WgVerdict.HEALTHY, c.tick(2000, stats(100, 10, true, 9, 9)))
+        // A successful write between polls resets the native streak, so the
+        // next burst has a different total - streak identity.
+        assertEquals(WgVerdict.HEALTHY, c.tick(3000, stats(100, 10, true, 17, 8)))
+        assertEquals(WgVerdict.HEALTHY, c.tick(4000, stats(100, 10, true, 18, 9)))
+        assertEquals(WgVerdict.HEALTHY, c.tick(7999, stats(100, 10, true, 22, 13)))
+        assertEquals(WgVerdict.BROKEN, c.tick(8000, stats(100, 10, true, 23, 14)))
+    }
+
+    /** Negative and internally inconsistent native samples cannot qualify a failure run. */
+    @Test
+    fun invalidTunWriteSamplesRequalifyConservatively() {
+        val c = newChecker()
+        c.seed(0, stats(0, 0))
+
+        assertEquals(WgVerdict.HEALTHY, c.tick(1000, stats(100, 10, true, 8, 8)))
+        // Invalid samples must clear an already active qualification window.
+        assertEquals(WgVerdict.HEALTHY, c.tick(2000, stats(100, 10, true, -1, 8)))
+        assertEquals(WgVerdict.HEALTHY, c.tick(3000, stats(100, 10, true, 9, -1)))
+        assertEquals(WgVerdict.HEALTHY, c.tick(4000, stats(100, 10, true, 7, 8)))
+        assertEquals(WgVerdict.HEALTHY, c.tick(5000, stats(100, 10, true, 8, 8)))
+        assertEquals(WgVerdict.HEALTHY, c.tick(9999, stats(100, 10, true, 12, 12)))
+        assertEquals(WgVerdict.BROKEN, c.tick(10_000, stats(100, 10, true, 13, 13)))
+    }
+
     /** Continuous two-way traffic never trips the watchdog. */
     @Test
     fun continuousTrafficStaysHealthy() {
