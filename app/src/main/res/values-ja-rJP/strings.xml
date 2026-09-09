@@ -220,7 +220,7 @@
     <string name="yes">はい</string>
     <string name="no">いいえ</string>
     <string name="menu_csv">CSV形式でエクスポート</string>
-    <string name="exporting">エクスポート中...</string>
+    <string name="exporting">エクスポート中…</string>
     <string name="share_csv">共有</string>
     <string name="export_failed">エクスポートに失敗しました</string>
     <string name="exported">ストレージにエクスポートされました！</string>
@@ -251,7 +251,7 @@
     <string name="google_dpo_mail">data-protection-office@google.com</string>
     <string name="dpas_overview_url">https://edpb.europa.eu/about-edpb/board/members</string>
     <string name="subject_request_data">GDPRサブジェクトアクセスリクエスト</string>
-    <string name="crash_dialog_text">すみません。TrackerControl がクラッシュしてしまいました... 詳細をメールで送っていただけませんか？</string>
+    <string name="crash_dialog_text">すみません。TrackerControl がクラッシュしてしまいました… 詳細をメールで送っていただけませんか？</string>
     <string name="crash_dialog_comment">コメントはありますか？</string>
     <string name="instructions_monitoring_private_dns">スイッチを切り替えて、いくつかのアプリと連動させます。プライベートDNSを無効にする必要があります。</string>
     <string name="instructions_monitoring">スイッチを切り替えて、いくつかのアプリを操作します。</string>

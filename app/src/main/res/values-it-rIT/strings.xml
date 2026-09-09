@@ -46,6 +46,7 @@
     <string name="setting_update">Cerca aggiornamenti</string>
     <plurals name="pause">
         <item quantity="one">Sospendi per %d minuto</item>
+        <item quantity="many">Sospendi per %d minuti</item>
         <item quantity="other">Sospendi per %d minuti</item>
     </plurals>
     <string name="setting_network_options">Opzioni di rete</string>
@@ -212,10 +213,12 @@ Il tuo traffico di rete non è inoltrato verso un server remoto, ma viene monito
     <!-- Dynamic content description for the home-screen widget toggle (accessibility follow-up, issue #636) -->
     <plurals name="n_companies_found_week">
         <item quantity="one">ha contattato %d azienda la settimana scorsa</item>
+        <item quantity="many">ha contattato %d aziende la settimana scorsa</item>
         <item quantity="other">ha contattato %d aziende la settimana scorsa</item>
     </plurals>
     <plurals name="n_companies_found">
         <item quantity="one">ha contattato %d azienda in continuazione</item>
+        <item quantity="many">ha contattato %d aziende in continuazione</item>
         <item quantity="other">ha contattato %d aziende in continuazione</item>
     </plurals>
     <string name="confirm_ipinfo_title">Recupera informazioni sull\'organizzazione?</string>

@@ -104,7 +104,7 @@
     <string name="summary_socks5_enabled">Sadece TCP trafiği vekil sunucuya gönderilecek</string>
     <string name="summary_watchdog">TrackerControl\'ün hala çalışıp çalışmadığını periyodik olarak kontrol edin (bu seçeneği devre dışı bırakmak için sıfır girin). Bu, fazladan pil kullanımına neden olabilir.</string>
     <string name="msg_sure">Emin misiniz?</string>
-    <string name="msg_started">Takipçiler aranıyor...</string>
+    <string name="msg_started">Takipçiler aranıyor…</string>
     <string name="msg_waiting">Eylem bekleniyor</string>
     <string name="msg_disabled">TrackerControl\'ü etkinleştirmek için yukarıdaki anahtarı kullanın.</string>
     <string name="msg_revoked">TrackerControl, muhtemelen başka bir VPN tabanlı uygulama kullanılarak devre dışı bırakıldı</string>

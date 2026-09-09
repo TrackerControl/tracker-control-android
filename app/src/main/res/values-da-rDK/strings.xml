@@ -71,7 +71,7 @@
     <string name="summary_log_app">Deaktiver for at mindske batteriforbrug. Nye trackere blokeres stadig, men vises ikke.</string>
     <string name="summary_track_usage">Spor antallet af sendte og modtagne bytes for hver app og adresse. Dette kan resultere i ekstra batteriforbrug.</string>
     <string name="msg_sure">Er du sikker?</string>
-    <string name="msg_started">Leder efter trackere...</string>
+    <string name="msg_started">Leder efter trackere…</string>
     <string name="msg_disabled">Brug knappen ovenfor for at aktivere TrackerControl.</string>
     <string name="msg_installed">Problemer med %1$s?</string>
     <string name="msg_installed_tracker_libraries_found">Indeholder %d tracker-biblioteker</string>
@@ -99,7 +99,7 @@
     <string name="yes">Ja</string>
     <string name="no">Nej</string>
     <string name="menu_csv">Eksportér som CSV</string>
-    <string name="exporting">Eksporterer...</string>
+    <string name="exporting">Eksporterer…</string>
     <string name="share_csv">Del</string>
     <!-- App Details -->
     <string name="title_activity_detail">Detaljer</string>

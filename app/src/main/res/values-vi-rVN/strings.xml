@@ -156,8 +156,8 @@
     <string name="vpn_choose_country_first">Chọn một quốc gia trước</string>
     <string name="vpn_choose_profile_first">Chọn một hồ sơ WireGuard trước</string>
     <string name="vpn_setup_required">Thiết lập hồ sơ Mullvad hoặc nhập một hồ sơ WireGuard trước</string>
-    <string name="vpn_loading_countries">Đang tải các quốc gia...</string>
-    <string name="vpn_generating">Đang tạo hồ số WireGuard...</string>
+    <string name="vpn_loading_countries">Đang tải các quốc gia…</string>
+    <string name="vpn_generating">Đang tạo hồ số WireGuard…</string>
     <string name="vpn_generation_failed">Thiết lập VPN đã thất bại: %s</string>
     <string name="vpn_retry">Thử lại</string>
     <string name="vpn_country_selected">OK</string>
@@ -321,7 +321,7 @@
     <string name="launch_app">Chạy &amp; tìm trình theo dõi</string>
     <string name="countries">Các quốc gia đích</string>
     <string name="countries_explanation">Tìm ra nơi mà điện thoại của bạn gửi dữ liệu theo dõi đến.\n\nThông tin được dựa trên tra cứu DNS và thông tin IP, và có thể không chính xác.</string>
-    <string name="countries_loading_failed">Ối... Tải bản đồ quốc gia thất bại. Vui lòng nói cho tc@kollnig.net làm thế nào mà việc này xảy ra.</string>
+    <string name="countries_loading_failed">Ối… Tải bản đồ quốc gia thất bại. Vui lòng nói cho tc@kollnig.net làm thế nào mà việc này xảy ra.</string>
     <string name="tracker_advertising">Quảng cáo</string>
     <string name="tracker_analytics">Phân tích</string>
     <string name="tracker_content">Thiết yếu</string>

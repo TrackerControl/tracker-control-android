@@ -120,7 +120,7 @@
     <string name="summary_socks5_enabled">سيتم إرسال حركة مرور TCP فقط إلى خادم الوكيل</string>
     <string name="summary_watchdog">تحقق دوريًا مما إذا كان التحكم في التتبع لا يزال قيد التشغيل (أدخل صفرًا لتعطيل هذا الخيار). قد يؤدي هذا إلى زيادة استهلاك البطارية.</string>
     <string name="msg_sure">هل أنت متأكد؟</string>
-    <string name="msg_started">البحث عن أدوات التتبع...</string>
+    <string name="msg_started">البحث عن أدوات التتبع…</string>
     <string name="msg_waiting">انتظار الحدث</string>
     <string name="msg_disabled">استخدم المفتاح أعلاه لتمكين التحكم في التتبع.</string>
     <string name="msg_revoked">تم تعطيل التحكم في التتبع، على الأرجح باستخدام تطبيق آخر يعتمد على VPN</string>

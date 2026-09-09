@@ -115,7 +115,7 @@
     <string name="summary_socks5_enabled">Vain TCP-liikenne lähetetään välityspalvelimeen</string>
     <string name="summary_watchdog">Tarkista säännöllisesti, onko TrackerControl edelleen käynnissä (kirjoita nolla poistaaksesi tämän vaihtoehdon käytöstä). Tämä voi lisätä akun kulutusta.</string>
     <string name="msg_sure">Oletko varma?</string>
-    <string name="msg_started">Etsitään seuraimia...</string>
+    <string name="msg_started">Etsitään seuraimia…</string>
     <string name="msg_waiting">Odottaa tapahtumaa</string>
     <string name="msg_disabled">Ota yllä olevalla kytkimellä TrackerControl käyttöön.</string>
     <string name="msg_revoked">TrackerControl on poistettu käytöstä, todennäköisesti käyttämällä toista VPN-pohjaista sovellusta</string>

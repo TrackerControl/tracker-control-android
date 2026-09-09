@@ -127,7 +127,7 @@
     <string name="summary_socks5_enabled">Nur TCP-Datenverkehr wird an den Proxyserver gesendet</string>
     <string name="summary_watchdog">In regelmäßigen Abständen überprüfen, ob TrackerControl noch läuft (geben Sie Null ein, um diese Option zu deaktivieren). Kann zu erhöhtem Akkuverbrauch führen.</string>
     <string name="msg_sure">Sind Sie sicher?</string>
-    <string name="msg_started">Suche nach Trackern...</string>
+    <string name="msg_started">Suche nach Trackern…</string>
     <string name="msg_waiting">Auf Ereignis warten</string>
     <string name="msg_disabled">Verwenden Sie den obigen Schalter um TrackerControl zu aktivieren.</string>
     <string name="msg_revoked">TrackerControl wurde deaktiviert, wahrscheinlich durch die Verwendung einer anderen VPN-Anwendung</string>
@@ -247,7 +247,7 @@
     <string name="yes">Ja</string>
     <string name="no">Nein</string>
     <string name="menu_csv">Als CSV-Datei exportieren</string>
-    <string name="exporting">Wird exportiert ...</string>
+    <string name="exporting">Wird exportiert …</string>
     <string name="share_csv">Teilen</string>
     <string name="export_failed">Export fehlgeschlagen</string>
     <string name="exported">In den Speicher exportiert!</string>
@@ -278,7 +278,7 @@
     <string name="google_dpo_mail">data-protection-office@google.com</string>
     <string name="dpas_overview_url">https://edpb.europa.eu/about-edpb/board/members</string>
     <string name="subject_request_data">GDPR Subject Access Request</string>
-    <string name="crash_dialog_text">Entschuldigung. TrackerControl ist abgestürzt ... Wir wären sehr dankbar dafür, wenn Sie uns eine E-Mail mit Details schicken.</string>
+    <string name="crash_dialog_text">Entschuldigung. TrackerControl ist abgestürzt … Wir wären sehr dankbar dafür, wenn Sie uns eine E-Mail mit Details schicken.</string>
     <string name="crash_dialog_comment">Bemerkungen?</string>
     <string name="instructions_monitoring_private_dns">Betätigen Sie den Schalter und nutzen Sie einige Apps. Private DNS muss deaktiviert werden.</string>
     <string name="instructions_monitoring">Betätigen Sie den Schalter und nutzen Sie einige Apps.</string>
@@ -287,7 +287,7 @@
     <string name="launch_app">Starten &amp; Tracker finden</string>
     <string name="countries">Zielländer</string>
     <string name="countries_explanation">Herausfinden, wohin Ihr Telefon Tracking-Daten sendet.\n\nInformationen basieren auf DNS-Abfragen und IP-Informationen und können ungenau sein.</string>
-    <string name="countries_loading_failed">Hoppla ... Die Karte konnte nicht geladen werden. Bitte wenden Sie sich an tc@kollnig.net.</string>
+    <string name="countries_loading_failed">Hoppla … Die Karte konnte nicht geladen werden. Bitte wenden Sie sich an tc@kollnig.net.</string>
     <string name="tracker_advertising">Werbung</string>
     <string name="tracker_analytics">Analyse</string>
     <string name="tracker_content">Notwendig</string>
