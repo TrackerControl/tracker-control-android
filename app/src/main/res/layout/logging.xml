@@ -60,7 +60,7 @@
             android:layout_height="0dp"
             android:layout_alignParentBottom="true"
             android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true" />
+            />
     </RelativeLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

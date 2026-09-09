@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true">
@@ -22,12 +23,14 @@
             android:src="@drawable/ic_rocket2"
             app:tint="?attr/colorAccent" />
 
+        <!-- Preview placeholders are replaced by translated content at bind time. -->
         <TextView
             android:id="@+id/tvTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
             android:text="Title"
+            tools:ignore="HardcodedText"
             android:gravity="start"
             android:textAppearance="@style/TextAppearance.Material3.HeadlineSmall"
             android:textStyle="bold" />
@@ -39,6 +42,7 @@
             android:layout_marginBottom="32dp"
             android:gravity="start"
             android:text="Description"
+            tools:ignore="HardcodedText"
             android:textAppearance="@style/TextAppearance.Material3.BodyLarge" />
 
         <Button
@@ -46,7 +50,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="start"
-            android:text="Action" />
+            android:text="Action"
+            tools:ignore="HardcodedText" />
 
     </LinearLayout>
 </ScrollView>

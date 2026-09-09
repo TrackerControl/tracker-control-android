@@ -1,19 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Layout used to generate a shareable PNG image with privacy insights -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="400dp"
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:background="@color/colorTrackerControl"
-    android:padding="24dp">
+    android:padding="24dp"
+    tools:ignore="Overdraw">
 
-    <!-- Header: TrackerControl branding -->
+    <!-- Header: separate branding views preserve static sizing and tinting. -->
+    <!-- This card paints its own background for the exported PNG. -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center_vertical"
-        android:layout_marginBottom="16dp">
+        android:layout_marginBottom="16dp"
+        tools:ignore="UseCompoundDrawables">
 
         <ImageView
             android:layout_width="32dp"
@@ -64,6 +68,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:baselineAligned="false"
         android:orientation="horizontal"
         android:layout_marginTop="16dp">
 

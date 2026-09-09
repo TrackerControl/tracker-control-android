@@ -292,11 +292,13 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
 
         // Netguard is busy
         ivQueue.setOnLongClickListener(new View.OnLongClickListener() {
+            @SuppressLint("RtlHardcoded")
             @Override
             public boolean onLongClick(View view) {
                 int location[] = new int[2];
                 actionView.getLocationOnScreen(location);
                 Toast toast = Toast.makeText(ActivityMain.this, R.string.msg_queue, Toast.LENGTH_LONG);
+                // These are absolute screen coordinates, so gravity must stay physical-left in RTL.
                 toast.setGravity(
                         Gravity.TOP | Gravity.LEFT,
                         location[0] + ivQueue.getLeft(),
@@ -400,11 +402,13 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         });
         // Network is metered
         ivMetered.setOnLongClickListener(new View.OnLongClickListener() {
+            @SuppressLint("RtlHardcoded")
             @Override
             public boolean onLongClick(View view) {
                 int location[] = new int[2];
                 actionView.getLocationOnScreen(location);
                 Toast toast = Toast.makeText(ActivityMain.this, R.string.msg_metered, Toast.LENGTH_LONG);
+                // These are absolute screen coordinates, so gravity must stay physical-left in RTL.
                 toast.setGravity(
                         Gravity.TOP | Gravity.LEFT,
                         location[0] + ivMetered.getLeft(),
