@@ -184,7 +184,7 @@ class InsightsActivity : AppCompatActivity() {
             tvBlockedCount.text = nf.format(data.blockedTrackingAttempts)
 
             // Companies count
-            tvCompanies.text = data.uniqueTrackerCompanies.toString()
+            tvCompanies.text = nf.format(data.uniqueTrackerCompanies)
             
             // Top 3 Companies (dynamically added) - use pervasiveTrackers for correct app counts
             val top3 = data.pervasiveTrackers.take(3)

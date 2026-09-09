@@ -31,6 +31,8 @@ import android.widget.TextView;
 
 import net.kollnig.missioncontrol.R;
 
+import java.util.Locale;
+
 public class AdapterForwarding extends CursorAdapter {
     private int colProtocol;
     private int colDPort;
@@ -73,9 +75,9 @@ public class AdapterForwarding extends CursorAdapter {
         TextView tvRUid = view.findViewById(R.id.tvRUid);
 
         tvProtocol.setText(Util.getProtocolName(protocol, 0, false));
-        tvDPort.setText(Integer.toString(dport));
+        tvDPort.setText(String.format(Locale.ROOT, "%d", dport));
         tvRAddr.setText(raddr);
-        tvRPort.setText(Integer.toString(rport));
+        tvRPort.setText(String.format(Locale.ROOT, "%d", rport));
         tvRUid.setText(TextUtils.join(", ", Util.getApplicationNames(ruid, context)));
     }
 }

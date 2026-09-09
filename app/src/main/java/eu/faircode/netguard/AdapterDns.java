@@ -34,6 +34,7 @@ import net.kollnig.missioncontrol.R;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 public class AdapterDns extends CursorAdapter {
     private int colorExpired;
@@ -89,10 +90,10 @@ public class AdapterDns extends CursorAdapter {
         TextView tvTTL = view.findViewById(R.id.tvTTL);
 
         // Set values
-        tvTime.setText(new SimpleDateFormat("dd HH:mm").format(time));
+        tvTime.setText(new SimpleDateFormat("dd HH:mm", Locale.getDefault()).format(time));
         tvQName.setText(qname);
         tvAName.setText(aname);
         tvResource.setText(resource);
-        tvTTL.setText("+" + Integer.toString(ttl / 1000));
+        tvTTL.setText(String.format(Locale.ROOT, "+%d", ttl / 1000));
     }
 }

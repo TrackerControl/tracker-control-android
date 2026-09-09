@@ -105,6 +105,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -1208,7 +1209,7 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
         intent.addCategory(Intent.CATEGORY_OPENABLE);
         intent.setType("*/*"); // text/xml
         intent.putExtra(Intent.EXTRA_TITLE,
-                "trackercontrol_" + new SimpleDateFormat("yyyyMMdd").format(new Date().getTime()) + ".xml");
+                "trackercontrol_" + new SimpleDateFormat("yyyyMMdd", Locale.ROOT).format(new Date().getTime()) + ".xml");
         return intent;
     }
 
@@ -1232,7 +1233,7 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
                     Uri target = data.getData();
                     if (data.hasExtra("org.openintents.extra.DIR_PATH"))
                         target = Uri.parse(target + "/trackercontrol_"
-                                + new SimpleDateFormat("yyyyMMdd").format(new Date().getTime()) + ".xml");
+                                + new SimpleDateFormat("yyyyMMdd", Locale.ROOT).format(new Date().getTime()) + ".xml");
                     Log.i(TAG, "Writing URI=" + target);
                     out = getContentResolver().openOutputStream(target);
                     xmlExport(out);

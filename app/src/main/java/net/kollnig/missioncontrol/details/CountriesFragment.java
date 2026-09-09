@@ -54,6 +54,7 @@ import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Locale;
 
 import eu.faircode.netguard.DatabaseHelper;
 
@@ -174,7 +175,7 @@ public class CountriesFragment extends Fragment {
 
             final RenderOptions renderOptions = new RenderOptions();
             String countries = TextUtils.join(",#", hostCountriesCount.keySet());
-            renderOptions.css(String.format("#%s { fill: #B71C1C; }", countries.toUpperCase()));
+            renderOptions.css(String.format(Locale.ROOT, "#%s { fill: #B71C1C; }", countries.toUpperCase(Locale.ROOT)));
 
             if (Thread.currentThread().isInterrupted())
                 return; // the screen was left before rendering started

@@ -45,6 +45,7 @@ import net.kollnig.missioncontrol.R;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
+import java.util.Locale;
 
 public class AdapterAccess extends CursorAdapter {
     private int colVersion;
@@ -120,7 +121,7 @@ public class AdapterAccess extends CursorAdapter {
         TextView tvTraffic = view.findViewById(R.id.tvTraffic);
 
         // Set values
-        tvTime.setText(new SimpleDateFormat("dd HH:mm").format(time));
+        tvTime.setText(new SimpleDateFormat("dd HH:mm", Locale.getDefault()).format(time));
         if (block < 0) {
             ivBlock.setImageDrawable(null);
             ivBlock.setContentDescription(null);
@@ -157,9 +158,9 @@ public class AdapterAccess extends CursorAdapter {
 
                 @Override
                 protected void onPostExecute(String addr) {
-                    tvDest.setText(
-                            Util.getProtocolName(protocol, version, true) +
-                                    " >" + addr + (dport > 0 ? "/" + dport : ""));
+                    String port = dport > 0 ? String.format(Locale.ROOT, "/%d", dport) : "";
+                    tvDest.setText(String.format(Locale.ROOT, "%s >%s%s",
+                            Util.getProtocolName(protocol, version, true), addr, port));
                     ViewCompat.setHasTransientState(tvDest, false);
                 }
             }.execute(daddr);
