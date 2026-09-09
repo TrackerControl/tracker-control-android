@@ -167,6 +167,32 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
     private int privateDnsWarningState = ServiceSinkhole.PRIVATE_DNS_WARNING_NONE;
     private int privateDnsWarningQueryGeneration;
     private Boolean lastLocalNetworkGrant;
+    private boolean autofillUnavailable;
+
+    @Override
+    public Object getSystemService(String name) {
+        if (Context.AUTOFILL_SERVICE.equals(name) && autofillUnavailable)
+            return null;
+
+        try {
+            return super.getSystemService(name);
+        } catch (NullPointerException ex) {
+            StackTraceElement[] stack = ex.getStackTrace();
+            if (Context.AUTOFILL_SERVICE.equals(name)
+                    && "FileDescriptor must not be null".equals(ex.getMessage())
+                    && stack.length > 0
+                    && "android.os.ParcelFileDescriptor".equals(stack[0].getClassName())
+                    && "<init>".equals(stack[0].getMethodName())) {
+                // Android 16 can fail to construct the optional Autofill service when
+                // file-descriptor duplication fails (#931). This keeps startup alive;
+                // it does not repair the underlying descriptor failure.
+                autofillUnavailable = true;
+                Log.w(TAG, "Autofill service unavailable (#931)", ex);
+                return null;
+            }
+            throw ex;
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
