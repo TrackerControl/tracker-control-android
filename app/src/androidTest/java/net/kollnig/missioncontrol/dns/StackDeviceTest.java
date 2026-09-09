@@ -97,9 +97,7 @@ public class StackDeviceTest {
             for (Socket client : clients) client.close();
             for(int i=0;i<5;i++) {
                 proxy.start();
-                Field circuit = DnsProxyServer.class.getDeclaredField("circuitOpenUntil");
-                circuit.setAccessible(true);
-                circuit.setLong(proxy,System.currentTimeMillis()+60000);
+                proxy.getCurrentCircuitState().trip(System.currentTimeMillis());
                 servfail();
                 proxy.stop();
             }

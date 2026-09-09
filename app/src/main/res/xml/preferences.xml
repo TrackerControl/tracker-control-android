@@ -68,6 +68,7 @@
             <EditTextPreference
                 android:defaultValue="https://dns.quad9.net/dns-query"
                 android:dependency="doh_enabled"
+                android:dialogMessage="@string/dialog_doh_endpoint"
                 android:hint="https://dns.quad9.net/dns-query"
                 android:inputType="textUri"
                 android:key="doh_endpoint"

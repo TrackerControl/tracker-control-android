@@ -31,6 +31,7 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -66,14 +67,42 @@ public class DnsProxyServer {
     private static final int REQUEST_WORKERS = 16;
     private static final int REQUEST_QUEUE_CAPACITY = 64;
     private final AtomicInteger overloadDrops = new AtomicInteger(0);
-    private final AtomicInteger dohFailures = new AtomicInteger(0);
     // Trips after this many consecutive failed network attempts (not queries):
     // a single failing resolve burns up to three full timeout budgets, so a
     // broken endpoint must stop being hammered within a few bad queries.
     private static final int CIRCUIT_BREAKER_THRESHOLD = 10;
     private static final long CIRCUIT_BREAKER_COOLDOWN_MS = 60_000;
     private static final int FALLBACK_DNS_TIMEOUT_MS = 5000;
-    private volatile long circuitOpenUntil = 0;
+    private final Object circuitBreakerLock = new Object();
+    private CircuitState circuitState;
+
+    static final class CircuitState {
+        final String endpoint;
+        final AtomicInteger failures = new AtomicInteger(0);
+        volatile long openUntil = 0;
+
+        CircuitState(String endpoint) {
+            this.endpoint = endpoint;
+        }
+
+        boolean isOpen(long now) {
+            return now < openUntil;
+        }
+
+        void recordSuccess() {
+            failures.set(0);
+            openUntil = 0;
+        }
+
+        int recordFailure(int failedAttempts) {
+            return failures.addAndGet(Math.max(1, failedAttempts));
+        }
+
+        void trip(long now) {
+            openUntil = now + CIRCUIT_BREAKER_COOLDOWN_MS;
+            failures.set(0);
+        }
+    }
 
     private DnsProxyServer(Context context) {
         this.context = context.getApplicationContext();
@@ -102,6 +131,11 @@ public class DnsProxyServer {
             Log.d(TAG, "DNS proxy already running");
             return;
         }
+
+        // A stopped proxy gets a fresh circuit so disable/enable recovers from
+        // an earlier endpoint outage. Delayed workers still retain the state
+        // captured by their own request and cannot touch this replacement.
+        resetCircuitState();
 
         // Close any existing sockets first (safety for app restart scenarios)
         if (serverSocket != null && !serverSocket.isClosed()) {
@@ -203,6 +237,38 @@ public class DnsProxyServer {
         DnsOverHttpsClient.resetInstance();
 
         Log.i(TAG, "DNS proxy server stopped");
+    }
+
+    private void resetCircuitState() {
+        synchronized (circuitBreakerLock) {
+            circuitState = null;
+        }
+    }
+
+    /**
+     * Select the circuit state for one request. The preference read must stay
+     * inside this lock: otherwise a delayed worker can install an old endpoint
+     * snapshot after a newer endpoint has already been selected.
+     * Package-private for deterministic state tests.
+     */
+    CircuitState getCurrentCircuitState() {
+        synchronized (circuitBreakerLock) {
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+            String endpoint = prefs.getString("doh_endpoint", BuildConfig.DEFAULT_DOH_ENDPOINT);
+            if (circuitState == null || !Objects.equals(circuitState.endpoint, endpoint))
+                circuitState = new CircuitState(endpoint);
+            return circuitState;
+        }
+    }
+
+    private void reportDohCircuitOpen(CircuitState state, String message) {
+        synchronized (circuitBreakerLock) {
+            if (getCurrentCircuitState() != state
+                    || !eu.faircode.netguard.Util.isInternetWorking(context))
+                return;
+            Log.w(TAG, message);
+            eu.faircode.netguard.ServiceSinkhole.dohError(context);
+        }
     }
 
     /**
@@ -350,17 +416,16 @@ public class DnsProxyServer {
             byte[] responseData = null;
 
             // Circuit breaker: skip DoH if we recently had too many failures
-            boolean circuitOpen = System.currentTimeMillis() < circuitOpenUntil;
+            CircuitState state = getCurrentCircuitState();
+            boolean circuitOpen = state.isOpen(System.currentTimeMillis());
             AtomicInteger queryFailedAttempts = new AtomicInteger(0);
             if (!circuitOpen) {
-                String endpoint = prefs.getString("doh_endpoint", BuildConfig.DEFAULT_DOH_ENDPOINT);
-                DnsOverHttpsClient dohClient = DnsOverHttpsClient.getInstance(context, endpoint);
+                DnsOverHttpsClient dohClient = DnsOverHttpsClient.getInstance(context, state.endpoint);
                 responseData = dohClient.resolve(queryData, queryFailedAttempts::incrementAndGet);
             }
 
             if (responseData != null) {
-                dohFailures.set(0);
-                circuitOpenUntil = 0;
+                state.recordSuccess();
                 DatagramSocket socket = serverSocket;
                 if (socket == null || socket.isClosed()) return;
                 DatagramPacket response = new DatagramPacket(
@@ -373,17 +438,14 @@ public class DnsProxyServer {
                     // three full timeout budgets, and waiting for ten whole
                     // queries before tripping kept ~30s of hung work alive
                     // per query on a dead network.
-                    int failures = dohFailures.addAndGet(Math.max(1, queryFailedAttempts.get()));
+                    int failures = state.recordFailure(queryFailedAttempts.get());
                     Log.w(TAG, "DoH query returned null response after "
                             + queryFailedAttempts.get() + " attempt(s), failures=" + failures);
 
                     if (failures >= CIRCUIT_BREAKER_THRESHOLD) {
-                        circuitOpenUntil = System.currentTimeMillis() + CIRCUIT_BREAKER_COOLDOWN_MS;
-                        dohFailures.set(0);
-                        if (eu.faircode.netguard.Util.isInternetWorking(context)) {
-                            Log.w(TAG, "DoH circuit breaker tripped, skipping DoH for 60s");
-                            eu.faircode.netguard.ServiceSinkhole.dohError(context);
-                        }
+                        state.trip(System.currentTimeMillis());
+                        reportDohCircuitOpen(state,
+                                "DoH circuit breaker tripped, skipping DoH for 60s");
                     }
                 }
 
@@ -528,17 +590,16 @@ public class DnsProxyServer {
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
             byte[] responseData = null;
 
-            boolean circuitOpen = System.currentTimeMillis() < circuitOpenUntil;
+            CircuitState state = getCurrentCircuitState();
+            boolean circuitOpen = state.isOpen(System.currentTimeMillis());
             AtomicInteger queryFailedAttempts = new AtomicInteger(0);
             if (!circuitOpen) {
-                String endpoint = prefs.getString("doh_endpoint", BuildConfig.DEFAULT_DOH_ENDPOINT);
-                DnsOverHttpsClient dohClient = DnsOverHttpsClient.getInstance(context, endpoint);
+                DnsOverHttpsClient dohClient = DnsOverHttpsClient.getInstance(context, state.endpoint);
                 responseData = dohClient.resolve(queryData, queryFailedAttempts::incrementAndGet);
             }
 
             if (responseData != null) {
-                dohFailures.set(0);
-                circuitOpenUntil = 0;
+                state.recordSuccess();
                 out.writeShort(responseData.length);
                 out.write(responseData);
                 out.flush();
@@ -546,14 +607,11 @@ public class DnsProxyServer {
             } else {
                 if (!circuitOpen) {
                     // Same attempt-based accounting as the UDP path above.
-                    int failures = dohFailures.addAndGet(Math.max(1, queryFailedAttempts.get()));
+                    int failures = state.recordFailure(queryFailedAttempts.get());
                     if (failures >= CIRCUIT_BREAKER_THRESHOLD) {
-                        circuitOpenUntil = System.currentTimeMillis() + CIRCUIT_BREAKER_COOLDOWN_MS;
-                        dohFailures.set(0);
-                        if (eu.faircode.netguard.Util.isInternetWorking(context)) {
-                            Log.w(TAG, "DoH circuit breaker tripped (TCP), skipping DoH for 60s");
-                            eu.faircode.netguard.ServiceSinkhole.dohError(context);
-                        }
+                        state.trip(System.currentTimeMillis());
+                        reportDohCircuitOpen(state,
+                                "DoH circuit breaker tripped (TCP), skipping DoH for 60s");
                     }
                 }
 

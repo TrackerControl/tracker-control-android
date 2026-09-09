@@ -95,8 +95,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.InetAddress;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -107,6 +107,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import okhttp3.HttpUrl;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
@@ -342,6 +344,7 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
         // DoH endpoint
         EditTextPreference pref_doh_endpoint = (EditTextPreference) screen.findPreference("doh_endpoint");
         if (pref_doh_endpoint != null) {
+            configureDohEndpointPreference(pref_doh_endpoint);
             pref_doh_endpoint.setSummary(prefs.getString("doh_endpoint", BuildConfig.DEFAULT_DOH_ENDPOINT));
         }
 
@@ -797,22 +800,9 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
             ServiceSinkhole.reload("changed " + name, this, false);
 
         } else if ("doh_endpoint".equals(name)) {
-            String endpoint = prefs.getString(name, BuildConfig.DEFAULT_DOH_ENDPOINT);
-            try {
-                // Validate URL format
-                if (!TextUtils.isEmpty(endpoint)) {
-                    new URL(endpoint);
-                    if (!endpoint.startsWith("https://")) {
-                        throw new MalformedURLException("DoH endpoint must use HTTPS");
-                    }
-                }
-            } catch (MalformedURLException ex) {
-                prefs.edit().remove(name).apply();
-                ((EditTextPreference) getPreferenceScreen().findPreference(name)).setText(null);
-                Toast.makeText(ActivitySettings.this, "Invalid DoH URL: " + ex.getMessage(), Toast.LENGTH_LONG).show();
-            }
-            getPreferenceScreen().findPreference(name).setSummary(
-                    prefs.getString(name, BuildConfig.DEFAULT_DOH_ENDPOINT));
+            Preference dohEndpoint = getPreferenceScreen().findPreference(name);
+            if (dohEndpoint != null)
+                dohEndpoint.setSummary(prefs.getString(name, BuildConfig.DEFAULT_DOH_ENDPOINT));
             // Reset DoH client to pick up new endpoint
             net.kollnig.missioncontrol.dns.DnsOverHttpsClient.resetInstance();
             ServiceSinkhole.reload("changed " + name, this, false);
@@ -988,6 +978,58 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
             requestedLocalNetwork = true;
             requestPermissions(new String[] { LocalNetworkAccess.PERMISSION }, REQUEST_LOCAL_NETWORK);
         }
+    }
+
+    static void configureDohEndpointPreference(EditTextPreference preference) {
+        preference.setOnPreferenceChangeListener((changedPreference, newValue) -> {
+            if (!(newValue instanceof String)) {
+                Toast.makeText(changedPreference.getContext(), R.string.msg_invalid_doh_endpoint,
+                        Toast.LENGTH_LONG).show();
+                return false;
+            }
+
+            String endpoint = ((String) newValue).trim();
+            if (!isValidDohEndpoint(endpoint)) {
+                Toast.makeText(changedPreference.getContext(), R.string.msg_invalid_doh_endpoint,
+                        Toast.LENGTH_LONG).show();
+                return false;
+            }
+
+            if (!endpoint.equals(newValue)) {
+                ((EditTextPreference) changedPreference).setText(endpoint);
+                return false;
+            }
+            return true;
+        });
+    }
+
+    private static boolean isValidDohEndpoint(String endpoint) {
+        if (TextUtils.isEmpty(endpoint) || containsWhitespace(endpoint))
+            return false;
+
+        try {
+            URI uri = new URI(endpoint);
+            if (!"https".equalsIgnoreCase(uri.getScheme()) || uri.isOpaque()
+                    || TextUtils.isEmpty(uri.getRawAuthority())
+                    || uri.getRawUserInfo() != null || uri.getRawFragment() != null
+                    || uri.getRawAuthority().indexOf('@') >= 0)
+                return false;
+
+            HttpUrl httpUrl = HttpUrl.parse(endpoint);
+            return httpUrl != null && httpUrl.isHttps() && !TextUtils.isEmpty(httpUrl.host())
+                    && !uri.getRawAuthority().endsWith(":");
+        } catch (URISyntaxException ex) {
+            return false;
+        }
+    }
+
+    private static boolean containsWhitespace(String value) {
+        for (int i = 0; i < value.length(); i++) {
+            char character = value.charAt(i);
+            if (Character.isWhitespace(character) || Character.isSpaceChar(character))
+                return true;
+        }
+        return false;
     }
 
     private CharSequence getWireGuardStatusSummary(SharedPreferences prefs) {
