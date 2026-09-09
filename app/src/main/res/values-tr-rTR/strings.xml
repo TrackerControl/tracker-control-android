@@ -40,26 +40,17 @@
     <string name="menu_export">Dışarı aktar</string>
     <string name="menu_reset">Sıfırla</string>
     <string name="menu_cleanup">Temizle</string>
-    <string name="setting_dark">Karanlık tema</string>
-    <string name="setting_install">Yeni uygulamaları bildir</string>
     <string name="setting_pause">%1$s dakika sonra otomatik etkinleştir</string>
     <string name="setting_update">Güncellemeleri denetle</string>
     <plurals name="pause">
         <item quantity="one">%d dakika duraklat</item>
         <item quantity="other">%d dakika duraklat</item>
     </plurals>
-    <string name="setting_network_options">Ağ seçenekleri</string>
-    <string name="setting_subnet">Alt ağ yönlendirmesi</string>
-    <string name="setting_tethering">İnternet paylaşımına izin ver</string>
-    <string name="setting_lan">Yerel ağ erişimine izin ver</string>
     <string name="setting_ip6">IPv6 trafiğini etkinleştir</string>
     <string name="setting_call">Çağrı sırasında devre dışı bırak</string>
     <string name="setting_reload_onconnectivity">Her bağlantı değişikliğinde tekrar yüklensin</string>
     <string name="setting_log_app">Yeni izleyiciler ara</string>
-    <string name="setting_filter">İzleyicileri engelle</string>
     <string name="setting_handover">Yeniden yüklemede kesintisiz VPN devredilmesi</string>
-    <string name="setting_lockdown">Trafiği durdur</string>
-    <string name="setting_track_usage">Veri kullanımını ölç</string>
     <string name="setting_reset_usage">Veri kullanımını sıfırla</string>
     <string name="setting_show_resolved">Çözümlenmiş alan adlarını göster</string>
     <string name="setting_block_domains">Hosts dosyasını etkinleştir</string>
@@ -83,21 +74,12 @@
     <string name="setting_stats_samples">Yenileme geçmişi: %s s</string>
     <string name="setting_backup">Yedekle</string>
     <string name="setting_import">Ayarları içe aktar</string>
-    <string name="setting_hosts">Hosts dosyasını içe aktar</string>
-    <string name="setting_hosts_append">Hosts dosyasını içe aktar (ek)</string>
-    <string name="setting_hosts_url">Hosts dosya URL\'si</string>
-    <string name="setting_hosts_download">Hosts dosyasını indir</string>
     <string name="setting_hosts_update">Hosts dosyasını güncelleştir</string>
-    <string name="summary_install">Yeni yüklenen uygulamalar için durum çubuğu bildirimini göster</string>
     <string name="summary_pause">Bildirimi duraklattıktan sonra, seçilen dakika sayısından sonra TrackerControl\'ü otomatik olarak yeniden etkinleştirin (bu seçeneği devre dışı bırakmak için 0 girin).</string>
     <string name="summary_update">Yeni sürümler için GitHub üzerinden günde iki defa kontrol et</string>
-    <string name="summary_tethering">Android sürümüne bağlı olarak, internet paylaşımı çalışabilir ya da çalışmayabilir. Paylaşılan internet trafiği filtrelenemez.</string>
-    <string name="summary_subnet">Alt ağ yönlendirmesini etkinleştir; Wi-Fi aramasını etkinleştirebilir, fakat Android\'de hatalara sebep olup pil kullanımını arttırabilir</string>
-    <string name="summary_lan">Uygulamaların 10.0.0.0/8, 172.16.0.0/12 ve 192.168.0.0/16 gibi yerel ağ adreslerine bağlanmasına izin ver</string>
     <string name="summary_ip6">IP sürüm 6 trafiğini, seçici olarak izin verilebilmesi veya engellenebilmesi için TrackerControl\'e yönlendirin</string>
     <string name="summary_call">Telefon aramalarında TrackerControl devre dışı bırakılsın. IP/Kablosuz üzerinden arama sorunlarını çözmek için kullanılabilir.</string>
     <string name="summary_log_app">Pil kullanımını azaltmak için devre dışı bırakın. Yeni izleyiciler yine engellenecek, ancak gösterilmeyecek.</string>
-    <string name="summary_track_usage">Her uygulama ve adres tarafından gönderilip alınan veri miktarını izleyin. Bu pil kullanımını arttırabilir.</string>
     <string name="summary_block_domains">UYARI: Engellenen ana bilgisayarlar kullanıcı arayüzünde gösterilmez.</string>
     <string name="summary_rcode">Varsayılan değer, \'var olmayan etki alanı\' anlamına gelen 3\'tür (NXDOMAIN).</string>
     <string name="summary_validate">443 (https) bağlantı noktasındaki internet bağlantısını doğrulamak için kullanılan alan adı.</string>
@@ -111,7 +93,6 @@
     <string name="msg_installed">%1$s ile ilgili sorun mu yaşıyorsunuz?</string>
     <string name="msg_installed_description">Uygulamanın şirketlerle iletişim kurmasına izin verin</string>
     <string name="msg_installed_tracker_libraries_found">%d izleyici kitaplığı içeriyor</string>
-    <string name="msg_installed_n">Yüklendi</string>
     <string name="msg_completed">Eylem tamamlandı</string>
     <string name="msg_vpn">TrackerControl, internet trafiğini filtrelemek için yerel bir VPN kullanır.
 Bu nedenle, lütfen bir sonraki iletişim kutusunda bir VPN bağlantısına izin verin.
@@ -120,26 +101,14 @@ Bu nedenle, lütfen bir sonraki iletişim kutusunda bir VPN bağlantısına izin
     <string name="msg_error">Beklenmedik bir hata oluştu: \'%s\'</string>
     <string name="msg_start_failed">Android şu anda VPN hizmetini başlatmayı reddetti. Bunun nedeni muhtemelen Android sürümünüzdeki bir hatadır.</string>
     <string name="msg_try">TrackerControl\'ü deneyin</string>
-    <string name="msg_datasaving">Tutarlı sonuçlar için, TrackerControl için Android veri kaydetme seçenekleri devre dışı bırakılmalıdır.
-\n\nBir sonraki iletişim kutusunda, \"Arka plan verileri\" ve \"Sınırsız veri kullanımı\" seçeneklerini etkinleştirin</string>
-    <string name="msg_filter">Filtrelemenin kullanılması, Android\'in verileri ve güç kullanımını TrackerControl ile ilişkilendirmesine neden olur - Android, verilerin ve gücün orijinal uygulamalar yerine TrackerControl tarafından kullanıldığını varsayar</string>
-    <string name="msg_filter4">Android 4 filtrelemenin etkinleştirilmesini gerektirir</string>
     <string name="msg_log_disabled">Trafik günlüğü devre dışı bırakıldı, yukarıdan etkinleştirebilirsiniz. Trafik günlüğünü etkinleştirmek pil kullanımını arttırabilir.</string>
-    <string name="msg_clear_rules">Bu kural ve koşulları varsayılan değerlerine sıfırlar</string>
-    <string name="msg_reset_access">Bu eylem, kuralı olmayan internet erişim kayıtlarını siler</string>
-    <string name="msg_import_last">Son içe aktarma: %s</string>
-    <string name="msg_downloaded">Hosts dosyası indirildi</string>
-    <string name="msg_updated">Hosts dosyası güncellendi ve uygulandı!</string>
-    <string name="msg_download_last">Son indirme: %s</string>
     <string name="msg_update_last">Son güncelleme: %s</string>
     <string name="msg_metered">Mevcut ağ kotalı</string>
     <string name="msg_inactive">İnternet bağlantısı yok</string>
     <string name="msg_queue">TrackerControl meşgul</string>
     <string name="msg_update">Güncelleme mevcut, indirmek için dokunun</string>
-    <string name="msg_usage">Uygulamanın yanındaki simgelere dokunarak kablosuz veya mobil veri erişimine izin verip (yeşil) engelleyebilirsiniz (kırmızı)</string>
     <string name="msg_push">Gelen (anlık) iletiler genellikle internet erişimi varsayılan olarak verilen Play hizmetleri tarafından yönetilir</string>
     <string name="msg_system">Tüm uygulamaların (sistem) yönetimi ayarlardan etkinleştirilebilir</string>
-    <string name="msg_issue">Lütfen sorunu açıklayın ve sorunun zamanını belirtin:</string>
     <string name="msg_vpn_cancelled">VPN bağlantısı iptal edildi\nFarklı bir VPN\'i daima açık olarak ayarlamış olabilir misiniz?</string>
     <string name="msg_unavailable">Bu özellik, bu Android sürümünde mevcut değil</string>
     <string name="msg_always_on">Farklı bir VPN daima açık olarak ayarlanmış</string>
@@ -170,38 +139,10 @@ Bu nedenle, lütfen bir sonraki iletişim kutusunda bir VPN bağlantısına izin
     <string name="title_interactive_allowed">Ekran açıkken izin veriliyor</string>
     <string name="title_roaming_blocked">Dolaşımdayken engelle</string>
     <string name="title_metered">Kablosuz ağlar kotasız, mobil bağlantılar kotalı olarak sayılır</string>
-    <string name="title_internet">internete erişilemiyor</string>
-    <string name="title_disabled">devre dışı</string>
-    <string name="title_messaging">İletiler bu uygulama tarafından değil, Google Play hizmetleri tarafından alınmakta bundan dolayı bu uygulamayı engellemek işe yaramaz</string>
-    <string name="title_download">İndirmeler bu uygulama tarafından değil, indirme yöneticisi tarafından yapılmakta bundan dolayı bu uygulamayı engellemek işe yaramaz</string>
-    <string name="title_conditions">Koşullar</string>
-    <string name="title_screen_wifi">Ekran açıkken kablosuza izin ver</string>
-    <string name="title_screen_other">Ekran açıkken mobil veriye izin ver</string>
-    <string name="title_roaming">Dolaşımdayken engelle</string>
-    <string name="title_lockdown">Trafik durdurulduğunda izin verilsin</string>
-    <string name="title_related">İlgilileri filtrele</string>
-    <string name="title_access">Erişim denemeleri</string>
-    <string name="title_precedence">Erişim kuralları diğer kurallara göre önceliklidir</string>
-    <string name="title_options">Ayarlar</string>
-    <string name="title_notify">İnternet erişim denemelerini bildir</string>
-    <string name="title_logging_disabled">Günlüğe kaydetme veya filtreleme etkin değil</string>
-    <string name="title_logging_enabled">Günlüğe kaydetme ve filtreleme etkin</string>
-    <string name="title_logging_configure">Yapılandır</string>
-    <string name="title_enable_logging">Engellenen adresler kaydedilsin</string>
-    <string name="title_enable_filtering">İzin verilen adresler kaydedilsin</string>
-    <string name="title_enable_notify">Yeni kaydedilen adresler bildirilsin</string>
-    <string name="title_enable_help0">Bu ayarlar tüm uygulamalar için uygulanan genel ayarlardır</string>
-    <string tools:ignore="Typos" name="title_enable_help1">Adresleri ayrı ayrı yönetmek için filtreleme gereklidir</string>
-    <string name="title_enable_help2">Günlük (az) veya filtreleme (fazla) pil kullanımını arttırabilir ve ağ hızını etkileyebilir</string>
     <string name="title_rate">Değerlendirme</string>
     <string name="title_allow">İzin ver</string>
     <string name="title_block">Engelle</string>
-    <string name="title_allow_wifi">Kablosuza izin ver</string>
-    <string name="title_block_wifi">Kablosuz engellensin</string>
-    <string name="title_allow_other">Mobil veriye izin ver</string>
-    <string name="title_block_other">Mobil veri engellensin</string>
     <string name="title_nobody">hiçkimse</string>
-    <string name="title_dontask">Bir daha sorma</string>
     <string name="title_log_whois">Whois %1$s</string>
     <string name="title_log_port">Bağlantı noktası %1$d</string>
     <string name="title_log_copy">Kopyala</string>
@@ -228,14 +169,12 @@ Bu nedenle, lütfen bir sonraki iletişim kutusunda bir VPN bağlantısına izin
     <string name="no">Hayır</string>
     <string name="menu_csv">CSV olarak dışa aktar</string>
     <string name="exporting">Dışa aktarılıyor..</string>
-    <string name="share_csv">Paylaş</string>
     <string name="export_failed">Dışa aktarım başarısız oldu</string>
     <string name="exported">Depolama birimine aktarıldı!</string>
     <!-- App Details -->
     <string name="title_activity_detail">Detaylar</string>
     <string name="tab_trackers">İzleyiciler</string>
     <string name="tab_countries">Ülkeler</string>
-    <string name="tracker_name">İzleyici Adı</string>
     <string name="app_info">Uygulama Yönet</string>
     <!-- Actions -->
     <string name="block_tracking">İzleyicileri engelle</string>
@@ -248,7 +187,6 @@ Bu nedenle, lütfen bir sonraki iletişim kutusunda bir VPN bağlantısına izin
     <string name="contacts_description">Bir uygulamanın veri koruma ilkelerini ihlal ettiğini düşünüyorsanız, sorumlu kuruluşlarla doğrudan iletişime geçmek isteyebilirsiniz.</string>
     <string name="play_services_required">Bu, cihazınızda bulunmayan Google Play Hizmetlerinin bir ayarıdır.</string>
     <string name="no_mail_service">Lütfen bir e-posta istemcisi kurun.</string>
-    <string name="blocking_settings">İzleyicileri seç</string>
     <string name="ad_settings">Şimdi değiştir</string>
     <string name="request_data">Veri talep et</string>
     <string name="request_deletion">Silme iste</string>
@@ -310,15 +248,11 @@ Saygılarımla,\n\n]]></string>
     <string name="tracker_social">Sosyal Medya</string>
     <string name="tracker_email">E-Posta</string>
     <string name="tracker_uncategorised">Kategorize edilmemiş</string>
-    <string name="setting_strict_blocking">Sıkı Engelleme</string>
-    <string name="summary_strict_blocking">Yeni yüklenen uygulamalar için, şirketlerle mümkün olduğunca fazla veri paylaşımını engelleyin. Daha fazla uygulama bozulacak.</string>
-    <string name="strict_blocking_explanation">Uygulama kesintilerini azaltmak için uzman olmayan kişilerin bu seçeneği devre dışı bırakmaları önerilir. Ancak bu, şirketlerle bazı önemli paylaşımlara izin verir.</string>
     <!-- Per-app remote VPN routing -->
     <string name="setting_wg_route_mode">Uzak VPN üzerinden yönlendir</string>
     <string name="summary_wg_route_mode">Hangi uygulamaların uzak VPN üzerinden iletileceği. İletilmeyenler yine tümüyle izlenir ve filtrelenir — yalnızca bu cihazın kendi ağından bağlanırlar.</string>
     <string name="wg_route_mode_all">Tüm uygulamalar</string>
     <string name="wg_route_mode_selected">Yalnızca seçili uygulamalar</string>
-    <string name="app_route_heading">Uzak VPN</string>
     <string name="app_route_through">Uzak VPN üzerinden</string>
     <string name="app_route_through_explanation">Bu uygulama, trafiğini ağınız yerine gören uzak VPN\'iniz üzerinden bağlanır.</string>
     <string name="app_route_direct">Doğrudan bu cihazdan</string>
@@ -349,19 +283,14 @@ Saygılarımla,\n\n]]></string>
     <string name="forever_free">Ömür Boyu Ücretsiz</string>
     <string name="your_privacy">Kişisel Gizliliğiniz</string>
     <string name="tracker_hostlist">Kullanıcı Tanımlı Hosts</string>
-    <string name="unblocked">Engel kaldırıldı</string>
-    <string name="enable">Etkinleştir</string>
     <string name="internet_blocked">İnternet erişimi engellendi</string>
     <string name="internet_unblocked">İnternet erişimi engellenmedi</string>
-    <string name="category_blocked">Kategorideki izleyiciler engellendi</string>
     <string name="category_unblocked">Kategorideki izleyicilere izin verildi</string>
-    <string name="switch_strict_blocking">Temel veri paylaşımını engelleyin</string>
     <string name="tracking_detection_failed">İzleyici kitaplığı algılama başarısız oldu.</string>
     <string name="tracking_detection_failed_ram">İzleyici kitaplığı algılama başarısız oldu. Yeterli RAM yok.</string>
     <string name="tracking_detection_failed_report">İzleyici kitaplığı algılama başarısız oldu. Lütfen bu sorunu geliştiriciye bildirin.</string>
     <string name="detected_trackers">Algılanan izleyici kitaplıkları: %s</string>
     <string name="none">Hiç</string>
-    <string name="trackers_static">İzleyici kitaplıkları</string>
     <string name="trackers_static_explanation">TrackerControl, koddaki (\'kütüphaneler\') izlemeyi ve uygulamaların ağ trafiğini algılar.\n\nAğ trafiğinde tespit edilen izleme TrackerControl ile engellenebilir.</string>
     <string name="trackers_static_explanation_playstore">İzciKontrolü, koddaki (\'kütüphaneler\') izlemeyi ve uygulamaların ağ trafiğini algılar.</string>
     <!-- Tracker library screen, reached from the summary row on the Trackers tab -->
@@ -369,10 +298,7 @@ Saygılarımla,\n\n]]></string>
     <string name="allowed">İZİN VERİLDİ</string>
     <string name="setting_domain_based_blocked">Domain\'e Dayalı Engelleme</string>
     <string name="summary_domain_based_blocking">Daha ayrıntılı engellemeye izin verir. Hala geliştirme aşamasında.</string>
-    <string name="untap_unblock">İpucu: Tek tek girişlere dokunarak engellemeyi kaldırabilirsiniz.</string>
     <string name="uncertain_entry">Android\'in sınırlamaları nedeniyle, \'*\' ile işaretlenmiş girdiler yanlış olabilir.  Genellikle aynı şirket farklı domain altında aynı IP adresini kullandığında yaşanır, bu farklı şirketlerin aynı IP adresinin arkasında olduğu anlamınada gelebilir. (ör. eğer bir içerik dağıtım ağı kullanıyorlarsa(CDN))</string>
-    <string name="static_analysis">Uygulama kodundaki izleyicileri algıla</string>
-    <string name="failed_loading_cached_analysis">Önbelleğe alınmış izleyici sonuçları yüklenemedi. Lütfen bunu hello@trackercontrol.org adresinden geliştiriciye bildirin</string>
     <string name="msg_notifications">Bildirim izinleri vermek için dokunun (hata mesajları vb. için)</string>
     <!-- Onboarding -->
     <!-- Insights Screen -->
@@ -385,9 +311,6 @@ Saygılarımla,\n\n]]></string>
     <string name="menu_app_frozen">Dondurulmuş uygulamaları göster</string>
     <string name="menu_sort_by_latest_detected_tracker">Son algılanan izleyiciye göre sırala</string>
     <string name="menu_troubleshooting">Sorun giderme</string>
-    <string name="menu_timeline">İzleyici etkinliği</string>
-    <string name="title_tracker_activity">İzleyici Etkinliği</string>
-    <string name="timeline_empty">Yakın zamanda izleyici etkinliği yok.\n\nHangi uygulamaların sizi izlediğini görmek için TrackerControl’ü etkinleştirin.</string>
     <string name="timeline_empty_disabled_title">TrackerControl kapalı</string>
     <string name="timeline_empty_disabled_subtitle">Sağ üstteki anahtarı kullanarak TrackerControl’ü etkinleştirin. Uygulamalarınızdaki izleyici etkinliği daha sonra burada görünür.</string>
     <string name="timeline_empty_enabled_title">İzleyiciler aranıyor…</string>
@@ -463,14 +386,12 @@ Saygılarımla,\n\n]]></string>
     <string name="setting_tcp_mss_clamp">İnternet paylaşımı uyumluluk modu</string>
     <string name="summary_tcp_mss_clamp">İnternet paylaşımında duran veya internete erişemeyen bağlantıları düzeltmek için tüm trafiği TrackerControl üzerinden yönlendirin ve TCP segment boyutunu sınırlayın. Yerel ağ erişimi artık TrackerControl’ü atlamaz ve performans düşebilir.</string>
     <string name="setting_advanced_options">Gelişmiş seçenekler (uzmanlar için)</string>
-    <string name="setting_system">Sistem uygulamalarını göster</string>
     <string name="setting_log_logcat">Araştırma</string>
     <string name="setting_exclude_all_tracking">Tüm uygulamaları izleme dışında tut</string>
     <string tools:ignore="Typos" name="summary_exclude_all_tracking">Tüm uygulamalar için izleyici izlemeyi devre dışı bırakın. Daha sonra tek tek uygulamalar için yeniden etkinleştirebilirsiniz.</string>
     <string name="setting_include_all_tracking">Tüm uygulamaları izlemeye dahil et</string>
     <string name="summary_include_all_tracking">Tüm uygulamalar için izleyici izlemeyi yeniden etkinleştirin.</string>
     <string name="setting_wg_enabled">Trafiği WireGuard üzerinden tünelle</string>
-    <string name="setting_wg_config">WireGuard yapılandırması</string>
     <string name="setting_wg_profile">WireGuard profili</string>
     <string name="setting_wg_profile_manage">Özel WireGuard profilleri</string>
     <string name="setting_wg_profile_import">WireGuard yapılandırmasını içe aktar</string>
@@ -498,7 +419,6 @@ Saygılarımla,\n\n]]></string>
     <string name="setting_export">Ayarları dışa aktar</string>
     <string name="setting_hosts_auto_update">Hosts dosyasını otomatik güncelle</string>
     <string name="summary_hosts_auto_update">Hosts dosyasını arka planda otomatik olarak güncelle</string>
-    <string name="summary_system">Sistem uygulamalarını uygulama listesinde göster</string>
     <string name="summary_wg_enabled">Cihaz IP’sini gizler. TCP ve UDP çıkış trafiğini tüneller. Kesintiler sırasında uygulamalarda ağ hataları görülür — güvenli kapanır, doğrudan bağlantıya geri dönmez. Tünel boşta olduğunda (pil tasarrufu için canlı tutma devre dışıdır) sunucu tarafından telefona başlatılan bağlantılar çalışmayabilir.</string>
     <string name="summary_wg_config">Sağlayıcınızdan bir [Interface] / [Peer] yapılandırması yapıştırın</string>
     <string name="summary_wg_profile">Kayıtlı bir WireGuard yapılandırması seçin</string>
@@ -518,7 +438,6 @@ Saygılarımla,\n\n]]></string>
     <string name="msg_wg_profile_default_name">Varsayılan</string>
     <string name="msg_wg_profile_saved">WireGuard profili kaydedildi</string>
     <string name="msg_wg_profile_deleted">WireGuard profili silindi</string>
-    <string name="msg_wg_profile_no_config">Profil kaydetmeden önce bir WireGuard yapılandırması yapıştırın</string>
     <string name="msg_wg_profile_empty">Henüz profil yok</string>
     <string name="msg_wg_profile_active">Etkin</string>
     <string name="msg_wg_profile_set_active">Etkin olarak ayarla</string>
@@ -547,13 +466,9 @@ Saygılarımla,\n\n]]></string>
     <string name="msg_wg_mullvad_countries_failed">Mullvad ülkeleri yüklenemedi: %s</string>
     <string name="msg_wg_proton_note">Proton’un belgelenmiş üçüncü taraf kurulumu indirilebilir WireGuard yapılandırmaları kullanır. TrackerControl Proton kimlik bilgilerinize ihtiyaç duymaz ve yapılandırmayı otomatik olarak yenileyemez.\n\naccount.protonvpn.com adresinde oturum açın, Downloads → WireGuard configuration bölümüne gidin, bir yapılandırma indirin, metin düzenleyicide açın, ardından içeriğini buraya kopyalayıp yapıştırın.</string>
     <string name="msg_wg_proton_open_dashboard">Proton VPN kontrol panelini aç</string>
-    <string name="vpn_status_connected">%s</string>
-    <string name="vpn_status_mullvad_connected">Mullvad - %s</string>
     <string name="vpn_status_mullvad">Mullvad</string>
     <string name="vpn_status_relay">Aktarma: %s</string>
-    <string name="vpn_status_mullvad_summary">Aktarma: %s</string>
     <string name="vpn_status_wireguard_connected">WireGuard bağlı</string>
-    <string name="vpn_status_wireguard_summary">%1$s - %2$s</string>
     <string name="vpn_status_disconnected">Bağlı değil</string>
     <string name="vpn_provider_mullvad">Mullvad VPN</string>
     <string name="vpn_provider_ivpn">IVPN</string>
@@ -581,7 +496,6 @@ Saygılarımla,\n\n]]></string>
     <string name="vpn_account_show">Göster</string>
     <string name="vpn_account_hide">Gizle</string>
     <string name="vpn_account_change">Değiştir</string>
-    <string name="vpn_account_done">Bitti</string>
     <string name="vpn_account_cancel">İptal</string>
     <string name="vpn_mullvad_intro">Mullvad hesap numaranızı girin. Bu cihazda kaydedilir.</string>
     <string name="vpn_mullvad_account_note">Bu hesap Mullvad ülke bağlantıları için kullanılır.</string>
@@ -621,12 +535,9 @@ Saygılarımla,\n\n]]></string>
     <string name="msg_native_fd_error">VPN’in dosya tanımlayıcıları tükendi. Kullanılmayan uygulamaları kapatın veya cihazınızı yeniden başlatın, ardından korumayı yeniden başlatın.</string>
     <string name="msg_vpn_replacement_recovery_exhausted">TrackerControl VPN’i yeniden kuramadı. Trafik engelleniyor.</string>
     <string tools:ignore="Typos" name="msg_doh_unreachable">Etkin bir internet bağlantınız olmasına rağmen Güvenli DNS’e (DoH) ulaşılamıyor. Bu tekrar tekrar olursa Ağ ayarlarından devre dışı bırakmayı düşünün.</string>
-    <string name="msg_doze">Tutarlı sonuçlar için Android pil optimizasyonları TrackerControl için devre dışı bırakılmalıdır.\n\nBir sonraki iletişim kutusunda üstten “Tüm uygulamalar”ı seçin, listedeki TrackerControl’e dokunun ve “Optimize etme”yi seçip onaylayın.</string>
     <string name="msg_clear_activity">Bu, bu uygulama için kaydedilen etkinliği kaldırır. Uygulamanın izleyici başına engelleme/izin verme ayarları korunur.</string>
-    <string name="msg_downloading">İndiriliyor…</string>
     <string name="title_version">Sürüm %1$d</string>
     <string name="msg_always_on_lockdown">TrackerControl’ü kullanmak için Android VPN ayarlarında “VPN olmadan bağlantıları engelle”yi kapatın</string>
-    <string name="msg_private_dns">Android ağ ayarlarında “Özel DNS”i kapatın. TrackerControl kendi Güvenli DNS özelliğini Ayarlar’da sunar.</string>
     <string name="toggle_block_internet_description">%1$s için internet erişimini engelle</string>
     <string name="toggle_allow_internet_description">%1$s için internet erişimine izin ver</string>
     <string name="toggle_no_internet_description">%1$s internet erişimine sahip değil</string>
@@ -642,10 +553,6 @@ Saygılarımla,\n\n]]></string>
     <string name="countries_map_highlighted">Vurgulanan izleme hedefleri: %1$s</string>
     <string name="countries_map_none">Hiçbir izleme hedefi vurgulanmadı.</string>
     <string name="tracker_consent">Onay yönetimi</string>
-    <string name="setting_block_ambiguous_trackers">Belirsiz izleyicileri engelle</string>
-    <string name="summary_block_ambiguous_trackers">Bir IP adresinde hem izleyici hem de izleyici olmayan ana bilgisayar kanıtı olsa bile engelleyin. Uygulama bozulmasını azaltmak için bunu devre dışı bırakın.</string>
-    <string name="setting_sni_enabled">SNI çıkarımı (araştırma)</string>
-    <string name="summary_sni_enabled">Daha doğru izleyici algılama için TLS bağlantılarından ana bilgisayar adlarını çıkarın. Uyarı: bu, IP adresinizi izleyici sunucularına (veya uzaktan yönlendirme etkinse VPN sağlayıcısının IP adresine) sızdırır. Yalnızca araştırma için etkinleştirin.</string>
     <string name="setting_blocking_mode">Engelleme Modu</string>
     <string name="summary_blocking_mode_minimal">Minimal: Yalnızca engellenmesi güvenli olan DuckDuckGo listesindeki izleyicileri engeller. Tarayıcılar VPN üzerinden yönlendirilmeye devam eder, ancak izleyici koruması varsayılan olarak kapalıdır. Bilinen uyumsuz uygulamalar hariç tutulur. Uygulama bozulması sınırlıdır.</string>
     <string name="summary_blocking_mode_standard">Standart: Birden fazla listedeki (X-Ray, Disconnect, DuckDuckGo) bilinen tüm izleyicileri engeller. Gerekli hizmetlere izin verilir. Bir uygulama çalışmayı durdurursa Koruma ayarını değiştirin (uygulama menüsündeki Sorun giderme bölümüne bakın).</string>
@@ -688,9 +595,7 @@ Saygılarımla,\n\n]]></string>
     <string name="protection_temporary">Geçici, duraklatılırken</string>
     <string name="bypass_vpn_error">“Uygulama TrackerControl’ü atlarken internet engellenemez.”</string>
     <string tools:ignore="Typos" name="category_unblocked_warning">Bu kategoriyle izin verildi — tek tek şirketleri değiştirmek için kategoriyi engelleyin.</string>
-    <string name="analyzing_classes">Sınıflar analiz ediliyor…</string>
     <string name="analyzing_classes_progress">Sınıflar analiz ediliyor… %d%%</string>
-    <string name="analysis_already_running">Analiz zaten devam ediyor</string>
     <string name="trackers_static_disclaimer">Not: İzleyici kitaplığı kodunun algılanması, aktif olarak kullanıldığı anlamına gelmez. Bazı uygulamalar bu kitaplıkları kaldırmış veya devre dışı bırakmış olabilir, ancak izleri hâlâ algılanabilir.</string>
     <string name="analyze_tracker_libraries">İzleyici kitaplıklarını analiz et</string>
     <string name="update_analysis">Analizi güncelle</string>
@@ -727,7 +632,6 @@ Saygılarımla,\n\n]]></string>
     <string name="setting_monitor_system">Sistem uygulamalarını izle</string>
     <string name="summary_monitor_system">Sistem uygulamalarını (Play Hizmetleri, operatör hizmetleri vb.) izleyicilerinin algılanıp engellenmesi için VPN üzerinden yönlendirin ve uygulama listesinde gösterin.\n\nVarsayılan olarak kapalıdır: Sistem uygulamalarını hariç tutmak pil için daha uygundur, çünkü arka plan trafiği artık VPN’i uyandırmaz. Bunu açmak, Android VPN ayarlarındaki “VPN olmadan bağlantıları engelle” seçeneğiyle çakışır; bu seçenek DEVRE DIŞI bırakılmalıdır.</string>
     <string name="title_next">İleri</string>
-    <string name="title_skip">Atla</string>
     <string name="title_previous">Önceki</string>
     <string name="title_finish">Başlayın</string>
     <string name="onboarding_welcome_title">Gizliliğinizin Kontrolünü Elinize Alın</string>
@@ -739,39 +643,18 @@ Saygılarımla,\n\n]]></string>
     <string name="onboarding_vpn_blocked_title">Başka bir VPN etkin</string>
     <string name="onboarding_vpn_blocked_desc">Android, başka bir uygulama <b>Her zaman açık VPN</b> olarak ayarlandığı için TrackerControl’ün yerel VPN’ini başlatmasını engelledi. VPN ayarlarını açın, diğer VPN için Her zaman açık seçeneğini devre dışı bırakın ve yeniden deneyin.</string>
     <string name="onboarding_vpn_blocked_action">VPN ayarlarını aç</string>
-    <string name="onboarding_battery_title">Kesintiyi Önleyin</string>
-    <string name="onboarding_battery_desc">Android pil tasarrufu için arka plan uygulamalarını sonlandırabilir. İzleyicilere karşı kesintisiz koruma sağlamak için TrackerControl’ün optimizasyonlarını devre dışı bırakın.</string>
-    <string name="onboarding_battery_action">Optimizasyonu Devre Dışı Bırak</string>
-    <string name="onboarding_battery_sure">Pil optimizasyonlarını devre dışı bırakmazsanız TrackerControl Android tarafından her an durdurulabilir. Devam etmek istediğinizden emin misiniz?</string>
     <string name="onboarding_notify_title">Bilgi Edinin</string>
     <string name="onboarding_notify_desc">Gerçek zamanlı güncellemeleri görmek ve korumayı doğrudan durum çubuğundan denetlemek için bildirimlere izin verin.</string>
     <string name="onboarding_notify_action">Bildirimlere İzin Ver</string>
     <string name="onboarding_notify_sure">Bildirim izinleri olmadan gerçek zamanlı güncellemeleri göremez veya korumayı durum çubuğundan denetleyemezsiniz. Emin misiniz?</string>
     <string name="onboarding_timeline_title">Zaman Akışının Dolmasını İzleyin</string>
     <string name="onboarding_timeline_desc">TrackerControl Zaman Akışı’nda başlar. Başlangıçta boş olabilir: Uygulamalar genellikle izleyicilerle yalnızca onları kullandığınız sırada iletişim kurar.\n\nKurulumu tamamladıktan sonra birkaç uygulama açın, ardından algılanan ve engellenen izleme etkinliğini görmek için TrackerControl’e dönün.</string>
-    <string name="onboarding_network_title">Sınırsız Ağ</string>
-    <string name="onboarding_network_desc">Veri tasarrufu seçenekleri TrackerControl’ün arka planda düzgün çalışmasını engelleyebilir. En güvenilir koruma için sınırsız erişim izni verin.</string>
-    <string name="onboarding_network_action">Sınırsız Erişime İzin Ver</string>
-    <string name="onboarding_network_sure">Kısıtlı arka plan verileri TrackerControl’ün başarısız olmasına neden olabilir. Sınırsız erişim izni vermeden devam etmek istediğinizden emin misiniz?</string>
     <string name="onboarding_lockdown_title">VPN Kilitleme Ayarı</string>
     <string name="onboarding_lockdown_desc">Android’de uygulamaların TrackerControl hazır olmadan bağlanmasını önleyen “VPN olmadan bağlantıları engelle” adlı bir ayar vardır.\n\nEtkinleştirilirse uygulamaların yüklenememesine neden olabilir. En iyi deneyim için bu ayarı <b>devre dışı</b> tutmanızı öneririz.</string>
     <string name="onboarding_lockdown_action">VPN Ayarlarını Aç</string>
     <string name="onboarding_lockdown_sure">Kilitleme etkin olarak devam etmek bağlantı sorunlarına neden olabilir. Emin misiniz?</string>
-    <string name="onboarding_dns_title">Güvenli DNS (Beta özelliği; beklenildiği gibi çalışmayabilir)</string>
-    <string name="onboarding_dns_desc">DNS trafiğinizi DNS-over-HTTPS (DoH) kullanarak şifreleyerek internet servis sağlayıcınızdan gizliliğinizi koruyun.\n\nBu, “DNS ele geçirmesini” önler ve gezinme alışkanlıklarınızı ağ sağlayıcınızdan gizli tutar.</string>
-    <string name="onboarding_dns_action">Güvenli DNS’i Etkinleştir</string>
-    <string name="onboarding_dns_action_disable">Güvenli DNS’i Devre Dışı Bırak</string>
-    <string name="onboarding_blocking_title">İzleyicileri Engelleyin</string>
-    <string name="onboarding_blocking_desc">Uygulamalarınızdaki yaygın izlemeyi ortaya çıkarın ve engelleyin.\n\n• <b>Engelleme listeleri</b>: Firefox Disconnect’i <b>2.000.000 uygulamaya</b> ilişkin benzersiz analizimizle birleştirir.\n• <b>GDPR</b>: <b>Tek tıklamayla veri silme talepleri</b> ile haklarınızı kullanın.\n• <b>Şeffaflık</b>: Verilerinizi hangi şirketlerin ve ülkelerin topladığını tam olarak ortaya çıkarın.</string>
-    <string name="onboarding_blocking_action">Engellemeyi Etkinleştir</string>
-    <string name="onboarding_blocking_action_disable">Engellemeyi Devre Dışı Bırak</string>
-    <string name="onboarding_blocking_sure">İzleyici engelleme TrackerControl’ün temel bir özelliğidir. Bunu devre dışı bırakmak istediğinizden emin misiniz?</string>
-    <string name="onboarding_action_enabled">Etkin</string>
     <string name="onboarding_action_disabled">Devre dışı</string>
     <string name="onboarding_action_granted">İzin verildi</string>
-    <string name="onboarding_action_optimized">Optimize edildi</string>
-    <string name="onboarding_action_unrestricted">Sınırsız</string>
-    <string name="menu_insights">İçgörüler</string>
     <string name="insights_title">Gizlilik İçgörüleriniz</string>
     <string name="insights_subtitle_7days">Son 7 gün</string>
     <string name="insights_tracking_attempts">İletişim kurulan izleyici ana bilgisayarları</string>
@@ -779,8 +662,6 @@ Saygılarımla,\n\n]]></string>
     <string name="insights_allowed">İzin verildi</string>
     <string name="insights_tracker_companies">İzleme şirketleri</string>
     <string name="insights_apps_with_trackers">İzleyici içeren uygulamalar</string>
-    <string name="insights_top_tracking_apps">En fazla izleme yapan uygulamalar</string>
-    <string name="insights_top_companies">En etkin izleme şirketleri</string>
     <string name="insights_pervasive_trackers">En yaygın izleyiciler</string>
     <string name="insights_top_domains">En önemli izleyici alan adları</string>
     <string name="insights_domain_alias_separator">" veya "</string>
@@ -791,15 +672,11 @@ Saygılarımla,\n\n]]></string>
     </plurals>
     <string name="insights_no_data">Henüz izleme verisi yok. Uygulamalarınızı kullanın ve tekrar kontrol edin!</string>
     <string name="insights_shocking_fact">Uygulamalarınız bu hafta %2$d izleyici ana bilgisayarı üzerinden %1$d izleme şirketiyle iletişim kurdu!</string>
-    <string name="insights_shocking_fact_playstore">Uygulamalarınız bu hafta %1$d izleme şirketiyle iletişim kurdu!</string>
     <string name="insights_share">Arkadaşlarınızla Paylaşın</string>
     <string name="insights_share_trackers_blocked">Engellenen İzleyici Ana Bilgisayarları</string>
-    <string name="insights_share_trackers_detected">Algılanan İzleyici Ana Bilgisayarları</string>
     <string name="insights_share_url">TrackerControl.org</string>
     <string name="insights_share_message">Bu hafta TrackerControl kullanarak %2$d şirketin %1$d izleyici ana bilgisayarını engelledim! Gizliliğinizi geri alın: https://trackercontrol.org</string>
-    <string name="insights_share_message_playstore">Bu hafta TrackerControl kullanarak %2$d şirketin %1$d izleyici ana bilgisayarını algıladım! Gizliliğinizi geri alın: https://trackercontrol.org</string>
     <string name="insights_see_more">Daha Fazla Gör →</string>
-    <string name="insights_view_timeline">Son izleyici etkinliğini görüntüle</string>
     <string name="title_blocklists">Ek ana bilgisayar dosyaları</string>
     <string name="summary_manage_blocklists">Bunlar yalnızca geri dönüş içindir. TrackerControl, izlemenin arkasındaki şirketler hakkında içgörü sağlayan kendi ana bilgisayar listelerini içerir.</string>
     <string name="title_add_blocklist">Ana bilgisayar dosyası ekle</string>
@@ -817,5 +694,4 @@ Saygılarımla,\n\n]]></string>
     <string name="log_connection_wifi">Wi-Fi</string>
     <string name="log_connection_other">Diğer ağ</string>
     <string name="log_screen_on">Ekran açık</string>
-    <string name="log_app_icon">Uygulama simgesi</string>
 </resources>

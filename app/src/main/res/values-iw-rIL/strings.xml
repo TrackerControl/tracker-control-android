@@ -40,8 +40,6 @@
     <string name="menu_export">ייצא</string>
     <string name="menu_reset">אפס</string>
     <string name="menu_cleanup">לנקות</string>
-    <string name="setting_dark">ערכת נושא כהה</string>
-    <string name="setting_install">הודע על התקנה חדשה</string>
     <string name="setting_pause">הפעלה אוטומטית לאחר %1$s דקות</string>
     <string name="setting_update">בדוק עדכונים</string>
     <plurals name="pause">
@@ -49,18 +47,11 @@
         <item quantity="two">השהה למשך %d דקות</item>
         <item quantity="other">השהה למשך %d דקות</item>
     </plurals>
-    <string name="setting_network_options">אפשרויות רשת</string>
-    <string name="setting_subnet">ניתוב רשת משנה</string>
-    <string name="setting_tethering">אפשר קשירה</string>
-    <string name="setting_lan">אפשר גישה לרשת LAN</string>
     <string name="setting_ip6">אפשר תעבורת IPv6</string>
     <string name="setting_call">השבת במהלך שיחה</string>
     <string name="setting_reload_onconnectivity">טען מחדש בכל שינוי קישוריות</string>
     <string name="setting_log_app">חפש עוקבים חדשים</string>
-    <string name="setting_filter">חסימת עוקבים</string>
     <string name="setting_handover">העברה חלקה של ה-VPN בטעינה מחדש</string>
-    <string name="setting_lockdown">נעילת תעבורה</string>
-    <string name="setting_track_usage">עקוב אחר השימוש ברשת</string>
     <string name="setting_reset_usage">אפס את מונה השימוש ברשת</string>
     <string name="setting_show_resolved">הצג שמות דומיין שנפתרו</string>
     <string name="setting_block_domains">אפשר קובץ מארחים</string>
@@ -84,21 +75,12 @@
     <string name="setting_stats_samples">מספר דגימות: %s s</string>
     <string name="setting_backup">גיבוי</string>
     <string name="setting_import">ייבוא הגדרות</string>
-    <string name="setting_hosts">ייבוא קובץ מארחים</string>
-    <string name="setting_hosts_append">יבא קובץ מארחים (הוספה)</string>
-    <string name="setting_hosts_url">כתובת אתר של קובץ מארח</string>
-    <string name="setting_hosts_download">הורד קובץ מארחים</string>
     <string name="setting_hosts_update">עדכן את קובץ המארחים</string>
-    <string name="summary_install">הצג הודעת שורת מצב עבור אפליקציות שהותקנו לאחרונה</string>
     <string name="summary_pause">לאחר הפסקה מההתראה, הפעל שוב את TrackerControl באופן אוטומטי לאחר מספר הדקות שנבחר (הזן 0 כדי להשבית אפשרות זו).</string>
     <string name="summary_update">בדוק אם יש מהדורות חדשות ב-GitHub פעמיים ביום</string>
-    <string name="summary_tethering">בהתאם לגרסת האנדרואיד, שיתוף אינטרנט בין ניידים עשוי לעבוד או לא. לא ניתן לסנן תעבורה קשורה.</string>
-    <string name="summary_subnet">אפשר ניתוב רשת משנה; עשוי לאפשר שיחות Wi-Fi, אך עשוי גם להפעיל באגים באנדרואיד ולהגביר את השימוש בסוללה</string>
-    <string name="summary_lan">אפשר ליישומים להתחבר לכתובות רשת מקומית, כגון 10.0.0.0/8, 172.16.0.0/12 ו- 192.168.0.0/16</string>
     <string name="summary_ip6">נתב תעבורת IP גרסת 6 אל TrackerControl כך שניתן יהיה לאפשר או לחסום אותה באופן סלקטיבי</string>
     <string name="summary_call">השבת את TrackerControl בשיחת טלפון נכנסת או יוצאת. זה יכול לשמש כדי לעקוף בעיות שיחות IP/Wi-Fi.</string>
     <string name="summary_log_app">השבת כדי להפחית את השימוש בסוללה. עוקבים חדשים עדיין ייחסמו, אך לא יוצגו.</string>
-    <string name="summary_track_usage">עקוב אחר מספר הבתים שנשלחו והתקבלו עבור כל אפליקציה וכתובת. זה עלול לגרום לשימוש נוסף בסוללה.</string>
     <string name="summary_block_domains">אזהרה: מארחים חסומים אינם מוצגים בממשק המשתמש.</string>
     <string name="summary_rcode">ערך ברירת המחדל הוא 3 (NXDOMAIN), שפירושו \'דומיין לא קיים\'.</string>
     <string name="summary_validate">שם הדומיין המשמש לאימות חיבור האינטרנט ביציאה 443 (https).</string>
@@ -111,7 +93,6 @@
     <string name="msg_installed">יש בעיות עם %1$s?</string>
     <string name="msg_installed_description">אפשר לאפליקציה ליצור קשר עם חברות</string>
     <string name="msg_installed_tracker_libraries_found">מכיל %d ספריות מעקב</string>
-    <string name="msg_installed_n">הותקן</string>
     <string name="msg_completed">הפעולה הושלמה</string>
     <string name="msg_vpn">TrackerControl משתמש ב-VPN מקומי כדי לסנן תעבורת אינטרנט.
 מסיבה זו, אנא אפשר חיבור VPN בתיבת הדו-שיח הבאה.
@@ -120,26 +101,14 @@
     <string name="msg_error">אירעה שגיאה בלתי צפויה: \'%s\'</string>
     <string name="msg_start_failed">אנדרואיד סירבה להפעיל את שירות ה-VPN ברגע זה. זה כנראה בגלל באג בגרסת האנדרואיד שלך.</string>
     <string name="msg_try">נסה את TrackerControl</string>
-    <string name="msg_datasaving">לקבלת תוצאות עקביות, יש להשבית את אפשרויות שמירת הנתונים של אנדרואיד עבור TrackerControl
-\n\nבתיבת הדו-שיח הבאה, הפעל את האפשרויות \"נתוני רקע\" ו\"שימוש בלתי מוגבל בנתונים\"</string>
-    <string name="msg_filter">שימוש בסינון יגרום ל-אנדרואיד לייחס נתונים וצריכת חשמל ל-TrackerControl - אנדרואיד מניח שהנתונים והכוח נמצאים בשימוש על-ידי TrackerControl, ולא האפליקציות המקוריות</string>
-    <string name="msg_filter4">אנדרואיד 4 דורש סינון כדי להיות מופעל</string>
     <string name="msg_log_disabled">רישום תנועה מושבת, השתמש במתג למעלה כדי לאפשר רישום. רישום תנועה עלול לגרום לשימוש נוסף בסוללה.</string>
-    <string name="msg_clear_rules">זה יאפס את הכללים והתנאים לערכי ברירת המחדל שלהם</string>
-    <string name="msg_reset_access">פעולה זו תמחק שורות יומן נסיונות גישה ללא חוקי אישור/חסימה</string>
-    <string name="msg_import_last">הייבוא האחרון: %s</string>
-    <string name="msg_downloaded">הורדת קובץ מארחים</string>
-    <string name="msg_updated">קובץ המארחים עודכן והוחל!</string>
-    <string name="msg_download_last">הורדה אחרונה: %s</string>
     <string name="msg_update_last">עדכון אחרון: %s</string>
     <string name="msg_metered">הרשת נמדדת</string>
     <string name="msg_inactive">אין חיבור אינטרנט פעיל</string>
     <string name="msg_queue">TrackerControl תפוס</string>
     <string name="msg_update">היי יש עדכון זמין, הקש כדי להוריד</string>
-    <string name="msg_usage">אתה יכול לאפשר (ירקרק) או לדחות (אדמדם) גישה לאינטרנט אלחוטי או סלולרי על ידי הקשה על הסמלים שליד אפליקציה</string>
     <string name="msg_push">הודעות נכנסות (דחיפה) מטופלות לרוב על ידי רכיב המערכת Play Services, המותרת גישה לאינטרנט כברירת מחדל</string>
     <string name="msg_system">ניתן להפעיל את כל האפליקציות (מערכת) בהגדרות</string>
-    <string name="msg_issue">נא לתאר את הבעיה ולציין את זמן הבעיה:</string>
     <string name="msg_vpn_cancelled">חיבור VPN בוטל\nהאם הגדרת VPN אחר להיות VPN תמידי?</string>
     <string name="msg_unavailable">תכונה זו אינה זמינה בגרסת אנדרואיד זו</string>
     <string name="msg_always_on">VPN אחר מוגדר כ-VPN תמידי</string>
@@ -170,38 +139,10 @@
     <string name="title_interactive_allowed">אפשר כשהמסך פועל</string>
     <string name="title_roaming_blocked">חסום בעת נדידה</string>
     <string name="title_metered">כברירת מחדל, חיבור Wi-Fi נחשב ללא מדידה וחיבור נייד למדוד</string>
-    <string name="title_internet">לא יכול לגשת לאינטרנט</string>
-    <string name="title_disabled">מושבת</string>
-    <string name="title_messaging">הודעות נכנסות מתקבלות על ידי שירותי Google Play ולא על ידי אפליקציה זו ולכן לא ניתן לחסום אותן על ידי חסימת אפליקציה זו</string>
-    <string name="title_download">ההורדות מתבצעות על ידי מנהל ההורדות ולא על ידי אפליקציה זו ולכן לא ניתן לחסום אותן על ידי חסימת אפליקציה זו</string>
-    <string name="title_conditions">תנאים</string>
-    <string name="title_screen_wifi">אפשר Wi-Fi כשהמסך פועל</string>
-    <string name="title_screen_other">אפשר לנייד כשהמסך פועל</string>
-    <string name="title_roaming">חסום בעת נדידה</string>
-    <string name="title_lockdown">אפשר במצב נעילה</string>
-    <string name="title_related">סנן דומים</string>
-    <string name="title_access">נסיונות גישה</string>
-    <string name="title_precedence">כללי הגישה מקבלים עדיפות על פני כללים אחרים</string>
-    <string name="title_options">אפשרויות</string>
-    <string name="title_notify">הודעה על ניסיונות גישה לאינטרנט</string>
-    <string name="title_logging_disabled">רישום או סינון אינם מופעלים</string>
-    <string name="title_logging_enabled">רישום וסינון מופעלים</string>
-    <string name="title_logging_configure">הגדר</string>
-    <string name="title_enable_logging">אפשר רישום של כתובות חסומות בלבד</string>
-    <string name="title_enable_filtering">אפשר סינון גם כדי לרשום כתובות מותרות</string>
-    <string name="title_enable_notify">אפשר הודעות גישה עבור כתובות שנרשמו לאחרונה</string>
-    <string name="title_enable_help0">הגדרות אלה הן הגדרות כלליות החלות על כל היישומים</string>
-    <string name="title_enable_help1">נדרש סינון גם על מנת לאפשר או לחסום כתובות בודדות</string>
-    <string name="title_enable_help2">הפעלת תיעוד (מופחת) או סינון (מוגבר) עלול להשפיע על צריכת סוללה, ועשוי גם להשפיע על מהירות הרשת</string>
     <string name="title_rate">דרג</string>
     <string name="title_allow">אפשר</string>
     <string name="title_block">חסום</string>
-    <string name="title_allow_wifi">אפשר Wi-Fi</string>
-    <string name="title_block_wifi">חסום Wi-Fi</string>
-    <string name="title_allow_other">אפשר נייד</string>
-    <string name="title_block_other">חסום נייד</string>
     <string name="title_nobody">אף אחד</string>
-    <string name="title_dontask">אל תשאל שוב</string>
     <string name="title_log_whois">מי זה %1$s</string>
     <string name="title_log_port">פורט %1$d</string>
     <string name="title_log_copy">העתק</string>
@@ -230,14 +171,12 @@
     <string name="no">לא</string>
     <string name="menu_csv">יצא בתור CSV</string>
     <string name="exporting">מייצא..</string>
-    <string name="share_csv">שתף</string>
     <string name="export_failed">ייצוא נכשל</string>
     <string name="exported">ייצא לאמצעי אחסון!</string>
     <!-- App Details -->
     <string name="title_activity_detail">פרטים</string>
     <string name="tab_trackers">טראקרים</string>
     <string name="tab_countries">מדינות</string>
-    <string name="tracker_name">שם עוקב</string>
     <string name="app_info">ניהול אפליקציה</string>
     <!-- Actions -->
     <string name="block_tracking">חסימת עוקבים</string>
@@ -250,7 +189,6 @@
     <string name="contacts_description">אם אתה חושב שאפליקציה מפרה את עקרונות הגנת המידע, ייתכן שתרצה לפנות ישירות לגורמים האחראים.</string>
     <string name="play_services_required">זוהי הגדרה של שירותי Google Play, שלא נמצאו במכשיר שלך.</string>
     <string name="no_mail_service">נא להתקין לקוח דוא\"ל.</string>
-    <string name="blocking_settings">בחר עוקבים</string>
     <string name="ad_settings">שנה עכשיו</string>
     <string name="request_data">בקש נתונים</string>
     <string name="request_deletion">בקש מחיקה</string>
@@ -290,15 +228,11 @@
     <string name="tracker_social">חברתי</string>
     <string name="tracker_email">אימייל</string>
     <string name="tracker_uncategorised">לא מסווג</string>
-    <string name="setting_strict_blocking">חסימה קפדנית</string>
-    <string name="summary_strict_blocking">עבור אפליקציות שהותקנו לאחרונה, חסום כמה שיותר שיתוף נתונים עם חברות. אפליקציות נוספות יישברו.</string>
-    <string name="strict_blocking_explanation">מומלץ למי שאינם מומחים להשבית אפשרות זו כדי להפחית את שבירת האפליקציה. עם זאת, זה מאפשר שיתוף חיוני עם חברות.</string>
     <!-- Per-app remote VPN routing -->
     <string name="setting_wg_route_mode">ניתוב דרך VPN מרוחק</string>
     <string name="summary_wg_route_mode">אילו אפליקציות מועברות דרך ה-VPN המרוחק. אלה שלא, ממשיכות להיות מנוטרות ומסוננות במלואן — הן פשוט מתחברות מהרשת של המכשיר הזה.</string>
     <string name="wg_route_mode_all">כל האפליקציות</string>
     <string name="wg_route_mode_selected">רק אפליקציות נבחרות</string>
-    <string name="app_route_heading">VPN מרוחק</string>
     <string name="app_route_through">דרך ה-VPN המרוחק</string>
     <string name="app_route_through_explanation">אפליקציה זו מתחברת דרך ה-VPN המרוחק שלך, שרואה את התעבורה שלה במקום הרשת שלך.</string>
     <string name="app_route_direct">ישירות מהמכשיר הזה</string>
@@ -329,19 +263,14 @@
     <string name="forever_free">לעולם חופשי</string>
     <string name="your_privacy">הפרטיות שלך</string>
     <string name="tracker_hostlist">מארחים בהגדרת משתמש</string>
-    <string name="unblocked">בוטלה החסימה</string>
-    <string name="enable">אפשר</string>
     <string name="internet_blocked">הגישה לאינטרנט מוגבלת</string>
     <string name="internet_unblocked">בוטלה חסימת הגישה לאינטרנט</string>
-    <string name="category_blocked">עוקבים בקטגוריה חסומים</string>
     <string name="category_unblocked">עוקבים בקטגוריה מותרים</string>
-    <string name="switch_strict_blocking">חסום שיתוף נתונים חיוני</string>
     <string name="tracking_detection_failed">זיהוי ספריית המעקב נכשל.</string>
     <string name="tracking_detection_failed_ram">זיהוי ספריית המעקב נכשל. אין מספיק זיכרון RAM.</string>
     <string name="tracking_detection_failed_report">זיהוי ספריית המעקב נכשל. אנא דווח על בעיה זו למפתח.</string>
     <string name="detected_trackers">ספריות מעקב שזוהו: %s</string>
     <string name="none">ללא</string>
-    <string name="trackers_static">ספריות גשש</string>
     <string name="trackers_static_explanation">TrackerControl מזהה מעקב בקוד (\'ספריות\') ותעבורת רשת של אפליקציות.\n\nניתן לחסום מעקב שמתגלה בתעבורת הרשת באמצעות TrackerControl.</string>
     <string name="trackers_static_explanation_playstore">TrackerControl מזהה מעקב בקוד (\'ספריות\') ותעבורת רשת של אפליקציות.</string>
     <!-- Tracker library screen, reached from the summary row on the Trackers tab -->
@@ -349,10 +278,7 @@
     <string name="allowed">מאופשר</string>
     <string name="setting_domain_based_blocked">חסימה מבוססת דומיין</string>
     <string name="summary_domain_based_blocking">מאפשר חסימה ממוקדת יותר. עדיין בפיתוח.</string>
-    <string name="untap_unblock">טיפ: אתה יכול לבטל חסימה של ערכים בודדים על ידי הקשה עליהם.</string>
     <string name="uncertain_entry">ערכים המסומנים ב-\'*\' עשויים להיות לא מדויקים, עקב המגבלות של אנדרואיד. זה בדרך כלל אומר שאותה חברה משתמשת באותה כתובת IP תחת דומיינים שונים, אבל יכול גם להיות שחברות שונות עומדות מאחורי אותה כתובת IP (למשל אם הן משתמשות ברשת להעברת תוכן).</string>
-    <string name="static_analysis">זיהוי עוקבים בקוד האפליקציה</string>
-    <string name="failed_loading_cached_analysis">טעינת תוצאות המעקב בקובץ השמור נכשלה. אנא דווח על כך למפתח בכתובת hello@trackercontrol.org</string>
     <!-- Onboarding -->
     <!-- Insights Screen -->
     <!-- Joins the alternative domain names of one tracker, e.g. "example.com or example.net". Keep the surrounding spaces. -->
@@ -364,9 +290,6 @@
     <string name="menu_app_frozen">הצג אפליקציות קפואות</string>
     <string name="menu_sort_by_latest_detected_tracker">מיין לפי העוקב האחרון שזוהה</string>
     <string name="menu_troubleshooting">פתרון בעיות</string>
-    <string name="menu_timeline">פעילות עוקבים</string>
-    <string name="title_tracker_activity">פעילות עוקבים</string>
-    <string name="timeline_empty">אין פעילות עוקבים אחרונה.\n\nהפעל את TrackerControl כדי לראות אילו אפליקציות עוקבות אחריך.</string>
     <string name="timeline_empty_disabled_title">TrackerControl כבויה</string>
     <string name="timeline_empty_disabled_subtitle">הפעל את TrackerControl באמצעות המתג בפינה השמאלית העליונה. פעילות העוקבים מהאפליקציות שלך תופיע כאן.</string>
     <string name="timeline_empty_enabled_title">מחפש עוקבים…</string>
@@ -445,14 +368,12 @@
     <string name="setting_tcp_mss_clamp">מצב תאימות לשיתוף אינטרנט</string>
     <string name="summary_tcp_mss_clamp">נתב את כל התעבורה דרך TrackerControl והגבל את גודל מקטעי TCP כדי לתקן חיבורים משותפים שנתקעים או אינם מקבלים גישה לאינטרנט. הגישה לרשת המקומית אינה עוקפת עוד את TrackerControl, והביצועים עלולים להיפגע.</string>
     <string name="setting_advanced_options">אפשרויות מתקדמות (למומחים)</string>
-    <string name="setting_system">הצג אפליקציות מערכת</string>
     <string name="setting_log_logcat">מחקר</string>
     <string name="setting_exclude_all_tracking">אל תכלול אף אפליקציה במעקב</string>
     <string name="summary_exclude_all_tracking">השבת ניטור עוקבים לכל האפליקציות. לאחר מכן אפשר להפעיל אותו מחדש עבור אפליקציות בודדות.</string>
     <string name="setting_include_all_tracking">כלול את כל האפליקציות במעקב</string>
     <string name="summary_include_all_tracking">הפעל מחדש ניטור עוקבים לכל האפליקציות.</string>
     <string name="setting_wg_enabled">נתב תעבורה דרך WireGuard</string>
-    <string name="setting_wg_config">תצורת WireGuard</string>
     <string name="setting_wg_profile">פרופיל WireGuard</string>
     <string name="setting_wg_profile_manage">פרופילי WireGuard מותאמים אישית</string>
     <string name="setting_wg_profile_import">ייבוא תצורת WireGuard</string>
@@ -480,7 +401,6 @@
     <string name="setting_export">ייצוא הגדרות</string>
     <string name="setting_hosts_auto_update">עדכון אוטומטי של מארחים</string>
     <string name="summary_hosts_auto_update">עדכן את קובץ המארחים אוטומטית ברקע</string>
-    <string name="summary_system">הצג אפליקציות מערכת ברשימת האפליקציות</string>
     <string name="summary_wg_enabled">מסתיר את כתובת ה-IP של המכשיר. מנתב תעבורת TCP ו-UDP יוצאת דרך מנהרה. בזמן השבתה האפליקציות יראו שגיאות רשת — כשל סגור, ללא מעבר לתעבורה ישירה. חיבורים שיזמו שרתים אל הטלפון עלולים לא לפעול כשהמנהרה אינה פעילה (שמירת חיבור מושבתת כדי לחסוך בסוללה).</string>
     <string name="summary_wg_config">הדבק תצורת [Interface] / [Peer] מהספק שלך</string>
     <string name="summary_wg_profile">בחר תצורת WireGuard שמורה</string>
@@ -500,7 +420,6 @@
     <string name="msg_wg_profile_default_name">ברירת מחדל</string>
     <string name="msg_wg_profile_saved">פרופיל WireGuard נשמר</string>
     <string name="msg_wg_profile_deleted">פרופיל WireGuard נמחק</string>
-    <string name="msg_wg_profile_no_config">הדבק תצורת WireGuard לפני שמירת פרופיל</string>
     <string name="msg_wg_profile_empty">עדיין אין פרופילים</string>
     <string name="msg_wg_profile_active">פעיל</string>
     <string name="msg_wg_profile_set_active">הגדר כפעיל</string>
@@ -531,13 +450,9 @@
     <string name="msg_wg_mullvad_countries_failed">לא ניתן לטעון את מדינות Mullvad: %s</string>
     <string name="msg_wg_proton_note">ההגדרה המתועדת של Proton לצד שלישי משתמשת בתצורות WireGuard להורדה. TrackerControl אינה זקוקה לאישורי Proton שלך ואינה יכולה לרענן את התצורה אוטומטית.\n\nהיכנס ל-account.protonvpn.com, עבור אל Downloads → WireGuard configuration, הורד תצורה, פתח אותה בעורך טקסט ולאחר מכן העתק והדבק כאן את התוכן.</string>
     <string name="msg_wg_proton_open_dashboard">פתח את לוח הבקרה של Proton VPN</string>
-    <string name="vpn_status_connected">%s</string>
-    <string name="vpn_status_mullvad_connected">Mullvad - %s</string>
     <string name="vpn_status_mullvad">Mullvad</string>
     <string name="vpn_status_relay">ממסר: %s</string>
-    <string name="vpn_status_mullvad_summary">ממסר: %s</string>
     <string name="vpn_status_wireguard_connected">WireGuard מחובר</string>
-    <string name="vpn_status_wireguard_summary">%1$s - %2$s</string>
     <string name="vpn_status_disconnected">לא מחובר</string>
     <string name="vpn_provider_mullvad">Mullvad VPN</string>
     <string name="vpn_provider_ivpn">IVPN</string>
@@ -565,7 +480,6 @@
     <string name="vpn_account_show">הצג</string>
     <string name="vpn_account_hide">הסתר</string>
     <string name="vpn_account_change">שנה</string>
-    <string name="vpn_account_done">סיום</string>
     <string name="vpn_account_cancel">ביטול</string>
     <string name="vpn_mullvad_intro">הזן את מספר חשבון Mullvad שלך. הוא נשמר במכשיר הזה.</string>
     <string name="vpn_mullvad_account_note">חשבון זה משמש לחיבורי Mullvad למדינות.</string>
@@ -606,12 +520,9 @@
     <string name="msg_native_fd_error">ל-VPN אזלו מתארי הקבצים. סגור אפליקציות שאינן בשימוש או הפעל מחדש את המכשיר, ולאחר מכן הפעל מחדש את ההגנה.</string>
     <string name="msg_vpn_replacement_recovery_exhausted">TrackerControl לא הצליחה להקים מחדש את ה-VPN. התעבורה נחסמת.</string>
     <string name="msg_doh_unreachable">לא ניתן להגיע ל-DNS המאובטח (DoH), אף שיש לך חיבור אינטרנט פעיל. אם הדבר קורה שוב ושוב, שקול להשבית אותו בהגדרות הרשת.</string>
-    <string name="msg_doze">לקבלת תוצאות עקביות, יש להשבית את אופטימיזציות הסוללה של Android עבור TrackerControl.\n\nבתיבת הדו-שיח הבאה, בחר "כל האפליקציות" בחלק העליון, הקש על TrackerControl ברשימה ובחר ואשר "אל תבצע אופטימיזציה".</string>
     <string name="msg_clear_activity">פעולה זו מסירה את הפעילות המתועדת עבור אפליקציה זו. הגדרות החסימה/ההתרה לכל עוקב של אפליקציה זו נשמרות.</string>
-    <string name="msg_downloading">מוריד…</string>
     <string name="title_version">גרסה %1$d</string>
     <string name="msg_always_on_lockdown">השבת את "חסום חיבורים ללא VPN" בהגדרות ה-VPN של Android כדי להשתמש ב-TrackerControl</string>
-    <string name="msg_private_dns">כבה את "DNS פרטי" בהגדרות הרשת של Android. TrackerControl מספקת תכונת DNS מאובטח משלה בהגדרות.</string>
     <string name="toggle_block_internet_description">חסום גישה לאינטרנט עבור %1$s</string>
     <string name="toggle_allow_internet_description">אפשר גישה לאינטרנט עבור %1$s</string>
     <string name="toggle_no_internet_description">ל-%1$s אין גישה לאינטרנט</string>
@@ -627,10 +538,6 @@
     <string name="countries_map_highlighted">יעדי המעקב המודגשים: %1$s</string>
     <string name="countries_map_none">אין יעדי מעקב מודגשים.</string>
     <string name="tracker_consent">ניהול הסכמה</string>
-    <string name="setting_block_ambiguous_trackers">חסום עוקבים עמומים</string>
-    <string name="summary_block_ambiguous_trackers">כאשר ל-IP יש ראיות לשם מארח של עוקב וגם של גורם שאינו עוקב, חסום אותו בכל זאת. השבת אפשרות זו כדי לצמצם תקלות באפליקציות.</string>
-    <string name="setting_sni_enabled">חילוץ SNI (מחקר)</string>
-    <string name="summary_sni_enabled">חלץ שמות מארחים מחיבורי TLS לזיהוי מדויק יותר של עוקבים. אזהרה: פעולה זו חושפת את כתובת ה-IP שלך לשרתי עוקבים (או, אם ניתוב מרוחק מופעל, את כתובת ה-IP של ספק ה-VPN). הפעל רק לצורכי מחקר.</string>
     <string name="setting_blocking_mode">מצב חסימה</string>
     <string name="summary_blocking_mode_minimal">מינימלי: חוסם רק עוקבים מרשימת DuckDuckGo שבטוח לחסום. הדפדפנים נשארים מנותבים דרך ה-VPN, אך הגנת עוקבים מושבתת כברירת מחדל. אפליקציות שאינן תואמות ידועות אינן נכללות. מעט תקלות באפליקציות.</string>
     <string name="summary_blocking_mode_standard">רגיל: חוסם את כל העוקבים הידועים ממספר רשימות (X-Ray, Disconnect, DuckDuckGo). שירותים חיוניים מותרים. אם אפליקציה מפסיקה לעבוד, התאם את הגדרת ההגנה שלה (ראה "פתרון בעיות" בתפריט האפליקציה).</string>
@@ -674,9 +581,7 @@
     <string name="protection_temporary">זמני, בזמן השהיה</string>
     <string name="bypass_vpn_error">"לא ניתן לחסום את האינטרנט כאשר האפליקציה עוקפת את TrackerControl."</string>
     <string name="category_unblocked_warning">מותרת עם קטגוריה זו — חסום את הקטגוריה כדי לשנות חברות בודדות.</string>
-    <string name="analyzing_classes">מנתח מחלקות…</string>
     <string name="analyzing_classes_progress">מנתח מחלקות… %d%%</string>
-    <string name="analysis_already_running">הניתוח כבר בתהליך</string>
     <string name="trackers_static_disclaimer">הערה: זיהוי קוד של ספריית עוקבים אינו אומר שנעשה בו שימוש פעיל. ייתכן שאפליקציות הסירו או השביתו ספריות אלו, אך עדיין ניתן לזהות עקבות שלהן.</string>
     <string name="analyze_tracker_libraries">נתח ספריות עוקבים</string>
     <string name="update_analysis">עדכן ניתוח</string>
@@ -715,7 +620,6 @@
     <string name="setting_monitor_system">נטר אפליקציות מערכת</string>
     <string name="summary_monitor_system">נתב אפליקציות מערכת (Play Services, שירותי מפעיל ועוד) דרך ה-VPN כדי שהעוקבים שלהן יזוהו וייחסמו, והצג אותן ברשימת האפליקציות.\n\nכבוי כברירת מחדל: אי-הכללת אפליקציות מערכת ידידותית יותר לסוללה, משום שהתעבורה שלהן ברקע אינה מעירה עוד את ה-VPN. הפעלה זו מתנגשת עם "חסום חיבורים ללא VPN" בהגדרות ה-VPN של Android, וחובה להשבית אותה.</string>
     <string name="title_next">הבא</string>
-    <string name="title_skip">דלג</string>
     <string name="title_previous">הקודם</string>
     <string name="title_finish">תחילת העבודה</string>
     <string name="onboarding_welcome_title">קח שליטה על הפרטיות שלך</string>
@@ -727,39 +631,18 @@
     <string name="onboarding_vpn_blocked_title">VPN אחר פעיל</string>
     <string name="onboarding_vpn_blocked_desc">Android מנעה מ-TrackerControl להפעיל את ה-VPN המקומי שלה משום שאפליקציה אחרת מוגדרת כ-<b>VPN תמיד פועל</b>. פתח את הגדרות ה-VPN והשבת את מצב "תמיד פועל" עבור ה-VPN האחר, ואז נסה שוב.</string>
     <string name="onboarding_vpn_blocked_action">פתח הגדרות VPN</string>
-    <string name="onboarding_battery_title">מנע הפרעות</string>
-    <string name="onboarding_battery_desc">Android עלולה לסגור אפליקציות ברקע כדי לחסוך בסוללה. כדי להבטיח הגנה רציפה מפני עוקבים, השבת את האופטימיזציות עבור TrackerControl.</string>
-    <string name="onboarding_battery_action">השבת אופטימיזציה</string>
-    <string name="onboarding_battery_sure">בלי להשבית את אופטימיזציות הסוללה, Android עלולה לעצור את TrackerControl בכל עת. האם אתה בטוח שברצונך להמשיך?</string>
     <string name="onboarding_notify_title">הישאר מעודכן</string>
     <string name="onboarding_notify_desc">אפשר התראות כדי לראות עדכונים בזמן אמת ולשלוט בהגנה ישירות משורת המצב.</string>
     <string name="onboarding_notify_action">אפשר התראות</string>
     <string name="onboarding_notify_sure">ללא הרשאות התראות, לא תוכל לראות עדכונים בזמן אמת או לשלוט בהגנה משורת המצב. האם אתה בטוח?</string>
     <string name="onboarding_timeline_title">צפה בציר הזמן מתמלא</string>
     <string name="onboarding_timeline_desc">TrackerControl מתחילה בציר הזמן. בהתחלה הוא עשוי להיות ריק: אפליקציות בדרך כלל פונות לעוקבים רק בזמן השימוש בהן.\n\nלאחר סיום ההגדרה, פתח כמה אפליקציות ואז חזור ל-TrackerControl כדי לראות פעילות מעקב שזוהתה ונחסמה.</string>
-    <string name="onboarding_network_title">רשת ללא הגבלה</string>
-    <string name="onboarding_network_desc">אפשרויות חיסכון בנתונים עלולות למנוע מ-TrackerControl לפעול כראוי ברקע. הענק גישה ללא הגבלה להגנה האמינה ביותר.</string>
-    <string name="onboarding_network_action">הענק גישה ללא הגבלה</string>
-    <string name="onboarding_network_sure">נתוני רקע מוגבלים עלולים לגרום ל-TrackerControl להיכשל. האם אתה בטוח שברצונך להמשיך בלי להעניק גישה ללא הגבלה?</string>
     <string name="onboarding_lockdown_title">הגדרת נעילת VPN</string>
     <string name="onboarding_lockdown_desc">ל-Android יש הגדרה בשם "חסום חיבורים ללא VPN", שמונעת מאפליקציות להתחבר לפני ש-TrackerControl מוכנה.\n\nאם היא מופעלת, אפליקציות עלולות לא להיטען. אנו ממליצים להשאיר הגדרה זו <b>מושבתת</b> לחוויה הטובה ביותר.</string>
     <string name="onboarding_lockdown_action">פתח הגדרות VPN</string>
     <string name="onboarding_lockdown_sure">המשך כאשר הנעילה מופעלת עלול לגרום לבעיות קישוריות. האם אתה בטוח?</string>
-    <string name="onboarding_dns_title">DNS מאובטח (תכונת בטא; ייתכן שלא תפעל כמצופה)</string>
-    <string name="onboarding_dns_desc">הגן על פרטיותך מפני ספק האינטרנט שלך באמצעות הצפנת תעבורת ה-DNS ב-DNS-over-HTTPS ‏(DoH).\n\nכך נמנעת "חטיפת DNS" והרגלי הגלישה שלך נשארים פרטיים מספק הרשת.</string>
-    <string name="onboarding_dns_action">אפשר DNS מאובטח</string>
-    <string name="onboarding_dns_action_disable">השבת DNS מאובטח</string>
-    <string name="onboarding_blocking_title">חסום עוקבים</string>
-    <string name="onboarding_blocking_desc">חשוף וחסום מעקב נרחב באפליקציות שלך.\n\n• <b>רשימות חסימה</b>: משלב את Firefox Disconnect עם הניתוח הייחודי שלנו של <b>2,000,000 אפליקציות</b>.\n• <b>GDPR</b>: ממש את זכויותיך באמצעות <b>בקשות מחיקת נתונים בלחיצה אחת</b>.\n• <b>שקיפות</b>: גלה בדיוק אילו חברות וארצות אוספות את הנתונים שלך.</string>
-    <string name="onboarding_blocking_action">הפעל חסימה</string>
-    <string name="onboarding_blocking_action_disable">השבת חסימה</string>
-    <string name="onboarding_blocking_sure">חסימת עוקבים היא תכונת ליבה של TrackerControl. האם אתה בטוח שברצונך להשבית אותה?</string>
-    <string name="onboarding_action_enabled">מופעל</string>
     <string name="onboarding_action_disabled">מושבת</string>
     <string name="onboarding_action_granted">הוענק</string>
-    <string name="onboarding_action_optimized">עבר אופטימיזציה</string>
-    <string name="onboarding_action_unrestricted">ללא הגבלה</string>
-    <string name="menu_insights">תובנות</string>
     <string name="insights_title">תובנות הפרטיות שלך</string>
     <string name="insights_subtitle_7days">7 הימים האחרונים</string>
     <string name="insights_tracking_attempts">מארחי עוקבים שאליהם נעשתה פנייה</string>
@@ -767,8 +650,6 @@
     <string name="insights_allowed">הותר</string>
     <string name="insights_tracker_companies">חברות מעקב</string>
     <string name="insights_apps_with_trackers">אפליקציות עם עוקבים</string>
-    <string name="insights_top_tracking_apps">האפליקציות הבעייתיות ביותר</string>
-    <string name="insights_top_companies">חברות המעקב הפעילות ביותר</string>
     <string name="insights_pervasive_trackers">העוקבים הנפוצים ביותר</string>
     <string name="insights_top_domains">הדומיינים המובילים של עוקבים</string>
     <string name="insights_domain_alias_separator">" או "</string>
@@ -780,15 +661,11 @@
     </plurals>
     <string name="insights_no_data">עדיין אין נתוני מעקב. השתמש באפליקציות שלך ובדוק שוב!</string>
     <string name="insights_shocking_fact">האפליקציות שלך פנו ל-%1$d חברות מעקב דרך %2$d מארחי עוקבים השבוע!</string>
-    <string name="insights_shocking_fact_playstore">האפליקציות שלך פנו ל-%1$d חברות מעקב השבוע!</string>
     <string name="insights_share">שתף עם חברים</string>
     <string name="insights_share_trackers_blocked">מארחי עוקבים שנחסמו</string>
-    <string name="insights_share_trackers_detected">מארחי עוקבים שזוהו</string>
     <string name="insights_share_url">TrackerControl.org</string>
     <string name="insights_share_message">השבוע חסמתי באמצעות TrackerControl %1$d מארחי עוקבים מ-%2$d חברות! קח בחזרה את הפרטיות שלך: https://trackercontrol.org</string>
-    <string name="insights_share_message_playstore">השבוע זיהיתי באמצעות TrackerControl %1$d מארחי עוקבים מ-%2$d חברות! קח בחזרה את הפרטיות שלך: https://trackercontrol.org</string>
     <string name="insights_see_more">ראה עוד →</string>
-    <string name="insights_view_timeline">הצג פעילות עוקבים אחרונה</string>
     <string name="title_blocklists">קובצי מארחים נוספים</string>
     <string name="summary_manage_blocklists">אלה מיועדים רק לחלופה. TrackerControl כוללת רשימות מארחים משלה שמציגות תובנות על החברות שמאחורי המעקב.</string>
     <string name="title_add_blocklist">הוסף קובץ מארחים</string>
@@ -806,5 +683,4 @@
     <string name="log_connection_wifi">Wi-Fi</string>
     <string name="log_connection_other">רשת אחרת</string>
     <string name="log_screen_on">המסך פועל</string>
-    <string name="log_app_icon">סמל אפליקציה</string>
 </resources>

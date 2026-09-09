@@ -1,4 +1,5 @@
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<!-- Retain this menu: ActivityLog references R.id.menu_allow and R.id.menu_block, declared only here. -->
+<menu xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools" tools:ignore="UnusedResources">
     <item
         android:visible="false"
         android:id="@+id/menu_host"

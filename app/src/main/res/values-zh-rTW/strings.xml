@@ -35,25 +35,16 @@
     <string name="menu_export">匯出</string>
     <string name="menu_reset">重置</string>
     <string name="menu_cleanup">清理</string>
-    <string name="setting_dark">深色主題</string>
-    <string name="setting_install">有新安裝動作時通知</string>
     <string name="setting_pause">在 %1$s 分鐘後自動啟用</string>
     <string name="setting_update">檢查是否有更新</string>
     <plurals name="pause">
         <item quantity="other">暫停 %d 分鐘</item>
     </plurals>
-    <string name="setting_network_options">網路選項</string>
-    <string name="setting_subnet">子網路路由</string>
-    <string name="setting_tethering">允許網路共用</string>
-    <string name="setting_lan">允許區域網路存取</string>
     <string name="setting_ip6">啟用 IPv6 流量</string>
     <string name="setting_call">在通話期間停用</string>
     <string name="setting_reload_onconnectivity">每當連線改變時均重新載入</string>
     <string name="setting_log_app">搜尋新的追蹤器</string>
-    <string name="setting_filter">阻擋追蹤器</string>
     <string name="setting_handover">重新載入時無縫 VPN 交接</string>
-    <string name="setting_lockdown">全面封鎖網路流量</string>
-    <string name="setting_track_usage">追蹤網路用量</string>
     <string name="setting_reset_usage">重置網路用量</string>
     <string name="setting_show_resolved">顯示已解析的網域名稱</string>
     <string name="setting_block_domains">啟用 hosts 檔案</string>
@@ -77,30 +68,18 @@
     <string name="setting_stats_samples">取樣數：%s s</string>
     <string name="setting_backup">備份</string>
     <string name="setting_import">匯入設定</string>
-    <string name="setting_hosts">匯入 hosts 檔案</string>
-    <string name="setting_hosts_append">匯入 hosts 檔案（附加）</string>
-    <string name="setting_hosts_url">Hosts 檔案 URL</string>
-    <string name="setting_hosts_download">下載 hosts 檔案</string>
     <string name="setting_hosts_update">更新 hosts 檔案</string>
-    <string name="summary_install">新安裝的 apps 顯示狀態列通知</string>
     <string name="summary_pause">暫停通知後，將於指定分鐘數後自動重新啟用 TrackerControl（輸入 0 即可停用此選項）。</string>
     <string name="summary_update">每日檢查兩次 GitHub 上的新版本</string>
-    <string name="summary_tethering">依 Android 版本而定，網路共用 (tethering) 或許可用，或許不可用。共用流量將無法過濾。</string>
-    <string name="summary_subnet">啟用子網路路由；也許能啟用 Wi-Fi 通話，但也有可能會觸發 Android 當中的臭蟲，導致耗電量增加</string>
-    <string name="summary_lan">允許應用程式連接到區域網路位址，例如 10.0.0.0/8、172.16.0.0/12 以及 192.168.0.0/16</string>
     <string name="summary_ip6">將 IPv6 流量路由至 TrackerControl，以便選擇性地允許或封鎖該流量</string>
     <string name="summary_call">在接聽或撥打電話時停用 TrackerControl。這可以解決 IP/Wi-Fi 網路電話的通話問題。</string>
     <string name="msg_vpn">TrackerControl 使用本地端 VPN 來過濾網際網路流量。
 因此，請在下一個對話方塊允許 VPN 連線。
 您的網際網路流量不會被送到遠端的 VPN 伺服器。</string>
-    <string name="msg_downloaded">已下載 hosts 檔案</string>
-    <string name="msg_updated">已上傳和套用 hosts 檔案！</string>
     <string name="msg_inactive">無網際網路連線</string>
     <string name="msg_update">有更新版本，請點選下載</string>
-    <string name="msg_usage">您可以點選 app 旁邊的圖示以允許 (綠色) 或禁止 (紅色) app 存取 Wi-Fi 或行動網路</string>
     <string name="msg_push">收到的 (推送) 訊息通常由系統元件 Play 服務所處理，那預設允許存取網際網路</string>
     <string name="msg_system">您可在進階選項中啟用所有 (包含系統) apps 之管理</string>
-    <string name="msg_issue">請描述問題並寫明問題發生的時間：</string>
     <string name="msg_vpn_cancelled">VPN 連線已取消\n您是否把另一個 VPN 配置為「永遠連線的 VPN」？</string>
     <string name="msg_unavailable">此功能無法在這個版本的 Android 上執行</string>
     <string name="msg_always_on">另一個 VPN 連線被設定成 「永遠連線的 VPN」</string>
@@ -110,9 +89,6 @@
         <item>TCP</item>
     </string-array>
     <string name="menu_add">新增</string>
-    <string name="title_internet">無法存取網際網路</string>
-    <string name="title_screen_wifi">在螢幕開啟時啟用 Wi-fi</string>
-    <string name="title_notify">通知網際網路存取嘗試</string>
     <!-- App Overview -->
     <string name="tracked_app_icon">關閉這個 app 的網際網路連線</string>
     <!-- Dynamic content descriptions for the app-icon Internet toggle in the app list (issue #231) -->
@@ -125,7 +101,6 @@
     <string name="title_activity_detail">詳細資訊</string>
     <string name="tab_trackers">追蹤器</string>
     <string name="tab_countries">國家</string>
-    <string name="tracker_name">追蹤器名稱</string>
     <string name="app_info">管理應用程式</string>
     <!-- Actions -->
     <string name="block_tracking">阻擋追蹤器</string>
@@ -138,7 +113,6 @@
     <string name="contacts_description">若您認為某項應用程式違反了資料保護原則，可直接聯繫相關負責單位。</string>
     <string name="play_services_required">這是 Google Play 服務的設定，並不會出現在您的裝置上。</string>
     <string name="no_mail_service">請安裝電子郵件用戶端。</string>
-    <string name="blocking_settings">選擇追蹤器</string>
     <string name="ad_settings">立即更改</string>
     <string name="request_data">請求資料</string>
     <string name="request_deletion">請求刪除</string>
@@ -160,7 +134,6 @@
     <string name="summary_wg_route_mode">哪些應用程式經遠端 VPN 轉送。未轉送的應用程式仍受到完整的追蹤器監控與封鎖，只是改從本機自己的網路連線。</string>
     <string name="wg_route_mode_all">所有應用程式</string>
     <string name="wg_route_mode_selected">僅所選應用程式</string>
-    <string name="app_route_heading">遠端 VPN</string>
     <string name="app_route_through">經遠端 VPN</string>
     <string name="app_route_through_explanation">此應用程式經你的遠端 VPN 連線，由 VPN 而非你的網路看到它的流量。</string>
     <string name="app_route_direct">直接從本機連線</string>
@@ -199,9 +172,6 @@
     <string name="menu_log">流量日誌</string>
     <string name="menu_legend">圖例</string>
     <string name="menu_troubleshooting">故障排除</string>
-    <string name="menu_timeline">追蹤器活動</string>
-    <string name="title_tracker_activity">追蹤器活動</string>
-    <string name="timeline_empty">最近沒有追蹤器活動。\n\n啟用 TrackerControl 檢視哪些應用程式追蹤您。</string>
     <string name="timeline_empty_disabled_title">TrackerControl 已關閉</string>
     <string name="timeline_empty_disabled_subtitle">使用右上角的開關啟用TrackerControl 。然後應用程式的追蹤器活動會顯示在這裡。</string>
     <string name="timeline_empty_enabled_title">正在觀察追蹤器…</string>
@@ -276,14 +246,12 @@
     <string name="setting_tcp_mss_clamp">網路共用相容模式</string>
     <string name="summary_tcp_mss_clamp">透過 TrackerControl 路由所有流量，並限制TCP 分段大小來修復停滯或無法上網的繫結的連線。 本機網路存取不再繞過 TrackerControl，效能可能下降。</string>
     <string name="setting_advanced_options">進階選項(供專家使用)</string>
-    <string name="setting_system">顯示系統應用程式</string>
     <string name="setting_log_logcat">研究</string>
     <string name="setting_exclude_all_tracking">將所有應用程式排除在追蹤保護之外</string>
     <string name="summary_exclude_all_tracking">停用所有應用程式的追蹤器監控。您可以重新啟用個別應用程式的監控。</string>
     <string name="setting_include_all_tracking">將所有應用程式包含在追蹤保護中</string>
     <string name="summary_include_all_tracking">重新啟用所有應用程式的追蹤監視。</string>
     <string name="setting_wg_enabled">透過 WireGuard 隧道傳送流量</string>
-    <string name="setting_wg_config">WireGuard 設定</string>
     <string name="setting_wg_profile">WireGuard 設定</string>
     <string name="setting_wg_profile_manage">自定義 WireGuard 設定檔</string>
     <string name="setting_wg_profile_import">匯入 WireGuard 設定</string>
@@ -311,9 +279,7 @@
     <string name="setting_export">匯出設定</string>
     <string name="setting_hosts_auto_update">自動更新主機檔案</string>
     <string name="summary_hosts_auto_update">在背景自動更新主機檔案</string>
-    <string name="summary_system">在應用程式清單中顯示系統應用程式</string>
     <string name="summary_log_app">停用以減少電池使用量。新的追蹤器仍將被封鎖，但不會顯示。</string>
-    <string name="summary_track_usage">追蹤每個應用程式和位址傳送和接收的位元組數。這可能會導致額外的電池使用。</string>
     <string name="summary_block_domains">警告: 被封鎖的主機未在使用者介面中顯示。</string>
     <string name="summary_rcode">預設值是 3 (NXDOMAIN)，代表「不存在的網域」。</string>
     <string name="summary_validate">用於在埠 443 (HTTPS) 驗證網際網路連線的網域名稱。</string>
@@ -337,7 +303,6 @@
     <string name="msg_wg_profile_default_name">預設</string>
     <string name="msg_wg_profile_saved">WireGuard 設定已儲存</string>
     <string name="msg_wg_profile_deleted">WireGuard 設定已刪除</string>
-    <string name="msg_wg_profile_no_config">儲存設定檔前，請先貼上 WireGuard 設定</string>
     <string name="msg_wg_profile_empty">暫無設定</string>
     <string name="msg_wg_profile_active">活躍</string>
     <string name="msg_wg_profile_set_active">設定為活躍</string>
@@ -364,13 +329,9 @@
     <string name="msg_wg_mullvad_countries_failed">無法載入 Mullvad 地區： %s</string>
     <string name="msg_wg_proton_note">Proton 的第三方設定流程使用可下載的 WireGuard 設定檔。TrackerControl 不需要您的 Proton 認證資訊，也無法自動更新設定。\n\n請登入 account.protonvpn.com，前往 Downloads → WireGuard 設定，下載設定檔，在文字編輯器中開啟後，複製內容並貼到此處。</string>
     <string name="msg_wg_proton_open_dashboard">開啟 Proton VPN 儀表板</string>
-    <string name="vpn_status_connected">%s</string>
-    <string name="vpn_status_mullvad_connected">Mullvad - %s</string>
     <string name="vpn_status_mullvad">Mullvad</string>
     <string name="vpn_status_relay">中繼: %s</string>
-    <string name="vpn_status_mullvad_summary">中繼: %s</string>
     <string name="vpn_status_wireguard_connected">WireGuard 已連線</string>
-    <string name="vpn_status_wireguard_summary">%1$s - %2$s</string>
     <string name="vpn_status_disconnected">未連線</string>
     <string name="vpn_provider_mullvad">Mullvad VPN</string>
     <string name="vpn_provider_ivpn">IVPN</string>
@@ -398,7 +359,6 @@
     <string name="vpn_account_show">顯示</string>
     <string name="vpn_account_hide">隱藏</string>
     <string name="vpn_account_change">更改</string>
-    <string name="vpn_account_done">已完成</string>
     <string name="vpn_account_cancel">取消</string>
     <string name="vpn_mullvad_intro">輸入您的 Mullvad 帳號。它已儲存在這臺裝置上。</string>
     <string name="vpn_mullvad_account_note">此帳戶用於Mullvad地區連線。</string>
@@ -441,7 +401,6 @@
     <string name="msg_installed">遇到了 %1$s 的問題嗎？</string>
     <string name="msg_installed_description">允許應用程式聯絡公司</string>
     <string name="msg_installed_tracker_libraries_found">包含 %d 個追蹤程式庫</string>
-    <string name="msg_installed_n">已被安裝</string>
     <string name="msg_completed">操作已完成</string>
     <string name="msg_no_file_manager">沒有找到檔案管理器來選擇檔案。</string>
     <string name="msg_no_browser">未找到開啟連結的瀏覽器。</string>
@@ -453,25 +412,13 @@
     <string name="msg_doh_unreachable">即使您有活躍的網際網路連線，也無法連線到安全的DNS(DoH)。如果反覆發生這種情況，請考慮在網路設定中停用它。</string>
     <string name="msg_start_failed">Android此時拒絕啟動VPN服務。這可能你的Android版本中的一個bug造成的。</string>
     <string name="msg_try">嘗試TrackerControl</string>
-    <string name="msg_doze">為了取得一致的結果，應該停用對TrackerControl的Android電池最佳化。
-\n\n在下一個對話方塊中，選擇頂部的“全部應用程式”，點選清單中的TrackerControl，選擇並確認“不最佳化”。</string>
-    <string name="msg_datasaving">為了得到一致的結果，對TrackerControl的Android資料節省選項應該被停用
-\n\n在下一個對話方塊中，啟用“背景資料”和“不受限制的資料使用”選項</string>
-    <string name="msg_filter">使用過濾會使Android把資料和電量使用歸於TrackerControl——Android假設資料和電量是由TrackerControl使用的，而不是原來的應用程式</string>
-    <string name="msg_filter4">Android 4需要啟用過濾功能</string>
     <string name="msg_log_disabled">流量日誌已停用，請使用上面的開關啟用日誌記錄。流量記錄可能會導致額外的電池使用。</string>
-    <string name="msg_clear_rules">這將把規則和條件重置為它們的預設值</string>
     <string name="msg_clear_activity">這將刪除此應用程式已記錄的活動。將保留此應用程式的不同追蹤器封鎖/允許設定。</string>
-    <string name="msg_reset_access">這將刪除沒有允許/封鎖規則的存取嘗試日誌行</string>
-    <string name="msg_import_last">上次匯入： %s</string>
-    <string name="msg_downloading">正在下載…</string>
-    <string name="msg_download_last">上次下載： %s</string>
     <string name="msg_update_last">上次更新：%s</string>
     <string name="msg_metered">網路是計量的</string>
     <string name="msg_queue">TrackerControl 正忙</string>
     <string name="title_version">版本 %1$d</string>
     <string name="msg_always_on_lockdown">在 Android VPN 設定中關閉\"封鎖不使用VPN的所有連線\"以使用 TrackerControl</string>
-    <string name="msg_private_dns">在 Android 網路設定中關閉 \"Private DNS\"。TrackerControl 在設定中提供它自己的安全DNS 功能。</string>
     <string name="msg_start_forward">停止從%1$s埠%2$d轉發流量到\'%5$s\'的%3$s:%4$d？</string>
     <string name="msg_stop_forward">停止%1$s埠%2$d的流量轉發？</string>
     <string name="menu_delete">刪除</string>
@@ -493,35 +440,10 @@
     <string name="title_interactive_allowed">亮屏時允許</string>
     <string name="title_roaming_blocked">漫遊時封鎖</string>
     <string name="title_metered">預設情況下，Wi-Fi連線被認為是不按流量計費的，移動連線按流量計費</string>
-    <string name="title_disabled">被停用</string>
-    <string name="title_messaging">傳入訊息是由 Google Play 服務接收而非此應用程式，因此不能透過封鎖此應用程式來阻擋接收訊息</string>
-    <string name="title_download">下載是透過下載管理器而非此應用程式執行的，因此不能透過封鎖此應用程式來阻擋下載</string>
-    <string name="title_conditions">條件</string>
-    <string name="title_screen_other">亮屏時允許行動網路</string>
-    <string name="title_roaming">漫遊時封鎖</string>
-    <string name="title_lockdown">鎖定模式中允許</string>
-    <string name="title_related">相關篩選器</string>
-    <string name="title_access">存取嘗試</string>
-    <string name="title_precedence">存取規則優先於其他規則</string>
-    <string name="title_options">選項</string>
-    <string name="title_logging_disabled">未啟用日誌記錄或過濾</string>
-    <string name="title_logging_enabled">已啟用日誌記錄和過濾</string>
-    <string name="title_logging_configure">設定</string>
-    <string name="title_enable_logging">只記錄封鎖的網址</string>
-    <string name="title_enable_filtering">啟用過濾來記錄允許的位址</string>
-    <string name="title_enable_notify">對新記錄到的位址啟用存取通知</string>
-    <string name="title_enable_help0">這些設定適用於所有應用程式，是全域設定</string>
-    <string name="title_enable_help1">同樣需要啟用篩選才能允許或封鎖單獨位址</string>
-    <string name="title_enable_help2">啟用日誌記錄(更少) 或過濾(更多) 可能會增加電池使用量，並可能影響網路速度</string>
     <string name="title_rate">速率</string>
     <string name="title_allow">允許</string>
     <string name="title_block">封鎖</string>
-    <string name="title_allow_wifi">允許 Wi-Fi</string>
-    <string name="title_block_wifi">停用Wi-Fi</string>
-    <string name="title_allow_other">允許行動網路</string>
-    <string name="title_block_other">封鎖行動網路</string>
     <string name="title_nobody">沒有人</string>
-    <string name="title_dontask">不要再次詢問</string>
     <string name="title_log_whois">Whois %1$s</string>
     <string name="title_log_port">埠 %1$d</string>
     <string name="title_log_copy">複製</string>
@@ -550,7 +472,6 @@
     <string name="yes">是</string>
     <string name="no">否</string>
     <string name="exporting">正在匯出…</string>
-    <string name="share_csv">分享</string>
     <string name="tab_actions">資料權</string>
     <string name="body_request_data">致有關人士：\n
 \n
@@ -600,13 +521,6 @@
     <string name="tracker_email">電子郵件</string>
     <string name="tracker_consent">同意管理</string>
     <string name="tracker_uncategorised">未分類</string>
-    <string name="setting_strict_blocking">嚴格封鎖</string>
-    <string name="summary_strict_blocking">對於新安裝的應用程式，儘可能多地阻擋與公司共用資料。更多的應用程式將無法正常運作。</string>
-    <string name="strict_blocking_explanation">建議非專家停用此選項，以減少應用程式使用碰到的問題。然而，這允許與公司進行一些必要的資料共用。</string>
-    <string name="setting_block_ambiguous_trackers">封鎖模稜兩可的追蹤器</string>
-    <string name="summary_block_ambiguous_trackers">當一個 IP 同時有追蹤器和非追蹤器主機名稱的證據時，仍然封鎖它。停用它以減少應用程式無法正常運作。</string>
-    <string name="setting_sni_enabled">SNI 提取(研究)</string>
-    <string name="summary_sni_enabled">從 TLS 連線中提取主機名稱以更準確地偵測到追蹤器。警告：這將洩漏您的 IP 位址到追蹤伺服器。僅出於研究目的啟用它。</string>
     <string name="setting_blocking_mode">封鎖模式</string>
     <string name="summary_blocking_mode_minimal">最小：只封鎖DuckGo清單中可以安全封鎖的追蹤器。 瀏覽器流量仍然透過 VPN 路由，但是追蹤器保護預設關閉。已知的不相容應用程式被排除。有限度的應用程式功能不正常。</string>
     <string name="summary_blocking_mode_standard">標準：封鎖來自多個清單 (X-Ray, Disconnect, DuckDuckGo) 的所有一直追蹤器。允許基本服務。 如果應用程式停止運作，請調整其保護設定(見應用程式選單中的故障排除)。</string>
@@ -656,21 +570,14 @@
     <string name="forever_free">永遠免費</string>
     <string name="your_privacy">您的隱私</string>
     <string name="tracker_hostlist">使用者定義的主機</string>
-    <string name="unblocked">解除封鎖</string>
-    <string name="enable">啟用</string>
-    <string name="category_blocked">已阻擋類別中的追蹤器</string>
     <string name="category_unblocked">已允許此類別中的追蹤器</string>
     <string name="category_unblocked_warning">此類別允許 — — 封鎖此類別以更改個別公司。</string>
-    <string name="switch_strict_blocking">組織必要的資料共用</string>
     <string name="tracking_detection_failed">追蹤程式庫偵測失敗。</string>
     <string name="tracking_detection_failed_ram">追蹤程式庫偵測失敗。記憶體不足。</string>
     <string name="tracking_detection_failed_report">追蹤程式庫偵測失敗。請將此問題回報給開發者。</string>
     <string name="detected_trackers">偵測到的追蹤程式庫： %s</string>
-    <string name="analyzing_classes">正在分析類…</string>
     <string name="analyzing_classes_progress">正在分析類… %d%%</string>
-    <string name="analysis_already_running">已經在進行分析</string>
     <string name="none">無</string>
-    <string name="trackers_static">追蹤程式庫</string>
     <string name="trackers_static_explanation">TrackerControl 會偵測應用程式程式碼（「程式庫」）和網路流量中的追蹤。\n\n在網路流量中偵測到的追蹤可由 TrackerControl 封鎖。</string>
     <string name="trackers_static_explanation_playstore">TrackerControl 會偵測應用程式程式碼（「程式庫」）和網路流量中的追蹤。</string>
     <string name="trackers_static_disclaimer">注意：偵測到追蹤程式庫程式碼不代表它正在使用中。某些應用程式可能已移除或停用這些程式庫，但仍可能偵測到其痕跡。</string>
@@ -697,12 +604,9 @@
     <string name="tracker_monitored_minimal">已監視 — 最小模式中未封鎖</string>
     <string name="setting_domain_based_blocked">基於網域的封鎖</string>
     <string name="summary_domain_based_blocking">允許進行更高資料粒度的阻擋。 仍在開發中。</string>
-    <string name="untap_unblock">提示：您可以點選解除對單獨條目的封鎖。</string>
     <string name="uncertain_entry">由於 Android 的限制，標有“*”的條目可能不準確。 這通常意味著同一家公司在不同網域下使用相同的 IP 位址，但也可能意味著不同的公司使用相同的 IP 位址(例如，如果他們使用內容交付網路)。</string>
     <string name="browsers_not_supported">偵測到瀏覽器 ⚠️</string>
     <string name="browsers_not_supported_explanation">這似乎是一個瀏覽器應用程式。\n\n瀏覽器追蹤保護在瀏覽器內最有效，可在頁面和請求級別阻擋追蹤器。 TrackerControl 讓瀏覽器流量透過 VPN/WireGuard 隧道路由，但應用程式級別的追蹤器封鎖預設關閉，如果啟用可能導致網站無法正常運作。</string>
-    <string name="static_analysis">偵測應用程式碼中的追蹤器</string>
-    <string name="failed_loading_cached_analysis">載入快取的追蹤器結果失敗。請透過 hello@trackercontrol.org 向開發人員報告。</string>
     <string name="msg_notifications">點選授予通知權限 (用於錯誤訊息等)</string>
     <string name="msg_local_network">點選允許本機網路存取，Android系統將其作為“附近裝置”權限詢問。 Android17預設阻擋它，所以無法連線到您自己的DNS伺服器，安全的DNS解析器，WireGuard對端或代理。</string>
     <string name="msg_local_network_title">需要本機網路存取權限</string>
@@ -717,7 +621,6 @@
     <string name="setting_monitor_system">監視系統應用程式</string>
     <string name="summary_monitor_system">透過 VPN 路由系統應用程式 (PlayServices, 電信業者服務等)來偵測和封鎖它們的追蹤器，並在應用程式清單中顯示它們。\n\n預設關閉：排除系統應用程式對電池更友好，因為它們的背景流量不再喚醒VPN。 此選項與Android VPN 設定中\"封鎖沒有VPN的連線\"發生衝突，必須停用。</string>
     <string name="title_next">下一步</string>
-    <string name="title_skip">跳過</string>
     <string name="title_previous">上一步</string>
     <string name="title_finish">開始</string>
     <string name="onboarding_welcome_title">控制您的隱私</string>
@@ -729,39 +632,18 @@
     <string name="onboarding_vpn_blocked_title">另一個 VPN 已啟用</string>
     <string name="onboarding_vpn_blocked_desc">Android 阻擋 TrackerControl 啟動本機 VPN，因為另一個應用程式被設為 <b>始終開啟的 VPN</b>。開啟 VPN 設定停用其他應用程式的始終開啟設定後再試。</string>
     <string name="onboarding_vpn_blocked_action">開啟 VPN 設定</string>
-    <string name="onboarding_battery_title">防止中斷</string>
-    <string name="onboarding_battery_desc">Android 可能會停止背景應用程式以節省電量。為了確保對追蹤器的持續保護，請停用對於 TrackerControl 的最佳化。</string>
-    <string name="onboarding_battery_action">停用最佳化</string>
-    <string name="onboarding_battery_sure">在不停用電池最佳化的情況下，TrackerControl 可能會隨時被Android 停止。您確定要繼續嗎？</string>
     <string name="onboarding_notify_title">接收通知</string>
     <string name="onboarding_notify_desc">允許通知以直接從狀態列檢視即時更新並控制保護。</string>
     <string name="onboarding_notify_action">允許通知</string>
     <string name="onboarding_notify_sure">沒有通知權限，您將無法從狀態列檢視即時更新或控制保護。您確定嗎？</string>
     <string name="onboarding_timeline_title">觀看時間軸填充</string>
     <string name="onboarding_timeline_desc">透過 TrackerControl 時間軸觀察追蹤器活動 。時間軸一開始可能是空的：應用程式通常只在您使用時才與追蹤伺服器聯絡。\n\n完成設定後，開啟幾個應用程式，然後返回到TrackerControl檢視偵測到和被阻擋的追蹤活動。</string>
-    <string name="onboarding_network_title">不受限制的網路</string>
-    <string name="onboarding_network_desc">資料節省選項可能阻擋TrackerControl在背景正常運作，允許無限制存取以取得最可靠的保護。</string>
-    <string name="onboarding_network_action">授予無限制存取</string>
-    <string name="onboarding_network_sure">受限制的背景資料可能導致 TrackerControl 失敗。確定要在不允許無限制存取的情況下繼續嗎？</string>
     <string name="onboarding_lockdown_title">VPN 鎖定設定</string>
     <string name="onboarding_lockdown_desc">Android系統有一個叫“封鎖未使用 VPN 的所有連線 ”的設定，它阻擋應用程式在 TrackerControl 就緒之前連線。\n\n如果啟用，這可能導致應用程式載入失敗。 我們建議<b>停用</b>此設定取得最佳體驗。</string>
     <string name="onboarding_lockdown_action">開啟 VPN 設定</string>
     <string name="onboarding_lockdown_sure">鎖定啟用情況下繼續可能導致連線問題。您確定嗎？</string>
-    <string name="onboarding_dns_title">安全 DNS (Beta 功能；可能無法按預期運作)</string>
-    <string name="onboarding_dns_desc">用 DNS-over-HTTPS (DoH) 加密 DNS 流量保護隱私不受 ISP 侵害。\n\n這防止“DNS 劫持”，使網路供應商無法知曉瀏覽習慣。</string>
-    <string name="onboarding_dns_action">啟用安全DNS</string>
-    <string name="onboarding_dns_action_disable">停用安全DNS</string>
-    <string name="onboarding_blocking_title">封鎖追蹤器</string>
-    <string name="onboarding_blocking_desc">揭示並封鎖應用程式中普遍存在的追蹤。\n\n• <b>封鎖清單</b>：結合 Firefox Disconnect 和獨一無二的對 <b>2,000,000 個應用程式</b> 分析。\n • <b>GDPR</b>：用 <b>一鍵刪除請求</b>行使權利。\n• <b>透明性</b>：發現究竟是哪些企業和國家/地區蒐集你的資料。</string>
-    <string name="onboarding_blocking_action">啟用封鎖</string>
-    <string name="onboarding_blocking_action_disable">停用封鎖</string>
-    <string name="onboarding_blocking_sure">追蹤器封鎖是TrackerControl的核心功能。您確定要停用它嗎？</string>
-    <string name="onboarding_action_enabled">已啟用</string>
     <string name="onboarding_action_disabled">已停用</string>
     <string name="onboarding_action_granted">已授權</string>
-    <string name="onboarding_action_optimized">已最佳化</string>
-    <string name="onboarding_action_unrestricted">不受限制</string>
-    <string name="menu_insights">洞察分析</string>
     <string name="insights_title">您的隱私洞察</string>
     <string name="insights_subtitle_7days">過去7天</string>
     <string name="insights_tracking_attempts">聯絡的 Tracker 主機</string>
@@ -769,8 +651,6 @@
     <string name="insights_allowed">允許透過</string>
     <string name="insights_tracker_companies">追蹤公司</string>
     <string name="insights_apps_with_trackers">帶追蹤器的應用程式</string>
-    <string name="insights_top_tracking_apps">最惡劣的違規應用程式</string>
-    <string name="insights_top_companies">最活躍的追蹤公司</string>
     <string name="insights_pervasive_trackers">最常見的追蹤器</string>
     <string name="insights_top_domains">封鎖最多的追蹤網網域名稱</string>
     <string name="insights_domain_alias_separator">" 或 "</string>
@@ -780,15 +660,11 @@
     </plurals>
     <string name="insights_no_data">尚無追蹤資料。繼續使用您的應用程式，之後回來看看！</string>
     <string name="insights_shocking_fact">您的應用程式本週透過 %2$d 個追蹤主機聯絡了 %1$d 家追蹤公司！</string>
-    <string name="insights_shocking_fact_playstore">您的應用程式本週聯絡了 %1$d 家追蹤公司！</string>
     <string name="insights_share">分享給好友</string>
     <string name="insights_share_trackers_blocked">封鎖的追蹤主機</string>
-    <string name="insights_share_trackers_detected">偵測到的追蹤主機</string>
     <string name="insights_share_url">TrackerControl.org</string>
     <string name="insights_share_message">我本週用TrackerControl封鎖了來自 %2$d 家企業的 %1$d 個追蹤器！拿回您的隱私：https://trackercontrol.org</string>
-    <string name="insights_share_message_playstore">我本週用TrackerControl偵測到來自 %2$d 家企業的 %1$d 個追蹤器！拿回您的隱私：https://trackercontrol.org</string>
     <string name="insights_see_more">檢視更多 →</string>
-    <string name="insights_view_timeline">檢視最近的追蹤器活動</string>
     <string name="title_blocklists">額外的主機檔案</string>
     <string name="summary_manage_blocklists">這些只是備用。TrackerControl 包括其自己的主機名稱單，讓人們瞭解追蹤背後的公司。</string>
     <string name="title_add_blocklist">新增主機檔案</string>
@@ -806,5 +682,4 @@
     <string name="log_connection_wifi">Wi-Fi</string>
     <string name="log_connection_other">其他網路</string>
     <string name="log_screen_on">螢幕開啟</string>
-    <string name="log_app_icon">應用程式圖示</string>
 </resources>

@@ -31,9 +31,6 @@
     <string name="menu_log_support">Razlaga</string>
     <string name="menu_troubleshooting">Odpravljanje težav</string>
     <string name="menu_about">O programu</string>
-    <string name="menu_timeline">Dejavnost sledilcev</string>
-    <string name="title_tracker_activity">Dejavnost sledilcev</string>
-    <string name="timeline_empty">Ni nedavne dejavnosti sledilcev.\n\nOmogočite TrackerControl, če si želite ogledati, kateri programi vam sledijo.</string>
     <string name="timeline_empty_disabled_title">TrackerControl je izklopljen.</string>
     <string name="timeline_empty_disabled_subtitle">S stikalom zgoraj desno omogočite TrackerControl.  Dejavnost sledilcev iz vaših programov se bo nato pojavila tukaj.</string>
     <string name="timeline_empty_enabled_title">Nadziranje sledilcev …</string>
@@ -127,8 +124,6 @@
     <string name="menu_cleanup">Počisti</string>
     <string name="setting_options">Splošno</string>
     <string name="setting_further_options">Več možnosti</string>
-    <string name="setting_dark">Temna tema</string>
-    <string name="setting_install">Obvesti ob novi namestitvi</string>
     <string name="setting_pause">Samodejno omogoči po %1$s-h minutah</string>
     <string name="setting_update">Preveri za posodobitve</string>
     <plurals name="pause">
@@ -137,23 +132,15 @@
         <item quantity="few">Premor za %d min.</item>
         <item quantity="other">Premor za %d min.</item>
     </plurals>
-    <string name="setting_network_options">Možnosti omrežja</string>
-    <string name="setting_subnet">Podomrežno usmerjanje</string>
-    <string name="setting_tethering">Dovoli privezovanje</string>
-    <string name="setting_lan">Dovoli dostop do LAN-a</string>
     <string name="setting_ip6">Omogoči promet IPv6</string>
     <string name="setting_call">Onemogoči ob klicu</string>
     <string name="setting_reload_onconnectivity">Ponovno naloži ob vsaki spremembi povezljivosti</string>
     <string name="setting_tcp_mss_clamp">Način združljivosti s privezovanjem</string>
     <string name="summary_tcp_mss_clamp">Preusmeri ves promet skozi TrackerControl in omeji velikost odsekov TCP, da popravi privezane povezave, ki so zastale ali nimajo internetne povezave.  Krajevni dostop do omrežja gre sedaj skozi TrackerControl.  Zmogljivost bo morda zmanjšana.</string>
     <string name="setting_advanced_options">Napredne nastavitve</string>
-    <string name="setting_system">Prikaži sistemske programe</string>
     <string name="setting_log_app">Poišči nove sledilce</string>
     <string name="setting_log_logcat">Raziskave</string>
-    <string name="setting_filter">Blokiraj sledilce</string>
     <string name="setting_handover">Nemoten preklop VPN-a ob ponovnem nalaganju</string>
-    <string name="setting_lockdown">Zakleni promet</string>
-    <string name="setting_track_usage">Sledi porabi omrežja</string>
     <string name="setting_reset_usage">Ponastavi porabo omrežja</string>
     <string name="setting_show_resolved">Pokaži razrešena imena domen</string>
     <string name="setting_exclude_all_tracking">Izključi vse programe iz nadzora sledenja</string>
@@ -173,7 +160,6 @@
     <string name="setting_socks5_username">Uporabniško ime SOCKS5: %s</string>
     <string name="setting_socks5_password">Geslo SOCKS5: %s</string>
     <string name="setting_wg_enabled">Preusmeri promet preko WireGuarda</string>
-    <string name="setting_wg_config">Nastavitve WireGuard</string>
     <string name="setting_wg_profile">Profil WireGuard</string>
     <string name="setting_wg_profile_manage">Profili WireGuard po meri</string>
     <string name="setting_wg_profile_import">Uvozi nastavitve WireGuard</string>
@@ -207,24 +193,14 @@
     <string name="setting_backup">Varnostno kopiranje</string>
     <string name="setting_export">Izvozi nastavitve</string>
     <string name="setting_import">Uvozi nastavitve</string>
-    <string name="setting_hosts">Uvozi datoteko gostiteljev</string>
-    <string name="setting_hosts_append">Uvozi datoteko gostiteljev (pripni)</string>
-    <string name="setting_hosts_url">URL datoteke gostiteljev</string>
-    <string name="setting_hosts_download">Prejmi datoteko gostiteljev</string>
     <string name="setting_hosts_update">Posodobi datoteko gostiteljev</string>
     <string name="setting_hosts_auto_update">Samodejno posodobi gostitelje</string>
     <string name="summary_hosts_auto_update">V ozadju samodejno posodobi datoteko gostiteljev</string>
-    <string name="summary_install">Prikaži obvestilo v vrstici stanja za na novo nameščene programe.</string>
     <string name="summary_pause">Po premoru iz obvestila samodejno omogoči TrackerControl po izbranem številu minut (vnesite 0 , da onemogočite to možnost).</string>
     <string name="summary_update">Dvakrat dnevno preveri za nove izdaje na GitHubu</string>
-    <string name="summary_tethering">Delovanje privezovanja je odvisno od različice Androida.  Privezanega prenosa ni mogoče filtrirati.</string>
-    <string name="summary_subnet">Omogoči podomrežno usmerjanje; lahko omogoči klicanje Wi-Fi, lahko pa tudi sproži hrošče v Androidu in poveča porabo energije.</string>
-    <string name="summary_lan">Dovoli programom, da se povežejo na krajevne omrežne naslove, kot so 10.0.0.0/8, 172.16.0.0/12 in 192.168.0.0/16.</string>
     <string name="summary_ip6">Preusmeri promet IP različice 6 v TrackerControl, da se ga lahko izbirno dovoli ali blokira.</string>
     <string name="summary_call">Onemogoči TrackerControl ob dohodnih ali odhodnih klicih.  To se lahko uporabi, da se zaobide težave pri klicanju IP/Wi-Fi.</string>
-    <string name="summary_system">Na seznamu programov prikaži sistemske programe</string>
     <string name="summary_log_app">Onemogočite za zmanjšanje porabe energije.  Novi sledilci bodo še vedno blokirani, vendar ne bodo prikazani.</string>
-    <string name="summary_track_usage">Sledi številu poslanih in prejetih bajtov za vsak program in naslov.  To lahko povzroči dodatno porabo energije.</string>
     <string name="summary_block_domains">OPOZORILO: blokirani gostitelji niso prikazani v up. vmesniku.</string>
     <string name="summary_rcode">Privzeta vrednost je 3 (NXDOMAIN), kar pomeni \'neobstoječa domena\'.</string>
     <string name="summary_validate">Ime domene, ki se uporablja za preverjanje veljavnosti internetne povezave na vratih 443 (https).</string>
@@ -248,7 +224,6 @@
     <string name="msg_wg_profile_default_name">Privzeto</string>
     <string name="msg_wg_profile_saved">Profil WireGuard je bil shranjen.</string>
     <string name="msg_wg_profile_deleted">Profil WireGuard je bil izbrisan.</string>
-    <string name="msg_wg_profile_no_config">Pred shranjevanjem profila prilepite nastavive WireGuarda.</string>
     <string name="msg_wg_profile_empty">Noben profil še ni bil ustvarjen.</string>
     <string name="msg_wg_profile_active">Dejaven</string>
     <string name="msg_wg_profile_set_active">Nastavi kot dejaven</string>
@@ -281,13 +256,9 @@
     <string name="msg_wg_mullvad_countries_failed">Nalaganje držav Mullvada ni uspelo: %s</string>
     <string name="msg_wg_proton_note">Protonova dokumentirana nastavitev preko tretjih oseb uporablja prejemljive nastavitve WireGuard.  TrackerControl ne potrebuje vaših poveril za Proton in ne more samodejno osvežiti nastavitev.\n\nNa account.protonvpn.com se vpišite, pojite na Downloads → WireGuard configuration, prejmite nastavitve, jih odprite v urejevalniku besedil in vsebino prilepite sem.</string>
     <string name="msg_wg_proton_open_dashboard">Odpri nadzorno ploščo VPN-a Proton</string>
-    <string name="vpn_status_connected">%s</string>
-    <string name="vpn_status_mullvad_connected">Mullvad - %s</string>
     <string name="vpn_status_mullvad">Mullvad</string>
     <string name="vpn_status_relay">Prehod: %s</string>
-    <string name="vpn_status_mullvad_summary">Prehod: %s</string>
     <string name="vpn_status_wireguard_connected">WireGuard je povezan.</string>
-    <string name="vpn_status_wireguard_summary">%1$s - %2$s</string>
     <string name="vpn_status_disconnected">Ni povezano.</string>
     <string name="vpn_provider_mullvad">VPN Mullvad</string>
     <string name="vpn_provider_ivpn">IVPN</string>
@@ -315,7 +286,6 @@
     <string name="vpn_account_show">Prikaži</string>
     <string name="vpn_account_hide">Skrij</string>
     <string name="vpn_account_change">Spremeni</string>
-    <string name="vpn_account_done">Končano</string>
     <string name="vpn_account_cancel">Prekliči</string>
     <string name="vpn_mullvad_intro">Vnesite št. računa Mullvad.  Shrani se na to napravo.</string>
     <string name="vpn_mullvad_account_note">Ta račun se uporablja za Mullvadove povezave iz držav.</string>
@@ -358,7 +328,6 @@
     <string name="msg_installed">Težave s/z %1$s?</string>
     <string name="msg_installed_description">Dovoli programom, da navežejo stik s podjetji</string>
     <string name="msg_installed_tracker_libraries_found">Vsebuje %d sledilnih knjižnic.</string>
-    <string name="msg_installed_n">Je bil nameščen</string>
     <string name="msg_completed">Dejanje je končano.</string>
     <string name="msg_no_file_manager">Upravljalnika datotek za izbiro datoteke ni bilo mogoče najti.</string>
     <string name="msg_no_browser">Brskalnika za odpiranje povezave ni bilo mogoče najti.</string>
@@ -373,36 +342,20 @@ Vaš internetni promet se ne pošilja na oddaljeni strežnik VPN.</string>
     <string name="msg_doh_unreachable">Varnega DNS-a (DoH) ni mogoče doseči, čeprav imate dejavno internetno povezavo.  Če se to pogosto dogaja, bi ga morda bilo dobro v nastavitvah omrežja onemogočiti.</string>
     <string name="msg_start_failed">Android je trenutno zavrnil zagon storitve VPN.  To je verjetno zaradi hrošča v vaši različici Androida.</string>
     <string name="msg_try">Poizkusite TrackerControl</string>
-    <string name="msg_doze">Za dosledne rezultate morate za TrackereControl onemogočiti Androidovo optimizacijo baterije.
-\n\nV naslednjem pogovornem oknu na vrhu izberite \"Vsi Programi\", na seznamu se dotaknite \"TrackerControl\" in izberite in potrdite \"Ne optimiziraj\".</string>
-    <string name="msg_datasaving">Za dosledne rezultate onemogočite Androidovo varčevanje s podatki za TrackerControl.
-\n\nV naslednjem pogovornem oknu omogočite možnosti \"Podatki v ozadju\" in \"Neomejena poraba podatkov\".</string>
-    <string name="msg_filter">Če boste uporabljali filtriranje, bo Android porabo podatkov in energije dodelil programu TrackerControl (Android bo mislil, da podatke in energijo porablja TrackerControl in ne izvirni programi).</string>
-    <string name="msg_filter4">Android 4 zahteva, da je filtriranje omogočeno.</string>
     <string name="msg_log_disabled">Beleženje prometa je onemogočeno.  Uporabite zgornje stikalo, da ga omogočite.  Beleženje prometa lahko povzroči dodatno porabo energije.</string>
-    <string name="msg_clear_rules">To bo ponastavilo pravila in pogoje na privzete vrednosti.</string>
     <string name="msg_clear_activity">To bo odstranilo posneto dejavnost tega programa.  Nastavitev blokiranja/dovolitve za posamezen sledilec bo ohranjena.</string>
-    <string name="msg_reset_access">To bo izbrisalo dnevniške vrstice poizkusov dostopa, ki so brez pravil za dovolitev/blokiranje.</string>
-    <string name="msg_import_last">Zadnji uvoz: %s</string>
-    <string name="msg_downloading">Prejemanje …</string>
-    <string name="msg_downloaded">Datoteka gostiteljev je bila prejeta.</string>
-    <string name="msg_updated">Datoteka gostiteljev je bila posodobljena in uveljavljena!</string>
-    <string name="msg_download_last">Zadnji prejem: %s</string>
     <string name="msg_update_last">Zadnja posodobitev: %s</string>
     <string name="msg_metered">Omrežje je merjeno.</string>
     <string name="msg_inactive">Ni dejavne internetne povezave.</string>
     <string name="msg_queue">TrackerControl je zaposlen.</string>
     <string name="msg_update">Na voljo je posodobitev, dotaknite za prejem.</string>
     <string name="title_version">Različica %1$d</string>
-    <string name="msg_usage">Dostop do omrežja Wi-Fi ali mobilnega interneta lahko dovolite (zeleno) ali zavrnete (rdeče) z dotikom ikone poleg programa.</string>
     <string name="msg_push">Dohodna (potisna) sporočila v glavnem obdela sistemski sestavni del Storitve Play, ki mu je dostop do interneta privzeto dovoljen.</string>
     <string name="msg_system">Upravljanje z vsemi (sistemskimi) programi lahko omogočite v nastavitvah.</string>
-    <string name="msg_issue">Prosimo, opišite težavo in čas njenega nastanka:</string>
     <string name="msg_vpn_cancelled">Povezava VPN je bila preklicana.\nAli ste nastavili drug VPN kot vedno dejavnega?</string>
     <string name="msg_unavailable">Ta značilnost ni na voljo v tej različici Androida.</string>
     <string name="msg_always_on">Drug VPN je nastavljen kot vedno dejaven.</string>
     <string name="msg_always_on_lockdown">Če želite uporabljati TrackerControl, izklopite \"Blokiraj povezave brez VPN-a\" v Androidovih nastavitvah za VPN.</string>
-    <string name="msg_private_dns">V Androidovih nastavitvah omrežja izklopite \"Zasebni DNS\".  TrackerControl v svojih nastavitvah nudi svojo značilnost \"Varen DNS\".</string>
     <string name="msg_start_forward">Začni posredovati iz %1$s, vrata %2$d v %3$s:%4$d od%5$s?</string>
     <string name="msg_stop_forward">Ustavi posredovati %1$s, vrata %2$d?</string>
     <string name="msg_log_logcat">Opozorilo: blokiranje je onemogočeno zaradi beleženja ADB.</string>
@@ -430,38 +383,10 @@ Vaš internetni promet se ne pošilja na oddaljeni strežnik VPN.</string>
     <string name="title_interactive_allowed">Dovoli, ko je zaslon vklopljen</string>
     <string name="title_roaming_blocked">Blokiraj med gostovanjem</string>
     <string name="title_metered">Privzeto se povezava Wi-Fi smatra za nemerjeno, mobilna povezava pa za merjeno.</string>
-    <string name="title_internet">Dostop do interneta ni mogoč.</string>
-    <string name="title_disabled">je onemogočen.</string>
-    <string name="title_messaging">Dohodna sporočila prejemajo Storitve Google Play in ne ta program in jih zato blokiranje tega programa ne more blokirati.</string>
-    <string name="title_download">Prejeme opravlja upravljalnik prenosov in ne ta program in jih zato blokiranje tega programa ne more blokirati.</string>
-    <string name="title_conditions">Pogoji</string>
-    <string name="title_screen_wifi">Dovoli Wi-Fi, ko je zaslon vklopljen</string>
-    <string name="title_screen_other">Dovoli mobilno povezavo, ko je zaslon vklopljen</string>
-    <string name="title_roaming">Blokiraj med gostovanjem</string>
-    <string name="title_lockdown">Dovoli v zaklenjenem načinu</string>
-    <string name="title_related">V povezavi s filtrom</string>
-    <string name="title_access">Poizkusi dostopa</string>
-    <string name="title_precedence">Pravila o dostopih imajo prednost pred drugimi pravili.</string>
-    <string name="title_options">Možnosti</string>
-    <string name="title_notify">Obvesti o poizkusih dostopa do interneta</string>
-    <string name="title_logging_disabled">Beleženje ali filtriranje ni omogočeno.</string>
-    <string name="title_logging_enabled">Beleženje ali filtriranje sta omogočena.</string>
-    <string name="title_logging_configure">Nastavi</string>
-    <string name="title_enable_logging">Omogoči beleženje samo blokiranih naslovov</string>
-    <string name="title_enable_filtering">Omogočite filtriranje za beleženje tudi dovoljenih naslovov.</string>
-    <string name="title_enable_notify">Omogoči obvestila o dostopih za na novo zabeležene naslove</string>
-    <string name="title_enable_help0">Te nastavitve so splošne, ki veljajo za vse programe.</string>
-    <string name="title_enable_help1">Za dovolitev ali blokiranje posameznih naslovov je zahtevano tudi filtriranje.</string>
-    <string name="title_enable_help2">Omogočitev beleženja (manj) ali filtriranja (več) lahko poveča porabo energije in vpliva na hitrost omrežja.</string>
     <string name="title_rate">Oceni</string>
     <string name="title_allow">Dovoli</string>
     <string name="title_block">Blokiraj</string>
-    <string name="title_allow_wifi">Dovoli Wi-Fi</string>
-    <string name="title_block_wifi">Blokiraj Wi-Fi</string>
-    <string name="title_allow_other">Dovoli mob. povezavo</string>
-    <string name="title_block_other">Blokirajo mob. povezavo</string>
     <string name="title_nobody">nihče</string>
-    <string name="title_dontask">Ne vprašaj več</string>
     <string name="title_log_whois">Whois %1$s</string>
     <string name="title_log_port">Vrata %1$d</string>
     <string name="title_log_copy">Kopiraj</string>
@@ -502,7 +427,6 @@ Vaš internetni promet se ne pošilja na oddaljeni strežnik VPN.</string>
     <string name="no">Ne</string>
     <string name="menu_csv">Izvozi kot CSV</string>
     <string name="exporting">Izvažanje …</string>
-    <string name="share_csv">Deli</string>
     <string name="export_failed">Izvoz je spodletel.</string>
     <string name="exported">Izvoženo v shrambo!</string>
     <!-- App Details -->
@@ -510,7 +434,6 @@ Vaš internetni promet se ne pošilja na oddaljeni strežnik VPN.</string>
     <string name="tab_trackers">Sledilci</string>
     <string name="tab_countries">Države</string>
     <string name="tab_actions">Podatkovne pravice</string>
-    <string name="tracker_name">Ime sledilca</string>
     <string name="app_info">Upravljanje programa</string>
     <!-- Actions -->
     <string name="block_tracking">Blokiraj sledilce</string>
@@ -523,7 +446,6 @@ Vaš internetni promet se ne pošilja na oddaljeni strežnik VPN.</string>
     <string name="contacts_description">Če mislite, da program krši načela zaščite podatkov, navežite stik neposredno z odgovorno osebo.</string>
     <string name="play_services_required">To je nastavitev Storitev Google Play, ki je ni bilo mogoče najti na vaši napravi.</string>
     <string name="no_mail_service">Namestite e-poštnega odjemalca.</string>
-    <string name="blocking_settings">Izberite sledilce</string>
     <string name="ad_settings">Spremeni zdaj</string>
     <string name="request_data">Zahtevaj podatke</string>
     <string name="request_deletion">Zahtevaj izbris</string>
@@ -555,13 +477,6 @@ Vaš internetni promet se ne pošilja na oddaljeni strežnik VPN.</string>
     <string name="tracker_email">E-pošta</string>
     <string name="tracker_consent">Upravljanje s soglasji</string>
     <string name="tracker_uncategorised">Neuvrščeno</string>
-    <string name="setting_strict_blocking">Strogo blokiranje</string>
-    <string name="summary_strict_blocking">Za na novo nameščene program blokiraj kar največ deljenja podatkov s podjetji.  Več programov bo delovalo z napakami.</string>
-    <string name="strict_blocking_explanation">Nenaprednim uporabnikom je priporočljivo onemogočiti to možnost, da se zmanjšajo okvare programov.  Vendar to dovoli nekaj osnovnega deljenja s podjetji.</string>
-    <string name="setting_block_ambiguous_trackers">Blokiraj nejasne sledilce</string>
-    <string name="summary_block_ambiguous_trackers">Kadar ima IP dokaze tako o sledilnih in nesledilnih gostiteljskih imenih, ga vseeno blokiraj.  Onemogočite to možnost, če želite zmanjšati prizadetost programov.</string>
-    <string name="setting_sni_enabled">Izločitev SNI (raziskovalno)</string>
-    <string name="summary_sni_enabled">Izloči gostiteljska imena iz povezav TLS za natančnejše zaznavanje sledilcev.  Opozorilo: to sledilnim strežnikom razkrije vaš naslov IP.  Na voljo samo za raziskovalne namene.</string>
     <string name="setting_blocking_mode">Način blokiranja</string>
     <string name="summary_blocking_mode_minimal">Minimalno: blokira samo sledilce s seznama DuckDuckGo, ki jih je varno blokirati.  Brskalniki so še vedno preusmerjeni preko VPN-a, vendar je njihova zaščita pred sledenjem privzeto izklopljena.  Znani nezdružljivi programi so izključeni.  Omejena prizadetost programov.</string>
     <string name="summary_blocking_mode_standard">Običajno: blokira vse znane sledilce z več seznamov (X-Ray, Disconnect, DuckDuckGo).  Osnovne storitve so dovoljene.  Če program preneha delovati, prilagodite njegove nastavitve za zaščito (v programskem meniju glejte Odpravljanje težav).</string>
@@ -585,7 +500,6 @@ Vaš internetni promet se ne pošilja na oddaljeni strežnik VPN.</string>
     <string name="summary_wg_route_mode">Katere aplikacije gredo prek oddaljenega VPN. Preostale so še naprej v celoti nadzorovane in filtrirane — le povežejo se prek omrežja te naprave.</string>
     <string name="wg_route_mode_all">Vse aplikacije</string>
     <string name="wg_route_mode_selected">Samo izbrane aplikacije</string>
-    <string name="app_route_heading">Oddaljeni VPN</string>
     <string name="app_route_through">Prek oddaljenega VPN</string>
     <string name="app_route_through_explanation">Ta aplikacija se poveže prek vašega oddaljenega VPN, ki namesto vašega omrežja vidi njen promet.</string>
     <string name="app_route_direct">Neposredno s te naprave</string>
@@ -641,23 +555,16 @@ Vaš internetni promet se ne pošilja na oddaljeni strežnik VPN.</string>
     <string name="forever_free">Vedno brezplačen</string>
     <string name="your_privacy">Vaša zasebnost</string>
     <string name="tracker_hostlist">Uporabniško določeni gostitelji</string>
-    <string name="unblocked">Odblokirano</string>
-    <string name="enable">Omogoči</string>
     <string name="internet_blocked">Dostop do spleta je blokiran.</string>
     <string name="internet_unblocked">Dostop do spleta je odblokiran.</string>
-    <string name="category_blocked">Sledilci v kategoriji so blokirani.</string>
     <string name="category_unblocked">Sledilci v kategoriji so dovoljeni.</string>
     <string name="category_unblocked_warning">Dovoljeno s to kategorijo — blokirajte kategorijo, če želite spremeniti posamezna podjetja.</string>
-    <string name="switch_strict_blocking">Blokiraj osnovno deljenje podatkov</string>
     <string name="tracking_detection_failed">Zaznavanje sledilnih knjižnic je spodletelo.</string>
     <string name="tracking_detection_failed_ram">Zaznavanje sledilnih knjižnic je spodletelo.  Ni dovolj pomnilnika.</string>
     <string name="tracking_detection_failed_report">Zaznavanje sledilnih knjižnic je spodletelo.  Prosimo, sporočite to težavo razvijalcu.</string>
     <string name="detected_trackers">Zaznane sledilne knjižnice: %s</string>
-    <string name="analyzing_classes">Preučevanje razredov …</string>
     <string name="analyzing_classes_progress">Preučevanje razredov … %d%%</string>
-    <string name="analysis_already_running">Preučevanje se že izvaja.</string>
     <string name="none">Brez</string>
-    <string name="trackers_static">Sledilne knjižnice</string>
     <string name="trackers_static_explanation">TrackerControl sledenje zazna v kodi (\'knjižnicah\') in omrežnem prometu programov.\n\nSledenje, ki je zaznano v omrežnem prometu, lahko TrackerControl blokira.</string>
     <string name="trackers_static_explanation_playstore">TrackerControl sledenje zazna v kodi (\'knjižnicah\') in omrežnem prometu programov.</string>
     <string name="trackers_static_disclaimer">Opomba: zaznavanje kode sledilnih knjižnic še ne pomeni, da se dejavno uporabljajo.  Nekateri programi so lahko te knjižnice odstranili ali onemogočili, vendar je še vedno mogoče zaznati njihove sledi.</string>
@@ -688,12 +595,9 @@ Vaš internetni promet se ne pošilja na oddaljeni strežnik VPN.</string>
     <string name="tracker_monitored_minimal">Nadzirano — ni blokirano v minimalnem načinu</string>
     <string name="setting_domain_based_blocked">Blokiranje glede na domeno</string>
     <string name="summary_domain_based_blocking">Dovoli bolj prefinjeno blokiranje.  To je še vedno v razvoju.</string>
-    <string name="untap_unblock">Nasvet: posamezne vnose lahko blokirate tako, da se jih dotaknete.</string>
     <string name="uncertain_entry">Vnosi, ki so označeni z \'*\', so lahko netočni zaradi omejitev Androida.  To običajno pomeni, da isto podjetje uporablja isti naslov IP pod različnimi domenami, lahko pa tudi, da so za istim naslovom IP različna podjetja (npr. če uporabljajo omrežje za dostavo vsebin).</string>
     <string name="browsers_not_supported">Zaznan je bil brskalnik. ⚠️</string>
     <string name="browsers_not_supported_explanation">Videti je, da je to brskalnik.\n\nZaščite pred sledenjem za brskalnike deluje najbolje znotraj brskalnika, kjer se sledilci blokirajo na ravni strani in zahtev.  TrackerControl preusmerja promet brskalnika skozi VPN/WireGuard, vendar je blokiranje sledilcev za brskalnik privzeto izklopljeno, ker lahko povzroči nedelovanje strani.</string>
-    <string name="static_analysis">Zaznaj sledilce v kodi programov</string>
-    <string name="failed_loading_cached_analysis">Nalaganje predpomnjenih rezultatov sledilcev je spodletelo.  Prosimo, sporočite to razvijalcu na hello@trackercontrol.org.</string>
     <string name="msg_notifications">Dotaknite se, da odobrite dovoljenja za obvestila (za sporočila o napakah itd.)</string>
     <string name="msg_local_network">Dotaknite se, če želite dovoliti dostop do krajevnega omrežja, za katerega Android vpraša kot \"bližnje naprave\".  Android 17 ga privzeto blokira, tako da je dostop do vašega soležnega ali posredniškega strežnika WireGuard, varnega razrešilnika DNS ali strežnika DNS onemogočen.</string>
     <string name="msg_local_network_title">Potreben je dostop do krajevnega omrežja.</string>
@@ -709,7 +613,6 @@ Vaš internetni promet se ne pošilja na oddaljeni strežnik VPN.</string>
     <string name="summary_monitor_system">Preusmeri sistemske programe (Storitve Play, storitve ponudnika itd.) preko VPN-a, da se zaznajo blokirajo njihovi sledilci in prikažejo na seznamu programov,\n\nPrivzeto izklopljeno: izključitev sistemskih programov je prijaznejše do baterije, ker njihov promet v ozadju ne zbudi VPN-a.  Vklop te možnosti je v sporu z možnostjo \"Blokiraj povezave brez VPN-a\" v Androidovih nastavitvah za VPN, zato je treba slednjo IZKLOPITI.</string>
     <!-- Onboarding -->
     <string name="title_next">Naprej</string>
-    <string name="title_skip">Preskoči</string>
     <string name="title_previous">Nazaj</string>
     <string name="title_finish">Začni</string>
     <string name="onboarding_welcome_title">Prevzemite nadzor nad svojo zasebnostjo</string>
@@ -721,40 +624,19 @@ Vaš internetni promet se ne pošilja na oddaljeni strežnik VPN.</string>
     <string name="onboarding_vpn_blocked_title">Dejaven je drugi VPN</string>
     <string name="onboarding_vpn_blocked_desc">Android je programu TrackerControl preprečil zagon svojega krajevnega VPN-a, ker je drug program nastavljen kot <b>Vedno vklopljen VPN</b>.  Odprite nastavitve VPN in onemogočite \"Vedno vklopljen\" za drug VPN in poizkusite znova.</string>
     <string name="onboarding_vpn_blocked_action">Odpri nastavitve VPN</string>
-    <string name="onboarding_battery_title">Prepreči motnje</string>
-    <string name="onboarding_battery_desc">Android lahko uniči opravila v ozadju, da prihrani energijo.  Da zagotovite neprekinjeno zaščito pred sledilci, onemogočite optimizacije za TrackerControl.</string>
-    <string name="onboarding_battery_action">Onemogoči optimizacijo</string>
-    <string name="onboarding_battery_sure">Če ne onemogočite optimizacijo baterije, lahko Android TrackerControl kadarkoli ustavi.  Ali res želite nadaljevati?</string>
     <string name="onboarding_notify_title">Ostanite na tekočem</string>
     <string name="onboarding_notify_desc">Dovoli obvestila, da si ogledate posodobitve v resničnem času in nadzirate zaščito neposredno iz vrstice stanja.</string>
     <string name="onboarding_notify_action">Dovoli obvestila</string>
     <string name="onboarding_notify_sure">Brez dovoljenj za obvestila si ne boste mogli ogledati posodobitev v resničnem času ali nadzirati zaščite iz vrstice stanja.  Ali ste prepričani?</string>
     <string name="onboarding_timeline_title">Oglejte si, kako se časovnica napolni</string>
     <string name="onboarding_timeline_desc">TrackerControl se zažene po časovnici.  Na začetku je lahko prazna — programi običajno stopijo v stik s sledilci šele med njihovo uporabo.\n\nKo končate z nastavitvijo odprite nekaj programov in se vrnite v TrackerControl, da si ogledate zaznano in blokirano sledilno dejavnost.</string>
-    <string name="onboarding_network_title">Neomejeno omrežje</string>
-    <string name="onboarding_network_desc">Možnosti varčevanja podatkov lahko programu TrackerControl onemogočijo pravilno delovanje v ozadju.  Za najzanesljivejšo zaščito mu omogočite neomejen dostop.</string>
-    <string name="onboarding_network_action">Odobri neomejen dostop</string>
-    <string name="onboarding_network_sure">Omejevanje prenašanja podatkov v ozadju lahko povzroči nedelovanje programa TrackerControl.  Ali res želite nadaljevati brez odobritve neomejenega dostopa?</string>
     <string name="onboarding_lockdown_title">Nastavitev blokiranja povezav brez VPN-a</string>
     <string name="onboarding_lockdown_desc">Android ima nastavitev \"Blokiraj povezave brez VPN-a\", ki programom preprečuje povezavo z internetom, dokler TrackerControl ni pripravljen.\n\nČe je ta nastavitev omogočena, lahko programom prepreči njihovo nalaganje.  Priporočamo, da za najboljšo izkušnjo to nastavitev <b>onemogočite</b>.</string>
     <string name="onboarding_lockdown_action">Odpri nastavitve VPN</string>
     <string name="onboarding_lockdown_sure">Če nadaljujete z omogočenim blokiranjem, lahko to povzroči težave.  Ste prepričani?</string>
-    <string name="onboarding_dns_title">Varen DNS (značilnost beta; morda ne bo delovalo po pričakovanjih)</string>
-    <string name="onboarding_dns_desc">Zaščitite svojo zasebnost pred vašim ponudnikom s šifriranjem prometa DNS z uporabo DNS-a preko HTTPS-a (DoH).\n\nTo prepreči \"ugrabitev DNS\" in ščiti vaše navade brskanja pred ponudnikom interneta.</string>
-    <string name="onboarding_dns_action">Omogoči varen DNS</string>
-    <string name="onboarding_dns_action_disable">Onemogoči varen DNS</string>
-    <string name="onboarding_blocking_title">Blokiraj sledilce</string>
-    <string name="onboarding_blocking_desc">Odkrij in blokiraj razširjeno sledenje v vaših programih.\n\n• Seznami blokiranja&lt;/b&gt;: združuje Firefox Disconnect z našim edinstvenim preučevanjem &lt;b&gt;2.000.000-ov programov&lt;/b&gt;.\n• &lt;b&gt;GDPR&lt;/b&gt;: izkoristite svoje pravice z &lt;b&gt;zahtevami za brisanje z enim klikom&lt;/b&gt;.\n• &lt;b&gt;Preglednost&lt;/b&gt;: odkrijte, katera podjetja in države natančno pridobivajo vaše podatke.</string>
-    <string name="onboarding_blocking_action">Omogoči blokiranje</string>
-    <string name="onboarding_blocking_action_disable">Onemogoči blokiranje</string>
-    <string name="onboarding_blocking_sure">Blokiranje sledilcev je glavna značilnost programa TrackerControl.  Ali ga res želite onemogočiti?</string>
-    <string name="onboarding_action_enabled">Omogočeno</string>
     <string name="onboarding_action_disabled">Onemogočeno</string>
     <string name="onboarding_action_granted">Odobreno</string>
-    <string name="onboarding_action_optimized">Optimizirano</string>
-    <string name="onboarding_action_unrestricted">Neomejeno</string>
     <!-- Insights Screen -->
-    <string name="menu_insights">Podatki</string>
     <string name="insights_title">Podatki o vaši zasebnosti</string>
     <string name="insights_subtitle_7days">Zadnjih 7 dni</string>
     <string name="insights_tracking_attempts">Št. navez. stikov z gostitelji sledilcev</string>
@@ -762,8 +644,6 @@ Vaš internetni promet se ne pošilja na oddaljeni strežnik VPN.</string>
     <string name="insights_allowed">Dovoljenih</string>
     <string name="insights_tracker_companies">Sledilna podjetja</string>
     <string name="insights_apps_with_trackers">Programi s sledilci</string>
-    <string name="insights_top_tracking_apps">Najbolj agresivni programi</string>
-    <string name="insights_top_companies">Najbolj dejavna sledilna podjetja</string>
     <string name="insights_pervasive_trackers">Najbolj prodorni sledilci</string>
     <string name="insights_top_domains">Domene z največ sledilci</string>
     <!-- Joins the alternative domain names of one tracker, e.g. "example.com or example.net". Keep the surrounding spaces. -->
@@ -777,15 +657,11 @@ Vaš internetni promet se ne pošilja na oddaljeni strežnik VPN.</string>
     </plurals>
     <string name="insights_no_data">Podatki o sledenju še niso na voljo.  Uporabljajte svoje programe in zopet preverite!</string>
     <string name="insights_shocking_fact">Ta teden so vaši programi navezali stiki s/z %1$d-imi sledilnimi podjetji preko %2$d gostiteljev sledenja!</string>
-    <string name="insights_shocking_fact_playstore">Vaši programi so ta teden navezali stik s/z %1$d-imi sledilnimi podjetji!</string>
     <string name="insights_share">Deli s priijatelji</string>
     <string name="insights_share_trackers_blocked">Blokiranih sledilnih gostiteljev</string>
-    <string name="insights_share_trackers_detected">Zaznanih sledilnih gostiteljev</string>
     <string name="insights_share_url">TrackerControl.org</string>
     <string name="insights_share_message">S programom TrackerControl sem ta teden blokiral %1$d sledilnih gostiteljev od %2$d podjetij!  Prevzemite nadzor nad svojo zasebnostjo: https://trackercontrol.org.</string>
-    <string name="insights_share_message_playstore">S programom TrackerControl sem ta teden zaznal %1$d sledilnih gostiteljev od %2$d podjetij!  Prevzemite nadzor nad svojo zasebnostjo: https://trackercontrol.org.</string>
     <string name="insights_see_more">Več →</string>
-    <string name="insights_view_timeline">Pokaži nedavno sledilno dejavnost</string>
     <!-- What's New onboarding slide (not translated) -->
     <string name="title_blocklists">Dodatne datoteke gostiteljev</string>
     <string name="summary_manage_blocklists">Ti so samo za izhod v sili.  TrackerControl vključuje svoje sezname gostiteljev, ki nudijo podatke o sledilnih podjetjih.</string>
@@ -805,7 +681,6 @@ Vaš internetni promet se ne pošilja na oddaljeni strežnik VPN.</string>
     <string name="log_connection_wifi">Wi-Fi</string>
     <string name="log_connection_other">Drugo omrežje</string>
     <string name="log_screen_on">Zaslon je vkl.</string>
-    <string name="log_app_icon">Ikona programa</string>
     <string name="body_request_data"><![CDATA[Spoštovani: \n
 \n
 \n

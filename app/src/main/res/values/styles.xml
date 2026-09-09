@@ -12,9 +12,6 @@
         <item name="windowNoTitle">true</item>
     </style>
 
-    <style name="PrimaryFlatButton" parent="Theme.Material3.Light">
-        <item name="colorPrimary">@color/colorPrimary</item>
-    </style>
 
     <!-- Single base theme. Day/night is handled by Theme.Material3.DayNight;
          icons are tinted via ?attr/colorControlNormal rather than duplicated
