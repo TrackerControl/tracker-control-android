@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_description">TrackerControl permite aos usuarios monitorizar e controlar a recolección de datos xeneralizada, continua e oculta nas apps do móbil sobor do comportamento do usuario (\"rastreo\" ou \"tracking\").</string>
+    <string name="app_copyright">Dereitos de autor \u00A9 2019–2022 Elemento Elemento\n\nDereitos de autor.</string>
     <string name="app_android">TrackerControl precisa de Android 5.1 ou superior</string>
     <string name="app_xposed">Xposed causa demasiados erros, o cal implicaría a eliminación de TrackerControl da tenda de Google Play, polo tanto non hai soporte mentres Xposed estea instalado</string>
     <string name="app_eula">O uso dista aplicación é baixo a túa responsabilidade. Ningunha aplicación ofrece un 100% de protección contra o rastrexo de datos.</string>
+    <string name="app_privacy"><a href="https://github.com/TrackerControl/tracker-control-android#privacy-notice">Política de privacidade</a> <a href="https://github.com/TrackerControl/tracker-control-android#cookie-policy">Política de cookies</a></string>
+    <string name="app_ios"><a href="https://ios.trackercontrol.org">TrackerControl tamén está dispoñible para iOS</a></string>
     <string name="channel_foreground">Servizos en uso</string>
     <string name="channel_notify">Notificacións xerais</string>
     <string name="channel_access">Notificacións de acceso</string>
@@ -12,100 +15,22 @@
     <string name="menu_app_user">Amosar aplicacións de usuario</string>
     <string name="menu_app_system">Amosar aplicacións do sistema</string>
     <string name="menu_app_nointernet">Amosar aplicacións sen internet</string>
+    <string name="menu_app_unprotected">Amosar sen protección aplicacións só</string>
+    <string name="menu_app_frozen">Amosar conxeladas aplicacións</string>
     <string name="menu_sort">Ordear aplicacións</string>
     <string name="menu_sort_name">Orde alfabético</string>
     <string name="menu_sort_uid">Orde por uid</string>
     <string name="menu_sort_companies_week">Orde por empresas (semanal)</string>
     <string name="menu_sort_companies">Orde por empresas</string>
+    <string name="menu_sort_by_latest_detected_tracker">Ordenar por máis recente detectado rastreador</string>
     <string name="menu_log">Logs de tráfico</string>
     <string name="menu_settings">Opcións</string>
     <string name="menu_invite">Invitar</string>
     <string name="menu_legend">Lenda</string>
     <string name="menu_support">Apoia esta aplicación</string>
     <string name="menu_log_support">Explicación</string>
-    <string name="menu_about">Acerca de</string>
-    <!-- A blocked/allowed label followed by its share of all tracking attempts. -->
-    <string name="menu_apps">Outras aplicacións</string>
-    <string name="menu_protocol_other">Outros</string>
-    <string name="menu_traffic_allowed">Permitido</string>
-    <string name="menu_traffic_blocked">Bloqueado</string>
-    <string name="menu_live">Actualizacións no momento</string>
-    <string name="menu_refresh">Actualizar</string>
-    <string name="menu_resolve">Amosar nomes</string>
-    <string name="menu_organization">Amosar organización</string>
-    <string name="menu_pcap_enabled">PCAP habilitado</string>
-    <string name="menu_pcap_export">Exportar PCAP</string>
-    <string name="menu_clear">Limpar</string>
-    <string name="menu_export">Exportar</string>
-    <string name="menu_reset">Deixar por defecto</string>
-    <string name="menu_cleanup">Limpeza</string>
-    <string name="setting_pause">Auto habilitar despois de %1$s minutos</string>
-    <string name="setting_update">Comprobar actualizacións</string>
-    <plurals name="pause">
-        <item quantity="one">Pausar durante %d min</item>
-        <item quantity="other">Pausar durante %d min</item>
-    </plurals>
-    <!-- Secure DNS (DoH) -->
-    <!-- Block DNS-over-TLS (DoT) -->
-    <string name="summary_block_domains">AVISO: Os hosts bloqueados non se amosan na interface.</string>
-    <string name="summary_rcode">O valor por defecto é 3 (NXDOMAIN), que quere dicir \"dominio non existente\".</string>
-    <string name="summary_validate">Nome de dominio usado para validar a conexión a internet no porto 443 (https).</string>
-    <string name="summary_socks5_enabled">Só irá o tráfico TCP ao servidor proxy</string>
-    <string name="summary_watchdog">Comprobación periódica de que TrackerControl está activo (poña cero para deshabilitar). Isto pode causar consumo extra de batería.</string>
-    <string name="msg_sure">¿Está seguro?</string>
-    <string name="msg_waiting">Agardando por evento</string>
-    <string name="msg_disabled">Use o botón de enriba para activar TrackerControl.</string>
-    <string name="msg_revoked">TrackerControl foi deactivado, é moi posible que por usar outra aplicación con VPN</string>
-    <string name="msg_installed">¿Problemas con %1$s?</string>
-    <string name="msg_installed_description">Permitir á aplicación contactar con empresas</string>
-    <string name="msg_completed">Acción completada</string>
-    <string name="msg_vpn">TrackerControl usa unha VPN local para filtar o tráfico de internet.
-Por isto, por favor permita a conexión VPN no seguinte diálogo.
-O seu tráfico de internet non será enviado a ningún servidor VPN remoto.</string>
-    <string name="msg_autostart">TrackerControl non puido arrancar de xeito automático. É moi posible que sexa un bug na súa versión de Android.</string>
-    <!-- App Overview -->
-    <!-- Dynamic content descriptions for the app-icon Internet toggle in the app list (issue #231) -->
-    <!-- Dynamic content description for the per-category tracker-blocking switch -->
-    <!-- Dynamic content description for the home-screen widget toggle (accessibility follow-up, issue #636) -->
-    <!-- App Details -->
-    <!-- Actions -->
-    <!-- Per-app remote VPN routing -->
-    <string name="setting_wg_route_mode">Encamiñar polo VPN remoto</string>
-    <string name="summary_wg_route_mode">Que aplicacións se envían a través do VPN remoto. As que non seguen totalmente supervisadas e filtradas — simplemente conéctanse desde a rede deste dispositivo.</string>
-    <string name="wg_route_mode_all">Todas as aplicacións</string>
-    <string name="wg_route_mode_selected">Só aplicacións seleccionadas</string>
-    <string name="app_route_through">A través do VPN remoto</string>
-    <string name="app_route_through_explanation">Esta aplicación conéctase a través do teu VPN remoto, que ve o seu tráfico no canto da túa rede.</string>
-    <string name="app_route_direct">Directamente desde este dispositivo</string>
-    <string name="app_route_direct_explanation">Esta aplicación conéctase desde a túa propia rede. A supervisión e o bloqueo de rastrexadores seguen a aplicarse. As súas consultas DNS van ao resolvedor da túa rede no canto do VPN, e ve o enderezo real deste dispositivo — algunhas aplicacións precísano, por exemplo para chegar a dispositivos locais ou comprobar un portal cativo.</string>
-    <string name="app_route_unavailable_no_vpn">Non hai ningún VPN remoto configurado, así que todo o tráfico xa sae directamente deste dispositivo.</string>
-    <string name="app_route_unavailable_bypassed">Esta aplicación omite TrackerControl por completo, así que non hai tráfico que encamiñar.</string>
-    <string name="app_route_unavailable_partial_routes">O teu VPN remoto non transporta todo o tráfico (os seus AllowedIPs non forman un túnel completo). O encamiñamento por aplicación precisa un túnel completo, porque as rutas compártenas todas as aplicacións.</string>
-    <!-- Per-app protection state -->
-    <string name="app_state_protected">Protexida</string>
-    <string name="app_state_protected_explanation">Os rastrexadores bloquéanse e rexístranse para esta aplicación.</string>
-    <string name="app_state_trackers_allowed">Rastrexadores permitidos</string>
-    <string name="app_state_trackers_allowed_explanation">A aplicación segue pasando por TrackerControl, pero os seus rastrexadores non se bloquean nin se rexistran. Usa isto se o bloqueo estraga a aplicación.</string>
-    <string name="app_state_no_internet">Sen Internet</string>
-    <string name="app_state_no_internet_explanation">Todas as conexións desta aplicación están bloqueadas. Tamén podes tocar a icona da aplicación na pantalla principal.</string>
-    <string name="app_state_no_internet_shared_uid">Tamén se aplica a %1$s, que comparte un ID de usuario de Android con esta aplicación.</string>
-    <string name="app_state_bypassed">Omitir TrackerControl</string>
-    <string name="app_state_bypassed_explanation">A aplicación conéctase directamente, fóra de TrackerControl. Non se supervisa nin se bloquea nada para ela. Usa isto como último recurso se a aplicación segue sen funcionar.\n\nNota: \"Bloquear conexións sen VPN\" nos axustes de VPN de Android debe estar DESACTIVADO para que isto funcione.</string>
-    <!-- Per-app protection screen -->
-    <!-- Protection state and remote-VPN routing shown together on one row -->
-    <!-- Tracker library screen, reached from the summary row on the Trackers tab -->
-    <!-- Onboarding -->
-    <!-- Insights Screen -->
-    <!-- Joins the alternative domain names of one tracker, e.g. "example.com or example.net". Keep the surrounding spaces. -->
-    <!-- What's New onboarding slide (not translated) -->
-    <!-- Accessibility labels -->
-    <string name="app_copyright">Dereitos de autor \u00A9 2019–2022 Elemento Elemento\n\nDereitos de autor.</string>
-    <string name="app_privacy"><a href="https://github.com/TrackerControl/tracker-control-android#privacy-notice">Política de privacidade</a> <a href="https://github.com/TrackerControl/tracker-control-android#cookie-policy">Política de cookies</a></string>
-    <string name="app_ios"><a href="https://ios.trackercontrol.org">TrackerControl tamén está dispoñible para iOS</a></string>
-    <string name="menu_app_unprotected">Amosar sen protección aplicacións só</string>
-    <string name="menu_app_frozen">Amosar conxeladas aplicacións</string>
-    <string name="menu_sort_by_latest_detected_tracker">Ordenar por máis recente detectado rastreador</string>
     <string name="menu_troubleshooting">Solución de problemas</string>
+    <string name="menu_about">Acerca de</string>
     <string name="timeline_empty_disabled_title">TrackerControl é elemento</string>
     <string name="timeline_empty_disabled_subtitle">Liña temporal vacía desactivado subtítulo.</string>
     <string name="timeline_empty_enabled_title">Elemento para rastreadores…</string>
@@ -121,17 +46,15 @@ O seu tráfico de internet non será enviado a ningún servidor VPN remoto.</str
     <string name="unidentified_app_uid">Non identificada aplicación (UID %1$d)</string>
     <string name="tab_timeline">Liña temporal</string>
     <string name="tab_apps">Aplicacións</string>
-    <string name="tab_vpn">VPN</string>
     <string name="timeline_section_last_hour">Última hora</string>
     <string name="timeline_section_today">Hoxe</string>
     <string name="timeline_section_yesterday">Onte</string>
     <string name="timeline_section_this_week">Esta semana</string>
-    <string name="timeline_more_trackers">+%d máis</string>
+    <!-- Keep as a string: call-site/API migration and multi-count grammar are intentionally separate. -->
+    <string name="timeline_more_trackers" tools:ignore="PluralsCandidate">+%d máis</string>
     <string name="timeline_tracker_blocked">Bloqueado</string>
     <string name="timeline_tracker_allowed">Permitido</string>
-    <string name="insights_overview_status">%1$s %2$s · %3$s %4$s</string>
-    <string name="insights_overview_status_share">%1$s (%2$s)</string>
-    <string name="timeline_insights_status">%1$s %2$s · %3$s %4$s</string>
+    <!-- A blocked/allowed label followed by its share of all tracking attempts. -->
     <string name="feed_section_last_contact">última contacto %s</string>
     <plurals name="feed_show_more_companies">
         <item quantity="one">Amosar %d empresa máis</item>
@@ -146,7 +69,8 @@ O seu tráfico de internet non será enviado a ningún servidor VPN remoto.</str
     <string name="feed_company_collapsed">Contraída</string>
     <string name="feed_essential_explainer">Elemento por aplicacións — permitido elemento %s elemento funcionar</string>
     <string name="feed_essential_explainer_blocked">Elemento por aplicacións — bloqueo elemento pode elemento %s</string>
-    <string name="timeline_summary_mixed">%1$d bloqueado · %2$d permitido</string>
+    <!-- Keep as a string: call-site/API migration and multi-count grammar are intentionally separate. -->
+    <string name="timeline_summary_mixed" tools:ignore="PluralsCandidate">%1$d bloqueado · %2$d permitido</string>
     <plurals name="timeline_trackers_blocked">
         <item quantity="one">%d rastrexador bloqueados</item>
         <item quantity="other">%d rastrexadores bloqueados</item>
@@ -175,9 +99,29 @@ O seu tráfico de internet non será enviado a ningún servidor VPN remoto.</str
     <string name="troubleshooting_alwayson_title">VPN sempre activa</string>
     <string name="troubleshooting_alwayson_desc">Se \"Bloquear elemento sen VPN\"Máis información sobre Solución de problemas sempre activada elemento.</string>
     <string name="troubleshooting_alwayson_action">Abrir VPN opcións</string>
+    <string name="menu_apps">Outras aplicacións</string>
+    <string name="menu_protocol_other">Outros</string>
+    <string name="menu_traffic_allowed">Permitido</string>
+    <string name="menu_traffic_blocked">Bloqueado</string>
+    <string name="menu_live">Actualizacións no momento</string>
+    <string name="menu_refresh">Actualizar</string>
+    <string name="menu_resolve">Amosar nomes</string>
+    <string name="menu_organization">Amosar organización</string>
+    <string name="menu_pcap_enabled">PCAP habilitado</string>
+    <string name="menu_pcap_export">Exportar PCAP</string>
+    <string name="menu_clear">Limpar</string>
     <string name="menu_clear_activity">Limpar elemento actividade</string>
+    <string name="menu_export">Exportar</string>
+    <string name="menu_reset">Deixar por defecto</string>
+    <string name="menu_cleanup">Limpeza</string>
     <string name="setting_options">Elemento</string>
     <string name="setting_further_options">Adicionais opcións</string>
+    <string name="setting_pause">Auto habilitar despois de %1$s minutos</string>
+    <string name="setting_update">Comprobar actualizacións</string>
+    <plurals name="pause">
+        <item quantity="one">Pausar durante %d min</item>
+        <item quantity="other">Pausar durante %d min</item>
+    </plurals>
     <string name="setting_ip6">Activar Elemento6 tráfico</string>
     <string name="setting_call">Elemento en chamada</string>
     <string name="setting_reload_onconnectivity">Recargar en cada conectividade cambiar</string>
@@ -197,7 +141,6 @@ O seu tráfico de internet non será enviado a ningún servidor VPN remoto.</str
     <string name="setting_rcode">Hosts bloqueo elemento: %s</string>
     <string name="setting_vpn4">VPN Elemento4: %s</string>
     <string name="setting_vpn6">VPN Elemento6: %s</string>
-    <string name="setting_dns">VPN DNS: %s</string>
     <string name="setting_validate">Validar en: %s</string>
     <string name="setting_ttl">Elemento DNS TTL: %s elemento</string>
     <string name="setting_socks5_enabled">Elemento Elemento5 elemento</string>
@@ -224,13 +167,13 @@ O seu tráfico de internet non será enviado a ningún servidor VPN remoto.</str
     <string name="setting_pcap_record_size">PCAP rexistro tamaño: %s Elemento</string>
     <string name="setting_pcap_file_size">PCAP elemento. ficheiro tamaño: %s Elemento</string>
     <string name="setting_watchdog">Vixilancia: cada %s elemento</string>
-    <string name="setting_doh_enabled">Secure DNS (DoH)</string>
+    <!-- Secure DNS (DoH) -->
     <string name="summary_doh_enabled">Máis información sobre DNS seguro activado.</string>
     <string name="warning_beta">Elemento elemento. Pode non elemento como elemento.</string>
-    <string name="setting_doh_endpoint">DoH Endpoint URL</string>
     <string name="summary_doh_endpoint">HTTPS URL para Elemento elemento</string>
     <string name="setting_doh_dns_fallback">DNS alternativa</string>
     <string name="summary_doh_dns_fallback">Máis información sobre DNS seguro DNS alternativa.</string>
+    <!-- Block DNS-over-TLS (DoT) -->
     <string name="setting_block_dot">Bloquear Android\'elemento Privada DNS</string>
     <string name="summary_block_dot">Con Android\'Máis información sobre Bloquear DNS privado.</string>
     <string name="setting_stats_frequency">Elemento elemento: %s elemento</string>
@@ -246,8 +189,11 @@ O seu tráfico de internet non será enviado a ningún servidor VPN remoto.</str
     <string name="summary_ip6">Máis información sobre IPv6.</string>
     <string name="summary_call">Máis información sobre Chamada.</string>
     <string name="summary_log_app">Máis información sobre Rexistro.</string>
+    <string name="summary_block_domains">AVISO: Os hosts bloqueados non se amosan na interface.</string>
+    <string name="summary_rcode">O valor por defecto é 3 (NXDOMAIN), que quere dicir \"dominio non existente\".</string>
+    <string name="summary_validate">Nome de dominio usado para validar a conexión a internet no porto 443 (https).</string>
+    <string name="summary_socks5_enabled">Só irá o tráfico TCP ao servidor proxy</string>
     <string name="summary_wg_enabled">Máis información sobre WireGuard activado.</string>
-    <string name="summary_wg_config">Paste a [Interface] / [Peer] config from your provider</string>
     <string name="summary_wg_profile">Elixir un elemento WireGuard configuración</string>
     <string name="summary_wg_profile_none">Elemento elemento perfís</string>
     <string name="summary_wg_profile_manage">Elemento, editar, ou eliminar elemento WireGuard elemento</string>
@@ -268,7 +214,7 @@ O seu tráfico de internet non será enviado a ningún servidor VPN remoto.</str
     <string name="msg_wg_profile_empty">Elemento perfís elemento</string>
     <string name="msg_wg_profile_active">Activa</string>
     <string name="msg_wg_profile_set_active">Establecer activa</string>
-    <string name="msg_wg_profile_config_hint">[Interface]\nPrivateKey = …\nAddress = …\n\n[Peer]\nPublicKey = …\nAllowedIPs = 0.0.0.0/0, ::/0\nEndpoint = …</string>
+    <string name="msg_wg_profile_config_hint" tools:ignore="TypographyEllipsis">[Interface]\nPrivateKey = …\nAddress = …\n\n[Peer]\nPublicKey = …\nAllowedIPs = 0.0.0.0/0, ::/0\nEndpoint = …</string>
     <string name="msg_wg_profile_delete_confirm">Eliminar esta WireGuard perfil?</string>
     <string name="msg_wg_profile_scan_hint">WireGuard perfil escanear indicación.</string>
     <string name="msg_wg_profile_scan_no_camera">Esta dispositivo elemento elemento cámara a escanear con</string>
@@ -293,27 +239,17 @@ O seu tráfico de internet non será enviado a ningún servidor VPN remoto.</str
     <string name="msg_wg_mullvad_countries_failed">Elemento non elemento Mullvad países: %s</string>
     <string name="msg_wg_proton_note">WireGuard Proton elemento.\n\nWireGuard Proton elemento.</string>
     <string name="msg_wg_proton_open_dashboard">Abrir Proton VPN elemento</string>
-    <string name="vpn_status_mullvad">Mullvad</string>
     <string name="vpn_status_relay">Relé: %s</string>
     <string name="vpn_status_wireguard_connected">WireGuard conectado</string>
     <string name="vpn_status_disconnected">Non conectado</string>
-    <string name="vpn_provider_mullvad">Mullvad VPN</string>
-    <string name="vpn_provider_ivpn">IVPN</string>
     <string name="vpn_intro_title">VPN elemento</string>
     <string name="vpn_intro_body">VPN introdución corpo.</string>
-    <string name="vpn_intro_mullvad_title">Mullvad</string>
     <string name="vpn_intro_mullvad_body">VPN introdución Mullvad corpo.</string>
-    <string name="vpn_intro_ivpn_title">IVPN</string>
     <string name="vpn_intro_ivpn_body">VPN introdución elemento corpo.</string>
-    <string name="vpn_intro_proton_title">Proton VPN</string>
     <string name="vpn_intro_proton_body">VPN introdución Proton corpo.</string>
-    <string name="vpn_intro_wireguard_title">WireGuard</string>
     <string name="vpn_intro_wireguard_body">VPN introdución WireGuard corpo.</string>
     <string name="vpn_enter_mullvad_account">Introducir conta número</string>
     <string name="vpn_enter_ivpn_account">Introducir conta Elemento</string>
-    <string name="vpn_mode_mullvad">Mullvad</string>
-    <string name="vpn_mode_ivpn">IVPN</string>
-    <string name="vpn_mode_wireguard">WireGuard</string>
     <string name="vpn_settings">Mullvad opcións</string>
     <string name="vpn_settings_title">Mullvad opcións</string>
     <string name="vpn_ivpn_settings">IVPN opcións</string>
@@ -355,11 +291,24 @@ O seu tráfico de internet non será enviado a ningún servidor VPN remoto.</str
     <string name="msg_wg_identity_renewed">%1$sWireGuard elemento elemento.%1$s perfís en esta dispositivo.</string>
     <string name="msg_wg_provider_rejected">%1$s elemento a establecer elemento esta dispositivo: %2$s</string>
     <string name="msg_wg_recovery_failed">WireGuard recuperación fallou.</string>
+    <string name="summary_watchdog">Comprobación periódica de que TrackerControl está activo (poña cero para deshabilitar). Isto pode causar consumo extra de batería.</string>
     <string name="summary_log_logcat">Máis información sobre Rexistro elemento.\'Elemento\'.</string>
+    <string name="msg_sure">¿Está seguro?</string>
     <string name="msg_started">Elemento para rastreadores…</string>
-    <string name="msg_installed_tracker_libraries_found">Elemento %d rastreador bibliotecas</string>
+    <string name="msg_waiting">Agardando por evento</string>
+    <string name="msg_disabled">Use o botón de enriba para activar TrackerControl.</string>
+    <string name="msg_revoked">TrackerControl foi deactivado, é moi posible que por usar outra aplicación con VPN</string>
+    <string name="msg_installed">¿Problemas con %1$s?</string>
+    <string name="msg_installed_description">Permitir á aplicación contactar con empresas</string>
+    <!-- Keep as a string: call-site/API migration and multi-count grammar are intentionally separate. -->
+    <string name="msg_installed_tracker_libraries_found" tools:ignore="PluralsCandidate">Elemento %d rastreador bibliotecas</string>
+    <string name="msg_completed">Acción completada</string>
     <string name="msg_no_file_manager">Elemento ficheiro elemento elemento a elemento un ficheiro.</string>
     <string name="msg_no_browser">Elemento navegador aplicación elemento a abrir  elemento.</string>
+    <string name="msg_vpn">TrackerControl usa unha VPN local para filtar o tráfico de internet.
+Por isto, por favor permita a conexión VPN no seguinte diálogo.
+O seu tráfico de internet non será enviado a ningún servidor VPN remoto.</string>
+    <string name="msg_autostart">TrackerControl non puido arrancar de xeito automático. É moi posible que sexa un bug na súa versión de Android.</string>
     <string name="msg_error">Un elemento erro elemento elemento: \'%s\'</string>
     <string name="msg_native_fd_recovery_exhausted">Elemento elemento recuperación elemento.</string>
     <string name="msg_native_fd_error">Elemento elemento erro.</string>
@@ -411,16 +360,19 @@ O seu tráfico de internet non será enviado a ningún servidor VPN remoto.</str
     <string name="title_log_whois">Elemento %1$s</string>
     <string name="title_log_port">Porto %1$d</string>
     <string name="title_log_copy">Elemento</string>
+    <!-- App Overview -->
     <string name="tracked_app_icon">Elemento internet acceso para esta elemento</string>
     <string name="tracked_app_name">Elemento Nome</string>
+    <!-- Dynamic content descriptions for the app-icon Internet toggle in the app list (issue #231) -->
     <string name="toggle_block_internet_description">Bloquear internet acceso para %1$s</string>
     <string name="toggle_allow_internet_description">Permitir internet acceso para %1$s</string>
     <string name="toggle_no_internet_description">%1$s elemento elemento internet acceso</string>
     <string name="toggle_internet_unavailable_description">Internet acceso elemento non dispoñible para %1$s</string>
+    <!-- Dynamic content description for the per-category tracker-blocking switch -->
     <string name="toggle_block_category_description">Rastreador bloqueo para categoría %1$s</string>
+    <!-- Dynamic content description for the home-screen widget toggle (accessibility follow-up, issue #636) -->
     <string name="widget_toggle_enable_description">Activar rastreador bloqueo</string>
     <string name="widget_toggle_disable_description">Elemento rastreador bloqueo</string>
-    <string name="accessibility_stat_description">%1$s, %2$s</string>
     <string name="accessibility_tracker_blocking_enabled">Rastreador bloqueo activado</string>
     <string name="accessibility_tracker_blocking_disabled">Rastreador bloqueo desactivado</string>
     <plurals name="n_companies_found_week">
@@ -442,11 +394,13 @@ O seu tráfico de internet non será enviado a ningún servidor VPN remoto.</str
     <string name="exporting">Elemento..</string>
     <string name="export_failed">Exportar fallou</string>
     <string name="exported">Elemento a elemento!</string>
+    <!-- App Details -->
     <string name="title_activity_detail">Elemento</string>
     <string name="tab_trackers">Rastreadores</string>
     <string name="tab_countries">Países</string>
     <string name="tab_actions">Data Elemento</string>
     <string name="app_info">Xestionar Aplicación</string>
+    <!-- Actions -->
     <string name="block_tracking">Bloquear rastreadores</string>
     <string name="block_tracking_description">Bloquear elemento descrición.</string>
     <string name="personalised_ads">Elemento Elemento</string>
@@ -461,13 +415,11 @@ O seu tráfico de internet non será enviado a ningún servidor VPN remoto.</str
     <string name="request_data">Solicitude data</string>
     <string name="request_deletion">Solicitude eliminación</string>
     <string name="contact_developer">Elemento</string>
-    <string name="contact_playstore">Google</string>
     <string name="contact_officials">Elemento Autoridades</string>
     <string name="google_dpo_mail">elemento@google.elemento</string>
-    <string name="dpas_overview_url">https://edpb.europa.eu/about-edpb/board/members</string>
     <string name="subject_request_data">GDPR Asunto Acceso Solicitude</string>
-    <string name="body_request_data">A Elemento Elemento Pode Elemento:\n\n\n\n\n\nCorpo solicitude datos.%1$s (Elemento: %2$sCorpo solicitude datos.\n\nCorpo solicitude datos.\n\n\n\n• un elemento de elemento elemento data;\n\n•  elemento de  elemento;\n\n•  categorías de elemento data elemento;\n\nCorpo solicitude datos.\n\nCorpo solicitude datos.\n\nCorpo solicitude datos.\n\nCorpo solicitude datos.\n\n    -  elemento elemento en  elemento elemento;\n\nCorpo solicitude datos.\n\nCorpo solicitude datos.\n\nCorpo solicitude datos.\n\n\n\nCorpo solicitude datos.\n\n\n\nCorpo solicitude datos.\n\n\n\nElemento,\n\n</string>
-    <string name="body_delete_data">A Elemento Elemento Pode Elemento:\n\n\n\n\n\nCorpo eliminar datos.%1$s (Elemento: %2$sCorpo eliminar datos.\n\n• Todas data.\n\n\n\nCorpo eliminar datos.\n\n\n\nCorpo eliminar datos.\n\n\n\nElemento,\n\n</string>
+    <string name="body_request_data"><![CDATA[A Elemento Elemento Pode Elemento:\n\n\n\n\n\nCorpo solicitude datos.%1$s (Elemento: %2$sCorpo solicitude datos.\n\nCorpo solicitude datos.\n\n\n\n• un elemento de elemento elemento data;\n\n•  elemento de  elemento;\n\n•  categorías de elemento data elemento;\n\nCorpo solicitude datos.\n\nCorpo solicitude datos.\n\nCorpo solicitude datos.\n\nCorpo solicitude datos.\n\n    -  elemento elemento en  elemento elemento;\n\nCorpo solicitude datos.\n\nCorpo solicitude datos.\n\nCorpo solicitude datos.\n\n\n\nCorpo solicitude datos.\n\n\n\nCorpo solicitude datos.\n\n\n\nElemento,\n\n]]></string>
+    <string name="body_delete_data"><![CDATA[A Elemento Elemento Pode Elemento:\n\n\n\n\n\nCorpo eliminar datos.%1$s (Elemento: %2$sCorpo eliminar datos.\n\n• Todas data.\n\n\n\nCorpo eliminar datos.\n\n\n\nCorpo eliminar datos.\n\n\n\nElemento,\n\n]]></string>
     <string name="crash_dialog_text">Elemento elemento elemento.</string>
     <string name="crash_dialog_comment">Elemento elemento?</string>
     <string name="instructions_monitoring_private_dns">Instrucións elemento privada DNS.</string>
@@ -486,7 +438,6 @@ O seu tráfico de internet non será enviado a ningún servidor VPN remoto.</str
     <string name="tracker_content">Esencial</string>
     <string name="tracker_cryptomining">Minaría de criptomoedas</string>
     <string name="tracker_fingerprinting">Pegada dixital</string>
-    <string name="tracker_social">Social</string>
     <string name="tracker_email">Correo</string>
     <string name="tracker_consent">Consentimento elemento</string>
     <string name="tracker_uncategorised">Sen categoría</string>
@@ -508,15 +459,39 @@ O seu tráfico de internet non será enviado a ningún servidor VPN remoto.</str
     <string name="onboarding_blockingmode_strict_desc">Segue as instrucións para configurar Elemento estrito elemento.</string>
     <string name="onboarding_blockingmode_research_label">Investigación</string>
     <string name="onboarding_blockingmode_research_desc">Segue as instrucións para configurar Elemento investigación elemento.</string>
+    <!-- Per-app remote VPN routing -->
+    <string name="setting_wg_route_mode">Encamiñar polo VPN remoto</string>
+    <string name="summary_wg_route_mode">Que aplicacións se envían a través do VPN remoto. As que non seguen totalmente supervisadas e filtradas — simplemente conéctanse desde a rede deste dispositivo.</string>
+    <string name="wg_route_mode_all">Todas as aplicacións</string>
+    <string name="wg_route_mode_selected">Só aplicacións seleccionadas</string>
+    <string name="app_route_through">A través do VPN remoto</string>
+    <string name="app_route_through_explanation">Esta aplicación conéctase a través do teu VPN remoto, que ve o seu tráfico no canto da túa rede.</string>
+    <string name="app_route_direct">Directamente desde este dispositivo</string>
+    <string name="app_route_direct_explanation">Esta aplicación conéctase desde a túa propia rede. A supervisión e o bloqueo de rastrexadores seguen a aplicarse. As súas consultas DNS van ao resolvedor da túa rede no canto do VPN, e ve o enderezo real deste dispositivo — algunhas aplicacións precísano, por exemplo para chegar a dispositivos locais ou comprobar un portal cativo.</string>
+    <string name="app_route_unavailable_no_vpn">Non hai ningún VPN remoto configurado, así que todo o tráfico xa sae directamente deste dispositivo.</string>
+    <string name="app_route_unavailable_bypassed">Esta aplicación omite TrackerControl por completo, así que non hai tráfico que encamiñar.</string>
+    <string name="app_route_unavailable_partial_routes">O teu VPN remoto non transporta todo o tráfico (os seus AllowedIPs non forman un túnel completo). O encamiñamento por aplicación precisa un túnel completo, porque as rutas compártenas todas as aplicacións.</string>
+    <!-- Per-app protection state -->
     <string name="app_state_heading">Bloqueo modo</string>
     <string name="app_state_title_minimal">Mínimo bloqueo</string>
     <string name="app_state_title_standard">Estándar bloqueo</string>
     <string name="app_state_title_strict">Estrito bloqueo</string>
     <string name="app_state_subtitle_misbehaving">Aplicación elemento? Interruptor a Mínimo bloqueo elemento.</string>
+    <string name="app_state_protected">Protexida</string>
+    <string name="app_state_protected_explanation">Os rastrexadores bloquéanse e rexístranse para esta aplicación.</string>
     <string name="app_state_essential_only">Mínimo bloqueo só</string>
     <string name="app_state_essential_only_explanation">Elemento esencial só elemento.</string>
+    <string name="app_state_trackers_allowed">Rastrexadores permitidos</string>
+    <string name="app_state_trackers_allowed_explanation">A aplicación segue pasando por TrackerControl, pero os seus rastrexadores non se bloquean nin se rexistran. Usa isto se o bloqueo estraga a aplicación.</string>
+    <string name="app_state_no_internet">Sen Internet</string>
+    <string name="app_state_no_internet_explanation">Todas as conexións desta aplicación están bloqueadas. Tamén podes tocar a icona da aplicación na pantalla principal.</string>
+    <string name="app_state_no_internet_shared_uid">Tamén se aplica a %1$s, que comparte un ID de usuario de Android con esta aplicación.</string>
+    <string name="app_state_bypassed">Omitir TrackerControl</string>
+    <string name="app_state_bypassed_explanation">A aplicación conéctase directamente, fóra de TrackerControl. Non se supervisa nin se bloquea nada para ela. Usa isto como último recurso se a aplicación segue sen funcionar.\n\nNota: \"Bloquear conexións sen VPN\" nos axustes de VPN de Android debe estar DESACTIVADO para que isto funcione.</string>
+    <!-- Per-app protection screen -->
     <string name="protection_title">Protección</string>
     <string name="protection_route_heading">Remota VPN</string>
+    <!-- Protection state and remote-VPN routing shown together on one row -->
     <string name="protection_app_not_working">Aplicación non funcionar? Elemento elemento</string>
     <plurals name="protection_paused_resumes">
         <item quantity="one">%d minuto</item>
@@ -535,7 +510,7 @@ O seu tráfico de internet non será enviado a ningún servidor VPN remoto.</str
     <string name="no_trackers_found_message_disabled">Elemento rastreadores elemento elemento desactivado.</string>
     <string name="no_trackers_found_message">Iniciar aplicación a elemento rastreadores</string>
     <string name="no_trackers_found_action">Iniciar</string>
-    <string name="no_internet_message">Elemento internet elemento.</string>
+    <string name="no_internet_message">"Elemento internet elemento."</string>
     <string name="no_internet">Elemento Internet acceso</string>
     <string name="bypass_vpn_error">"Elemento bloquear Internet elemento  aplicación elemento TrackerControl."</string>
     <string name="back">Atrás</string>
@@ -558,6 +533,7 @@ O seu tráfico de internet non será enviado a ningún servidor VPN remoto.</str
     <string name="analyze_tracker_libraries">Elemento rastreador bibliotecas</string>
     <string name="update_analysis">Actualización análise</string>
     <string name="analysis_outdated_version">\n\nAnálise desactualizada versión.</string>
+    <!-- Tracker library screen, reached from the summary row on the Trackers tab -->
     <string name="libraries_title">Rastreador bibliotecas</string>
     <string name="libraries_row_heading">Rastreador bibliotecas</string>
     <string name="libraries_none_found">Elemento rastreador bibliotecas elemento en  aplicación elemento</string>
@@ -595,6 +571,7 @@ O seu tráfico de internet non será enviado a ningún servidor VPN remoto.</str
     <string name="msg_private_dns_bypass_allowed_notify">Privada DNS elemento permitido notificacións.</string>
     <string name="setting_monitor_system">Elemento sistema aplicacións</string>
     <string name="summary_monitor_system">Máis información sobre Elemento sistema.\n\nMáis información sobre Elemento sistema.\"Bloquear elemento sen VPN\"Máis información sobre Elemento sistema.</string>
+    <!-- Onboarding -->
     <string name="title_next">Seguinte</string>
     <string name="title_previous">Anterior</string>
     <string name="title_finish">Obter Iniciado</string>
@@ -619,6 +596,7 @@ O seu tráfico de internet non será enviado a ningún servidor VPN remoto.</str
     <string name="onboarding_lockdown_sure">Segue as instrucións para configurar Bloqueo elemento.</string>
     <string name="onboarding_action_disabled">Desactivado</string>
     <string name="onboarding_action_granted">Concedido</string>
+    <!-- Insights Screen -->
     <string name="insights_title">Teu Privacidade Estatísticas</string>
     <string name="insights_subtitle_7days">Última 7 elemento</string>
     <string name="insights_tracking_attempts">Rastreador hosts elemento</string>
@@ -628,19 +606,26 @@ O seu tráfico de internet non será enviado a ningún servidor VPN remoto.</str
     <string name="insights_apps_with_trackers">Aplicacións con rastreadores</string>
     <string name="insights_pervasive_trackers">A maioría xeneralizados rastreadores</string>
     <string name="insights_top_domains">Principais rastreador dominios</string>
+    <!-- Joins the alternative domain names of one tracker, e.g. "example.com or example.net". Keep the surrounding spaces. -->
     <string name="insights_domain_alias_separator">" ou "</string>
-    <string name="insights_in_apps">en %d aplicacións</string>
+    <!-- Keep as a string: call-site/API migration and multi-count grammar are intentionally separate. -->
+    <string name="insights_in_apps" tools:ignore="PluralsCandidate">en %d aplicacións</string>
     <plurals name="insights_apps_count">
         <item quantity="one">%d aplicación</item>
         <item quantity="other">%d aplicacións</item>
     </plurals>
     <string name="insights_no_data">Estatísticas elemento datos.</string>
-    <string name="insights_shocking_fact">Teu aplicacións elemento %1$d elemento empresas elemento %2$d rastreador hosts esta semana!</string>
+    <!-- Keep as a string: call-site/API migration and multi-count grammar are intentionally separate. -->
+    <string name="insights_shocking_fact" tools:ignore="PluralsCandidate">Teu aplicacións elemento %1$d elemento empresas elemento %2$d rastreador hosts esta semana!</string>
+    <!-- Retained for Play Store copy; call-site/API migration and multi-count grammar are intentionally separate. -->
     <string name="insights_share">Compartir con Amizades</string>
     <string name="insights_share_trackers_blocked">Rastreador Hosts Bloqueado</string>
     <string name="insights_share_url">TrackerControl.elemento</string>
-    <string name="insights_share_message">Bloqueei %1$d hosts de rastreadores de %2$d empresas esta semana usando TrackerControl! Recupera a túa privacidade: https://trackercontrol.org</string>
+    <!-- Keep as a string: call-site/API migration and multi-count grammar are intentionally separate. -->
+    <string name="insights_share_message" tools:ignore="PluralsCandidate">Bloqueei %1$d hosts de rastreadores de %2$d empresas esta semana usando TrackerControl! Recupera a túa privacidade: https://trackercontrol.org</string>
+    <!-- Retained for Play Store copy; call-site/API migration and multi-count grammar are intentionally separate. -->
     <string name="insights_see_more">Ver Máis →</string>
+    <!-- What's New onboarding slide (not translated) -->
     <string name="title_blocklists">Adicionais elemento elemento</string>
     <string name="summary_manage_blocklists">Máis información sobre Xestionar elemento.</string>
     <string name="title_add_blocklist">Elemento elemento ficheiro</string>
@@ -649,17 +634,12 @@ O seu tráfico de internet non será enviado a ningún servidor VPN remoto.</str
     <string name="msg_invalid_url">Non válida URL</string>
     <string name="msg_apply_blocklists_failed">Fallou a elemento elemento elemento</string>
     <string name="msg_last_update">Última actualización: %s</string>
+    <!-- Accessibility labels -->
     <string name="switch_tracker_control_description">Rastreador bloqueo</string>
-    <string name="vpn_enabled_switch_description">VPN</string>
     <string name="blocklist_delete_description">Eliminar elemento</string>
     <string name="blocklist_enable_description">Activar elemento %s</string>
     <string name="log_connection_allowed">Permitido</string>
     <string name="log_connection_blocked">Bloqueado</string>
-    <string name="log_connection_wifi">Wi-Fi</string>
     <string name="log_connection_other">Outras rede</string>
     <string name="log_screen_on">Pantalla en</string>
-    <string-array name="protocolNames">
-        <item>UDP</item>
-        <item>TCP</item>
-    </string-array>
 </resources>

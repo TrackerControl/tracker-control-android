@@ -1,88 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_description">.</string>
+    <string name="app_copyright">حق نشر \u00A9 ۲۰۱۹–۲۰۲۲ Konrad Kollnig\n\nTrackerControl بر پایهٔ NetGuard ساخته شده است که Marcel Bokhorst (M66B) آن را توسعه داده است.</string>
     <string name="app_android">TrackerControl requires Android 5.1 or later</string>
+    <string name="app_xposed">Xposed باعث خرابی‌های زیادی می‌شود و ممکن است باعث حذف TrackerControl از فروشگاه Google Play شود؛ بنابراین تا وقتی Xposed نصب باشد TrackerControl پشتیبانی نمی‌شود.</string>
     <string name="app_eula">https://github.com/TrackerControl/tracker-control-android#privacy-notice</string>
     <string name="app_privacy">&lt;a href=\"https://github.com/TrackerControl/tracker-control-android#privacy-notice\"&gt;</string>
+    <string name="app_ios"><a href="https://ios.trackercontrol.org">TrackerControl برای iOS نیز در دسترس است</a></string>
     <string name="channel_foreground">سرویس‌های در حال اجرا</string>
     <string name="channel_notify">اعلان‌های عمومی</string>
+    <string name="channel_access">اعلان‌های دسترسی</string>
     <string name="menu_search">جستوجوی برنامه</string>
+    <string name="menu_filter">فیلتر کردن برنامه‌ها</string>
+    <string name="menu_app_user">نمایش برنامه‌های کاربر</string>
     <string name="menu_app_system">نمایش برنامه‌های سیستمی</string>
     <string name="menu_app_nointernet">نمایش برنامه‌ها بدون اینترنت</string>
     <string name="menu_app_unprotected">نمایش برنامه‌های محافظت نشده</string>
+    <string name="menu_app_frozen">نمایش فقط برنامه‌های منجمد</string>
     <string name="menu_sort">مرتب‌سازی برنامه‌ها</string>
     <string name="menu_sort_name">ترتیب بر اساس نام</string>
+    <string name="menu_sort_uid">مرتب‌سازی بر اساس شناسهٔ کاربر</string>
+    <string name="menu_sort_companies_week">مرتب‌سازی بر اساس شرکت‌ها (هفته)</string>
     <string name="menu_sort_companies">نمایش بر اساس شرکت ها</string>
+    <string name="menu_sort_by_latest_detected_tracker">مرتب‌سازی بر اساس جدیدترین ردیاب شناسایی‌شده</string>
     <string name="menu_log">گزارش ترافیک</string>
     <string name="menu_settings">تنظیمات</string>
     <string name="menu_invite">دعوت</string>
+    <string name="menu_legend">راهنما</string>
     <string name="menu_support">حمایت از این برنامه</string>
     <string name="menu_log_support">توضیحات</string>
     <string name="menu_troubleshooting">عیب یابی</string>
     <string name="menu_about">درباره ما</string>
-    <string name="tab_apps">برنامه‌ها</string>
-    <string name="tab_vpn">فیلترشکن</string>
-    <string name="timeline_section_last_hour">١ساعت پیش</string>
-    <string name="timeline_section_today">امروز</string>
-    <string name="timeline_section_yesterday">دیروز</string>
-    <string name="timeline_section_this_week">این هفته</string>
-    <string name="timeline_tracker_blocked">مسدود شده</string>
-    <string name="timeline_tracker_allowed">مجاز</string>
-    <!-- A blocked/allowed label followed by its share of all tracking attempts. -->
-    <string name="troubleshooting_battery_title">بهینه‌سازی باتری</string>
-    <string name="troubleshooting_battery_action">غیرفعال کردن بهینه‌سازی باتری</string>
-    <string name="troubleshooting_battery_ok">بهینه‌سازی باتری غیرفعال است</string>
-    <string name="troubleshooting_datasaver_title">صرفه‌جویی در مصرف اینترنت همراه</string>
-    <string name="menu_apps">سایر برنامه‌ها</string>
-    <string name="menu_traffic_allowed">مجاز</string>
-    <string name="menu_traffic_blocked">مسدود شده</string>
-    <string name="menu_live">به‌روزرسانی‌های زنده</string>
-    <string name="menu_resolve">نمایش اسامی</string>
-    <string name="menu_organization">نمایش سازمان</string>
-    <string name="menu_pcap_enabled">PCAP فعال شد</string>
-    <string name="menu_pcap_export">اکسپورت کردن PCAP</string>
-    <string name="setting_ip6">فعال کردن ترافیک IPv6</string>
-    <!-- Secure DNS (DoH) -->
-    <!-- Block DNS-over-TLS (DoT) -->
-    <!-- App Overview -->
-    <!-- Dynamic content descriptions for the app-icon Internet toggle in the app list (issue #231) -->
-    <!-- Dynamic content description for the per-category tracker-blocking switch -->
-    <!-- Dynamic content description for the home-screen widget toggle (accessibility follow-up, issue #636) -->
-    <!-- App Details -->
-    <!-- Actions -->
-    <!-- Per-app remote VPN routing -->
-    <string name="setting_wg_route_mode">مسیریابی از طریق VPN راه دور</string>
-    <string name="summary_wg_route_mode">کدام برنامه‌ها از طریق VPN راه دور فرستاده شوند. برنامه‌هایی که فرستاده نمی‌شوند همچنان به‌طور کامل پایش و فیلتر می‌شوند — فقط از شبکهٔ خودِ این دستگاه متصل می‌شوند.</string>
-    <string name="wg_route_mode_all">همهٔ برنامه‌ها</string>
-    <string name="wg_route_mode_selected">فقط برنامه‌های انتخاب‌شده</string>
-    <string name="app_route_through">از طریق VPN راه دور</string>
-    <string name="app_route_through_explanation">این برنامه از طریق VPN راه دور شما متصل می‌شود، که به‌جای شبکهٔ شما ترافیک آن را می‌بیند.</string>
-    <string name="app_route_direct">مستقیم از این دستگاه</string>
-    <string name="app_route_direct_explanation">این برنامه از شبکهٔ خودتان متصل می‌شود. پایش و مسدودسازی ردیاب‌ها همچنان اعمال می‌شود. پرس‌وجوهای DNS آن به‌جای VPN به حل‌کنندهٔ شبکهٔ شما می‌رود و برنامه نشانی واقعی این دستگاه را می‌بیند — برخی برنامه‌ها به این نیاز دارند، مثلاً برای دسترسی به دستگاه‌های محلی یا بررسی captive portal.</string>
-    <string name="app_route_unavailable_no_vpn">هیچ VPN راه دوری تنظیم نشده است، بنابراین همهٔ ترافیک از پیش مستقیماً این دستگاه را ترک می‌کند.</string>
-    <string name="app_route_unavailable_bypassed">این برنامه به‌طور کامل TrackerControl را دور می‌زند، بنابراین ترافیکی برای مسیریابی وجود ندارد.</string>
-    <string name="app_route_unavailable_partial_routes">VPN راه دور شما همهٔ ترافیک را حمل نمی‌کند (AllowedIPs آن تونل کامل نیست). مسیریابی جداگانه برای هر برنامه به تونل کامل نیاز دارد، چون مسیرها میان همهٔ برنامه‌ها مشترک است.</string>
-    <!-- Per-app protection state -->
-    <string name="app_state_protected">محافظت‌شده</string>
-    <string name="app_state_protected_explanation">ردیاب‌ها برای این برنامه مسدود و ثبت می‌شوند.</string>
-    <string name="app_state_trackers_allowed">ردیاب‌ها مجاز</string>
-    <string name="app_state_trackers_allowed_explanation">برنامه همچنان از طریق TrackerControl کار می‌کند، اما ردیاب‌های آن نه مسدود می‌شوند و نه ثبت. اگر مسدودسازی برنامه را خراب می‌کند از این گزینه استفاده کنید.</string>
-    <string name="app_state_no_internet">بدون اینترنت</string>
-    <string name="app_state_no_internet_explanation">همهٔ اتصال‌های این برنامه مسدود شده‌اند. می‌توانید روی نماد برنامه در صفحهٔ اصلی نیز ضربه بزنید.</string>
-    <string name="app_state_no_internet_shared_uid">برای %1$s نیز اعمال می‌شود، که شناسهٔ کاربری اندروید را با این برنامه به اشتراک می‌گذارد.</string>
-    <string name="app_state_bypassed">دور زدن TrackerControl</string>
-    <string name="app_state_bypassed_explanation">برنامه مستقیماً و خارج از TrackerControl متصل می‌شود. هیچ چیزی برای آن پایش یا مسدود نمی‌شود. اگر برنامه هنوز کار نمی‌کند، این را به‌عنوان آخرین راه‌حل استفاده کنید.\n\nتوجه: گزینهٔ \"مسدودسازی اتصال‌های بدون VPN\" در تنظیمات VPN اندروید باید غیرفعال باشد تا این کار کند.</string>
-    <string name="app_copyright">حق نشر \u00A9 ۲۰۱۹–۲۰۲۲ Konrad Kollnig\n\nTrackerControl بر پایهٔ NetGuard ساخته شده است که Marcel Bokhorst (M66B) آن را توسعه داده است.</string>
-    <string name="app_xposed">Xposed باعث خرابی‌های زیادی می‌شود و ممکن است باعث حذف TrackerControl از فروشگاه Google Play شود؛ بنابراین تا وقتی Xposed نصب باشد TrackerControl پشتیبانی نمی‌شود.</string>
-    <string name="app_ios"><a href="https://ios.trackercontrol.org">TrackerControl برای iOS نیز در دسترس است</a></string>
-    <string name="channel_access">اعلان‌های دسترسی</string>
-    <string name="menu_filter">فیلتر کردن برنامه‌ها</string>
-    <string name="menu_app_user">نمایش برنامه‌های کاربر</string>
-    <string name="menu_app_frozen">نمایش فقط برنامه‌های منجمد</string>
-    <string name="menu_sort_uid">مرتب‌سازی بر اساس شناسهٔ کاربر</string>
-    <string name="menu_sort_companies_week">مرتب‌سازی بر اساس شرکت‌ها (هفته)</string>
-    <string name="menu_sort_by_latest_detected_tracker">مرتب‌سازی بر اساس جدیدترین ردیاب شناسایی‌شده</string>
-    <string name="menu_legend">راهنما</string>
     <string name="timeline_empty_disabled_title">TrackerControl خاموش است</string>
     <string name="timeline_empty_disabled_subtitle">TrackerControl را با کلید بالا سمت راست فعال کنید. سپس فعالیت ردیاب‌های برنامه‌هایتان اینجا نشان داده می‌شود.</string>
     <string name="timeline_empty_enabled_title">در حال جست‌وجوی ردیاب‌ها…</string>
@@ -97,10 +45,17 @@
     <string name="timeline_hint_dismiss">متوجه شدم</string>
     <string name="unidentified_app_uid">برنامهٔ ناشناس (UID %1$d)</string>
     <string name="tab_timeline">خط زمانی</string>
-    <string name="timeline_more_trackers">+%d مورد دیگر</string>
-    <string name="insights_overview_status">%1$s %2$s · %3$s %4$s</string>
-    <string name="insights_overview_status_share">%1$s (%2$s)</string>
-    <string name="timeline_insights_status">%1$s %2$s · %3$s %4$s</string>
+    <string name="tab_apps">برنامه‌ها</string>
+    <string name="tab_vpn">فیلترشکن</string>
+    <string name="timeline_section_last_hour">١ساعت پیش</string>
+    <string name="timeline_section_today">امروز</string>
+    <string name="timeline_section_yesterday">دیروز</string>
+    <string name="timeline_section_this_week">این هفته</string>
+    <!-- Keep as a string: call-site/API migration and multi-count grammar are intentionally separate. -->
+    <string name="timeline_more_trackers" tools:ignore="PluralsCandidate">+%d مورد دیگر</string>
+    <string name="timeline_tracker_blocked">مسدود شده</string>
+    <string name="timeline_tracker_allowed">مجاز</string>
+    <!-- A blocked/allowed label followed by its share of all tracking attempts. -->
     <string name="feed_section_last_contact">آخرین تماس %s</string>
     <plurals name="feed_show_more_companies">
         <item quantity="one">نمایش %d شرکت دیگر</item>
@@ -115,7 +70,8 @@
     <string name="feed_company_collapsed">بسته‌شده</string>
     <string name="feed_essential_explainer">برنامه‌ها به آن نیاز دارند — مجاز شده تا %s به کار خود ادامه دهد</string>
     <string name="feed_essential_explainer_blocked">برنامه‌ها به آن نیاز دارند — مسدود کردنش ممکن است %s را از کار بیندازد</string>
-    <string name="timeline_summary_mixed">%1$d مسدود · %2$d مجاز</string>
+    <!-- Keep as a string: call-site/API migration and multi-count grammar are intentionally separate. -->
+    <string name="timeline_summary_mixed" tools:ignore="PluralsCandidate">%1$d مسدود · %2$d مجاز</string>
     <plurals name="timeline_trackers_blocked">
         <item quantity="one">%d ردیاب مسدود شد</item>
         <item quantity="other">%d ردیاب مسدود شدند</item>
@@ -125,7 +81,11 @@
         <item quantity="other">%d ردیاب مجاز شدند</item>
     </plurals>
     <string name="troubleshooting_title">عیب‌یابی</string>
+    <string name="troubleshooting_battery_title">بهینه‌سازی باتری</string>
     <string name="troubleshooting_battery_desc">اگر TrackerControl در پس‌زمینه از کار می‌افتد، بهینه‌سازی باتری اندروید را برای TrackerControl غیرفعال کنید. «همهٔ برنامه‌ها» را انتخاب کنید، روی TrackerControl بزنید و «بهینه‌سازی نشود» را انتخاب کنید.</string>
+    <string name="troubleshooting_battery_action">غیرفعال کردن بهینه‌سازی باتری</string>
+    <string name="troubleshooting_battery_ok">بهینه‌سازی باتری غیرفعال است</string>
+    <string name="troubleshooting_datasaver_title">صرفه‌جویی در مصرف اینترنت همراه</string>
     <string name="troubleshooting_datasaver_desc">اگر TrackerControl هنگام روشن بودن صرفه‌جویی داده نمی‌تواند متصل شود، مصرف دادهٔ بدون محدودیت را برای TrackerControl مجاز کنید. «دادهٔ پس‌زمینه» و «مصرف دادهٔ بدون محدودیت» را فعال کنید.</string>
     <string name="troubleshooting_datasaver_action">مجاز کردن دادهٔ بدون محدودیت</string>
     <string name="troubleshooting_datasaver_ok">صرفه‌جویی داده دسترسی TrackerControl را محدود نمی‌کند.</string>
@@ -140,8 +100,16 @@
     <string name="troubleshooting_alwayson_title">VPN همیشه‌روشن</string>
     <string name="troubleshooting_alwayson_desc">اگر «مسدود کردن اتصال‌ها بدون VPN» (قفل‌سازی) در تنظیمات VPN اندروید فعال باشد، TrackerControl درست کار نمی‌کند. این گزینه را غیرفعال کنید.</string>
     <string name="troubleshooting_alwayson_action">باز کردن تنظیمات VPN</string>
+    <string name="menu_apps">سایر برنامه‌ها</string>
     <string name="menu_protocol_other">سایر</string>
+    <string name="menu_traffic_allowed">مجاز</string>
+    <string name="menu_traffic_blocked">مسدود شده</string>
+    <string name="menu_live">به‌روزرسانی‌های زنده</string>
     <string name="menu_refresh">تازه‌سازی</string>
+    <string name="menu_resolve">نمایش اسامی</string>
+    <string name="menu_organization">نمایش سازمان</string>
+    <string name="menu_pcap_enabled">PCAP فعال شد</string>
+    <string name="menu_pcap_export">اکسپورت کردن PCAP</string>
     <string name="menu_clear">پاک کردن</string>
     <string name="menu_clear_activity">پاک کردن فعالیت ضبط‌شده</string>
     <string name="menu_export">خروجی گرفتن</string>
@@ -155,6 +123,7 @@
         <item quantity="one">مکث به‌مدت %d دقیقه</item>
         <item quantity="other">مکث به‌مدت %d دقیقه</item>
     </plurals>
+    <string name="setting_ip6">فعال کردن ترافیک IPv6</string>
     <string name="setting_call">غیرفعال کردن هنگام تماس</string>
     <string name="setting_reload_onconnectivity">بارگذاری دوباره با هر تغییر اتصال</string>
     <string name="setting_tcp_mss_clamp">حالت سازگاری اشتراک‌گذاری اینترنت</string>
@@ -200,6 +169,7 @@
     <string name="setting_pcap_record_size">اندازهٔ رکورد PCAP: %s بایت</string>
     <string name="setting_pcap_file_size">حداکثر اندازهٔ فایل PCAP: %s مگابایت</string>
     <string name="setting_watchdog">ناظر: هر %s دقیقه</string>
+    <!-- Secure DNS (DoH) -->
     <string name="setting_doh_enabled">DNS امن (DoH)</string>
     <string name="summary_doh_enabled">پرس‌وجوهای DNS را با DNS روی HTTPS رمزگذاری می‌کند. وقتی WireGuard فعال است، به‌طور خودکار مکث می‌شود، چون آن پرس‌وجوها از تونل WireGuard استفاده می‌کنند.</string>
     <string name="warning_beta">قابلیت بتا. ممکن است طبق انتظار کار نکند.</string>
@@ -207,6 +177,7 @@
     <string name="summary_doh_endpoint">نشانی HTTPS برای پرس‌وجوهای DNS روی HTTPS</string>
     <string name="setting_doh_dns_fallback">جایگزین DNS</string>
     <string name="summary_doh_dns_fallback">وقتی DoH در دسترس نیست از DNS استاندارد (رمزگذاری‌نشده) استفاده می‌کند. غیرفعال کردن آن ممکن است در صورت ازکارافتادن سرور DoH برنامه‌ها را از کار بیندازد.</string>
+    <!-- Block DNS-over-TLS (DoT) -->
     <string name="setting_block_dot">مسدود کردن DNS خصوصی اندروید</string>
     <string name="summary_block_dot">با فعال بودن DNS خصوصی اندروید، TC نمی‌تواند هیچ ردیابی را شناسایی کند و درست کار نمی‌کند.</string>
     <string name="setting_stats_frequency">فاصلهٔ نمونه‌برداری: %s میلی‌ثانیه</string>
@@ -248,7 +219,7 @@
     <string name="msg_wg_profile_empty">هنوز نمایه‌ای وجود ندارد</string>
     <string name="msg_wg_profile_active">فعال</string>
     <string name="msg_wg_profile_set_active">فعال کردن</string>
-    <string name="msg_wg_profile_config_hint">[Interface]\nPrivateKey = …\nAddress = …\n\n[Peer]\nPublicKey = …\nAllowedIPs = 0.0.0.0/0, ::/0\nEndpoint = …</string>
+    <string name="msg_wg_profile_config_hint" tools:ignore="TypographyEllipsis">[Interface]\nPrivateKey = …\nAddress = …\n\n[Peer]\nPublicKey = …\nAllowedIPs = 0.0.0.0/0, ::/0\nEndpoint = …</string>
     <string name="msg_wg_profile_delete_confirm">این نمایهٔ WireGuard حذف شود؟</string>
     <string name="msg_wg_profile_scan_hint">دوربین را روی کد QR WireGuard که ارائه‌دهندهٔ VPN شما نمایش می‌دهد بگیرید. اسکن روی دستگاه شما انجام می‌شود.</string>
     <string name="msg_wg_profile_scan_no_camera">این دستگاه دوربینی برای اسکن ندارد</string>
@@ -273,27 +244,17 @@
     <string name="msg_wg_mullvad_countries_failed">بارگیری کشورها از Mullvad ممکن نشد: %s</string>
     <string name="msg_wg_proton_note">راه‌اندازی شخص‌ثالث مستندشدهٔ Proton از پیکربندی‌های قابل بارگیری WireGuard استفاده می‌کند. TrackerControl به اعتبارنامه‌های Proton شما نیاز ندارد و نمی‌تواند پیکربندی را به‌طور خودکار تازه کند.\n\nدر account.protonvpn.com وارد شوید، به Downloads → WireGuard configuration بروید، یک پیکربندی بارگیری کنید، آن را در ویرایشگر متن باز کنید و سپس محتوایش را اینجا جای‌گذاری کنید.</string>
     <string name="msg_wg_proton_open_dashboard">باز کردن داشبورد Proton VPN</string>
-    <string name="vpn_status_mullvad">Mullvad</string>
     <string name="vpn_status_relay">رله: %s</string>
     <string name="vpn_status_wireguard_connected">WireGuard متصل است</string>
     <string name="vpn_status_disconnected">متصل نیست</string>
-    <string name="vpn_provider_mullvad">Mullvad VPN</string>
-    <string name="vpn_provider_ivpn">IVPN</string>
     <string name="vpn_intro_title">پیش‌نمایش VPN</string>
     <string name="vpn_intro_body">VPN ترافیک اینترنت شما را از سرور دیگری عبور می‌دهد. این کار می‌تواند نشانی IP شما را از وب‌سایت‌ها و ارائه‌دهندهٔ شبکه‌تان پنهان کند و به شما اجازه دهد کشوری را برای اتصال انتخاب کنید. این زبانه جدید است، پس آن را پیش‌نمایش در نظر بگیرید.</string>
-    <string name="vpn_intro_mullvad_title">Mullvad</string>
     <string name="vpn_intro_mullvad_body">ارائه‌دهندهٔ VPN متمرکز بر حریم خصوصی. هزینهٔ آن ماهانه ۵ یورو است و به‌جای نشانی ایمیل از شمارهٔ حساب استفاده می‌کند. شمارهٔ حساب را وارد کنید و سپس کشوری را در TrackerControl انتخاب کنید.</string>
-    <string name="vpn_intro_ivpn_title">IVPN</string>
     <string name="vpn_intro_ivpn_body">ارائه‌دهندهٔ VPN متمرکز بر حریم خصوصی با پشتیبانی از WireGuard. شناسهٔ حساب IVPN را وارد کنید و سپس کشوری را در TrackerControl انتخاب کنید.</string>
-    <string name="vpn_intro_proton_title">Proton VPN</string>
     <string name="vpn_intro_proton_body">یک پیکربندی WireGuard را از حساب Proton VPN خود بارگیری و در TrackerControl جای‌گذاری کنید. اعتبارنامه‌های Proton شما هرگز اینجا وارد نمی‌شوند.</string>
-    <string name="vpn_intro_wireguard_title">WireGuard</string>
     <string name="vpn_intro_wireguard_body">اگر از قبل پیکربندی WireGuard را از ارائه‌دهندهٔ VPN دیگر، سرور خودتان یا محل کارتان دارید، از این گزینه استفاده کنید.</string>
     <string name="vpn_enter_mullvad_account">شمارهٔ حساب را وارد کنید</string>
     <string name="vpn_enter_ivpn_account">شناسهٔ حساب را وارد کنید</string>
-    <string name="vpn_mode_mullvad">Mullvad</string>
-    <string name="vpn_mode_ivpn">IVPN</string>
-    <string name="vpn_mode_wireguard">WireGuard</string>
     <string name="vpn_settings">تنظیمات Mullvad</string>
     <string name="vpn_settings_title">تنظیمات Mullvad</string>
     <string name="vpn_ivpn_settings">تنظیمات IVPN</string>
@@ -344,7 +305,8 @@
     <string name="msg_revoked">اتصال TrackerControl قطع شد، احتمالاً توسط برنامهٔ VPN دیگری یا سیستم. هر زمان ممکن باشد به‌طور خودکار دوباره متصل می‌شود.</string>
     <string name="msg_installed">مشکلی با %1$s دارید؟</string>
     <string name="msg_installed_description">اجازه دهید برنامه با شرکت‌ها تماس بگیرد</string>
-    <string name="msg_installed_tracker_libraries_found">شامل %d کتابخانهٔ ردیاب است</string>
+    <!-- Keep as a string: call-site/API migration and multi-count grammar are intentionally separate. -->
+    <string name="msg_installed_tracker_libraries_found" tools:ignore="PluralsCandidate">شامل %d کتابخانهٔ ردیاب است</string>
     <string name="msg_completed">عملیات تکمیل شد</string>
     <string name="msg_no_file_manager">مدیر فایلی برای انتخاب فایل پیدا نشد.</string>
     <string name="msg_no_browser">برنامهٔ مرورگری برای باز کردن پیوند پیدا نشد.</string>
@@ -403,13 +365,17 @@
     <string name="title_log_whois">Whois ‏%1$s</string>
     <string name="title_log_port">درگاه %1$d</string>
     <string name="title_log_copy">کپی</string>
+    <!-- App Overview -->
     <string name="tracked_app_icon">غیرفعال کردن دسترسی اینترنت برای این برنامه</string>
     <string name="tracked_app_name">نام برنامه</string>
+    <!-- Dynamic content descriptions for the app-icon Internet toggle in the app list (issue #231) -->
     <string name="toggle_block_internet_description">مسدود کردن دسترسی اینترنت برای %1$s</string>
     <string name="toggle_allow_internet_description">مجاز کردن دسترسی اینترنت برای %1$s</string>
     <string name="toggle_no_internet_description">%1$s به اینترنت دسترسی ندارد</string>
     <string name="toggle_internet_unavailable_description">کنترل دسترسی اینترنت برای %1$s در دسترس نیست</string>
+    <!-- Dynamic content description for the per-category tracker-blocking switch -->
     <string name="toggle_block_category_description">مسدودسازی ردیاب‌های دستهٔ %1$s</string>
+    <!-- Dynamic content description for the home-screen widget toggle (accessibility follow-up, issue #636) -->
     <string name="widget_toggle_enable_description">فعال کردن مسدودسازی ردیاب‌ها</string>
     <string name="widget_toggle_disable_description">غیرفعال کردن مسدودسازی ردیاب‌ها</string>
     <string name="accessibility_stat_description">%1$s، %2$s</string>
@@ -434,11 +400,13 @@
     <string name="exporting">در حال خروجی گرفتن…</string>
     <string name="export_failed">خروجی گرفتن ناموفق بود</string>
     <string name="exported">در حافظه ذخیره شد!</string>
+    <!-- App Details -->
     <string name="title_activity_detail">جزئیات</string>
     <string name="tab_trackers">ردیاب‌ها</string>
     <string name="tab_countries">کشورها</string>
     <string name="tab_actions">حقوق داده</string>
     <string name="app_info">مدیریت برنامه</string>
+    <!-- Actions -->
     <string name="block_tracking">مسدود کردن ردیاب‌ها</string>
     <string name="block_tracking_description">بسیاری از برنامه‌ها داده را برای اشخاص ثالث، که به آن‌ها ردیاب گفته می‌شود، ارسال می‌کنند. TrackerControl امکان مسدودسازی انتخابی این انتقال‌های شبکه را فراهم می‌کند. بااین‌حال، عاقلانه استفاده کنید، چون توسعه‌دهندگان برنامه به‌ویژه به خدمات تبلیغاتی وابسته‌اند.</string>
     <string name="personalised_ads">محدود کردن شخصی‌سازی</string>
@@ -453,10 +421,7 @@
     <string name="request_data">درخواست داده</string>
     <string name="request_deletion">درخواست حذف</string>
     <string name="contact_developer">توسعه‌دهنده</string>
-    <string name="contact_playstore">Google</string>
     <string name="contact_officials">مقام‌های اتحادیهٔ اروپا</string>
-    <string name="google_dpo_mail">data-protection-office@google.com</string>
-    <string name="dpas_overview_url">https://edpb.europa.eu/about-edpb/board/members</string>
     <string name="subject_request_data">درخواست دسترسی موضوع داده طبق GDPR</string>
     <string name="body_request_data"><![CDATA[به مسئول مربوطه:\n
 \n
@@ -532,15 +497,39 @@
     <string name="onboarding_blockingmode_strict_desc">همه‌چیز، از جمله خدمات ضروری و دامنه‌های مبهم، را مسدود می‌کند. ازکارافتادن برنامه‌ها قابل‌توجه است — بسیاری از برنامه‌ها به تنظیم محافظت کم‌محدودیت‌تری نیاز خواهند داشت.</string>
     <string name="onboarding_blockingmode_research_label">پژوهش</string>
     <string name="onboarding_blockingmode_research_desc">هیچ ردیابی مسدود نمی‌شود. انتقال‌ها را در ADB ثبت می‌کند و برای شناسایی بهتر نام میزبان، استخراج SNI را فعال می‌کند. فقط برای پژوهش: این کار نشانی IP شما را برای سرورهای ردیاب افشا می‌کند.</string>
+    <!-- Per-app remote VPN routing -->
+    <string name="setting_wg_route_mode">مسیریابی از طریق VPN راه دور</string>
+    <string name="summary_wg_route_mode">کدام برنامه‌ها از طریق VPN راه دور فرستاده شوند. برنامه‌هایی که فرستاده نمی‌شوند همچنان به‌طور کامل پایش و فیلتر می‌شوند — فقط از شبکهٔ خودِ این دستگاه متصل می‌شوند.</string>
+    <string name="wg_route_mode_all">همهٔ برنامه‌ها</string>
+    <string name="wg_route_mode_selected">فقط برنامه‌های انتخاب‌شده</string>
+    <string name="app_route_through">از طریق VPN راه دور</string>
+    <string name="app_route_through_explanation">این برنامه از طریق VPN راه دور شما متصل می‌شود، که به‌جای شبکهٔ شما ترافیک آن را می‌بیند.</string>
+    <string name="app_route_direct">مستقیم از این دستگاه</string>
+    <string name="app_route_direct_explanation">این برنامه از شبکهٔ خودتان متصل می‌شود. پایش و مسدودسازی ردیاب‌ها همچنان اعمال می‌شود. پرس‌وجوهای DNS آن به‌جای VPN به حل‌کنندهٔ شبکهٔ شما می‌رود و برنامه نشانی واقعی این دستگاه را می‌بیند — برخی برنامه‌ها به این نیاز دارند، مثلاً برای دسترسی به دستگاه‌های محلی یا بررسی captive portal.</string>
+    <string name="app_route_unavailable_no_vpn">هیچ VPN راه دوری تنظیم نشده است، بنابراین همهٔ ترافیک از پیش مستقیماً این دستگاه را ترک می‌کند.</string>
+    <string name="app_route_unavailable_bypassed">این برنامه به‌طور کامل TrackerControl را دور می‌زند، بنابراین ترافیکی برای مسیریابی وجود ندارد.</string>
+    <string name="app_route_unavailable_partial_routes">VPN راه دور شما همهٔ ترافیک را حمل نمی‌کند (AllowedIPs آن تونل کامل نیست). مسیریابی جداگانه برای هر برنامه به تونل کامل نیاز دارد، چون مسیرها میان همهٔ برنامه‌ها مشترک است.</string>
+    <!-- Per-app protection state -->
     <string name="app_state_heading">حالت مسدودسازی</string>
     <string name="app_state_title_minimal">مسدودسازی حداقلی</string>
     <string name="app_state_title_standard">مسدودسازی استاندارد</string>
     <string name="app_state_title_strict">مسدودسازی سخت‌گیرانه</string>
     <string name="app_state_subtitle_misbehaving">برنامه درست کار نمی‌کند؟ اینجا به مسدودسازی حداقلی تغییر دهید.</string>
+    <string name="app_state_protected">محافظت‌شده</string>
+    <string name="app_state_protected_explanation">ردیاب‌ها برای این برنامه مسدود و ثبت می‌شوند.</string>
     <string name="app_state_essential_only">فقط مسدودسازی حداقلی</string>
     <string name="app_state_essential_only_explanation">فقط ردیاب‌های تأییدشده‌ای را مسدود می‌کند که حالت حداقلی مسدود می‌کند. ردیاب‌های دیگر همچنان ثبت اما مجاز می‌شوند. اگر مسدودسازی استاندارد برنامه را از کار می‌اندازد، از این گزینه استفاده کنید.</string>
+    <string name="app_state_trackers_allowed">ردیاب‌ها مجاز</string>
+    <string name="app_state_trackers_allowed_explanation">برنامه همچنان از طریق TrackerControl کار می‌کند، اما ردیاب‌های آن نه مسدود می‌شوند و نه ثبت. اگر مسدودسازی برنامه را خراب می‌کند از این گزینه استفاده کنید.</string>
+    <string name="app_state_no_internet">بدون اینترنت</string>
+    <string name="app_state_no_internet_explanation">همهٔ اتصال‌های این برنامه مسدود شده‌اند. می‌توانید روی نماد برنامه در صفحهٔ اصلی نیز ضربه بزنید.</string>
+    <string name="app_state_no_internet_shared_uid">برای %1$s نیز اعمال می‌شود، که شناسهٔ کاربری اندروید را با این برنامه به اشتراک می‌گذارد.</string>
+    <string name="app_state_bypassed">دور زدن TrackerControl</string>
+    <string name="app_state_bypassed_explanation">برنامه مستقیماً و خارج از TrackerControl متصل می‌شود. هیچ چیزی برای آن پایش یا مسدود نمی‌شود. اگر برنامه هنوز کار نمی‌کند، این را به‌عنوان آخرین راه‌حل استفاده کنید.\n\nتوجه: گزینهٔ \"مسدودسازی اتصال‌های بدون VPN\" در تنظیمات VPN اندروید باید غیرفعال باشد تا این کار کند.</string>
+    <!-- Per-app protection screen -->
     <string name="protection_title">محافظت</string>
     <string name="protection_route_heading">VPN راه‌دور</string>
+    <!-- Protection state and remote-VPN routing shown together on one row -->
     <string name="protection_app_not_working">برنامه کار نمی‌کند؟ اینجا ضربه بزنید</string>
     <plurals name="protection_paused_resumes">
         <item quantity="one">مکث شده — پس از %d دقیقه ادامه می‌یابد</item>
@@ -559,9 +548,9 @@
     <string name="no_trackers_found_message_disabled">کلید صفحهٔ اصلی را فعال کنید، سپس برنامه را برای یافتن ردیاب‌ها راه‌اندازی کنید</string>
     <string name="no_trackers_found_message">برای یافتن ردیاب‌ها برنامه را راه‌اندازی کنید</string>
     <string name="no_trackers_found_action">راه‌اندازی</string>
-    <string name="no_internet_message">«این برنامه دسترسی اینترنت ندارد. ممکن است همچنان با تبادل داده با برنامه‌های دیگر شما را ردیابی کند.»</string>
+    <string name="no_internet_message">"«این برنامه دسترسی اینترنت ندارد. ممکن است همچنان با تبادل داده با برنامه‌های دیگر شما را ردیابی کند.»"</string>
     <string name="no_internet">دسترسی اینترنت وجود ندارد</string>
-    <string name="bypass_vpn_error">«وقتی برنامه TrackerControl را دور می‌زند، نمی‌توان اینترنت را مسدود کرد.»</string>
+    <string name="bypass_vpn_error">"«وقتی برنامه TrackerControl را دور می‌زند، نمی‌توان اینترنت را مسدود کرد.»"</string>
     <string name="back">بازگشت</string>
     <string name="forever_free">همیشه رایگان</string>
     <string name="your_privacy">حریم خصوصی شما</string>
@@ -582,6 +571,7 @@
     <string name="analyze_tracker_libraries">تحلیل کتابخانه‌های ردیاب</string>
     <string name="update_analysis">به‌روزرسانی تحلیل</string>
     <string name="analysis_outdated_version">\n\nتوجه: تحلیل مربوط به نسخهٔ قبلی برنامه است. ممکن است کتابخانه‌های ردیابی یکپارچه تغییر کرده باشند.</string>
+    <!-- Tracker library screen, reached from the summary row on the Trackers tab -->
     <string name="libraries_title">کتابخانه‌های ردیاب</string>
     <string name="libraries_row_heading">کتابخانه‌های ردیاب</string>
     <string name="libraries_none_found">هیچ کتابخانهٔ ردیابی در کد برنامه پیدا نشد</string>
@@ -619,6 +609,7 @@
     <string name="msg_private_dns_bypass_allowed_notify">برخی برنامه‌ها از DNS رمزگذاری‌شده استفاده می‌کنند؛ تماس‌های ردیابی آن‌ها برای TrackerControl نامرئی است.</string>
     <string name="setting_monitor_system">پایش برنامه‌های سیستمی</string>
     <string name="summary_monitor_system">برنامه‌های سیستمی (Play Services، خدمات اپراتور و غیره) را از VPN عبور می‌دهد تا ردیاب‌هایشان شناسایی و مسدود شوند و آن‌ها را در فهرست برنامه‌ها نشان می‌دهد.\n\nبه‌طور پیش‌فرض خاموش است: کنار گذاشتن برنامه‌های سیستمی برای باتری بهتر است، چون ترافیک پس‌زمینهٔ آن‌ها دیگر VPN را بیدار نمی‌کند. روشن کردن این گزینه با «مسدود کردن اتصال‌ها بدون VPN» در تنظیمات VPN اندروید ناسازگار است؛ این گزینه باید غیرفعال باشد.</string>
+    <!-- Onboarding -->
     <string name="title_next">بعدی</string>
     <string name="title_previous">قبلی</string>
     <string name="title_finish">شروع کنید</string>
@@ -643,6 +634,7 @@
     <string name="onboarding_lockdown_sure">ادامه دادن با قفل‌سازی فعال ممکن است مشکلات اتصال ایجاد کند. مطمئنید؟</string>
     <string name="onboarding_action_disabled">غیرفعال</string>
     <string name="onboarding_action_granted">اعطا شده</string>
+    <!-- Insights Screen -->
     <string name="insights_title">بینش‌های حریم خصوصی شما</string>
     <string name="insights_subtitle_7days">۷ روز گذشته</string>
     <string name="insights_tracking_attempts">میزبان‌های ردیاب تماس‌گرفته‌شده</string>
@@ -652,19 +644,25 @@
     <string name="insights_apps_with_trackers">برنامه‌های دارای ردیاب</string>
     <string name="insights_pervasive_trackers">فراگیرترین ردیاب‌ها</string>
     <string name="insights_top_domains">برترین دامنه‌های ردیاب</string>
-    <string name="insights_domain_alias_separator">« یا »</string>
-    <string name="insights_in_apps">در %d برنامه</string>
+    <!-- Joins the alternative domain names of one tracker, e.g. "example.com or example.net". Keep the surrounding spaces. -->
+    <string name="insights_domain_alias_separator">"« یا »"</string>
+    <!-- Keep as a string: call-site/API migration and multi-count grammar are intentionally separate. -->
+    <string name="insights_in_apps" tools:ignore="PluralsCandidate">در %d برنامه</string>
     <plurals name="insights_apps_count">
         <item quantity="one">در %d برنامه</item>
         <item quantity="other">در %d برنامه</item>
     </plurals>
     <string name="insights_no_data">هنوز دادهٔ ردیابی وجود ندارد. از برنامه‌هایتان استفاده کنید و بعداً دوباره سر بزنید!</string>
-    <string name="insights_shocking_fact">برنامه‌هایتان این هفته از طریق %2$d میزبان ردیاب با %1$d شرکت ردیابی تماس گرفته‌اند!</string>
+    <!-- Keep as a string: call-site/API migration and multi-count grammar are intentionally separate. -->
+    <string name="insights_shocking_fact" tools:ignore="PluralsCandidate">برنامه‌هایتان این هفته از طریق %2$d میزبان ردیاب با %1$d شرکت ردیابی تماس گرفته‌اند!</string>
+    <!-- Retained for Play Store copy; call-site/API migration and multi-count grammar are intentionally separate. -->
     <string name="insights_share">هم‌رسانی با دوستان</string>
     <string name="insights_share_trackers_blocked">میزبان‌های ردیاب مسدودشده</string>
-    <string name="insights_share_url">TrackerControl.org</string>
-    <string name="insights_share_message">این هفته با استفاده از TrackerControl، %1$d میزبان ردیاب از %2$d شرکت را مسدود کردم! حریم خصوصی خود را پس بگیرید: https://trackercontrol.org</string>
+    <!-- Keep as a string: call-site/API migration and multi-count grammar are intentionally separate. -->
+    <string name="insights_share_message" tools:ignore="PluralsCandidate">این هفته با استفاده از TrackerControl، %1$d میزبان ردیاب از %2$d شرکت را مسدود کردم! حریم خصوصی خود را پس بگیرید: https://trackercontrol.org</string>
+    <!-- Retained for Play Store copy; call-site/API migration and multi-count grammar are intentionally separate. -->
     <string name="insights_see_more">بیشتر ببینید ←</string>
+    <!-- What's New onboarding slide (not translated) -->
     <string name="title_blocklists">فایل‌های میزبان اضافی</string>
     <string name="summary_manage_blocklists">این‌ها فقط برای جایگزینی هستند. TrackerControl فهرست‌های میزبان خودش را دارد که دربارهٔ شرکت‌های پشت ردیابی بینش ارائه می‌کنند.</string>
     <string name="title_add_blocklist">افزودن فایل میزبان</string>
@@ -673,8 +671,8 @@
     <string name="msg_invalid_url">نشانی اینترنتی نامعتبر</string>
     <string name="msg_apply_blocklists_failed">اعمال فایل‌های میزبان ناموفق بود</string>
     <string name="msg_last_update">آخرین به‌روزرسانی: %s</string>
+    <!-- Accessibility labels -->
     <string name="switch_tracker_control_description">مسدودسازی ردیاب‌ها</string>
-    <string name="vpn_enabled_switch_description">VPN</string>
     <string name="blocklist_delete_description">حذف فهرست مسدودسازی</string>
     <string name="blocklist_enable_description">فعال کردن فهرست مسدودسازی %s</string>
     <string name="log_connection_allowed">مجاز</string>
@@ -682,16 +680,4 @@
     <string name="log_connection_wifi">Wi‑Fi</string>
     <string name="log_connection_other">شبکهٔ دیگر</string>
     <string name="log_screen_on">صفحه روشن</string>
-    <string-array name="protocolNames">
-        <item>UDP</item>
-        <item>TCP</item>
-    </string-array>
-    <!-- Per-app protection screen -->
-    <!-- Protection state and remote-VPN routing shown together on one row -->
-    <!-- Tracker library screen, reached from the summary row on the Trackers tab -->
-    <!-- Onboarding -->
-    <!-- Insights Screen -->
-    <!-- Joins the alternative domain names of one tracker, e.g. "example.com or example.net". Keep the surrounding spaces. -->
-    <!-- What's New onboarding slide (not translated) -->
-    <!-- Accessibility labels -->
 </resources>

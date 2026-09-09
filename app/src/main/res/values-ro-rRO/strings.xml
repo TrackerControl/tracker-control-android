@@ -1,111 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="app_description">TrackerControl le permite utilizatorilor să monitorizeze și să controleze colectarea extinsă, continuă și ascunsă de date despre comportamentul utilizatorilor în aplicațiile mobile („urmărirea”).</string>
+    <string name="app_copyright">Drepturi de autor \u00A9 2019–2022 Konrad Kollnig\n\nTrackerControl se bazează pe NetGuard, dezvoltat de Marcel Bokhorst (M66B).</string>
     <string name="app_android">TrackerControl necesită Android 5.1 sau mai nou</string>
     <string name="app_xposed">Xposed cauzează prea multe erori, ceea ce ar putea duce la eliminarea TrackerControl din Google Play Store, prin urmare TrackerControl nu este acceptat cât timp Xposed este instalat</string>
     <string name="app_eula">Utilizarea acestei aplicații este pe propriul risc. Nicio aplicație nu poate oferi protecție 100% împotriva urmăririi.</string>
     <string name="app_privacy"><a href="https://github.com/TrackerControl/tracker-control-android#privacy-notice">Politica de confidențialitate</a> <a href="https://github.com/TrackerControl/tracker-control-android#cookie-policy">Politica de cookie</a></string>
+    <string name="app_ios"><a href="https://ios.trackercontrol.org">TrackerControl este disponibil și pentru iOS</a></string>
+    <string name="channel_foreground">Servicii în execuție</string>
     <string name="channel_notify">Notificări generale</string>
+    <string name="channel_access">Notificări de acces</string>
+    <string name="menu_search">Caută o aplicație</string>
+    <string name="menu_filter">Filtrează aplicațiile</string>
     <string name="menu_app_user">Arată aplicațiile utilizatorului</string>
     <string name="menu_app_system">Arată aplicațiile de sistem</string>
     <string name="menu_app_nointernet">Arată aplicații fără permisiuni internet</string>
+    <string name="menu_app_unprotected">Arată doar aplicațiile neprotejate</string>
+    <string name="menu_app_frozen">Arată aplicațiile înghețate</string>
     <string name="menu_sort">Sortează aplicațiile</string>
     <string name="menu_sort_name">Sortează după nume</string>
     <string name="menu_sort_uid">Sortare după uid</string>
+    <string name="menu_sort_companies_week">Sortează după companii (săptămână)</string>
+    <string name="menu_sort_companies">Sortează după companii</string>
+    <string name="menu_sort_by_latest_detected_tracker">Sortează după ultimul urmăritor detectat</string>
     <string name="menu_log">Jurnal de trafic</string>
     <string name="menu_settings">Setări</string>
     <string name="menu_invite">Invită</string>
     <string name="menu_legend">Legendă</string>
     <string name="menu_support">Susțineți această aplicație</string>
-    <string name="menu_about">Despre</string>
-    <!-- A blocked/allowed label followed by its share of all tracking attempts. -->
-    <string name="menu_apps">Alte aplicații</string>
-    <string name="menu_traffic_allowed">Permis</string>
-    <string name="menu_traffic_blocked">Blocat</string>
-    <string name="menu_live">Actualizare în timp real</string>
-    <string name="menu_export">Export</string>
-    <string name="setting_call">Dezactivare în timpul apelului</string>
-    <string name="setting_vpn4">VPN IPv4: %s</string>
-    <string name="setting_vpn6">VPN IPv6: %s</string>
-    <string name="setting_dns">VPN DNS: %s</string>
-    <!-- Secure DNS (DoH) -->
-    <!-- Block DNS-over-TLS (DoT) -->
-    <string name="setting_import">Importă setări</string>
-    <string name="summary_ip6">Rutează traficul IPv6 în TrackerControl pentru a putea fi permis sau blocat selectiv</string>
-    <string name="msg_sure">Ești sigur?</string>
-    <string name="msg_installed">Probleme cu %1$s?</string>
-    <string name="msg_try">Încearcă TrackerControl</string>
-    <string name="msg_inactive">Nu există conexiune la internet</string>
-    <string name="msg_queue">TrackerControl este ocupat</string>
-    <string name="msg_update">Actualizare disponibilă, atingeți pentru a descărca</string>
-    <string-array name="protocolNames">
-        <item>UDP</item>
-        <item>TCP</item>
-    </string-array>
-    <string name="menu_delete">Șterge</string>
-    <string name="title_log_copy">Copiază</string>
-    <!-- App Overview -->
-    <!-- Dynamic content descriptions for the app-icon Internet toggle in the app list (issue #231) -->
-    <!-- Dynamic content description for the per-category tracker-blocking switch -->
-    <!-- Dynamic content description for the home-screen widget toggle (accessibility follow-up, issue #636) -->
-    <string name="ok">OK</string>
-    <string name="yes">Da</string>
-    <string name="no">Nu</string>
-    <!-- App Details -->
-    <string name="title_activity_detail">Detalii</string>
-    <string name="tab_countries">Țări</string>
-    <!-- Actions -->
-    <string name="contacts">Contact </string>
-    <string name="contact_playstore">Google</string>
-    <string name="tracker_social">Social</string>
-    <string name="tracker_email">Email</string>
-    <!-- Per-app remote VPN routing -->
-    <string name="setting_wg_route_mode">Rutează prin VPN-ul la distanță</string>
-    <string name="summary_wg_route_mode">Care aplicații sunt trimise prin VPN-ul la distanță. Celelalte rămân complet monitorizate și filtrate — doar se conectează din rețeaua acestui dispozitiv.</string>
-    <string name="wg_route_mode_all">Toate aplicațiile</string>
-    <string name="wg_route_mode_selected">Doar aplicațiile selectate</string>
-    <string name="app_route_through">Prin VPN-ul la distanță</string>
-    <string name="app_route_through_explanation">Această aplicație se conectează prin VPN-ul dvs. la distanță, care îi vede traficul în locul rețelei dvs.</string>
-    <string name="app_route_direct">Direct de pe acest dispozitiv</string>
-    <string name="app_route_direct_explanation">Această aplicație se conectează din propria rețea. Monitorizarea și blocarea urmăritorilor rămân valabile. Interogările ei DNS merg la rezolvatorul rețelei dvs., nu la cel al VPN-ului, iar aplicația vede adresa reală a dispozitivului — unele aplicații au nevoie de asta, de exemplu pentru a ajunge la dispozitive locale sau a verifica un captive portal.</string>
-    <string name="app_route_unavailable_no_vpn">Nu este configurat niciun VPN la distanță, așa că tot traficul iese deja direct de pe acest dispozitiv.</string>
-    <string name="app_route_unavailable_bypassed">Această aplicație ocolește complet TrackerControl, deci nu există trafic de rutat.</string>
-    <string name="app_route_unavailable_partial_routes">VPN-ul dvs. la distanță nu transportă tot traficul (AllowedIPs nu formează un tunel complet). Rutarea per aplicație necesită un tunel complet, deoarece rutele sunt partajate de toate aplicațiile.</string>
-    <!-- Per-app protection state -->
-    <string name="app_state_protected">Protejată</string>
-    <string name="app_state_protected_explanation">Urmăritorii sunt blocați și înregistrați pentru această aplicație.</string>
-    <string name="app_state_trackers_allowed">Urmăritori permiși</string>
-    <string name="app_state_trackers_allowed_explanation">Aplicația trece în continuare prin TrackerControl, dar urmăritorii ei nu sunt nici blocați, nici înregistrați. Folosiți această opțiune dacă blocarea strică aplicația.</string>
-    <string name="app_state_no_internet">Fără Internet</string>
-    <string name="app_state_no_internet_explanation">Toate conexiunile acestei aplicații sunt blocate. Puteți atinge și pictograma aplicației din ecranul principal.</string>
-    <string name="app_state_no_internet_shared_uid">Se aplică și pentru %1$s, care împarte un ID de utilizator Android cu această aplicație.</string>
-    <string name="app_state_bypassed">Ocolește TrackerControl</string>
-    <string name="app_state_bypassed_explanation">Aplicația se conectează direct, în afara TrackerControl. Nimic nu este monitorizat sau blocat pentru ea. Folosiți această opțiune ca ultimă soluție dacă aplicația tot nu funcționează.\n\nNotă: \"Blochează conexiunile fără VPN\" din setările VPN Android trebuie să fie DEZACTIVAT pentru ca aceasta să funcționeze.</string>
-    <!-- Per-app protection screen -->
-    <!-- Protection state and remote-VPN routing shown together on one row -->
-    <string name="uninstall">Dezinstalează</string>
-    <string name="back">Înapoi</string>
-    <string name="forever_free">Întotdeauna Gratuit</string>
-    <!-- Tracker library screen, reached from the summary row on the Trackers tab -->
-    <string name="blocked">BLOCAT</string>
-    <!-- Onboarding -->
-    <!-- Insights Screen -->
-    <!-- Joins the alternative domain names of one tracker, e.g. "example.com or example.net". Keep the surrounding spaces. -->
-    <!-- What's New onboarding slide (not translated) -->
-    <!-- Accessibility labels -->
-    <string name="app_description">TrackerControl le permite utilizatorilor să monitorizeze și să controleze colectarea extinsă, continuă și ascunsă de date despre comportamentul utilizatorilor în aplicațiile mobile („urmărirea”).</string>
-    <string name="app_copyright">Drepturi de autor \u00A9 2019–2022 Konrad Kollnig\n\nTrackerControl se bazează pe NetGuard, dezvoltat de Marcel Bokhorst (M66B).</string>
-    <string name="app_ios"><a href="https://ios.trackercontrol.org">TrackerControl este disponibil și pentru iOS</a></string>
-    <string name="channel_foreground">Servicii în execuție</string>
-    <string name="channel_access">Notificări de acces</string>
-    <string name="menu_search">Caută o aplicație</string>
-    <string name="menu_filter">Filtrează aplicațiile</string>
-    <string name="menu_app_unprotected">Arată doar aplicațiile neprotejate</string>
-    <string name="menu_app_frozen">Arată aplicațiile înghețate</string>
-    <string name="menu_sort_companies_week">Sortează după companii (săptămână)</string>
-    <string name="menu_sort_companies">Sortează după companii</string>
-    <string name="menu_sort_by_latest_detected_tracker">Sortează după ultimul urmăritor detectat</string>
     <string name="menu_log_support">Explicație</string>
     <string name="menu_troubleshooting">Depanare</string>
+    <string name="menu_about">Despre</string>
     <string name="timeline_empty_disabled_title">TrackerControl este oprit</string>
     <string name="timeline_empty_disabled_subtitle">Activează TrackerControl folosind comutatorul din dreapta sus. Activitatea urmăritorilor aplicațiilor tale va apărea apoi aici.</string>
     <string name="timeline_empty_enabled_title">Căutăm urmăritori…</string>
@@ -121,17 +46,15 @@
     <string name="unidentified_app_uid">Aplicație neidentificată (UID %1$d)</string>
     <string name="tab_timeline">Cronologie</string>
     <string name="tab_apps">Aplicații</string>
-    <string name="tab_vpn">VPN</string>
     <string name="timeline_section_last_hour">Ultima oră</string>
     <string name="timeline_section_today">Astăzi</string>
     <string name="timeline_section_yesterday">Ieri</string>
     <string name="timeline_section_this_week">Săptămâna aceasta</string>
-    <string name="timeline_more_trackers">încă %d</string>
+    <!-- Keep as a string: call-site/API migration and multi-count grammar are intentionally separate. -->
+    <string name="timeline_more_trackers" tools:ignore="PluralsCandidate">încă %d</string>
     <string name="timeline_tracker_blocked">Blocat</string>
     <string name="timeline_tracker_allowed">Permis</string>
-    <string name="insights_overview_status">%1$s %2$s · %3$s %4$s</string>
-    <string name="insights_overview_status_share">%1$s (%2$s)</string>
-    <string name="timeline_insights_status">%1$s %2$s · %3$s %4$s</string>
+    <!-- A blocked/allowed label followed by its share of all tracking attempts. -->
     <string name="feed_section_last_contact">ultimul contact %s</string>
     <plurals name="feed_show_more_companies">
         <item quantity="one">Arată încă %d companie</item>
@@ -147,7 +70,8 @@
     <string name="feed_company_collapsed">Restrâns</string>
     <string name="feed_essential_explainer">Necesar aplicațiilor — permis pentru ca %s să funcționeze</string>
     <string name="feed_essential_explainer_blocked">Necesar aplicațiilor — blocarea acestora poate afecta %s</string>
-    <string name="timeline_summary_mixed">%1$d blocați · %2$d permiși</string>
+    <!-- Keep as a string: call-site/API migration and multi-count grammar are intentionally separate. -->
+    <string name="timeline_summary_mixed" tools:ignore="PluralsCandidate">%1$d blocați · %2$d permiși</string>
     <plurals name="timeline_trackers_blocked">
         <item quantity="one">%d urmăritor blocat</item>
         <item quantity="few">%d urmăritori blocați</item>
@@ -178,7 +102,11 @@
     <string name="troubleshooting_alwayson_title">VPN permanent activ</string>
     <string name="troubleshooting_alwayson_desc">Dacă „Blochează conexiunile fără VPN” (blocarea) este activat în setările VPN Android, TrackerControl nu poate funcționa corect. Dezactivează această opțiune.</string>
     <string name="troubleshooting_alwayson_action">Deschide setările VPN</string>
+    <string name="menu_apps">Alte aplicații</string>
     <string name="menu_protocol_other">Altele</string>
+    <string name="menu_traffic_allowed">Permis</string>
+    <string name="menu_traffic_blocked">Blocat</string>
+    <string name="menu_live">Actualizare în timp real</string>
     <string name="menu_refresh">Reîmprospătează</string>
     <string name="menu_resolve">Arată numele</string>
     <string name="menu_organization">Arată organizația</string>
@@ -186,9 +114,9 @@
     <string name="menu_pcap_export">Export PCAP</string>
     <string name="menu_clear">Golește</string>
     <string name="menu_clear_activity">Șterge activitatea înregistrată</string>
+    <string name="menu_export">Export</string>
     <string name="menu_reset">Resetează</string>
     <string name="menu_cleanup">Curățare</string>
-    <string name="setting_options">General</string>
     <string name="setting_further_options">Opțiuni suplimentare</string>
     <string name="setting_pause">Activează automat după %1$s minute</string>
     <string name="setting_update">Caută actualizări</string>
@@ -198,6 +126,7 @@
         <item quantity="other">Pauză pentru %d de minute</item>
     </plurals>
     <string name="setting_ip6">Activează traficul IPv6</string>
+    <string name="setting_call">Dezactivare în timpul apelului</string>
     <string name="setting_reload_onconnectivity">Reîncarcă la fiecare schimbare a conectivității</string>
     <string name="setting_tcp_mss_clamp">Mod de compatibilitate pentru partajarea conexiunii</string>
     <string name="summary_tcp_mss_clamp">Rutează tot traficul prin TrackerControl și limitează dimensiunea segmentelor TCP pentru a remedia conexiunile partajate care se blochează sau nu au acces la internet. Accesul la rețeaua locală nu mai ocolește TrackerControl, iar performanța poate fi redusă.</string>
@@ -213,6 +142,9 @@
     <string name="summary_include_all_tracking">Reactivează monitorizarea urmăritorilor pentru toate aplicațiile.</string>
     <string name="setting_block_domains">Activează fișierul hosts</string>
     <string name="setting_rcode">Răspuns la blocarea hosts: %s</string>
+    <string name="setting_vpn4">VPN IPv4: %s</string>
+    <string name="setting_vpn6">VPN IPv6: %s</string>
+    <string name="setting_dns">VPN DNS: %s</string>
     <string name="setting_validate">Validează la: %s</string>
     <string name="setting_ttl">TTL DNS minim: %s s</string>
     <string name="setting_socks5_enabled">Folosește proxy SOCKS5</string>
@@ -239,6 +171,7 @@
     <string name="setting_pcap_record_size">Dimensiunea înregistrării PCAP: %s B</string>
     <string name="setting_pcap_file_size">Dimensiunea max. a fișierului PCAP: %s MB</string>
     <string name="setting_watchdog">Supraveghere: la fiecare %s minute</string>
+    <!-- Secure DNS (DoH) -->
     <string name="setting_doh_enabled">DNS securizat (DoH)</string>
     <string name="summary_doh_enabled">Criptează interogările DNS folosind DNS-over-HTTPS. Se pune automat pe pauză când WireGuard este activ, deoarece interogările folosesc atunci tunelul WireGuard.</string>
     <string name="warning_beta">Funcție beta. Este posibil să nu funcționeze conform așteptărilor.</string>
@@ -246,17 +179,20 @@
     <string name="summary_doh_endpoint">URL HTTPS pentru interogări DNS-over-HTTPS</string>
     <string name="setting_doh_dns_fallback">DNS alternativ</string>
     <string name="summary_doh_dns_fallback">Folosește DNS standard (necriptat) când DoH nu este disponibil. Dezactivarea poate împiedica aplicațiile să funcționeze dacă serverul DoH nu răspunde.</string>
+    <!-- Block DNS-over-TLS (DoT) -->
     <string name="setting_block_dot">Blochează DNS-ul privat al Android</string>
     <string name="summary_block_dot">Cu DNS-ul privat Android activat, TC nu poate detecta urmărirea și nu funcționează corect.</string>
     <string name="setting_stats_frequency">Interval de eșantionare: %s ms</string>
     <string name="setting_stats_samples">Număr de eșantioane: %s s</string>
     <string name="setting_backup">Copie de siguranță</string>
     <string name="setting_export">Exportă setările</string>
+    <string name="setting_import">Importă setări</string>
     <string name="setting_hosts_update">Actualizează fișierul hosts</string>
     <string name="setting_hosts_auto_update">Actualizează automat hosts</string>
     <string name="summary_hosts_auto_update">Actualizează automat fișierul hosts în fundal</string>
     <string name="summary_pause">După punerea pe pauză din notificare, reactivează automat TrackerControl după numărul de minute selectat (introdu 0 pentru a dezactiva această opțiune).</string>
     <string name="summary_update">Caută de două ori pe zi versiuni noi pe GitHub</string>
+    <string name="summary_ip6">Rutează traficul IPv6 în TrackerControl pentru a putea fi permis sau blocat selectiv</string>
     <string name="summary_call">Dezactivează TrackerControl la apelurile telefonice primite sau efectuate. Aceasta poate remedia problemele cu apelarea IP/Wi-Fi.</string>
     <string name="summary_log_app">Dezactivează pentru a reduce consumul bateriei. Urmăritorii noi vor fi în continuare blocați, dar nu vor fi afișați.</string>
     <string name="summary_block_domains">AVERTISMENT: gazdele blocate nu sunt afișate în interfață.</string>
@@ -285,7 +221,7 @@
     <string name="msg_wg_profile_empty">Nu există încă profiluri</string>
     <string name="msg_wg_profile_active">Activ</string>
     <string name="msg_wg_profile_set_active">Setează ca activ</string>
-    <string name="msg_wg_profile_config_hint">[Interface]\nPrivateKey = …\nAddress = …\n\n[Peer]\nPublicKey = …\nAllowedIPs = 0.0.0.0/0, ::/0\nEndpoint = …</string>
+    <string name="msg_wg_profile_config_hint" tools:ignore="TypographyEllipsis">[Interface]\nPrivateKey = …\nAddress = …\n\n[Peer]\nPublicKey = …\nAllowedIPs = 0.0.0.0/0, ::/0\nEndpoint = …</string>
     <string name="msg_wg_profile_delete_confirm">Ștergi acest profil WireGuard?</string>
     <string name="msg_wg_profile_scan_hint">Îndreaptă camera către codul QR WireGuard afișat de furnizorul VPN. Scanarea are loc pe dispozitivul tău.</string>
     <string name="msg_wg_profile_scan_no_camera">Acest dispozitiv nu are cameră pentru scanare</string>
@@ -312,27 +248,17 @@
     <string name="msg_wg_mullvad_countries_failed">Țările Mullvad nu au putut fi încărcate: %s</string>
     <string name="msg_wg_proton_note">Configurarea terță documentată de Proton folosește configurații WireGuard descărcabile. TrackerControl nu are nevoie de datele tale de autentificare Proton și nu poate reîmprospăta automat configurația.\n\nAutentifică-te la account.protonvpn.com, accesează Downloads → WireGuard configuration, descarcă o configurație, deschide-o într-un editor de text, apoi copiază și lipește conținutul aici.</string>
     <string name="msg_wg_proton_open_dashboard">Deschide panoul Proton VPN</string>
-    <string name="vpn_status_mullvad">Mullvad</string>
     <string name="vpn_status_relay">Releu: %s</string>
     <string name="vpn_status_wireguard_connected">WireGuard conectat</string>
     <string name="vpn_status_disconnected">Neconectat</string>
-    <string name="vpn_provider_mullvad">Mullvad VPN</string>
-    <string name="vpn_provider_ivpn">IVPN</string>
     <string name="vpn_intro_title">Previzualizare VPN</string>
     <string name="vpn_intro_body">Un VPN îți trimite traficul de internet printr-un alt server. Astfel îți poate ascunde adresa IP de site-uri și de furnizorul rețelei și îți permite să alegi o țară pentru conexiune. Această filă este nouă, așa că trateaz-o ca pe o previzualizare.</string>
-    <string name="vpn_intro_mullvad_title">Mullvad</string>
     <string name="vpn_intro_mullvad_body">Un furnizor VPN axat pe confidențialitate. Costă 5 € pe lună și folosește numere de cont în locul adreselor de e-mail. Introdu un număr de cont, apoi alege o țară în TrackerControl.</string>
-    <string name="vpn_intro_ivpn_title">IVPN</string>
     <string name="vpn_intro_ivpn_body">Un furnizor VPN axat pe confidențialitate, cu suport WireGuard. Introdu un ID de cont IVPN, apoi alege o țară în TrackerControl.</string>
-    <string name="vpn_intro_proton_title">Proton VPN</string>
     <string name="vpn_intro_proton_body">Descarcă o configurație WireGuard din contul tău Proton VPN și lipește-o în TrackerControl. Datele tale de autentificare Proton nu sunt introduse niciodată aici.</string>
-    <string name="vpn_intro_wireguard_title">WireGuard</string>
     <string name="vpn_intro_wireguard_body">Folosește această opțiune dacă ai deja o configurație WireGuard de la un alt furnizor VPN, de la propriul server sau de la locul de muncă.</string>
     <string name="vpn_enter_mullvad_account">Introdu numărul contului</string>
     <string name="vpn_enter_ivpn_account">Introdu ID-ul contului</string>
-    <string name="vpn_mode_mullvad">Mullvad</string>
-    <string name="vpn_mode_ivpn">IVPN</string>
-    <string name="vpn_mode_wireguard">WireGuard</string>
     <string name="vpn_settings">Setări Mullvad</string>
     <string name="vpn_settings_title">Setări Mullvad</string>
     <string name="vpn_ivpn_settings">Setări IVPN</string>
@@ -366,7 +292,6 @@
     <string name="vpn_generating">Se creează profilul WireGuard…</string>
     <string name="vpn_generation_failed">Configurarea VPN a eșuat: %s</string>
     <string name="vpn_retry">Încearcă din nou</string>
-    <string name="vpn_country_selected">OK</string>
     <string name="msg_wg_blocked_title">Tunelul WireGuard nu este disponibil</string>
     <string name="msg_wg_blocked">Accesul la internet este blocat până când WireGuard pornește sau setarea WireGuard este dezactivată.</string>
     <string name="msg_wg_blocked_detail">Accesul la internet este blocat până când WireGuard pornește sau setarea WireGuard este dezactivată. %s</string>
@@ -376,12 +301,15 @@
     <string name="msg_wg_recovery_failed">WireGuard nu mai răspunde. TrackerControl încearcă să se reconecteze, iar accesul la internet poate rămâne blocat până când WireGuard își revine.</string>
     <string name="summary_watchdog">Verifică periodic dacă TrackerControl rulează în continuare (introdu zero pentru a dezactiva această opțiune). Aceasta poate crește consumul bateriei.</string>
     <string name="summary_log_logcat">Mod cercetare: urmăritorii identificați sunt înregistrați în ADB, iar extragerea SNI este activată pentru o detectare mai bună a numelor de gazdă. Preia jurnalele cu adb logcat folosind eticheta „TC-Log”.</string>
+    <string name="msg_sure">Ești sigur?</string>
     <string name="msg_started">Se caută urmăritori…</string>
     <string name="msg_waiting">Se așteaptă un eveniment</string>
     <string name="msg_disabled">Folosește comutatorul de mai sus pentru a activa TrackerControl.</string>
     <string name="msg_revoked">TrackerControl a fost deconectat, probabil de o altă aplicație VPN sau de sistem. Se va reconecta automat când este posibil.</string>
+    <string name="msg_installed">Probleme cu %1$s?</string>
     <string name="msg_installed_description">Permite aplicației să contacteze companii</string>
-    <string name="msg_installed_tracker_libraries_found">Conține %d biblioteci de urmărire</string>
+    <!-- Keep as a string: call-site/API migration and multi-count grammar are intentionally separate. -->
+    <string name="msg_installed_tracker_libraries_found" tools:ignore="PluralsCandidate">Conține %d biblioteci de urmărire</string>
     <string name="msg_completed">Acțiune finalizată</string>
     <string name="msg_no_file_manager">Nu a fost găsit niciun manager de fișiere pentru alegerea unui fișier.</string>
     <string name="msg_no_browser">Nu a fost găsită nicio aplicație de navigare pentru deschiderea linkului.</string>
@@ -395,10 +323,14 @@ Traficul tău de internet nu este trimis către un server VPN la distanță.</st
     <string name="msg_vpn_replacement_recovery_exhausted">TrackerControl nu a putut restabili VPN-ul. Traficul este blocat.</string>
     <string name="msg_doh_unreachable">DNS-ul securizat (DoH) nu poate fi contactat, deși ai o conexiune activă la internet. Dacă se întâmplă repetat, ia în considerare dezactivarea lui din setările rețelei.</string>
     <string name="msg_start_failed">Android a refuzat să pornească serviciul VPN în acest moment. Probabil este vorba despre o eroare în versiunea ta de Android.</string>
+    <string name="msg_try">Încearcă TrackerControl</string>
     <string name="msg_log_disabled">Înregistrarea traficului este dezactivată; folosește comutatorul de mai sus pentru a o activa. Înregistrarea traficului poate crește consumul bateriei.</string>
     <string name="msg_clear_activity">Aceasta elimină activitatea înregistrată pentru această aplicație. Setările de blocare/permisie pentru urmăritori ale aplicației sunt păstrate.</string>
     <string name="msg_update_last">Ultima actualizare: %s</string>
     <string name="msg_metered">Rețeaua este contorizată</string>
+    <string name="msg_inactive">Nu există conexiune la internet</string>
+    <string name="msg_queue">TrackerControl este ocupat</string>
+    <string name="msg_update">Actualizare disponibilă, atingeți pentru a descărca</string>
     <string name="title_version">Versiunea %1$d</string>
     <string name="msg_push">Mesajele primite (push) sunt gestionate în principal de componenta de sistem Play services, căreia îi este permis accesul la internet în mod implicit</string>
     <string name="msg_system">Gestionarea tuturor aplicațiilor (de sistem) poate fi activată din setări</string>
@@ -409,9 +341,13 @@ Traficul tău de internet nu este trimis către un server VPN la distanță.</st
     <string name="msg_start_forward">Pornești redirecționarea de la portul %2$d al %1$s la %3$s:%4$d pentru „%5$s”?</string>
     <string name="msg_stop_forward">Oprești redirecționarea portului %2$d al %1$s?</string>
     <string name="msg_log_logcat">Avertisment: blocarea este dezactivată din cauza înregistrării ADB.</string>
+    <string-array name="protocolNames">
+        <item>UDP</item>
+        <item>TCP</item>
+    </string-array>
     <string name="menu_add">Adaugă</string>
+    <string name="menu_delete">Șterge</string>
     <string name="setting_forwarding">Redirecționare port</string>
-    <string name="title_protocol">Protocol</string>
     <string name="title_dport">Port sursă</string>
     <string name="title_raddr">Adresă destinație</string>
     <string name="title_rport">Port destinație</string>
@@ -432,18 +368,20 @@ Traficul tău de internet nu este trimis către un server VPN la distanță.</st
     <string name="title_allow">Permite</string>
     <string name="title_block">Blochează</string>
     <string name="title_nobody">nimeni</string>
-    <string name="title_log_whois">Whois %1$s</string>
-    <string name="title_log_port">Port %1$d</string>
+    <string name="title_log_copy">Copiază</string>
+    <!-- App Overview -->
     <string name="tracked_app_icon">Dezactivează accesul la internet pentru această aplicație</string>
     <string name="tracked_app_name">Numele aplicației</string>
+    <!-- Dynamic content descriptions for the app-icon Internet toggle in the app list (issue #231) -->
     <string name="toggle_block_internet_description">Blochează accesul la internet pentru %1$s</string>
     <string name="toggle_allow_internet_description">Permite accesul la internet pentru %1$s</string>
     <string name="toggle_no_internet_description">%1$s nu are acces la internet</string>
     <string name="toggle_internet_unavailable_description">Controlul accesului la internet nu este disponibil pentru %1$s</string>
+    <!-- Dynamic content description for the per-category tracker-blocking switch -->
     <string name="toggle_block_category_description">Blocarea urmăritorilor pentru categoria %1$s</string>
+    <!-- Dynamic content description for the home-screen widget toggle (accessibility follow-up, issue #636) -->
     <string name="widget_toggle_enable_description">Activează blocarea urmăritorilor</string>
     <string name="widget_toggle_disable_description">Dezactivează blocarea urmăritorilor</string>
-    <string name="accessibility_stat_description">%1$s, %2$s</string>
     <string name="accessibility_tracker_blocking_enabled">Blocarea urmăritorilor este activată</string>
     <string name="accessibility_tracker_blocking_disabled">Blocarea urmăritorilor este dezactivată</string>
     <plurals name="n_companies_found_week">
@@ -460,19 +398,27 @@ Traficul tău de internet nu este trimis către un server VPN la distanță.</st
     <string name="confirm_ipinfo">Aceasta va contacta serviciul extern ipinfo.io și va partaja cu acesta date despre adresele IP contactate.</string>
     <string name="external_servers">Obții automat adresa de e-mail a dezvoltatorului?</string>
     <string name="confirm_google_info">Această aplicație poate obține automat pentru tine adresa de e-mail a dezvoltatorului aplicației din Google Play Store.</string>
+    <string name="ok">OK</string>
+    <string name="yes">Da</string>
+    <string name="no">Nu</string>
     <string name="menu_csv">Exportă ca CSV</string>
     <string name="exporting">Se exportă..</string>
     <string name="export_failed">Exportul a eșuat</string>
     <string name="exported">Exportat în spațiul de stocare!</string>
+    <!-- App Details -->
+    <string name="title_activity_detail">Detalii</string>
     <string name="tab_trackers">Urmăritori</string>
+    <string name="tab_countries">Țări</string>
     <string name="tab_actions">Drepturi asupra datelor</string>
     <string name="app_info">Gestionează aplicația</string>
+    <!-- Actions -->
     <string name="block_tracking">Blochează urmăritorii</string>
     <string name="block_tracking_description">Multe aplicații trimit date către terți, așa-numiții urmăritori. TrackerControl permite blocarea selectivă a acestor transmisiuni de rețea. Folosește această opțiune cu atenție, deoarece dezvoltatorii aplicațiilor depind de aceste servicii, în special de publicitate.</string>
     <string name="personalised_ads">Limitează personalizarea</string>
     <string name="personalised_ads_description">Android oferă limitarea accesului aplicațiilor la ID-ul de publicitate Google al dispozitivului. Totuși, aplicațiile pot ignora această setare și pot folosi în continuare ID-ul. De asemenea, pot continua să colecteze acest ID pentru analiză, conform politicilor Google. Trebuie să ai încredere în Google și în compania care colectează datele.</string>
     <string name="data_managment">Gestionează datele</string>
     <string name="data_management_description">Regulamentul general privind protecția datelor al UE (RGPD) le permite utilizatorilor din UE să gestioneze orice date despre ei. Această aplicație oferă șabloane de e-mail pentru a contacta dezvoltatorul. Dezvoltatorul trebuie să răspundă în termen de o lună.</string>
+    <string name="contacts">Contact </string>
     <string name="contacts_description">Dacă consideri că o aplicație încalcă principiile protecției datelor, poți contacta direct entitățile responsabile.</string>
     <string name="play_services_required">Aceasta este o setare a serviciilor Google Play, care nu au fost găsite pe dispozitiv.</string>
     <string name="no_mail_service">Instalează un client de e-mail.</string>
@@ -480,9 +426,8 @@ Traficul tău de internet nu este trimis către un server VPN la distanță.</st
     <string name="request_data">Solicită datele</string>
     <string name="request_deletion">Solicită ștergerea</string>
     <string name="contact_developer">Dezvoltator</string>
+    <string name="contact_playstore">Google</string>
     <string name="contact_officials">Oficiali UE</string>
-    <string name="google_dpo_mail">data-protection-office@google.com</string>
-    <string name="dpas_overview_url">https://edpb.europa.eu/about-edpb/board/members</string>
     <string name="subject_request_data">Cerere de acces la date conform RGPD</string>
     <string name="body_request_data"><![CDATA[Către persoana responsabilă:\n
 \n
@@ -536,6 +481,8 @@ Cu stimă,\n\n]]></string>
     <string name="tracker_content">Esențial</string>
     <string name="tracker_cryptomining">Criptominare</string>
     <string name="tracker_fingerprinting">Amprentare</string>
+    <string name="tracker_social">Social</string>
+    <string name="tracker_email">Email</string>
     <string name="tracker_consent">Gestionarea consimțământului</string>
     <string name="tracker_uncategorised">Fără categorie</string>
     <string name="setting_blocking_mode">Mod de blocare</string>
@@ -543,28 +490,47 @@ Cu stimă,\n\n]]></string>
     <string name="summary_blocking_mode_standard">Standard: blochează toți urmăritorii cunoscuți din mai multe liste (X-Ray, Disconnect, DuckDuckGo). Serviciile esențiale sunt permise. Dacă o aplicație nu mai funcționează, ajustează setarea Protecție (consultă Depanare în meniul aplicației).</string>
     <string name="summary_blocking_mode_strict">Strict: blochează toți urmăritorii cunoscuți, inclusiv serviciile esențiale și domeniile ambigue cu IP partajat. Multe aplicații vor avea nevoie de o setare Protecție mai puțin restrictivă (consultă Depanare în meniul aplicației).</string>
     <string name="summary_sni_wg_note">Notă: extragerea SNI nu se aplică traficului rutat prin VPN-ul la distanță.</string>
-    <string name="blocking_mode_minimal">Minimal</string>
-    <string name="blocking_mode_standard">Standard</string>
-    <string name="blocking_mode_strict">Strict</string>
     <string name="onboarding_blockingmode_title">Alege modul de blocare</string>
     <string name="onboarding_blockingmode_desc">Alege cum ar trebui TrackerControl să gestioneze urmăritorii. Modurile de blocare opresc urmăritorii cu niveluri diferite de agresivitate; modul Cercetare menține blocarea oprită și activează extragerea SNI doar pentru măsurare. Poți schimba această opțiune ulterior din Setări.</string>
     <string name="onboarding_blockingmode_minimal_label">Minimal (recomandat utilizatorilor noi)</string>
     <string name="onboarding_blockingmode_minimal_desc">Blochează doar urmăritorii confirmați care pot fi blocați în siguranță. Probleme limitate ale aplicațiilor. Potrivit pentru majoritatea utilizatorilor.</string>
-    <string name="onboarding_blockingmode_standard_label">Standard</string>
     <string name="onboarding_blockingmode_standard_desc">Blochează toți urmăritorii cunoscuți din mai multe liste. Unele aplicații pot avea nevoie de o setare Protecție mai puțin restrictivă.</string>
-    <string name="onboarding_blockingmode_strict_label">Strict</string>
     <string name="onboarding_blockingmode_strict_desc">Blochează totul, inclusiv serviciile esențiale și domeniile ambigue. Probleme semnificative ale aplicațiilor — multe aplicații vor avea nevoie de o setare Protecție mai puțin restrictivă.</string>
     <string name="onboarding_blockingmode_research_label">Cercetare</string>
     <string name="onboarding_blockingmode_research_desc">Fără blocarea urmăritorilor. Înregistrează transmisiunile în ADB și activează extragerea SNI pentru o detectare mai bună a numelor de gazdă. Doar pentru cercetare: aceasta divulgă adresa IP serverelor urmăritorilor.</string>
+    <!-- Per-app remote VPN routing -->
+    <string name="setting_wg_route_mode">Rutează prin VPN-ul la distanță</string>
+    <string name="summary_wg_route_mode">Care aplicații sunt trimise prin VPN-ul la distanță. Celelalte rămân complet monitorizate și filtrate — doar se conectează din rețeaua acestui dispozitiv.</string>
+    <string name="wg_route_mode_all">Toate aplicațiile</string>
+    <string name="wg_route_mode_selected">Doar aplicațiile selectate</string>
+    <string name="app_route_through">Prin VPN-ul la distanță</string>
+    <string name="app_route_through_explanation">Această aplicație se conectează prin VPN-ul dvs. la distanță, care îi vede traficul în locul rețelei dvs.</string>
+    <string name="app_route_direct">Direct de pe acest dispozitiv</string>
+    <string name="app_route_direct_explanation">Această aplicație se conectează din propria rețea. Monitorizarea și blocarea urmăritorilor rămân valabile. Interogările ei DNS merg la rezolvatorul rețelei dvs., nu la cel al VPN-ului, iar aplicația vede adresa reală a dispozitivului — unele aplicații au nevoie de asta, de exemplu pentru a ajunge la dispozitive locale sau a verifica un captive portal.</string>
+    <string name="app_route_unavailable_no_vpn">Nu este configurat niciun VPN la distanță, așa că tot traficul iese deja direct de pe acest dispozitiv.</string>
+    <string name="app_route_unavailable_bypassed">Această aplicație ocolește complet TrackerControl, deci nu există trafic de rutat.</string>
+    <string name="app_route_unavailable_partial_routes">VPN-ul dvs. la distanță nu transportă tot traficul (AllowedIPs nu formează un tunel complet). Rutarea per aplicație necesită un tunel complet, deoarece rutele sunt partajate de toate aplicațiile.</string>
+    <!-- Per-app protection state -->
     <string name="app_state_heading">Mod de blocare</string>
     <string name="app_state_title_minimal">Blocare minimă</string>
     <string name="app_state_title_standard">Blocare standard</string>
     <string name="app_state_title_strict">Blocare strictă</string>
     <string name="app_state_subtitle_misbehaving">Aplicația se comportă greșit? Comută aici la blocarea minimă.</string>
+    <string name="app_state_protected">Protejată</string>
+    <string name="app_state_protected_explanation">Urmăritorii sunt blocați și înregistrați pentru această aplicație.</string>
     <string name="app_state_essential_only">Doar blocare minimă</string>
     <string name="app_state_essential_only_explanation">Blochează doar urmăritorii confirmați pe care îi blochează modul Minimal. Ceilalți urmăritori sunt în continuare înregistrați, dar permiși. Folosește această opțiune dacă blocarea standard împiedică aplicația să funcționeze.</string>
+    <string name="app_state_trackers_allowed">Urmăritori permiși</string>
+    <string name="app_state_trackers_allowed_explanation">Aplicația trece în continuare prin TrackerControl, dar urmăritorii ei nu sunt nici blocați, nici înregistrați. Folosiți această opțiune dacă blocarea strică aplicația.</string>
+    <string name="app_state_no_internet">Fără Internet</string>
+    <string name="app_state_no_internet_explanation">Toate conexiunile acestei aplicații sunt blocate. Puteți atinge și pictograma aplicației din ecranul principal.</string>
+    <string name="app_state_no_internet_shared_uid">Se aplică și pentru %1$s, care împarte un ID de utilizator Android cu această aplicație.</string>
+    <string name="app_state_bypassed">Ocolește TrackerControl</string>
+    <string name="app_state_bypassed_explanation">Aplicația se conectează direct, în afara TrackerControl. Nimic nu este monitorizat sau blocat pentru ea. Folosiți această opțiune ca ultimă soluție dacă aplicația tot nu funcționează.\n\nNotă: \"Blochează conexiunile fără VPN\" din setările VPN Android trebuie să fie DEZACTIVAT pentru ca aceasta să funcționeze.</string>
+    <!-- Per-app protection screen -->
     <string name="protection_title">Protecție</string>
     <string name="protection_route_heading">VPN la distanță</string>
+    <!-- Protection state and remote-VPN routing shown together on one row -->
     <string name="protection_app_not_working">Aplicația nu funcționează? Atinge aici</string>
     <plurals name="protection_paused_resumes">
         <item quantity="one">Pe pauză — se reia în %d minut</item>
@@ -579,13 +545,16 @@ Cu stimă,\n\n]]></string>
     <string name="protection_no_blocked_trackers">Nu s-a blocat nimic recent — probabil nu TrackerControl.</string>
     <string name="protection_recording_unavailable">Înregistrarea urmăritorilor nu este disponibilă deoarece „Caută urmăritori noi” este dezactivat.</string>
     <string name="protection_temporary">Temporar, cât timp este pe pauză</string>
+    <string name="uninstall">Dezinstalează</string>
     <string name="settings_uninstall">Setările și dezinstalarea aplicației</string>
     <string name="no_trackers_found_message_disabled">Activează comutatorul din ecranul principal, apoi lansează aplicația pentru a găsi urmăritori</string>
     <string name="no_trackers_found_message">Lansează aplicația pentru a găsi urmăritori</string>
     <string name="no_trackers_found_action">Lansează</string>
-    <string name="no_internet_message">„Această aplicație nu are acces la internet. Este posibil totuși să te urmărească schimbând date cu alte aplicații.”</string>
+    <string name="no_internet_message">"„Această aplicație nu are acces la internet. Este posibil totuși să te urmărească schimbând date cu alte aplicații.”"</string>
     <string name="no_internet">Fără acces la internet</string>
-    <string name="bypass_vpn_error">„Nu se poate bloca internetul cât timp aplicația ocolește TrackerControl.”</string>
+    <string name="bypass_vpn_error">"„Nu se poate bloca internetul cât timp aplicația ocolește TrackerControl.”"</string>
+    <string name="back">Înapoi</string>
+    <string name="forever_free">Întotdeauna Gratuit</string>
     <string name="your_privacy">Confidențialitatea ta</string>
     <string name="tracker_hostlist">Gazde definite de utilizator</string>
     <string name="internet_blocked">Acces la internet blocat</string>
@@ -604,6 +573,7 @@ Cu stimă,\n\n]]></string>
     <string name="analyze_tracker_libraries">Analizează bibliotecile de urmărire</string>
     <string name="update_analysis">Actualizează analiza</string>
     <string name="analysis_outdated_version">\n\nNotă: analiza este pentru o versiune anterioară a aplicației. Este posibil ca bibliotecile de urmărire integrate să se fi schimbat.</string>
+    <!-- Tracker library screen, reached from the summary row on the Trackers tab -->
     <string name="libraries_title">Biblioteci de urmărire</string>
     <string name="libraries_row_heading">Biblioteci de urmărire</string>
     <string name="libraries_none_found">Nu au fost găsite biblioteci de urmărire în codul aplicației</string>
@@ -620,6 +590,7 @@ Cu stimă,\n\n]]></string>
         <item quantity="other">Au fost găsite %d de biblioteci de urmărire în codul aplicației</item>
     </plurals>
     <string name="analysis_queued">Analiza a fost pusă în coadă…</string>
+    <string name="blocked">BLOCAT</string>
     <string name="allowed">PERMIS</string>
     <string name="allowed_shared_ip">Permis — IP partajat; activează modul Strict pentru a bloca</string>
     <string name="tracker_monitored_minimal">Monitorizat — nu este blocat în modul Minimal</string>
@@ -641,6 +612,7 @@ Cu stimă,\n\n]]></string>
     <string name="msg_private_dns_bypass_allowed_notify">Unele aplicații folosesc DNS criptat; contactele lor cu urmăritorii sunt invizibile pentru TrackerControl.</string>
     <string name="setting_monitor_system">Monitorizează aplicațiile de sistem</string>
     <string name="summary_monitor_system">Rutează aplicațiile de sistem (Play Services, servicii ale operatorului etc.) prin VPN, astfel încât urmăritorii lor să fie detectați și blocați, și afișează-le în lista de aplicații.\n\nDezactivat implicit: excluderea aplicațiilor de sistem este mai prietenoasă cu bateria, deoarece traficul lor din fundal nu mai trezește VPN-ul. Activarea acestei opțiuni intră în conflict cu „Blochează conexiunile fără VPN” din setările VPN Android, care trebuie să fie DEZACTIVATĂ.</string>
+    <!-- Onboarding -->
     <string name="title_next">Următorul</string>
     <string name="title_previous">Anteriorul</string>
     <string name="title_finish">Începe</string>
@@ -665,6 +637,7 @@ Cu stimă,\n\n]]></string>
     <string name="onboarding_lockdown_sure">Continuarea cu blocarea activată poate cauza probleme de conectivitate. Sigur?</string>
     <string name="onboarding_action_disabled">Dezactivat</string>
     <string name="onboarding_action_granted">Acordat</string>
+    <!-- Insights Screen -->
     <string name="insights_title">Statisticile tale de confidențialitate</string>
     <string name="insights_subtitle_7days">Ultimele 7 zile</string>
     <string name="insights_tracking_attempts">Gazde de urmărire contactate</string>
@@ -674,20 +647,26 @@ Cu stimă,\n\n]]></string>
     <string name="insights_apps_with_trackers">Aplicații cu urmăritori</string>
     <string name="insights_pervasive_trackers">Cei mai răspândiți urmăritori</string>
     <string name="insights_top_domains">Domeniile de top ale urmăritorilor</string>
-    <string name="insights_domain_alias_separator">„ sau ”</string>
-    <string name="insights_in_apps">în %d aplicații</string>
+    <!-- Joins the alternative domain names of one tracker, e.g. "example.com or example.net". Keep the surrounding spaces. -->
+    <string name="insights_domain_alias_separator">"„ sau ”"</string>
+    <!-- Keep as a string: call-site/API migration and multi-count grammar are intentionally separate. -->
+    <string name="insights_in_apps" tools:ignore="PluralsCandidate">în %d aplicații</string>
     <plurals name="insights_apps_count">
         <item quantity="one">în %d aplicație</item>
         <item quantity="few">în %d aplicații</item>
         <item quantity="other">în %d de aplicații</item>
     </plurals>
     <string name="insights_no_data">Nu există încă date de urmărire. Folosește aplicațiile și verifică din nou!</string>
-    <string name="insights_shocking_fact">Aplicațiile tale au contactat %1$d companii de urmărire prin %2$d gazde de urmărire în această săptămână!</string>
+    <!-- Keep as a string: call-site/API migration and multi-count grammar are intentionally separate. -->
+    <string name="insights_shocking_fact" tools:ignore="PluralsCandidate">Aplicațiile tale au contactat %1$d companii de urmărire prin %2$d gazde de urmărire în această săptămână!</string>
+    <!-- Retained for Play Store copy; call-site/API migration and multi-count grammar are intentionally separate. -->
     <string name="insights_share">Partajează cu prietenii</string>
     <string name="insights_share_trackers_blocked">Gazde de urmărire blocate</string>
-    <string name="insights_share_url">TrackerControl.org</string>
-    <string name="insights_share_message">Am blocat %1$d gazde de urmărire de la %2$d companii în această săptămână folosind TrackerControl! Recâștigă-ți confidențialitatea: https://trackercontrol.org</string>
+    <!-- Keep as a string: call-site/API migration and multi-count grammar are intentionally separate. -->
+    <string name="insights_share_message" tools:ignore="PluralsCandidate">Am blocat %1$d gazde de urmărire de la %2$d companii în această săptămână folosind TrackerControl! Recâștigă-ți confidențialitatea: https://trackercontrol.org</string>
+    <!-- Retained for Play Store copy; call-site/API migration and multi-count grammar are intentionally separate. -->
     <string name="insights_see_more">Vezi mai multe →</string>
+    <!-- What's New onboarding slide (not translated) -->
     <string name="title_blocklists">Fișiere hosts suplimentare</string>
     <string name="summary_manage_blocklists">Acestea sunt doar pentru situații de rezervă. TrackerControl include propriile liste de gazde care oferă statistici despre companiile din spatele urmăririi.</string>
     <string name="title_add_blocklist">Adaugă fișier hosts</string>
@@ -696,13 +675,12 @@ Cu stimă,\n\n]]></string>
     <string name="msg_invalid_url">URL nevalid</string>
     <string name="msg_apply_blocklists_failed">Aplicarea fișierelor hosts a eșuat</string>
     <string name="msg_last_update">Ultima actualizare: %s</string>
+    <!-- Accessibility labels -->
     <string name="switch_tracker_control_description">Blocarea urmăritorilor</string>
-    <string name="vpn_enabled_switch_description">VPN</string>
     <string name="blocklist_delete_description">Șterge lista de blocare</string>
     <string name="blocklist_enable_description">Activează lista de blocare %s</string>
     <string name="log_connection_allowed">Permisă</string>
     <string name="log_connection_blocked">Blocată</string>
-    <string name="log_connection_wifi">Wi-Fi</string>
     <string name="log_connection_other">Altă rețea</string>
     <string name="log_screen_on">Ecran aprins</string>
 </resources>

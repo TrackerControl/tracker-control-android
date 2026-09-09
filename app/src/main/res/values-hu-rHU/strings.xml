@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_description">A TrackerControl lehetővé teszi a felhasználók számára, hogy figyelemmel kísérjék és ellenőrizzék az almazásokban a felhasználói viselkedéssel kapcsolatos széles körű, folyamatos és rejtett adatgyűjtést (nyomkövetés).</string>
     <string name="app_copyright">Szerzői jog \u00A9 2019–2022 Konrad Kollnig\n\nA TrackerControl a NetGuardon alapul, amelyet Marcel Bokhorst (M66B) fejlesztett.</string>
     <string name="app_android">A TrackerControl Android 5.1-et vagy újabbat igényel</string>
     <string name="app_xposed">Az Xposed túl sok összeomlást okoz, ami a TrackerControl eltávolítását eredményezheti a Google Play Áruházból, ezért a TrackerControl nem támogatott amíg az Xposed telepítve van</string>
     <string name="app_eula">Az alkalmazás használata a saját felelősségére történik. Egyetlen alkalmazás sem kínál 100%-os védelmet a követés ellen.</string>
     <string name="app_privacy"><a href="https://github.com/TrackerControl/tracker-control-android#privacy-notice">Titoktartási irányelv</a> <a href="https://github.com/TrackerControl/tracker-control-android#cookie-policy">Süti irányelv</a></string>
+    <string name="app_ios"><a href="https://ios.trackercontrol.org">A TrackerControl iOS-re is elérhető</a></string>
     <string name="channel_foreground">Futó szolgáltatások</string>
     <string name="channel_notify">Általános értesítések</string>
     <string name="channel_access">Hozzáférési értesítések</string>
@@ -14,19 +15,90 @@
     <string name="menu_app_user">Felhasználói alkalmazások megjelenítése</string>
     <string name="menu_app_system">Rendszeralkalmazások megjelenítése</string>
     <string name="menu_app_nointernet">Internet nélküli alkalmazások megjelenítése</string>
+    <string name="menu_app_unprotected">Csak nem védett alkalmazások megjelenítése</string>
+    <string name="menu_app_frozen">Fagyasztott alkalmazások megjelenítése</string>
     <string name="menu_sort">Alkalmazások rendezése</string>
     <string name="menu_sort_name">Rendezés név alapján</string>
     <string name="menu_sort_uid">Rendezés UID alapján</string>
     <string name="menu_sort_companies_week">Rendezés cégek szerint (hét)</string>
     <string name="menu_sort_companies">Rendezés cégek szerint</string>
+    <string name="menu_sort_by_latest_detected_tracker">Rendezés a legutóbb észlelt nyomkövető szerint</string>
     <string name="menu_log">Forgalmi napló</string>
     <string name="menu_settings">Beállítások</string>
     <string name="menu_invite">Meghívás</string>
     <string name="menu_legend">Jelmagyarázat</string>
     <string name="menu_support">Támogassa az alkalmazást</string>
     <string name="menu_log_support">Magyarázat</string>
+    <string name="menu_troubleshooting">Hibaelhárítás</string>
     <string name="menu_about">Névjegy</string>
+    <string name="timeline_empty_disabled_title">A TrackerControl ki van kapcsolva</string>
+    <string name="timeline_empty_disabled_subtitle">Engedélyezze a TrackerControlt a jobb felső sarokban lévő kapcsolóval. Ezután itt jelenik meg az alkalmazások nyomkövetési tevékenysége.</string>
+    <string name="timeline_empty_enabled_title">Nyomkövetők keresése…</string>
+    <string name="timeline_empty_enabled_subtitle">A legtöbb alkalmazás csak használat közben lép kapcsolatba nyomkövetőkkel. Nyisson meg egy alkalmazást, majd térjen vissza ide — ekkor megjelenik a nyomkövetési tevékenysége.</string>
+    <string name="timeline_empty_recording_off_title">A nyomkövetők rögzítése ki van kapcsolva</string>
+    <string name="timeline_empty_recording_off_subtitle">Az „Új nyomkövetők keresése” ki van kapcsolva a speciális beállításokban. A nyomkövetők továbbra is blokkolva vannak, de már nem kerülnek rögzítésre, ezért ez az idővonal üres marad. Kapcsolja vissza a funkciót a nyomkövetési tevékenység megtekintéséhez.</string>
+    <string name="timeline_empty_recording_unavailable_title">A nyomkövetők rögzítése nem érhető el</string>
+    <string name="timeline_empty_recording_unavailable_subtitle">A TrackerControl ezen verziója nem teszi elérhetővé a nyomkövetési tevékenység rögzítését. A blokkolás működik, de ez az idővonal üres marad.</string>
+    <string name="timeline_open_app">Alkalmazás megnyitása</string>
+    <string name="timeline_open_settings">Beállítások megnyitása</string>
+    <string name="timeline_hint_tap_entry">Nem működik egy alkalmazás? Koppintson a bejegyzésére a védelme módosításához.</string>
+    <string name="timeline_hint_dismiss">Értem</string>
+    <string name="unidentified_app_uid">Azonosítatlan alkalmazás (UID: %1$d)</string>
+    <string name="tab_timeline">Idővonal</string>
+    <string name="tab_apps">Alkalmazások</string>
+    <string name="timeline_section_last_hour">Elmúlt óra</string>
+    <string name="timeline_section_today">Ma</string>
+    <string name="timeline_section_yesterday">Tegnap</string>
+    <string name="timeline_section_this_week">Ezen a héten</string>
+    <!-- Keep as a string: call-site/API migration and multi-count grammar are intentionally separate. -->
+    <string name="timeline_more_trackers" tools:ignore="PluralsCandidate">+%d további nyomkövető</string>
+    <string name="timeline_tracker_blocked">Blokkolva</string>
+    <string name="timeline_tracker_allowed">Engedélyezve</string>
     <!-- A blocked/allowed label followed by its share of all tracking attempts. -->
+    <string name="feed_section_last_contact">utolsó kapcsolatfelvétel: %s</string>
+    <plurals name="feed_show_more_companies">
+        <item quantity="one">Még %d vállalat megjelenítése</item>
+        <item quantity="other">Még %d vállalat megjelenítése</item>
+    </plurals>
+    <string name="feed_allow_company_in_app">%1$s engedélyezése a(z) %2$s alkalmazásban</string>
+    <string name="feed_block_company_in_app">%1$s blokkolása a(z) %2$s alkalmazásban</string>
+    <string name="feed_allowed_by_you">Ön engedélyezte</string>
+    <string name="feed_allowed_shared_ip">Engedélyezve · megosztott IP</string>
+    <string name="feed_monitored">Figyelve</string>
+    <string name="feed_company_expanded">Kibontva</string>
+    <string name="feed_company_collapsed">Összecsukva</string>
+    <string name="feed_essential_explainer">Az alkalmazásoknak szükségük van rá — engedélyezve, hogy a(z) %s működjön</string>
+    <string name="feed_essential_explainer_blocked">Az alkalmazásoknak szükségük van rá — a blokkolás elronthatja a(z) %s működését</string>
+    <!-- Keep as a string: call-site/API migration and multi-count grammar are intentionally separate. -->
+    <string name="timeline_summary_mixed" tools:ignore="PluralsCandidate">%1$d blokkolva · %2$d engedélyezve</string>
+    <plurals name="timeline_trackers_blocked">
+        <item quantity="one">%d nyomkövető blokkolva</item>
+        <item quantity="other">%d nyomkövető blokkolva</item>
+    </plurals>
+    <plurals name="timeline_trackers_allowed">
+        <item quantity="one">%d nyomkövető engedélyezve</item>
+        <item quantity="other">%d nyomkövető engedélyezve</item>
+    </plurals>
+    <string name="troubleshooting_title">Hibaelhárítás</string>
+    <string name="troubleshooting_battery_title">Akkumulátor-optimalizálás</string>
+    <string name="troubleshooting_battery_desc">Ha a TrackerControl leáll a háttérben, kapcsolja ki a TrackerControl akkumulátor-optimalizálását az Androidban. Válassza az „Összes alkalmazás” lehetőséget, koppintson a TrackerControlra, majd válassza a „Ne optimalizálja” lehetőséget.</string>
+    <string name="troubleshooting_battery_action">Akkumulátor-optimalizálás kikapcsolása</string>
+    <string name="troubleshooting_battery_ok">Az akkumulátor-optimalizálás már ki van kapcsolva.</string>
+    <string name="troubleshooting_datasaver_title">Adatforgalom-csökkentő</string>
+    <string name="troubleshooting_datasaver_desc">Ha a TrackerControl nem tud kapcsolódni, amikor az adatforgalom-csökkentő be van kapcsolva, engedélyezze a TrackerControl korlátlan adathasználatát. Engedélyezze a „Háttéradatok” és a „Korlátlan adathasználat” lehetőséget.</string>
+    <string name="troubleshooting_datasaver_action">Korlátlan adathasználat engedélyezése</string>
+    <string name="troubleshooting_datasaver_ok">Az adatforgalom-csökkentő nem korlátozza a TrackerControlt.</string>
+    <string name="troubleshooting_local_network_title">Helyi hálózati hozzáférés</string>
+    <string name="troubleshooting_local_network_desc">Engedély szükséges a helyi DNS-kiszolgálókhoz, WireGuard-partnerekhez és proxykhoz.</string>
+    <string name="troubleshooting_local_network_action">Helyi hálózati hozzáférés engedélyezése</string>
+    <string name="troubleshooting_local_network_ok">A helyi hálózati hozzáférés engedélyezve van.</string>
+    <string name="troubleshooting_app_breakage_title">Egy alkalmazás leállt</string>
+    <string name="troubleshooting_app_breakage_desc">Koppintson az alkalmazásra a fő listában, majd a Védelem lehetőségre. Először próbálja ki a „Csak minimális blokkolás” lehetőséget. Ha az alkalmazás továbbra is problémás, válassza a „Nyomkövetők engedélyezve” lehetőséget. A „TrackerControl megkerülése” lehetőséget csak végső megoldásként használja.</string>
+    <string name="troubleshooting_categories_title">Meghatározott nyomkövető-kategóriák blokkolása</string>
+    <string name="troubleshooting_categories_desc">Az egyes alkalmazások blokkolását finomhangolhatja: koppintson az alkalmazásra, majd a Nyomkövetők lapon kapcsolja be vagy ki az egyes nyomkövető-kategóriákat (például az Elemzések vagy a Hirdetések kategóriát).</string>
+    <string name="troubleshooting_alwayson_title">Mindig bekapcsolt VPN</string>
+    <string name="troubleshooting_alwayson_desc">Ha az Android VPN-beállításaiban engedélyezve van a „Kapcsolatok blokkolása VPN nélkül” (lezárás), a TrackerControl nem tud megfelelően működni. Kapcsolja ki ezt a lehetőséget.</string>
+    <string name="troubleshooting_alwayson_action">VPN-beállítások megnyitása</string>
     <string name="menu_apps">További alkalmazások</string>
     <string name="menu_protocol_other">Egyéb</string>
     <string name="menu_traffic_allowed">Engedélyezett</string>
@@ -38,9 +110,12 @@
     <string name="menu_pcap_enabled">PCAP engedélyezve</string>
     <string name="menu_pcap_export">PCAP exportálás</string>
     <string name="menu_clear">Törlés</string>
+    <string name="menu_clear_activity">Rögzített tevékenység törlése</string>
     <string name="menu_export">Exportálás</string>
     <string name="menu_reset">Visszaállítás</string>
     <string name="menu_cleanup">Takarítás</string>
+    <string name="setting_options">Általános</string>
+    <string name="setting_further_options">További beállítások</string>
     <string name="setting_pause">Automatikus engedélyezés %1$s perc után</string>
     <string name="setting_update">Frissítések ellenőrzése</string>
     <plurals name="pause">
@@ -50,10 +125,18 @@
     <string name="setting_ip6">IPv6 forgalom engedélyezése</string>
     <string name="setting_call">Letiltás hívás közben</string>
     <string name="setting_reload_onconnectivity">Újratöltés minden kapcsolatváltozáskor</string>
+    <string name="setting_tcp_mss_clamp">Internetmegosztási kompatibilitási mód</string>
+    <string name="summary_tcp_mss_clamp">Az összes forgalom átirányítása a TrackerControlon keresztül és a TCP-szegmens méretének korlátozása a megosztott kapcsolatok elakadásának vagy internet-hozzáférés nélküli állapotának megszüntetéséhez. A helyi hálózati hozzáférés többé nem kerüli meg a TrackerControlt, és a teljesítmény csökkenhet.</string>
+    <string name="setting_advanced_options">Speciális beállítások (szakértőknek)</string>
     <string name="setting_log_app">Új nyomkövetők keresése</string>
+    <string name="setting_log_logcat">Kutatás</string>
     <string name="setting_handover">Zökkenőmentes VPN átadás újratöltéskor</string>
     <string name="setting_reset_usage">Hálózathasználat alaphelyzetbe</string>
     <string name="setting_show_resolved">Mutassa a feloldott tartományneveket</string>
+    <string name="setting_exclude_all_tracking">Minden alkalmazás kizárása a nyomkövetésből</string>
+    <string name="summary_exclude_all_tracking">A nyomkövetés figyelésének kikapcsolása minden alkalmazásnál. Ezután egyenként újra engedélyezheti azt az alkalmazásoknál.</string>
+    <string name="setting_include_all_tracking">Minden alkalmazás bevonása a nyomkövetésbe</string>
+    <string name="summary_include_all_tracking">A nyomkövetés figyelésének újraengedélyezése minden alkalmazásnál.</string>
     <string name="setting_block_domains">Hosts fájl engedélyezése</string>
     <string name="setting_rcode">Hosts blokkoló válasza: %s</string>
     <string name="setting_vpn4">VPN IPv4: %s</string>
@@ -66,16 +149,44 @@
     <string name="setting_socks5_port">SOCKS5 port: %s</string>
     <string name="setting_socks5_username">SOCKS5 felhasználónév: %s</string>
     <string name="setting_socks5_password">SOCKS5 jelszó: %s</string>
+    <string name="setting_wg_enabled">Forgalom alagútba küldése WireGuardon keresztül</string>
+    <string name="setting_wg_profile">WireGuard-profil</string>
+    <string name="setting_wg_profile_manage">Egyéni WireGuard-profilok</string>
+    <string name="setting_wg_profile_import">WireGuard-konfiguráció importálása</string>
+    <string name="setting_wg_profile_scan">QR-kód beolvasása</string>
+    <string name="setting_wg_profile_import_file">Importálás fájlból vagy archívumból</string>
+    <string name="setting_wg_mullvad_setup">Mullvad beállítása</string>
+    <string name="setting_wg_proton_setup">Proton VPN-konfiguráció használata</string>
+    <string name="setting_wg_keepalive_when_screen_off">A WireGuard életben tartása kikapcsolt képernyőnél</string>
+    <string name="setting_wg_profile_save">Profil mentése</string>
+    <string name="setting_wg_profile_delete">Profil törlése</string>
+    <string name="accessibility_wg_profile_edit">A(z) %1$s WireGuard-profil szerkesztése</string>
+    <string name="accessibility_wg_profile_delete">A(z) %1$s WireGuard-profil törlése</string>
+    <string name="setting_wireguard">WireGuard (előzetes verzió)</string>
+    <string name="setting_wg_status">Állapot</string>
+    <string name="setting_vpn_key_rotate_now">VPN-szolgáltatói kulcsok azonnali cseréje</string>
     <string name="setting_pcap_record_size">PCAP rekord mérete: %s B</string>
     <string name="setting_pcap_file_size">PCAP max. fájlméret: %s MB</string>
     <string name="setting_watchdog">Watchdog: minden %s percben</string>
     <!-- Secure DNS (DoH) -->
+    <string name="setting_doh_enabled">Biztonságos DNS (DoH)</string>
+    <string name="summary_doh_enabled">DNS-lekérdezések titkosítása DNS-over-HTTPS használatával. A WireGuard aktív állapotában automatikusan szünetel, mert ezek a lekérdezések inkább a WireGuard-alagúton haladnak.</string>
+    <string name="warning_beta">Bétafunkció. Előfordulhat, hogy nem a várt módon működik.</string>
+    <string name="setting_doh_endpoint">DoH-végpont URL-je</string>
+    <string name="summary_doh_endpoint">HTTPS-URL a DNS-over-HTTPS-lekérdezésekhez</string>
+    <string name="setting_doh_dns_fallback">DNS-tartalék</string>
+    <string name="summary_doh_dns_fallback">Szabványos (titkosítatlan) DNS használata, ha a DoH nem érhető el. A kikapcsolás megakadályozhatja az alkalmazások működését, ha a DoH-kiszolgáló nem elérhető.</string>
     <!-- Block DNS-over-TLS (DoT) -->
+    <string name="setting_block_dot">Az Android privát DNS-ének blokkolása</string>
+    <string name="summary_block_dot">Ha az Android privát DNS-e engedélyezve van, a TC nem tud észlelni semmilyen nyomkövetést, és nem működik megfelelően.</string>
     <string name="setting_stats_frequency">Mintavétel időköze: %s ms</string>
     <string name="setting_stats_samples">Minták száma: %s s</string>
     <string name="setting_backup">Biztonsági mentés</string>
+    <string name="setting_export">Beállítások exportálása</string>
     <string name="setting_import">Beállítások importálása</string>
     <string name="setting_hosts_update">Hosts fájl frissítése</string>
+    <string name="setting_hosts_auto_update">Hosts automatikus frissítése</string>
+    <string name="summary_hosts_auto_update">A hosts fájl automatikus frissítése a háttérben</string>
     <string name="summary_pause">Az értesítés szüneteltetése után a kiválasztott percek után automatikusan engedélyezze újra a TrackerControl alkalmazást (0 érték letiltja az opciót).</string>
     <string name="summary_update">Ellenőrizze a GitHub-on az új kiadásokat naponta kétszer</string>
     <string name="summary_ip6">Az IPv6 forgalmat a TrackerControl szelektíven tudja tiltani vagy engedélyezni</string>
@@ -85,7 +196,106 @@
     <string name="summary_rcode">Az alapértelmezett érték 3 (NXDOMAIN), ami azt jelenti: „nem létező tartomány”.</string>
     <string name="summary_validate">A használandó tartománynév az internetkapcsolat ellenőrzéséhez a 443 (https) porton.</string>
     <string name="summary_socks5_enabled">Csak a TCP forgalom küldése a proxy-szerverre</string>
+    <string name="summary_wg_enabled">Elrejti az eszköz IP-címét. A TCP- és UDP-kimenő forgalmat alagútba küldi. Kieséskor az alkalmazások hálózati hibákat látnak — zárt működés, nincs visszaesés közvetlen kapcsolatra. A telefon felé kezdeményezett kapcsolatok nem biztos, hogy működnek, amikor az alagút tétlen (az akkumulátor kímélése érdekében az életben tartás ki van kapcsolva).</string>
+    <string name="summary_wg_config">Illessze be a szolgáltatójától kapott [Interface] / [Peer] konfigurációt</string>
+    <string name="summary_wg_profile">Mentett WireGuard-konfiguráció kiválasztása</string>
+    <string name="summary_wg_profile_none">Nincsenek mentett profilok</string>
+    <string name="summary_wg_profile_manage">Egyéni WireGuard-konfigurációk hozzáadása, szerkesztése vagy törlése</string>
+    <string name="summary_wg_keepalive_when_screen_off">Életben tartó csomagokat küld a WireGuard-konfigurációban megadott időközönként kikapcsolt képernyő mellett is. Javítja a megbízhatóságot azokon a hálózatokon, ahol a tétlen kapcsolatok megszakadnak, de növeli az akkumulátorhasználatot.</string>
+    <string name="summary_wg_status_off">Kikapcsolva</string>
+    <string name="summary_wg_status_missing_config">Kikapcsolva — nincs konfiguráció beállítva</string>
+    <string name="summary_wg_status_connected">Kapcsolódva</string>
+    <string name="summary_wg_status_handshaking">Kézfogás…</string>
+    <string name="summary_wg_status_blocked">Blokkolva — %s</string>
+    <string name="summary_wg_status_starting">Indítás</string>
+    <string name="summary_vpn_key_rotate_now">Mullvad- és IVPN-WireGuard-kulcsok cseréjének kényszerítése hibakereséshez</string>
+    <string name="msg_vpn_key_rotation_started">A VPN-kulcsok cseréje elindult</string>
+    <string name="msg_wg_config_invalid">Érvénytelen WireGuard-konfiguráció: %s</string>
+    <string name="msg_wg_profile_name">Profil neve</string>
+    <string name="msg_wg_profile_default_name">Alapértelmezett</string>
+    <string name="msg_wg_profile_saved">A WireGuard-profil mentve</string>
+    <string name="msg_wg_profile_deleted">A WireGuard-profil törölve</string>
+    <string name="msg_wg_profile_empty">Még nincsenek profilok</string>
+    <string name="msg_wg_profile_active">Aktív</string>
+    <string name="msg_wg_profile_set_active">Aktiválás</string>
+    <string name="msg_wg_profile_config_hint" tools:ignore="TypographyEllipsis">[Interface]\nPrivateKey = …\nAddress = …\n\n[Peer]\nPublicKey = …\nAllowedIPs = 0.0.0.0/0, ::/0\nEndpoint = …</string>
+    <string name="msg_wg_profile_delete_confirm">Törli ezt a WireGuard-profilt?</string>
+    <string name="msg_wg_profile_scan_hint">Irányítsa a kamerát a VPN-szolgáltatója által megjelenített WireGuard QR-kódra. A beolvasás az eszközön történik.</string>
+    <string name="msg_wg_profile_scan_no_camera">Ezen az eszközön nincs kamera a beolvasáshoz</string>
+    <string name="msg_wg_profile_scan_no_camera_permission">QR-kód beolvasásához kameraengedély szükséges</string>
+    <string name="msg_wg_profile_scan_failed">A kamera nem indítható el: %1$s</string>
+    <string name="msg_wg_profile_scan_not_config">Ez a QR-kód nem WireGuard-konfiguráció: %1$s</string>
+    <string name="msg_wg_profile_import_none">A kiválasztott fájlban nem található WireGuard-konfiguráció</string>
+    <string name="msg_wg_profile_import_failed">A kiválasztott fájl nem olvasható: %1$s</string>
+    <plurals name="msg_wg_profile_imported">
+        <item quantity="one">%1$d WireGuard-profil importálva</item>
+        <item quantity="other">%1$d WireGuard-profil importálva</item>
+    </plurals>
+    <plurals name="msg_wg_profile_import_skipped">
+        <item quantity="one">%1$d fájl kihagyva: nem érvényes WireGuard-konfiguráció</item>
+        <item quantity="other">%1$d fájl kihagyva: nem érvényes WireGuard-konfigurációk</item>
+    </plurals>
+    <string name="msg_wg_mullvad_account">Mullvad-fiókszám</string>
+    <string name="msg_wg_mullvad_recommended">Ajánlott hely</string>
+    <string name="msg_wg_mullvad_note">A TrackerControl Mullvad WireGuard-profilt hoz létre. A fiókszámot helyben menti a későbbi Mullvad-profilokhoz. Tokeneket nem tárol, és a profil itt történő törlése nem távolítja el az eszközt a Mullvadról.</string>
+    <string name="msg_wg_mullvad_generating">WireGuard-profil létrehozása…</string>
+    <string name="msg_wg_mullvad_failed">A Mullvad beállítása sikertelen: %s</string>
+    <string name="msg_wg_mullvad_countries_failed">A Mullvad országai nem tölthetők be: %s</string>
+    <string name="msg_wg_proton_note">A Proton dokumentált, külső féltől származó beállítása letölthető WireGuard-konfigurációkat használ. A TrackerControlnak nincs szüksége a Proton hitelesítő adataira, és nem tudja automatikusan frissíteni a konfigurációt.\n\nJelentkezzen be az account.protonvpn.com oldalon, lépjen a Letöltések → WireGuard-konfiguráció menübe, töltsön le egy konfigurációt, nyissa meg szövegszerkesztőben, majd másolja és illessze be a tartalmát ide.</string>
+    <string name="msg_wg_proton_open_dashboard">Proton VPN-irányítópult megnyitása</string>
+    <string name="vpn_status_relay">Relé: %s</string>
+    <string name="vpn_status_wireguard_connected">A WireGuard kapcsolódva</string>
+    <string name="vpn_status_disconnected">Nincs kapcsolat</string>
+    <string name="vpn_intro_title">VPN-előzetes</string>
+    <string name="vpn_intro_body">A VPN egy másik kiszolgálón keresztül küldi az internetes forgalmat. Ez elrejtheti az IP-címét a webhelyek és a hálózati szolgáltatója elől, és lehetővé teszi, hogy országot válasszon a kapcsolatához. Ez a lap új, ezért tekintse előzetesnek.</string>
+    <string name="vpn_intro_mullvad_body">Adatvédelemre összpontosító VPN-szolgáltató. Havi 5 €-ba kerül, és e-mail-cím helyett fiókszámokat használ. Adjon meg egy fiókszámot, majd válasszon országot a TrackerControlban.</string>
+    <string name="vpn_intro_ivpn_body">Adatvédelemre összpontosító, WireGuard-támogatást kínáló VPN-szolgáltató. Adja meg IVPN-fiókazonosítóját, majd válasszon országot a TrackerControlban.</string>
+    <string name="vpn_intro_proton_body">Töltsön le WireGuard-konfigurációt Proton VPN-fiókjából, és illessze be a TrackerControlba. Proton-hitelesítő adatait itt soha nem kell megadnia.</string>
+    <string name="vpn_intro_wireguard_body">Ezt akkor használja, ha már rendelkezik egy másik VPN-szolgáltatótól, saját szerverről vagy a munkahelyétől származó WireGuard-konfigurációval.</string>
+    <string name="vpn_enter_mullvad_account">Fiókszám megadása</string>
+    <string name="vpn_enter_ivpn_account">Fiókazonosító megadása</string>
+    <string name="vpn_settings">Mullvad-beállítások</string>
+    <string name="vpn_settings_title">Mullvad-beállítások</string>
+    <string name="vpn_ivpn_settings">IVPN-beállítások</string>
+    <string name="vpn_ivpn_settings_title">IVPN-beállítások</string>
+    <string name="vpn_account_number">Fiók: %s</string>
+    <string name="vpn_account_not_set">Fiók: nincs beállítva</string>
+    <string name="vpn_account_show">Megjelenítés</string>
+    <string name="vpn_account_hide">Elrejtés</string>
+    <string name="vpn_account_change">Módosítás</string>
+    <string name="vpn_account_cancel">Mégse</string>
+    <string name="vpn_mullvad_intro">Adja meg Mullvad-fiókszámát. Az eszközön mentésre kerül.</string>
+    <string name="vpn_mullvad_account_note">Ezt a fiókot használja a rendszer a Mullvad-országkapcsolatokhoz.</string>
+    <string name="vpn_get_mullvad_account">Mullvad-fiók létrehozása</string>
+    <string name="vpn_get_ivpn_account">IVPN-fiók létrehozása</string>
+    <string name="vpn_account_hint">Mullvad-fiókszám</string>
+    <string name="vpn_ivpn_intro">Adja meg IVPN-fiókazonosítóját. Az eszközön mentésre kerül.</string>
+    <string name="vpn_ivpn_captcha_intro">Az IVPN CAPTCHA-ellenőrzést igényel WireGuard-munkamenet létrehozása előtt.</string>
+    <string name="vpn_ivpn_account_hint">IVPN-fiókazonosító</string>
+    <string name="vpn_ivpn_captcha_hint">CAPTCHA-szöveg</string>
+    <string name="vpn_account_save">Mentés</string>
+    <string name="vpn_account_saved">Fiók mentve</string>
+    <string name="vpn_no_wireguard_profiles">Még nincsenek egyéni WireGuard-profilok</string>
+    <string name="vpn_import_wireguard_profile">WireGuard-profil importálása</string>
+    <string name="vpn_manage_wireguard_profiles">WireGuard-profilok kezelése</string>
+    <string name="vpn_country_load_failed">A(z) %1$s országai nem tölthetők be: %2$s</string>
+    <string name="vpn_country_load_failed_short">Az országok nem tölthetők be</string>
+    <string name="vpn_choose_country_first">Először válasszon országot</string>
+    <string name="vpn_choose_profile_first">Először válasszon WireGuard-profilt</string>
+    <string name="vpn_setup_required">Először állítsa be a Mullvadot, vagy importáljon WireGuard-profilt</string>
+    <string name="vpn_loading_countries">Országok betöltése…</string>
+    <string name="vpn_generating">WireGuard-profil létrehozása…</string>
+    <string name="vpn_generation_failed">A VPN beállítása sikertelen: %s</string>
+    <string name="vpn_retry">Újra</string>
+    <string name="msg_wg_blocked_title">A WireGuard-alagút nem érhető el</string>
+    <string name="msg_wg_blocked">Az internet-hozzáférés blokkolva van, amíg a WireGuard el nem indul, vagy ki nem kapcsolja a WireGuard-beállítást.</string>
+    <string name="msg_wg_blocked_detail">Az internet-hozzáférés blokkolva van, amíg a WireGuard el nem indul, vagy ki nem kapcsolja a WireGuard-beállítást. %s</string>
+    <string name="msg_wg_identity_renewed_title">A VPN-eszköz újraregisztrálva</string>
+    <string name="msg_wg_identity_renewed">%1$s már nem ismerte fel ezt az eszközt, ezért a TrackerControl új eszközként regisztrálta, és frissítette az eszközön lévő %1$s-profilokat.</string>
+    <string name="msg_wg_provider_rejected">%1$s megtagadta az eszköz beállítását: %2$s</string>
+    <string name="msg_wg_recovery_failed">A WireGuard nem válaszol. A TrackerControl megpróbál újracsatlakozni, és az internet-hozzáférés blokkolva maradhat a WireGuard helyreállásáig.</string>
     <string name="summary_watchdog">Rendszeresen ellenőrzi, ha a TrackerControl fut (a 0 beírása letiltja az opciót). Ez extra akkumulátor használattal járhat.</string>
+    <string name="summary_log_logcat">Kutatási mód: az észlelt nyomkövetők naplózása az ADB-be, valamint az SNI kinyerésének engedélyezése a pontosabb hosztnév-felismeréshez. A naplók lekérése az adb logcat használatával, a „TC-Log” címkével történik.</string>
     <string name="msg_sure">Biztos benne?</string>
     <string name="msg_started">Nyomkövetők keresése…</string>
     <string name="msg_waiting">Várakozás eseményre</string>
@@ -93,26 +303,36 @@
     <string name="msg_revoked">A TrackerControl le van tiltva, valószínűleg egy másik VPN alapú alkalmazással</string>
     <string name="msg_installed">%1$s gondot okozó alkalmazás?</string>
     <string name="msg_installed_description">Engedélyezi az alkalmazás kapcsolatát a társaságokkal</string>
-    <string name="msg_installed_tracker_libraries_found">%d nyomkövető könyvtárat tartalmaz</string>
+    <!-- Keep as a string: call-site/API migration and multi-count grammar are intentionally separate. -->
+    <string name="msg_installed_tracker_libraries_found" tools:ignore="PluralsCandidate">%d nyomkövető könyvtárat tartalmaz</string>
     <string name="msg_completed">A művelet befejeződött</string>
+    <string name="msg_no_file_manager">Nem található fájlkezelő a fájl kiválasztásához.</string>
+    <string name="msg_no_browser">Nem található böngészőalkalmazás a hivatkozás megnyitásához.</string>
     <string name="msg_vpn">A TrackerControl helyi VPN-t használ az internetes forgalom szűréséhez.
 Kérjük engedélyezze a VPN kapcsolatot a következő párbeszéd ablakban.
 Az Ön internetes forgalmát nem küldi el egy távoli VPN-kiszolgálóra.</string>
     <string name="msg_autostart">A TrackerControl nem tudott automatikusan elindulni. Ez valószínűleg Az androidjának hibája miatt következett be.</string>
     <string name="msg_error">Váratlan hiba történt: \'%s\'</string>
+    <string name="msg_native_fd_recovery_exhausted">A VPN ismételten kifogyott a fájlleírókból. A védelem leállt, miután minden automatikus újraindítási kísérlet sikertelen volt.</string>
+    <string name="msg_native_fd_error">A VPN kifogyott a fájlleírókból. Zárja be a nem használt alkalmazásokat, vagy indítsa újra az eszközt, majd indítsa újra a védelmet.</string>
+    <string name="msg_vpn_replacement_recovery_exhausted">A TrackerControl nem tudta újra létrehozni a VPN-t. A forgalom blokkolva van.</string>
+    <string name="msg_doh_unreachable">A biztonságos DNS (DoH) nem érhető el, noha aktív internetkapcsolata van. Ha ez ismételten megtörténik, fontolja meg a kikapcsolását a Hálózati beállításokban.</string>
     <string name="msg_start_failed">Az android nem volt hajlandó elindítani a VPN szolgáltatást. Ez valószínűleg Az androidjának hibája miatt következett be.</string>
     <string name="msg_try">Próbálja ki a TrackerControlt</string>
     <string name="msg_log_disabled">Forgalom naplózása le van tiltva, a fenti kapcsolóval engedélyezheti a naplózást. A forgalom naplózása extra akkumulátorhasználattal jár.</string>
+    <string name="msg_clear_activity">Ez eltávolítja az alkalmazás rögzített tevékenységét. Az alkalmazás nyomkövetőnkénti blokkolási/engedélyezési beállításai megmaradnak.</string>
     <string name="msg_update_last">Legutóbbi frissítés: %s</string>
     <string name="msg_metered">Ez mért hálózat</string>
     <string name="msg_inactive">Nincs aktív internetkapcsolat</string>
     <string name="msg_queue">A TrackerControl foglalt</string>
     <string name="msg_update">Frissítés érhető el, érintse meg a letöltéshez</string>
+    <string name="title_version">Verzió: %1$d</string>
     <string name="msg_push">A bejövő (push) üzeneteket többnyire a Play Szolgáltatások rendszerösszetevő kezeli, ennek alapértelmezés szerint engedélyezve van az internet-hozzáférése</string>
     <string name="msg_system">Az összes (rendszer) alkalmazás kezelése a beállításokban engedélyezhető</string>
     <string name="msg_vpn_cancelled">A VPN kapcsolat meg lett szüntetve.\nBeállít másik VPN kapcsolatot, hogy a VPN csatlakozás állandó legyen?</string>
     <string name="msg_unavailable">Ez a funkció nem érhető el ezen az android verzión</string>
     <string name="msg_always_on">Másik VPN beállítása állandó VPN-nek</string>
+    <string name="msg_always_on_lockdown">A TrackerControl használatához kapcsolja ki a „Kapcsolatok blokkolása VPN nélkül” lehetőséget az Android VPN-beállításaiban</string>
     <string name="msg_start_forward">Port forwarding indítás %1$s port %2$d to %3$s:%4$d of \'%5$s\'?</string>
     <string name="msg_stop_forward">Port forwarding leállítás %1$s port %2$d?</string>
     <string name="msg_log_logcat">Figyelem: A blokkolás letiltva az ADB naplózás miatt.</string>
@@ -151,8 +371,17 @@ Az Ön internetes forgalmát nem küldi el egy távoli VPN-kiszolgálóra.</stri
     <string name="tracked_app_icon">Az alkalmazás internet hozzáférésének letiltása</string>
     <string name="tracked_app_name">Alkalmazásnév</string>
     <!-- Dynamic content descriptions for the app-icon Internet toggle in the app list (issue #231) -->
+    <string name="toggle_block_internet_description">Internet-hozzáférés blokkolása a(z) %1$s számára</string>
+    <string name="toggle_allow_internet_description">Internet-hozzáférés engedélyezése a(z) %1$s számára</string>
+    <string name="toggle_no_internet_description">A(z) %1$s nem fér hozzá az internethez</string>
+    <string name="toggle_internet_unavailable_description">Az internet-hozzáférés vezérlése nem érhető el a(z) %1$s számára</string>
     <!-- Dynamic content description for the per-category tracker-blocking switch -->
+    <string name="toggle_block_category_description">A(z) %1$s kategória nyomkövetőinek blokkolása</string>
     <!-- Dynamic content description for the home-screen widget toggle (accessibility follow-up, issue #636) -->
+    <string name="widget_toggle_enable_description">Nyomkövetők blokkolásának engedélyezése</string>
+    <string name="widget_toggle_disable_description">Nyomkövetők blokkolásának letiltása</string>
+    <string name="accessibility_tracker_blocking_enabled">A nyomkövetők blokkolása engedélyezve</string>
+    <string name="accessibility_tracker_blocking_disabled">A nyomkövetők blokkolása letiltva</string>
     <plurals name="n_companies_found_week">
         <item quantity="one">a legutóbbi héten %d kapcsolat a céggel</item>
         <item quantity="other">a legutóbbi héten %d kapcsolat a cégekkel</item>
@@ -176,6 +405,7 @@ Az Ön internetes forgalmát nem küldi el egy távoli VPN-kiszolgálóra.</stri
     <string name="title_activity_detail">Részletek</string>
     <string name="tab_trackers">Nyomkövetők</string>
     <string name="tab_countries">Országok</string>
+    <string name="tab_actions">Adatvédelmi jogok</string>
     <string name="app_info">Alkalmazáskezelés</string>
     <!-- Actions -->
     <string name="block_tracking">Nyomkövetők blokkolása</string>
@@ -238,9 +468,12 @@ Tisztelettel,\n\n]]></string>
     <string name="device_not_supported_title">Az eszköz nem támogatott</string>
     <string name="device_not_supported_msg">A készüléke operációs rendszere nem teszi lehetővé a hálózati kommunikáció nyomon követését és szűrését. Ehhez a TrackerControlra van szükség.</string>
     <string name="launch_app">Indítás &amp; Nyomkövetők keresése</string>
+    <string name="launch_app_failed">Az alkalmazás nem indítható el</string>
     <string name="countries">Célországok</string>
     <string name="countries_explanation">Tudja meg hová küldi a telefonja az adatokat.\n\nAz információk DNS kereséseken és IP információkon alapulnak és pontatlanok lehetnek.</string>
     <string name="countries_loading_failed">Hoppá.. Az országtérkép betöltése nem sikerült. Kérlek írd meg (tc@kollnig.net), hogy történt.</string>
+    <string name="countries_map_highlighted">Kiemelt nyomkövetési célpontok: %1$s</string>
+    <string name="countries_map_none">Nincsenek kiemelt nyomkövetési célpontok.</string>
     <string name="tracker_advertising">Hirdetők</string>
     <string name="tracker_analytics">Elemzések</string>
     <string name="tracker_content">Alapvető</string>
@@ -248,313 +481,8 @@ Tisztelettel,\n\n]]></string>
     <string name="tracker_fingerprinting">Ujjlenyomat</string>
     <string name="tracker_social">Szociális</string>
     <string name="tracker_email">E-mail</string>
-    <string name="tracker_uncategorised">Kategória nélküli</string>
-    <!-- Per-app remote VPN routing -->
-    <string name="setting_wg_route_mode">Átirányítás a távoli VPN-en</string>
-    <string name="summary_wg_route_mode">Mely alkalmazások haladnak át a távoli VPN-en. A többi továbbra is teljesen felügyelt és szűrt — csak az eszköz saját hálózatáról csatlakoznak.</string>
-    <string name="wg_route_mode_all">Minden alkalmazás</string>
-    <string name="wg_route_mode_selected">Csak a kiválasztott alkalmazások</string>
-    <string name="app_route_through">A távoli VPN-en át</string>
-    <string name="app_route_through_explanation">Ez az alkalmazás a távoli VPN-en át csatlakozik, amely a hálózata helyett látja a forgalmát.</string>
-    <string name="app_route_direct">Közvetlenül erről az eszközről</string>
-    <string name="app_route_direct_explanation">Ez az alkalmazás a saját hálózatáról csatlakozik. A követők felügyelete és blokkolása továbbra is érvényes. DNS-kérései a VPN helyett a hálózat feloldójához mennek, és az alkalmazás látja az eszköz valódi címét — egyes alkalmazásoknak erre szükségük van, például helyi eszközök eléréséhez vagy captive portal ellenőrzéséhez.</string>
-    <string name="app_route_unavailable_no_vpn">Nincs beállítva távoli VPN, így minden forgalom már közvetlenül hagyja el az eszközt.</string>
-    <string name="app_route_unavailable_bypassed">Ez az alkalmazás teljesen megkerüli a TrackerControlt, így nincs mit átirányítani.</string>
-    <string name="app_route_unavailable_partial_routes">A távoli VPN nem viszi az összes forgalmat (az AllowedIPs nem teljes alagút). Az alkalmazásonkénti átirányításhoz teljes alagút kell, mert az útvonalakat minden alkalmazás megosztja.</string>
-    <!-- Per-app protection state -->
-    <string name="app_state_protected">Védett</string>
-    <string name="app_state_protected_explanation">A követők blokkolva és rögzítve vannak ennél az alkalmazásnál.</string>
-    <string name="app_state_trackers_allowed">Követők engedélyezve</string>
-    <string name="app_state_trackers_allowed_explanation">Az alkalmazás továbbra is a TrackerControlon keresztül fut, de a követőit sem nem blokkolja, sem nem rögzíti. Használja ezt, ha a blokkolás elrontja az alkalmazást.</string>
-    <string name="app_state_no_internet">Nincs internet</string>
-    <string name="app_state_no_internet_explanation">Az alkalmazás összes kapcsolata blokkolva van. A főképernyőn az alkalmazás ikonjára is koppinthat.</string>
-    <string name="app_state_no_internet_shared_uid">Erre is vonatkozik: %1$s, amely Android-felhasználóazonosítón osztozik ezzel az alkalmazással.</string>
-    <string name="app_state_bypassed">TrackerControl megkerülése</string>
-    <string name="app_state_bypassed_explanation">Az alkalmazás közvetlenül, a TrackerControlon kívül csatlakozik. Semmit sem figyel és blokkol nála. Végső megoldásként használja, ha az alkalmazás továbbra sem működik.\n\nMegjegyzés: az Android VPN-beállításaiban a \"Kapcsolatok blokkolása VPN nélkül\" beállításnak KIKAPCSOLVA kell lennie, hogy ez működjön.</string>
-    <!-- Per-app protection screen -->
-    <!-- Protection state and remote-VPN routing shown together on one row -->
-    <string name="uninstall">Eltávolítás</string>
-    <string name="settings_uninstall">App beállításai &amp; Eltávolítás</string>
-    <string name="no_trackers_found_message_disabled">Engedélyezze a kapcsolót a fő képernyőn, majd indítsa el az alkalmazást a nyomkövetők megtalálásához</string>
-    <string name="no_trackers_found_message">Indítsa el az alkalmazást a nyomkövetők megtalálásához</string>
-    <string name="no_trackers_found_action">Indítás</string>
-    <string name="no_internet_message">"Ez az alkalmazás nem rendelkezik internet-hozzáféréssel. Lehet, hogy továbbra is nyomon követi az adatokat más alkalmazásokkal."</string>
-    <string name="no_internet">Nincs internet-hozzáférés</string>
-    <string name="back">Vissza</string>
-    <string name="forever_free">Örökre ingyenes</string>
-    <string name="your_privacy">Az Ön adatainak védelme</string>
-    <string name="tracker_hostlist">Felhasználó által megadott gazdagépek</string>
-    <string name="internet_blocked">Internet-hozzáférés blokkolva</string>
-    <string name="internet_unblocked">Internet-hozzáférés feloldva</string>
-    <string name="category_unblocked">A kategóriába tartozó nyomkövetők engedélyezve</string>
-    <string name="tracking_detection_failed">Nyomkövető könyvtár észlelési hiba.</string>
-    <string name="tracking_detection_failed_ram">Nyomkövető könyvtár észlelési hiba. Kevés a RAM.</string>
-    <string name="tracking_detection_failed_report">Nyomkövető könyvtár észlelési hiba. Kérem jelentse ezt a hibát a fejlesztőnek.</string>
-    <string name="detected_trackers">Észlelt nyomkövető könyvtárak: %s</string>
-    <string name="none">Egyik sem</string>
-    <string name="trackers_static_explanation">A TrackerControl észleli a nyomkövetést a kódokban (könyvtárak) és az alkalmazások hálózati forgalmában.\n\nA hálózati forgalomban észlelt nyomkövetés a TrackerControllal blokkolható.</string>
-    <string name="trackers_static_explanation_playstore">A TrackerControl észleli a nyomkövetést a kódokban (könyvtárak) és az alkalmazások hálózati forgalmában.</string>
-    <!-- Tracker library screen, reached from the summary row on the Trackers tab -->
-    <string name="blocked">BLOKKOLT</string>
-    <string name="allowed">ENGEDÉLYEZETT</string>
-    <string name="setting_domain_based_blocked">Tartományalapú blokkolás</string>
-    <string name="summary_domain_based_blocking">Részletesebb blokkolást tesz lehetővé. Még fejlesztés alatt áll.</string>
-    <string name="uncertain_entry">A csillaggal megjelölt bejegyzések pontatlanok lehetnek az android korlátai miatt. Ez általában azt jelenti, hogy egy vállalat ugyanazt az IP-címet használja különböző területeken, de azt is jelentheti, hogy különböző vállalatok vannak ugyanazon IP-cím mögött (pl. ha tartalomszolgáltató hálózatot használnak).</string>
-    <string name="msg_notifications">Érintse meg az értesítési engedélyek megadásához (hibaüzenetekhez, stb.)</string>
-    <!-- Onboarding -->
-    <!-- Insights Screen -->
-    <!-- Joins the alternative domain names of one tracker, e.g. "example.com or example.net". Keep the surrounding spaces. -->
-    <!-- What's New onboarding slide (not translated) -->
-    <!-- Accessibility labels -->
-    <string name="app_ios"><a href="https://ios.trackercontrol.org">A TrackerControl iOS-re is elérhető</a></string>
-    <string name="menu_app_unprotected">Csak nem védett alkalmazások megjelenítése</string>
-    <string name="menu_app_frozen">Fagyasztott alkalmazások megjelenítése</string>
-    <string name="menu_sort_by_latest_detected_tracker">Rendezés a legutóbb észlelt nyomkövető szerint</string>
-    <string name="menu_troubleshooting">Hibaelhárítás</string>
-    <string name="timeline_empty_disabled_title">A TrackerControl ki van kapcsolva</string>
-    <string name="timeline_empty_disabled_subtitle">Engedélyezze a TrackerControlt a jobb felső sarokban lévő kapcsolóval. Ezután itt jelenik meg az alkalmazások nyomkövetési tevékenysége.</string>
-    <string name="timeline_empty_enabled_title">Nyomkövetők keresése…</string>
-    <string name="timeline_empty_enabled_subtitle">A legtöbb alkalmazás csak használat közben lép kapcsolatba nyomkövetőkkel. Nyisson meg egy alkalmazást, majd térjen vissza ide — ekkor megjelenik a nyomkövetési tevékenysége.</string>
-    <string name="timeline_empty_recording_off_title">A nyomkövetők rögzítése ki van kapcsolva</string>
-    <string name="timeline_empty_recording_off_subtitle">Az „Új nyomkövetők keresése” ki van kapcsolva a speciális beállításokban. A nyomkövetők továbbra is blokkolva vannak, de már nem kerülnek rögzítésre, ezért ez az idővonal üres marad. Kapcsolja vissza a funkciót a nyomkövetési tevékenység megtekintéséhez.</string>
-    <string name="timeline_empty_recording_unavailable_title">A nyomkövetők rögzítése nem érhető el</string>
-    <string name="timeline_empty_recording_unavailable_subtitle">A TrackerControl ezen verziója nem teszi elérhetővé a nyomkövetési tevékenység rögzítését. A blokkolás működik, de ez az idővonal üres marad.</string>
-    <string name="timeline_open_app">Alkalmazás megnyitása</string>
-    <string name="timeline_open_settings">Beállítások megnyitása</string>
-    <string name="timeline_hint_tap_entry">Nem működik egy alkalmazás? Koppintson a bejegyzésére a védelme módosításához.</string>
-    <string name="timeline_hint_dismiss">Értem</string>
-    <string name="unidentified_app_uid">Azonosítatlan alkalmazás (UID: %1$d)</string>
-    <string name="tab_timeline">Idővonal</string>
-    <string name="tab_apps">Alkalmazások</string>
-    <string name="tab_vpn">VPN</string>
-    <string name="timeline_section_last_hour">Elmúlt óra</string>
-    <string name="timeline_section_today">Ma</string>
-    <string name="timeline_section_yesterday">Tegnap</string>
-    <string name="timeline_section_this_week">Ezen a héten</string>
-    <string name="timeline_more_trackers">+%d további nyomkövető</string>
-    <string name="timeline_tracker_blocked">Blokkolva</string>
-    <string name="timeline_tracker_allowed">Engedélyezve</string>
-    <string name="insights_overview_status">%1$s %2$s · %3$s %4$s</string>
-    <string name="insights_overview_status_share">%1$s (%2$s)</string>
-    <string name="timeline_insights_status">%1$s %2$s · %3$s %4$s</string>
-    <string name="feed_section_last_contact">utolsó kapcsolatfelvétel: %s</string>
-    <plurals name="feed_show_more_companies">
-        <item quantity="one">Még %d vállalat megjelenítése</item>
-        <item quantity="other">Még %d vállalat megjelenítése</item>
-    </plurals>
-    <string name="feed_allow_company_in_app">%1$s engedélyezése a(z) %2$s alkalmazásban</string>
-    <string name="feed_block_company_in_app">%1$s blokkolása a(z) %2$s alkalmazásban</string>
-    <string name="feed_allowed_by_you">Ön engedélyezte</string>
-    <string name="feed_allowed_shared_ip">Engedélyezve · megosztott IP</string>
-    <string name="feed_monitored">Figyelve</string>
-    <string name="feed_company_expanded">Kibontva</string>
-    <string name="feed_company_collapsed">Összecsukva</string>
-    <string name="feed_essential_explainer">Az alkalmazásoknak szükségük van rá — engedélyezve, hogy a(z) %s működjön</string>
-    <string name="feed_essential_explainer_blocked">Az alkalmazásoknak szükségük van rá — a blokkolás elronthatja a(z) %s működését</string>
-    <string name="timeline_summary_mixed">%1$d blokkolva · %2$d engedélyezve</string>
-    <plurals name="timeline_trackers_blocked">
-        <item quantity="one">%d nyomkövető blokkolva</item>
-        <item quantity="other">%d nyomkövető blokkolva</item>
-    </plurals>
-    <plurals name="timeline_trackers_allowed">
-        <item quantity="one">%d nyomkövető engedélyezve</item>
-        <item quantity="other">%d nyomkövető engedélyezve</item>
-    </plurals>
-
-    <string name="troubleshooting_title">Hibaelhárítás</string>
-    <string name="troubleshooting_battery_title">Akkumulátor-optimalizálás</string>
-    <string name="troubleshooting_battery_desc">Ha a TrackerControl leáll a háttérben, kapcsolja ki a TrackerControl akkumulátor-optimalizálását az Androidban. Válassza az „Összes alkalmazás” lehetőséget, koppintson a TrackerControlra, majd válassza a „Ne optimalizálja” lehetőséget.</string>
-    <string name="troubleshooting_battery_action">Akkumulátor-optimalizálás kikapcsolása</string>
-    <string name="troubleshooting_battery_ok">Az akkumulátor-optimalizálás már ki van kapcsolva.</string>
-    <string name="troubleshooting_datasaver_title">Adatforgalom-csökkentő</string>
-    <string name="troubleshooting_datasaver_desc">Ha a TrackerControl nem tud kapcsolódni, amikor az adatforgalom-csökkentő be van kapcsolva, engedélyezze a TrackerControl korlátlan adathasználatát. Engedélyezze a „Háttéradatok” és a „Korlátlan adathasználat” lehetőséget.</string>
-    <string name="troubleshooting_datasaver_action">Korlátlan adathasználat engedélyezése</string>
-    <string name="troubleshooting_datasaver_ok">Az adatforgalom-csökkentő nem korlátozza a TrackerControlt.</string>
-    <string name="troubleshooting_local_network_title">Helyi hálózati hozzáférés</string>
-    <string name="troubleshooting_local_network_desc">Engedély szükséges a helyi DNS-kiszolgálókhoz, WireGuard-partnerekhez és proxykhoz.</string>
-    <string name="troubleshooting_local_network_action">Helyi hálózati hozzáférés engedélyezése</string>
-    <string name="troubleshooting_local_network_ok">A helyi hálózati hozzáférés engedélyezve van.</string>
-    <string name="troubleshooting_app_breakage_title">Egy alkalmazás leállt</string>
-    <string name="troubleshooting_app_breakage_desc">Koppintson az alkalmazásra a fő listában, majd a Védelem lehetőségre. Először próbálja ki a „Csak minimális blokkolás” lehetőséget. Ha az alkalmazás továbbra is problémás, válassza a „Nyomkövetők engedélyezve” lehetőséget. A „TrackerControl megkerülése” lehetőséget csak végső megoldásként használja.</string>
-    <string name="troubleshooting_categories_title">Meghatározott nyomkövető-kategóriák blokkolása</string>
-    <string name="troubleshooting_categories_desc">Az egyes alkalmazások blokkolását finomhangolhatja: koppintson az alkalmazásra, majd a Nyomkövetők lapon kapcsolja be vagy ki az egyes nyomkövető-kategóriákat (például az Elemzések vagy a Hirdetések kategóriát).</string>
-    <string name="troubleshooting_alwayson_title">Mindig bekapcsolt VPN</string>
-    <string name="troubleshooting_alwayson_desc">Ha az Android VPN-beállításaiban engedélyezve van a „Kapcsolatok blokkolása VPN nélkül” (lezárás), a TrackerControl nem tud megfelelően működni. Kapcsolja ki ezt a lehetőséget.</string>
-    <string name="troubleshooting_alwayson_action">VPN-beállítások megnyitása</string>
-
-    <string name="menu_clear_activity">Rögzített tevékenység törlése</string>
-    <string name="setting_options">Általános</string>
-    <string name="setting_further_options">További beállítások</string>
-    <string name="setting_tcp_mss_clamp">Internetmegosztási kompatibilitási mód</string>
-    <string name="summary_tcp_mss_clamp">Az összes forgalom átirányítása a TrackerControlon keresztül és a TCP-szegmens méretének korlátozása a megosztott kapcsolatok elakadásának vagy internet-hozzáférés nélküli állapotának megszüntetéséhez. A helyi hálózati hozzáférés többé nem kerüli meg a TrackerControlt, és a teljesítmény csökkenhet.</string>
-    <string name="setting_advanced_options">Speciális beállítások (szakértőknek)</string>
-    <string name="setting_log_logcat">Kutatás</string>
-    <string name="setting_exclude_all_tracking">Minden alkalmazás kizárása a nyomkövetésből</string>
-    <string name="summary_exclude_all_tracking">A nyomkövetés figyelésének kikapcsolása minden alkalmazásnál. Ezután egyenként újra engedélyezheti azt az alkalmazásoknál.</string>
-    <string name="setting_include_all_tracking">Minden alkalmazás bevonása a nyomkövetésbe</string>
-    <string name="summary_include_all_tracking">A nyomkövetés figyelésének újraengedélyezése minden alkalmazásnál.</string>
-    <string name="setting_wg_enabled">Forgalom alagútba küldése WireGuardon keresztül</string>
-    <string name="setting_wg_profile">WireGuard-profil</string>
-    <string name="setting_wg_profile_manage">Egyéni WireGuard-profilok</string>
-    <string name="setting_wg_profile_import">WireGuard-konfiguráció importálása</string>
-    <string name="setting_wg_profile_scan">QR-kód beolvasása</string>
-    <string name="setting_wg_profile_import_file">Importálás fájlból vagy archívumból</string>
-    <string name="setting_wg_mullvad_setup">Mullvad beállítása</string>
-    <string name="setting_wg_proton_setup">Proton VPN-konfiguráció használata</string>
-    <string name="setting_wg_keepalive_when_screen_off">A WireGuard életben tartása kikapcsolt képernyőnél</string>
-    <string name="setting_wg_profile_save">Profil mentése</string>
-    <string name="setting_wg_profile_delete">Profil törlése</string>
-    <string name="accessibility_wg_profile_edit">A(z) %1$s WireGuard-profil szerkesztése</string>
-    <string name="accessibility_wg_profile_delete">A(z) %1$s WireGuard-profil törlése</string>
-    <string name="setting_wireguard">WireGuard (előzetes verzió)</string>
-    <string name="setting_wg_status">Állapot</string>
-    <string name="setting_vpn_key_rotate_now">VPN-szolgáltatói kulcsok azonnali cseréje</string>
-    <string name="setting_doh_enabled">Biztonságos DNS (DoH)</string>
-    <string name="summary_doh_enabled">DNS-lekérdezések titkosítása DNS-over-HTTPS használatával. A WireGuard aktív állapotában automatikusan szünetel, mert ezek a lekérdezések inkább a WireGuard-alagúton haladnak.</string>
-    <string name="warning_beta">Bétafunkció. Előfordulhat, hogy nem a várt módon működik.</string>
-    <string name="setting_doh_endpoint">DoH-végpont URL-je</string>
-    <string name="summary_doh_endpoint">HTTPS-URL a DNS-over-HTTPS-lekérdezésekhez</string>
-    <string name="setting_doh_dns_fallback">DNS-tartalék</string>
-    <string name="summary_doh_dns_fallback">Szabványos (titkosítatlan) DNS használata, ha a DoH nem érhető el. A kikapcsolás megakadályozhatja az alkalmazások működését, ha a DoH-kiszolgáló nem elérhető.</string>
-    <string name="setting_block_dot">Az Android privát DNS-ének blokkolása</string>
-    <string name="summary_block_dot">Ha az Android privát DNS-e engedélyezve van, a TC nem tud észlelni semmilyen nyomkövetést, és nem működik megfelelően.</string>
-    <string name="setting_export">Beállítások exportálása</string>
-    <string name="setting_hosts_auto_update">Hosts automatikus frissítése</string>
-    <string name="summary_hosts_auto_update">A hosts fájl automatikus frissítése a háttérben</string>
-    <string name="summary_wg_enabled">Elrejti az eszköz IP-címét. A TCP- és UDP-kimenő forgalmat alagútba küldi. Kieséskor az alkalmazások hálózati hibákat látnak — zárt működés, nincs visszaesés közvetlen kapcsolatra. A telefon felé kezdeményezett kapcsolatok nem biztos, hogy működnek, amikor az alagút tétlen (az akkumulátor kímélése érdekében az életben tartás ki van kapcsolva).</string>
-    <string name="summary_wg_config">Illessze be a szolgáltatójától kapott [Interface] / [Peer] konfigurációt</string>
-    <string name="summary_wg_profile">Mentett WireGuard-konfiguráció kiválasztása</string>
-    <string name="summary_wg_profile_none">Nincsenek mentett profilok</string>
-    <string name="summary_wg_profile_manage">Egyéni WireGuard-konfigurációk hozzáadása, szerkesztése vagy törlése</string>
-    <string name="summary_wg_keepalive_when_screen_off">Életben tartó csomagokat küld a WireGuard-konfigurációban megadott időközönként kikapcsolt képernyő mellett is. Javítja a megbízhatóságot azokon a hálózatokon, ahol a tétlen kapcsolatok megszakadnak, de növeli az akkumulátorhasználatot.</string>
-    <string name="summary_wg_status_off">Kikapcsolva</string>
-    <string name="summary_wg_status_missing_config">Kikapcsolva — nincs konfiguráció beállítva</string>
-    <string name="summary_wg_status_connected">Kapcsolódva</string>
-    <string name="summary_wg_status_handshaking">Kézfogás…</string>
-    <string name="summary_wg_status_blocked">Blokkolva — %s</string>
-    <string name="summary_wg_status_starting">Indítás</string>
-    <string name="summary_vpn_key_rotate_now">Mullvad- és IVPN-WireGuard-kulcsok cseréjének kényszerítése hibakereséshez</string>
-    <string name="msg_vpn_key_rotation_started">A VPN-kulcsok cseréje elindult</string>
-    <string name="msg_wg_config_invalid">Érvénytelen WireGuard-konfiguráció: %s</string>
-    <string name="msg_wg_profile_name">Profil neve</string>
-    <string name="msg_wg_profile_default_name">Alapértelmezett</string>
-    <string name="msg_wg_profile_saved">A WireGuard-profil mentve</string>
-    <string name="msg_wg_profile_deleted">A WireGuard-profil törölve</string>
-    <string name="msg_wg_profile_empty">Még nincsenek profilok</string>
-    <string name="msg_wg_profile_active">Aktív</string>
-    <string name="msg_wg_profile_set_active">Aktiválás</string>
-    <string name="msg_wg_profile_config_hint">[Interface]\nPrivateKey = …\nAddress = …\n\n[Peer]\nPublicKey = …\nAllowedIPs = 0.0.0.0/0, ::/0\nEndpoint = …</string>
-    <string name="msg_wg_profile_delete_confirm">Törli ezt a WireGuard-profilt?</string>
-    <string name="msg_wg_profile_scan_hint">Irányítsa a kamerát a VPN-szolgáltatója által megjelenített WireGuard QR-kódra. A beolvasás az eszközön történik.</string>
-    <string name="msg_wg_profile_scan_no_camera">Ezen az eszközön nincs kamera a beolvasáshoz</string>
-    <string name="msg_wg_profile_scan_no_camera_permission">QR-kód beolvasásához kameraengedély szükséges</string>
-    <string name="msg_wg_profile_scan_failed">A kamera nem indítható el: %1$s</string>
-    <string name="msg_wg_profile_scan_not_config">Ez a QR-kód nem WireGuard-konfiguráció: %1$s</string>
-    <string name="msg_wg_profile_import_none">A kiválasztott fájlban nem található WireGuard-konfiguráció</string>
-    <string name="msg_wg_profile_import_failed">A kiválasztott fájl nem olvasható: %1$s</string>
-    <plurals name="msg_wg_profile_imported">
-        <item quantity="one">%1$d WireGuard-profil importálva</item>
-        <item quantity="other">%1$d WireGuard-profil importálva</item>
-    </plurals>
-    <plurals name="msg_wg_profile_import_skipped">
-        <item quantity="one">%1$d fájl kihagyva: nem érvényes WireGuard-konfiguráció</item>
-        <item quantity="other">%1$d fájl kihagyva: nem érvényes WireGuard-konfigurációk</item>
-    </plurals>
-    <string name="msg_wg_mullvad_account">Mullvad-fiókszám</string>
-    <string name="msg_wg_mullvad_recommended">Ajánlott hely</string>
-    <string name="msg_wg_mullvad_note">A TrackerControl Mullvad WireGuard-profilt hoz létre. A fiókszámot helyben menti a későbbi Mullvad-profilokhoz. Tokeneket nem tárol, és a profil itt történő törlése nem távolítja el az eszközt a Mullvadról.</string>
-    <string name="msg_wg_mullvad_generating">WireGuard-profil létrehozása…</string>
-    <string name="msg_wg_mullvad_failed">A Mullvad beállítása sikertelen: %s</string>
-    <string name="msg_wg_mullvad_countries_failed">A Mullvad országai nem tölthetők be: %s</string>
-    <string name="msg_wg_proton_note">A Proton dokumentált, külső féltől származó beállítása letölthető WireGuard-konfigurációkat használ. A TrackerControlnak nincs szüksége a Proton hitelesítő adataira, és nem tudja automatikusan frissíteni a konfigurációt.\n\nJelentkezzen be az account.protonvpn.com oldalon, lépjen a Letöltések → WireGuard-konfiguráció menübe, töltsön le egy konfigurációt, nyissa meg szövegszerkesztőben, majd másolja és illessze be a tartalmát ide.</string>
-    <string name="msg_wg_proton_open_dashboard">Proton VPN-irányítópult megnyitása</string>
-    <string name="vpn_status_mullvad">Mullvad</string>
-    <string name="vpn_status_relay">Relé: %s</string>
-    <string name="vpn_status_wireguard_connected">A WireGuard kapcsolódva</string>
-    <string name="vpn_status_disconnected">Nincs kapcsolat</string>
-    <string name="vpn_provider_mullvad">Mullvad VPN</string>
-    <string name="vpn_provider_ivpn">IVPN</string>
-    <string name="vpn_intro_title">VPN-előzetes</string>
-    <string name="vpn_intro_body">A VPN egy másik kiszolgálón keresztül küldi az internetes forgalmat. Ez elrejtheti az IP-címét a webhelyek és a hálózati szolgáltatója elől, és lehetővé teszi, hogy országot válasszon a kapcsolatához. Ez a lap új, ezért tekintse előzetesnek.</string>
-    <string name="vpn_intro_mullvad_title">Mullvad</string>
-    <string name="vpn_intro_mullvad_body">Adatvédelemre összpontosító VPN-szolgáltató. Havi 5 €-ba kerül, és e-mail-cím helyett fiókszámokat használ. Adjon meg egy fiókszámot, majd válasszon országot a TrackerControlban.</string>
-    <string name="vpn_intro_ivpn_title">IVPN</string>
-    <string name="vpn_intro_ivpn_body">Adatvédelemre összpontosító, WireGuard-támogatást kínáló VPN-szolgáltató. Adja meg IVPN-fiókazonosítóját, majd válasszon országot a TrackerControlban.</string>
-    <string name="vpn_intro_proton_title">Proton VPN</string>
-    <string name="vpn_intro_proton_body">Töltsön le WireGuard-konfigurációt Proton VPN-fiókjából, és illessze be a TrackerControlba. Proton-hitelesítő adatait itt soha nem kell megadnia.</string>
-    <string name="vpn_intro_wireguard_title">WireGuard</string>
-    <string name="vpn_intro_wireguard_body">Ezt akkor használja, ha már rendelkezik egy másik VPN-szolgáltatótól, saját szerverről vagy a munkahelyétől származó WireGuard-konfigurációval.</string>
-    <string name="vpn_enter_mullvad_account">Fiókszám megadása</string>
-    <string name="vpn_enter_ivpn_account">Fiókazonosító megadása</string>
-    <string name="vpn_mode_mullvad">Mullvad</string>
-    <string name="vpn_mode_ivpn">IVPN</string>
-    <string name="vpn_mode_wireguard">WireGuard</string>
-    <string name="vpn_settings">Mullvad-beállítások</string>
-    <string name="vpn_settings_title">Mullvad-beállítások</string>
-    <string name="vpn_ivpn_settings">IVPN-beállítások</string>
-    <string name="vpn_ivpn_settings_title">IVPN-beállítások</string>
-    <string name="vpn_account_number">Fiók: %s</string>
-    <string name="vpn_account_not_set">Fiók: nincs beállítva</string>
-    <string name="vpn_account_show">Megjelenítés</string>
-    <string name="vpn_account_hide">Elrejtés</string>
-    <string name="vpn_account_change">Módosítás</string>
-    <string name="vpn_account_cancel">Mégse</string>
-    <string name="vpn_mullvad_intro">Adja meg Mullvad-fiókszámát. Az eszközön mentésre kerül.</string>
-    <string name="vpn_mullvad_account_note">Ezt a fiókot használja a rendszer a Mullvad-országkapcsolatokhoz.</string>
-    <string name="vpn_get_mullvad_account">Mullvad-fiók létrehozása</string>
-    <string name="vpn_get_ivpn_account">IVPN-fiók létrehozása</string>
-    <string name="vpn_account_hint">Mullvad-fiókszám</string>
-    <string name="vpn_ivpn_intro">Adja meg IVPN-fiókazonosítóját. Az eszközön mentésre kerül.</string>
-    <string name="vpn_ivpn_captcha_intro">Az IVPN CAPTCHA-ellenőrzést igényel WireGuard-munkamenet létrehozása előtt.</string>
-    <string name="vpn_ivpn_account_hint">IVPN-fiókazonosító</string>
-    <string name="vpn_ivpn_captcha_hint">CAPTCHA-szöveg</string>
-    <string name="vpn_account_save">Mentés</string>
-    <string name="vpn_account_saved">Fiók mentve</string>
-    <string name="vpn_no_wireguard_profiles">Még nincsenek egyéni WireGuard-profilok</string>
-    <string name="vpn_import_wireguard_profile">WireGuard-profil importálása</string>
-    <string name="vpn_manage_wireguard_profiles">WireGuard-profilok kezelése</string>
-    <string name="vpn_country_load_failed">A(z) %1$s országai nem tölthetők be: %2$s</string>
-    <string name="vpn_country_load_failed_short">Az országok nem tölthetők be</string>
-    <string name="vpn_choose_country_first">Először válasszon országot</string>
-    <string name="vpn_choose_profile_first">Először válasszon WireGuard-profilt</string>
-    <string name="vpn_setup_required">Először állítsa be a Mullvadot, vagy importáljon WireGuard-profilt</string>
-    <string name="vpn_loading_countries">Országok betöltése…</string>
-    <string name="vpn_generating">WireGuard-profil létrehozása…</string>
-    <string name="vpn_generation_failed">A VPN beállítása sikertelen: %s</string>
-    <string name="vpn_retry">Újra</string>
-    <string name="vpn_country_selected">OK</string>
-    <string name="msg_wg_blocked_title">A WireGuard-alagút nem érhető el</string>
-    <string name="msg_wg_blocked">Az internet-hozzáférés blokkolva van, amíg a WireGuard el nem indul, vagy ki nem kapcsolja a WireGuard-beállítást.</string>
-    <string name="msg_wg_blocked_detail">Az internet-hozzáférés blokkolva van, amíg a WireGuard el nem indul, vagy ki nem kapcsolja a WireGuard-beállítást. %s</string>
-    <string name="msg_wg_identity_renewed_title">A VPN-eszköz újraregisztrálva</string>
-    <string name="msg_wg_identity_renewed">%1$s már nem ismerte fel ezt az eszközt, ezért a TrackerControl új eszközként regisztrálta, és frissítette az eszközön lévő %1$s-profilokat.</string>
-    <string name="msg_wg_provider_rejected">%1$s megtagadta az eszköz beállítását: %2$s</string>
-    <string name="msg_wg_recovery_failed">A WireGuard nem válaszol. A TrackerControl megpróbál újracsatlakozni, és az internet-hozzáférés blokkolva maradhat a WireGuard helyreállásáig.</string>
-    <string name="summary_log_logcat">Kutatási mód: az észlelt nyomkövetők naplózása az ADB-be, valamint az SNI kinyerésének engedélyezése a pontosabb hosztnév-felismeréshez. A naplók lekérése az adb logcat használatával, a „TC-Log” címkével történik.</string>
-    <string name="msg_no_file_manager">Nem található fájlkezelő a fájl kiválasztásához.</string>
-    <string name="msg_no_browser">Nem található böngészőalkalmazás a hivatkozás megnyitásához.</string>
-    <string name="msg_native_fd_recovery_exhausted">A VPN ismételten kifogyott a fájlleírókból. A védelem leállt, miután minden automatikus újraindítási kísérlet sikertelen volt.</string>
-    <string name="msg_native_fd_error">A VPN kifogyott a fájlleírókból. Zárja be a nem használt alkalmazásokat, vagy indítsa újra az eszközt, majd indítsa újra a védelmet.</string>
-    <string name="msg_vpn_replacement_recovery_exhausted">A TrackerControl nem tudta újra létrehozni a VPN-t. A forgalom blokkolva van.</string>
-    <string name="msg_doh_unreachable">A biztonságos DNS (DoH) nem érhető el, noha aktív internetkapcsolata van. Ha ez ismételten megtörténik, fontolja meg a kikapcsolását a Hálózati beállításokban.</string>
-    <string name="msg_clear_activity">Ez eltávolítja az alkalmazás rögzített tevékenységét. Az alkalmazás nyomkövetőnkénti blokkolási/engedélyezési beállításai megmaradnak.</string>
-    <string name="title_version">Verzió: %1$d</string>
-    <string name="msg_always_on_lockdown">A TrackerControl használatához kapcsolja ki a „Kapcsolatok blokkolása VPN nélkül” lehetőséget az Android VPN-beállításaiban</string>
-    <string name="toggle_block_internet_description">Internet-hozzáférés blokkolása a(z) %1$s számára</string>
-    <string name="toggle_allow_internet_description">Internet-hozzáférés engedélyezése a(z) %1$s számára</string>
-    <string name="toggle_no_internet_description">A(z) %1$s nem fér hozzá az internethez</string>
-    <string name="toggle_internet_unavailable_description">Az internet-hozzáférés vezérlése nem érhető el a(z) %1$s számára</string>
-    <string name="toggle_block_category_description">A(z) %1$s kategória nyomkövetőinek blokkolása</string>
-    <string name="widget_toggle_enable_description">Nyomkövetők blokkolásának engedélyezése</string>
-    <string name="widget_toggle_disable_description">Nyomkövetők blokkolásának letiltása</string>
-    <string name="accessibility_stat_description">%1$s, %2$s</string>
-    <string name="accessibility_tracker_blocking_enabled">A nyomkövetők blokkolása engedélyezve</string>
-    <string name="accessibility_tracker_blocking_disabled">A nyomkövetők blokkolása letiltva</string>
-    <string name="tab_actions">Adatvédelmi jogok</string>
-    <string name="launch_app_failed">Az alkalmazás nem indítható el</string>
-    <string name="countries_map_highlighted">Kiemelt nyomkövetési célpontok: %1$s</string>
-    <string name="countries_map_none">Nincsenek kiemelt nyomkövetési célpontok.</string>
     <string name="tracker_consent">Hozzájárulás kezelése</string>
+    <string name="tracker_uncategorised">Kategória nélküli</string>
     <string name="setting_blocking_mode">Blokkolási mód</string>
     <string name="summary_blocking_mode_minimal">Minimális: csak a DuckDuckGo listájáról származó, biztonságosan blokkolható nyomkövetőket blokkolja. A böngészők továbbra is a VPN-en keresztül vannak átirányítva, de a nyomkövetők védelme alapértelmezés szerint ki van kapcsolva. Az ismerten inkompatibilis alkalmazások ki vannak zárva. Korlátozott alkalmazás-hibásodás.</string>
     <string name="summary_blocking_mode_standard">Normál: több listáról (X-Ray, Disconnect, DuckDuckGo) származó összes ismert nyomkövetőt blokkolja. Az alapvető szolgáltatások engedélyezve vannak. Ha egy alkalmazás leáll, módosítsa a Védelmi beállítását (lásd az alkalmazásmenü Hibaelhárítás részét).</string>
@@ -573,15 +501,39 @@ Tisztelettel,\n\n]]></string>
     <string name="onboarding_blockingmode_strict_desc">Mindent blokkol, beleértve az alapvető szolgáltatásokat és a kétértelmű tartományokat is. Jelentős alkalmazás-hibásodás — sok alkalmazásnak kevésbé szigorú Védelmi beállításra lesz szüksége.</string>
     <string name="onboarding_blockingmode_research_label">Kutatás</string>
     <string name="onboarding_blockingmode_research_desc">Nincs nyomkövető-blokkolás. A továbbításokat az ADB-be naplózza, és az SNI-kinyerés engedélyezésével pontosabb hosztnév-felismerést tesz lehetővé. Csak kutatáshoz: ez felfedi az IP-címét a nyomkövetők szerverei előtt.</string>
+    <!-- Per-app remote VPN routing -->
+    <string name="setting_wg_route_mode">Átirányítás a távoli VPN-en</string>
+    <string name="summary_wg_route_mode">Mely alkalmazások haladnak át a távoli VPN-en. A többi továbbra is teljesen felügyelt és szűrt — csak az eszköz saját hálózatáról csatlakoznak.</string>
+    <string name="wg_route_mode_all">Minden alkalmazás</string>
+    <string name="wg_route_mode_selected">Csak a kiválasztott alkalmazások</string>
+    <string name="app_route_through">A távoli VPN-en át</string>
+    <string name="app_route_through_explanation">Ez az alkalmazás a távoli VPN-en át csatlakozik, amely a hálózata helyett látja a forgalmát.</string>
+    <string name="app_route_direct">Közvetlenül erről az eszközről</string>
+    <string name="app_route_direct_explanation">Ez az alkalmazás a saját hálózatáról csatlakozik. A követők felügyelete és blokkolása továbbra is érvényes. DNS-kérései a VPN helyett a hálózat feloldójához mennek, és az alkalmazás látja az eszköz valódi címét — egyes alkalmazásoknak erre szükségük van, például helyi eszközök eléréséhez vagy captive portal ellenőrzéséhez.</string>
+    <string name="app_route_unavailable_no_vpn">Nincs beállítva távoli VPN, így minden forgalom már közvetlenül hagyja el az eszközt.</string>
+    <string name="app_route_unavailable_bypassed">Ez az alkalmazás teljesen megkerüli a TrackerControlt, így nincs mit átirányítani.</string>
+    <string name="app_route_unavailable_partial_routes">A távoli VPN nem viszi az összes forgalmat (az AllowedIPs nem teljes alagút). Az alkalmazásonkénti átirányításhoz teljes alagút kell, mert az útvonalakat minden alkalmazás megosztja.</string>
+    <!-- Per-app protection state -->
     <string name="app_state_heading">Blokkolási mód</string>
     <string name="app_state_title_minimal">Minimális blokkolás</string>
     <string name="app_state_title_standard">Normál blokkolás</string>
     <string name="app_state_title_strict">Szigorú blokkolás</string>
     <string name="app_state_subtitle_misbehaving">Nem működik megfelelően az alkalmazás? Váltson itt minimális blokkolásra.</string>
+    <string name="app_state_protected">Védett</string>
+    <string name="app_state_protected_explanation">A követők blokkolva és rögzítve vannak ennél az alkalmazásnál.</string>
     <string name="app_state_essential_only">Csak minimális blokkolás</string>
     <string name="app_state_essential_only_explanation">Csak a megerősített nyomkövetőket blokkolja, amelyeket a Minimális mód blokkol. A többi nyomkövetőt továbbra is rögzíti, de engedélyezi. Akkor használja, ha a normál blokkolás elrontja az alkalmazást.</string>
+    <string name="app_state_trackers_allowed">Követők engedélyezve</string>
+    <string name="app_state_trackers_allowed_explanation">Az alkalmazás továbbra is a TrackerControlon keresztül fut, de a követőit sem nem blokkolja, sem nem rögzíti. Használja ezt, ha a blokkolás elrontja az alkalmazást.</string>
+    <string name="app_state_no_internet">Nincs internet</string>
+    <string name="app_state_no_internet_explanation">Az alkalmazás összes kapcsolata blokkolva van. A főképernyőn az alkalmazás ikonjára is koppinthat.</string>
+    <string name="app_state_no_internet_shared_uid">Erre is vonatkozik: %1$s, amely Android-felhasználóazonosítón osztozik ezzel az alkalmazással.</string>
+    <string name="app_state_bypassed">TrackerControl megkerülése</string>
+    <string name="app_state_bypassed_explanation">Az alkalmazás közvetlenül, a TrackerControlon kívül csatlakozik. Semmit sem figyel és blokkol nála. Végső megoldásként használja, ha az alkalmazás továbbra sem működik.\n\nMegjegyzés: az Android VPN-beállításaiban a \"Kapcsolatok blokkolása VPN nélkül\" beállításnak KIKAPCSOLVA kell lennie, hogy ez működjön.</string>
+    <!-- Per-app protection screen -->
     <string name="protection_title">Védelem</string>
     <string name="protection_route_heading">Távoli VPN</string>
+    <!-- Protection state and remote-VPN routing shown together on one row -->
     <string name="protection_app_not_working">Nem működik az alkalmazás? Koppintson ide</string>
     <plurals name="protection_paused_resumes">
         <item quantity="one">Szüneteltetve — folytatás %d perc múlva</item>
@@ -595,13 +547,35 @@ Tisztelettel,\n\n]]></string>
     <string name="protection_no_blocked_trackers">A közelmúltban semmi sem lett blokkolva — valószínűleg nem a TrackerControl miatt.</string>
     <string name="protection_recording_unavailable">A nyomkövetők rögzítése nem érhető el, mert az „Új nyomkövetők keresése” ki van kapcsolva.</string>
     <string name="protection_temporary">Ideiglenes, szüneteltetés alatt</string>
+    <string name="uninstall">Eltávolítás</string>
+    <string name="settings_uninstall">App beállításai &amp; Eltávolítás</string>
+    <string name="no_trackers_found_message_disabled">Engedélyezze a kapcsolót a fő képernyőn, majd indítsa el az alkalmazást a nyomkövetők megtalálásához</string>
+    <string name="no_trackers_found_message">Indítsa el az alkalmazást a nyomkövetők megtalálásához</string>
+    <string name="no_trackers_found_action">Indítás</string>
+    <string name="no_internet_message">"Ez az alkalmazás nem rendelkezik internet-hozzáféréssel. Lehet, hogy továbbra is nyomon követi az adatokat más alkalmazásokkal."</string>
+    <string name="no_internet">Nincs internet-hozzáférés</string>
     <string name="bypass_vpn_error">"Az internet nem blokkolható, miközben az alkalmazás megkerüli a TrackerControlt."</string>
+    <string name="back">Vissza</string>
+    <string name="forever_free">Örökre ingyenes</string>
+    <string name="your_privacy">Az Ön adatainak védelme</string>
+    <string name="tracker_hostlist">Felhasználó által megadott gazdagépek</string>
+    <string name="internet_blocked">Internet-hozzáférés blokkolva</string>
+    <string name="internet_unblocked">Internet-hozzáférés feloldva</string>
+    <string name="category_unblocked">A kategóriába tartozó nyomkövetők engedélyezve</string>
     <string name="category_unblocked_warning">Ezzel a kategóriával engedélyezve — az egyes vállalatok módosításához blokkolja a kategóriát.</string>
+    <string name="tracking_detection_failed">Nyomkövető könyvtár észlelési hiba.</string>
+    <string name="tracking_detection_failed_ram">Nyomkövető könyvtár észlelési hiba. Kevés a RAM.</string>
+    <string name="tracking_detection_failed_report">Nyomkövető könyvtár észlelési hiba. Kérem jelentse ezt a hibát a fejlesztőnek.</string>
+    <string name="detected_trackers">Észlelt nyomkövető könyvtárak: %s</string>
     <string name="analyzing_classes_progress">Osztályok elemzése… %d%%</string>
+    <string name="none">Egyik sem</string>
+    <string name="trackers_static_explanation">A TrackerControl észleli a nyomkövetést a kódokban (könyvtárak) és az alkalmazások hálózati forgalmában.\n\nA hálózati forgalomban észlelt nyomkövetés a TrackerControllal blokkolható.</string>
+    <string name="trackers_static_explanation_playstore">A TrackerControl észleli a nyomkövetést a kódokban (könyvtárak) és az alkalmazások hálózati forgalmában.</string>
     <string name="trackers_static_disclaimer">Megjegyzés: a nyomkövetőkönyvtár-kód észlelése nem jelenti azt, hogy aktívan használják. Egyes alkalmazások eltávolíthatták vagy letilthatták ezeket a könyvtárakat, de a nyomaik továbbra is észlelhetők.</string>
     <string name="analyze_tracker_libraries">Nyomkövetőkönyvtárak elemzése</string>
     <string name="update_analysis">Elemzés frissítése</string>
     <string name="analysis_outdated_version">\n\nMegjegyzés: az elemzés az alkalmazás egy korábbi verziójáról készült. Az integrált nyomkövetőkönyvtárak azóta megváltozhattak.</string>
+    <!-- Tracker library screen, reached from the summary row on the Trackers tab -->
     <string name="libraries_title">Nyomkövetőkönyvtárak</string>
     <string name="libraries_row_heading">Nyomkövetőkönyvtárak</string>
     <string name="libraries_none_found">Az alkalmazás kódjában nem találhatók nyomkövetőkönyvtárak</string>
@@ -617,10 +591,16 @@ Tisztelettel,\n\n]]></string>
         <item quantity="other">%d nyomkövetőkönyvtár található az alkalmazás kódjában</item>
     </plurals>
     <string name="analysis_queued">Az elemzés sorba állítva…</string>
+    <string name="blocked">BLOKKOLT</string>
+    <string name="allowed">ENGEDÉLYEZETT</string>
     <string name="allowed_shared_ip">Engedélyezve — megosztott IP; a blokkoláshoz engedélyezze a Szigorú módot</string>
     <string name="tracker_monitored_minimal">Figyelve — Minimális módban nincs blokkolva</string>
+    <string name="setting_domain_based_blocked">Tartományalapú blokkolás</string>
+    <string name="summary_domain_based_blocking">Részletesebb blokkolást tesz lehetővé. Még fejlesztés alatt áll.</string>
+    <string name="uncertain_entry">A csillaggal megjelölt bejegyzések pontatlanok lehetnek az android korlátai miatt. Ez általában azt jelenti, hogy egy vállalat ugyanazt az IP-címet használja különböző területeken, de azt is jelentheti, hogy különböző vállalatok vannak ugyanazon IP-cím mögött (pl. ha tartalomszolgáltató hálózatot használnak).</string>
     <string name="browsers_not_supported">Böngésző észlelve ⚠️</string>
     <string name="browsers_not_supported_explanation">Úgy tűnik, ez egy böngészőalkalmazás.\n\nA böngészők nyomkövetés elleni védelme a böngészőn belül működik a legjobban, ahol a nyomkövetők oldal- és kérésenként blokkolhatók. A TrackerControl a böngészőforgalmat a VPN/WireGuard-alagúton átirányítva tartja, de az alkalmazásszintű nyomkövető-blokkolás alapértelmezés szerint ki van kapcsolva, és engedélyezése megakadályozhatja a webhelyek működését.</string>
+    <string name="msg_notifications">Érintse meg az értesítési engedélyek megadásához (hibaüzenetekhez, stb.)</string>
     <string name="msg_local_network">Koppintson a helyi hálózati hozzáférés engedélyezéséhez, amelyet az Android „közeli eszközökként” kér. Az Android 17 alapértelmezés szerint blokkolja ezt, ezért saját DNS-kiszolgálója, biztonságos DNS-feloldója, WireGuard-partnere vagy proxyja nem érhető el.</string>
     <string name="msg_local_network_title">Helyi hálózati hozzáférés szükséges</string>
     <string name="msg_local_network_notify">A TrackerControl nem éri el saját DNS-kiszolgálóját, biztonságos DNS-feloldóját, WireGuard-partnerét vagy proxyját, ezért a névfeloldás sikertelen lehet. Az Android 17 ehhez engedélyt igényel, amelyet „közeli eszközökként” kér. Koppintson a TrackerControl megnyitásához, és engedélyezze azt.</string>
@@ -633,6 +613,7 @@ Tisztelettel,\n\n]]></string>
     <string name="msg_private_dns_bypass_allowed_notify">Egyes alkalmazások titkosított DNS-t használnak; a TrackerControl számára láthatatlan, hogy milyen nyomkövetőkkel lépnek kapcsolatba.</string>
     <string name="setting_monitor_system">Rendszeralkalmazások figyelése</string>
     <string name="summary_monitor_system">A rendszeralkalmazásokat (Play-szolgáltatások, mobilszolgáltatói szolgáltatások stb.) a VPN-en keresztül irányítja, hogy a nyomkövetőik észlelhetők és blokkolhatók legyenek, és megjeleníti őket az alkalmazáslistában.\n\nAlapértelmezés szerint ki van kapcsolva: a rendszeralkalmazások kizárása kíméli az akkumulátort, mert a háttérforgalmuk többé nem ébreszti fel a VPN-t. Ennek bekapcsolása ütközik az Android VPN-beállításaiban lévő „Kapcsolatok blokkolása VPN nélkül” lehetőséggel, amelyet KIKAPCSOLVA kell tartani.</string>
+    <!-- Onboarding -->
     <string name="title_next">Következő</string>
     <string name="title_previous">Előző</string>
     <string name="title_finish">Kezdés</string>
@@ -657,6 +638,7 @@ Tisztelettel,\n\n]]></string>
     <string name="onboarding_lockdown_sure">A lezárás engedélyezése kapcsolati problémákat okozhat. Biztos benne?</string>
     <string name="onboarding_action_disabled">Letiltva</string>
     <string name="onboarding_action_granted">Megadva</string>
+    <!-- Insights Screen -->
     <string name="insights_title">Adatvédelmi betekintései</string>
     <string name="insights_subtitle_7days">Elmúlt 7 nap</string>
     <string name="insights_tracking_attempts">Megkeresett nyomkövető-hosztok</string>
@@ -666,19 +648,25 @@ Tisztelettel,\n\n]]></string>
     <string name="insights_apps_with_trackers">Nyomkövetőket tartalmazó alkalmazások</string>
     <string name="insights_pervasive_trackers">Legelterjedtebb nyomkövetők</string>
     <string name="insights_top_domains">Leggyakoribb nyomkövető-tartományok</string>
+    <!-- Joins the alternative domain names of one tracker, e.g. "example.com or example.net". Keep the surrounding spaces. -->
     <string name="insights_domain_alias_separator">" vagy "</string>
-    <string name="insights_in_apps">%d alkalmazásban</string>
+    <!-- Keep as a string: call-site/API migration and multi-count grammar are intentionally separate. -->
+    <string name="insights_in_apps" tools:ignore="PluralsCandidate">%d alkalmazásban</string>
     <plurals name="insights_apps_count">
         <item quantity="one">%d alkalmazásban</item>
         <item quantity="other">%d alkalmazásban</item>
     </plurals>
     <string name="insights_no_data">Még nincs nyomkövetési adat. Használja alkalmazásait, majd nézzen vissza később!</string>
-    <string name="insights_shocking_fact">Alkalmazásai ezen a héten %1$d nyomkövető vállalattal léptek kapcsolatba %2$d nyomkövető-hoszton keresztül!</string>
+    <!-- Keep as a string: call-site/API migration and multi-count grammar are intentionally separate. -->
+    <string name="insights_shocking_fact" tools:ignore="PluralsCandidate">Alkalmazásai ezen a héten %1$d nyomkövető vállalattal léptek kapcsolatba %2$d nyomkövető-hoszton keresztül!</string>
+    <!-- Retained for Play Store copy; call-site/API migration and multi-count grammar are intentionally separate. -->
     <string name="insights_share">Megosztás barátokkal</string>
     <string name="insights_share_trackers_blocked">Blokkolt nyomkövető-hosztok</string>
-    <string name="insights_share_url">TrackerControl.org</string>
-    <string name="insights_share_message">Ezen a héten %1$d nyomkövető-hosztot blokkoltam %2$d vállalattól a TrackerControllal! Vegye vissza az adatvédelmét: https://trackercontrol.org</string>
+    <!-- Keep as a string: call-site/API migration and multi-count grammar are intentionally separate. -->
+    <string name="insights_share_message" tools:ignore="PluralsCandidate">Ezen a héten %1$d nyomkövető-hosztot blokkoltam %2$d vállalattól a TrackerControllal! Vegye vissza az adatvédelmét: https://trackercontrol.org</string>
+    <!-- Retained for Play Store copy; call-site/API migration and multi-count grammar are intentionally separate. -->
     <string name="insights_see_more">Továbbiak megtekintése →</string>
+    <!-- What's New onboarding slide (not translated) -->
     <string name="title_blocklists">További hosztfájlok</string>
     <string name="summary_manage_blocklists">Ezek csak visszaesés esetére szolgálnak. A TrackerControl saját hosztlistákat tartalmaz, amelyek betekintést adnak a nyomkövetés mögött álló vállalatokba.</string>
     <string name="title_add_blocklist">Hosztfájl hozzáadása</string>
@@ -687,13 +675,12 @@ Tisztelettel,\n\n]]></string>
     <string name="msg_invalid_url">Érvénytelen URL</string>
     <string name="msg_apply_blocklists_failed">A hosztfájlok alkalmazása sikertelen</string>
     <string name="msg_last_update">Legutóbbi frissítés: %s</string>
+    <!-- Accessibility labels -->
     <string name="switch_tracker_control_description">Nyomkövetők blokkolása</string>
-    <string name="vpn_enabled_switch_description">VPN</string>
     <string name="blocklist_delete_description">Blokkolólista törlése</string>
     <string name="blocklist_enable_description">A(z) %s blokkolólista engedélyezése</string>
     <string name="log_connection_allowed">Engedélyezve</string>
     <string name="log_connection_blocked">Blokkolva</string>
-    <string name="log_connection_wifi">Wi-Fi</string>
     <string name="log_connection_other">Egyéb hálózat</string>
     <string name="log_screen_on">Képernyő bekapcsolva</string>
 </resources>

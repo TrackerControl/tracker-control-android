@@ -51,7 +51,8 @@
     <string name="timeline_section_today">今天</string>
     <string name="timeline_section_yesterday">昨天</string>
     <string name="timeline_section_this_week">本周</string>
-    <string name="timeline_more_trackers">另 %d 个</string>
+    <!-- Keep as a string: call-site/API migration and multi-count grammar are intentionally separate. -->
+    <string name="timeline_more_trackers" tools:ignore="PluralsCandidate">另 %d 个</string>
     <string name="timeline_tracker_blocked">已拦截</string>
     <string name="timeline_tracker_allowed">已放行</string>
     <string name="insights_overview_status">%1$s %2$s · %3$s %4$s</string>
@@ -71,7 +72,8 @@
     <string name="feed_company_collapsed">已收起</string>
     <string name="feed_essential_explainer">应用程序需要 — — 已允许，以便 %s 继续工作</string>
     <string name="feed_essential_explainer_blocked">应用程序需要 — — 屏蔽这些可能破坏 %s</string>
-    <string name="timeline_summary_mixed">%1$d 已拦截 · %2$d 已放行</string>
+    <!-- Keep as a string: call-site/API migration and multi-count grammar are intentionally separate. -->
+    <string name="timeline_summary_mixed" tools:ignore="PluralsCandidate">%1$d 已拦截 · %2$d 已放行</string>
     <plurals name="timeline_trackers_blocked">
         <item quantity="other">拦截了 %d 个跟踪器</item>
     </plurals>
@@ -152,6 +154,7 @@
     <string name="setting_wg_profile_manage">自定义 WireGuard 配置文件</string>
     <string name="setting_wg_profile_import">导入WireGuard配置</string>
     <string name="setting_wg_profile_scan">扫描二维码</string>
+    <string name="setting_wg_profile_import_file">从文件或存档导入</string>
     <string name="setting_wg_mullvad_setup">设置 Mullvad</string>
     <string name="setting_wg_proton_setup">使用 Proton VPN 配置</string>
     <string name="setting_wg_keepalive_when_screen_off">屏幕关闭时保持WireGuard活跃</string>
@@ -214,13 +217,21 @@
     <string name="msg_wg_profile_empty">暂无配置</string>
     <string name="msg_wg_profile_active">活跃</string>
     <string name="msg_wg_profile_set_active">设置为活跃</string>
-    <string tools:ignore="TypographyEllipsis" name="msg_wg_profile_config_hint">[Interface]\nPrivateKey = ...\nAddress = ...\n\n[Peer]\nPublicKey = ...\nAllowedIPs = 0.0.0.0/0, ::/0\nEndpoint = ...</string>
+    <string name="msg_wg_profile_config_hint" tools:ignore="TypographyEllipsis">[Interface]\nPrivateKey = ...\nAddress = ...\n\n[Peer]\nPublicKey = ...\nAllowedIPs = 0.0.0.0/0, ::/0\nEndpoint = ...</string>
     <string name="msg_wg_profile_delete_confirm">删除这个WireGuard配置文件吗？</string>
     <string name="msg_wg_profile_scan_hint">将相机指向您的 VPN 提供商显示的 WireGuard QR 码。扫描发生在您的设备上。</string>
     <string name="msg_wg_profile_scan_no_camera">此设备没有可用来扫描的相机</string>
     <string name="msg_wg_profile_scan_no_camera_permission">扫描二维码需要相机权限</string>
     <string name="msg_wg_profile_scan_failed">无法启动相机： %1$s</string>
     <string name="msg_wg_profile_scan_not_config">这个二维码不是WireGuard配置: %1$s</string>
+    <string name="msg_wg_profile_import_none">所选文件中未找到 WireGuard 配置</string>
+    <string name="msg_wg_profile_import_failed">无法读取所选文件：%1$s</string>
+    <plurals name="msg_wg_profile_imported">
+        <item quantity="other">已导入 %1$d 个 WireGuard 配置文件</item>
+    </plurals>
+    <plurals name="msg_wg_profile_import_skipped">
+        <item quantity="other">已跳过 %1$d 个文件：不是有效的 WireGuard 配置</item>
+    </plurals>
     <string name="msg_wg_mullvad_account">Mullvad账号</string>
     <string name="msg_wg_mullvad_recommended">推荐位置</string>
     <string name="msg_wg_mullvad_note">TrackerControl 创建一个 Mullvad WireGuard 配置文件。账户号码将在本地保存以供未来Mullvad 配置文件使用。 没有存储令牌，删除此处的配置文件不会从 Mullvad 移除设备。</string>
@@ -300,7 +311,8 @@
     <string name="msg_revoked">TrackerControl已被禁用，可能是通过使用另一个基于VPN的应用程序</string>
     <string name="msg_installed">遇到了 %1$s 的问题吗？</string>
     <string name="msg_installed_description">允许应用联系公司</string>
-    <string name="msg_installed_tracker_libraries_found">包含 %d 个跟踪库</string>
+    <!-- Keep as a string: call-site/API migration and multi-count grammar are intentionally separate. -->
+    <string name="msg_installed_tracker_libraries_found" tools:ignore="PluralsCandidate">包含 %d 个跟踪库</string>
     <string name="msg_completed">操作已完成</string>
     <string name="msg_no_file_manager">没有找到文件管理器来选择文件。</string>
     <string name="msg_no_browser">未找到打开链接的浏览器。</string>
@@ -642,16 +654,21 @@
     <string name="insights_top_domains">拦截最多的跟踪域名</string>
     <!-- Joins the alternative domain names of one tracker, e.g. "example.com or example.net". Keep the surrounding spaces. -->
     <string name="insights_domain_alias_separator">" 或 "</string>
-    <string name="insights_in_apps">在 %d 个应用中</string>
+    <!-- Keep as a string: call-site/API migration and multi-count grammar are intentionally separate. -->
+    <string name="insights_in_apps" tools:ignore="PluralsCandidate">在 %d 个应用中</string>
     <plurals name="insights_apps_count">
         <item quantity="other">在 %d 个应用中</item>
     </plurals>
     <string name="insights_no_data">尚无跟踪数据。继续使用您的应用，之后回来看看！</string>
-    <string name="insights_shocking_fact">您的应用本周通过 %2$d 个追踪主机联系了 %1$d 家追踪公司！</string>
+    <!-- Keep as a string: call-site/API migration and multi-count grammar are intentionally separate. -->
+    <string name="insights_shocking_fact" tools:ignore="PluralsCandidate">您的应用本周通过 %2$d 个追踪主机联系了 %1$d 家追踪公司！</string>
+    <!-- Retained for Play Store copy; call-site/API migration and multi-count grammar are intentionally separate. -->
     <string name="insights_share">分享给好友</string>
     <string name="insights_share_trackers_blocked">屏蔽的跟踪主机</string>
     <string name="insights_share_url">TrackerControl.org</string>
-    <string name="insights_share_message">我本周用TrackerControl屏蔽了来自 %2$d 家企业的 %1$d 个追踪器！拿回您的隐私：https://trackercontrol.org</string>
+    <!-- Keep as a string: call-site/API migration and multi-count grammar are intentionally separate. -->
+    <string name="insights_share_message" tools:ignore="PluralsCandidate">我本周用TrackerControl屏蔽了来自 %2$d 家企业的 %1$d 个追踪器！拿回您的隐私：https://trackercontrol.org</string>
+    <!-- Retained for Play Store copy; call-site/API migration and multi-count grammar are intentionally separate. -->
     <string name="insights_see_more">查看更多 →</string>
     <!-- What's New onboarding slide (not translated) -->
     <string name="title_blocklists">额外的主机文件</string>
@@ -672,13 +689,4 @@
     <string name="log_connection_wifi">Wi-Fi</string>
     <string name="log_connection_other">其他网络</string>
     <string name="log_screen_on">屏幕开启</string>
-    <string name="setting_wg_profile_import_file">从文件或存档导入</string>
-    <string name="msg_wg_profile_import_none">所选文件中未找到 WireGuard 配置</string>
-    <string name="msg_wg_profile_import_failed">无法读取所选文件：%1$s</string>
-    <plurals name="msg_wg_profile_imported">
-        <item quantity="other">已导入 %1$d 个 WireGuard 配置文件</item>
-    </plurals>
-    <plurals name="msg_wg_profile_import_skipped">
-        <item quantity="other">已跳过 %1$d 个文件：不是有效的 WireGuard 配置</item>
-    </plurals>
 </resources>

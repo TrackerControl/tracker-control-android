@@ -1,44 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <!-- A blocked/allowed label followed by its share of all tracking attempts. -->
-    <!-- Secure DNS (DoH) -->
-    <!-- Block DNS-over-TLS (DoT) -->
-    <!-- App Overview -->
-    <!-- Dynamic content descriptions for the app-icon Internet toggle in the app list (issue #231) -->
-    <!-- Dynamic content description for the per-category tracker-blocking switch -->
-    <!-- Dynamic content description for the home-screen widget toggle (accessibility follow-up, issue #636) -->
-    <!-- App Details -->
-    <!-- Actions -->
-    <!-- Per-app remote VPN routing -->
-    <string name="setting_wg_route_mode">தொலைநிலை VPN வழியாக அனுப்பு</string>
-    <string name="summary_wg_route_mode">எந்த ஆப்ஸ் தொலைநிலை VPN வழியாகச் செல்லும். செல்லாதவையும் முழுமையாகக் கண்காணிக்கப்பட்டு தடுக்கப்படுகின்றன — அவை இந்தச் சாதனத்தின் சொந்த நெட்வொர்க்கிலிருந்து இணைகின்றன.</string>
-    <string name="wg_route_mode_all">எல்லா ஆப்ஸும்</string>
-    <string name="wg_route_mode_selected">தேர்ந்தெடுத்த ஆப்ஸ் மட்டும்</string>
-    <string name="app_route_through">தொலைநிலை VPN வழியாக</string>
-    <string name="app_route_through_explanation">இந்த ஆப்ஸ் உங்கள் தொலைநிலை VPN வழியாக இணைகிறது; உங்கள் நெட்வொர்க்குக்குப் பதிலாக VPN அதன் போக்குவரத்தைப் பார்க்கிறது.</string>
-    <string name="app_route_direct">இந்தச் சாதனத்திலிருந்து நேரடியாக</string>
-    <string name="app_route_direct_explanation">இந்த ஆப்ஸ் உங்கள் சொந்த நெட்வொர்க்கிலிருந்து இணைகிறது. டிராக்கர் கண்காணிப்பும் தடுப்பும் தொடர்ந்து பொருந்தும். அதன் DNS வினவல்கள் VPN-க்குப் பதிலாக உங்கள் நெட்வொர்க்கின் தீர்ப்பானுக்குச் செல்கின்றன, மேலும் அது இந்தச் சாதனத்தின் உண்மையான முகவரியைப் பார்க்கிறது — சில ஆப்ஸுக்கு இது தேவை, எடுத்துக்காட்டாக உள்ளூர் சாதனங்களை அணுகவோ captive portal-ஐச் சரிபார்க்கவோ.</string>
-    <string name="app_route_unavailable_no_vpn">தொலைநிலை VPN எதுவும் அமைக்கப்படவில்லை, எனவே எல்லாப் போக்குவரத்தும் ஏற்கெனவே நேரடியாக இந்தச் சாதனத்திலிருந்து செல்கிறது.</string>
-    <string name="app_route_unavailable_bypassed">இந்த ஆப்ஸ் TrackerControl-ஐ முழுமையாகத் தவிர்க்கிறது, எனவே அனுப்ப எந்தப் போக்குவரத்தும் இல்லை.</string>
-    <string name="app_route_unavailable_partial_routes">உங்கள் தொலைநிலை VPN எல்லாப் போக்குவரத்தையும் எடுத்துச் செல்வதில்லை (அதன் AllowedIPs முழு சுரங்கம் அல்ல). வழிகள் எல்லா ஆப்ஸாலும் பகிரப்படுவதால், ஆப்ஸ்வாரி வழியமைப்புக்கு முழு சுரங்கம் தேவை.</string>
-    <!-- Per-app protection state -->
-    <string name="app_state_protected">பாதுகாக்கப்பட்டது</string>
-    <string name="app_state_protected_explanation">இந்த ஆப்ஸுக்கான டிராக்கர்கள் தடுக்கப்பட்டு பதிவு செய்யப்படுகின்றன.</string>
-    <string name="app_state_trackers_allowed">டிராக்கர்கள் அனுமதிக்கப்பட்டன</string>
-    <string name="app_state_trackers_allowed_explanation">ஆப்ஸ் தொடர்ந்து TrackerControl வழியாகச் செல்கிறது, ஆனால் அதன் டிராக்கர்கள் தடுக்கப்படுவதுமில்லை, பதிவு செய்யப்படுவதுமில்லை. தடுப்பதால் ஆப்ஸ் வேலை செய்யாவிட்டால் இதைப் பயன்படுத்தவும்.</string>
-    <string name="app_state_no_internet">இணையம் இல்லை</string>
-    <string name="app_state_no_internet_explanation">இந்த ஆப்ஸின் அனைத்து இணைப்புகளும் தடுக்கப்படுகின்றன. முதன்மைத் திரையில் ஆப்ஸ் ஐகானைத் தட்டியும் மாற்றலாம்.</string>
-    <string name="app_state_no_internet_shared_uid">இந்த ஆப்ஸுடன் Android பயனர் ஐடியைப் பகிர்ந்துகொள்ளும் %1$s-க்கும் இது பொருந்தும்.</string>
-    <string name="app_state_bypassed">TrackerControl-ஐத் தவிர்</string>
-    <string name="app_state_bypassed_explanation">ஆப்ஸ் TrackerControl-ஐத் தவிர்த்து நேரடியாக இணைகிறது. அதற்காக எதுவும் கண்காணிக்கப்படுவதோ தடுக்கப்படுவதோ இல்லை. ஆப்ஸ் இன்னும் வேலை செய்யாவிட்டால் கடைசி வழியாக இதைப் பயன்படுத்தவும்.\n\nகுறிப்பு: இது வேலை செய்ய Android VPN அமைப்புகளில் \"VPN இல்லாத இணைப்புகளைத் தடு\" முடக்கப்பட்டிருக்க வேண்டும்.</string>
-    <!-- Per-app protection screen -->
-    <!-- Protection state and remote-VPN routing shown together on one row -->
-    <!-- Tracker library screen, reached from the summary row on the Trackers tab -->
-    <!-- Onboarding -->
-    <!-- Insights Screen -->
-    <!-- Joins the alternative domain names of one tracker, e.g. "example.com or example.net". Keep the surrounding spaces. -->
-    <!-- What's New onboarding slide (not translated) -->
-    <!-- Accessibility labels -->
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_description">பயன்பாடுகள் பயனர் நடத்தையைப் பற்றி மேற்கொள்ளும் பரவலான, தொடர்ச்சியான, மறைக்கப்பட்ட தரவு சேகரிப்பைக் (\'கண்காணிப்பு\') கண்காணித்து கட்டுப்படுத்த TrackerControl உதவுகிறது.</string>
     <string name="app_copyright">Copyright \u00A9 2019–2022 Konrad Kollnig\n\nTrackerControl, Marcel Bokhorst (M66B) உருவாக்கிய NetGuard-ஐ அடிப்படையாகக் கொண்டது.</string>
     <string name="app_android">TrackerControl-க்கு Android 5.1 அல்லது அதற்குப் பிந்தைய பதிப்பு தேவை</string>
@@ -85,17 +46,15 @@
     <string name="unidentified_app_uid">அடையாளம் காணப்படாத பயன்பாடு (UID %1$d)</string>
     <string name="tab_timeline">காலவரிசை</string>
     <string name="tab_apps">பயன்பாடுகள்</string>
-    <string name="tab_vpn">VPN</string>
     <string name="timeline_section_last_hour">கடந்த மணி</string>
     <string name="timeline_section_today">இன்று</string>
     <string name="timeline_section_yesterday">நேற்று</string>
     <string name="timeline_section_this_week">இந்த வாரம்</string>
-    <string name="timeline_more_trackers">மேலும் %d</string>
+    <!-- Keep as a string: call-site/API migration and multi-count grammar are intentionally separate. -->
+    <string name="timeline_more_trackers" tools:ignore="PluralsCandidate">மேலும் %d</string>
     <string name="timeline_tracker_blocked">தடுக்கப்பட்டது</string>
     <string name="timeline_tracker_allowed">அனுமதிக்கப்பட்டது</string>
-    <string name="insights_overview_status">%1$s %2$s · %3$s %4$s</string>
-    <string name="insights_overview_status_share">%1$s (%2$s)</string>
-    <string name="timeline_insights_status">%1$s %2$s · %3$s %4$s</string>
+    <!-- A blocked/allowed label followed by its share of all tracking attempts. -->
     <string name="feed_section_last_contact">கடைசித் தொடர்பு %s</string>
     <plurals name="feed_show_more_companies">
         <item quantity="one">மேலும் %d நிறுவனத்தைக் காட்டு</item>
@@ -110,7 +69,8 @@
     <string name="feed_company_collapsed">சுருக்கப்பட்டது</string>
     <string name="feed_essential_explainer">பயன்பாடுகளுக்குத் தேவை — %s தொடர்ந்து இயங்க அனுமதிக்கப்பட்டது</string>
     <string name="feed_essential_explainer_blocked">பயன்பாடுகளுக்குத் தேவை — இதைத் தடுப்பது %s-ஐ செயலிழக்கச் செய்யலாம்</string>
-    <string name="timeline_summary_mixed">%1$d தடுக்கப்பட்டது · %2$d அனுமதிக்கப்பட்டது</string>
+    <!-- Keep as a string: call-site/API migration and multi-count grammar are intentionally separate. -->
+    <string name="timeline_summary_mixed" tools:ignore="PluralsCandidate">%1$d தடுக்கப்பட்டது · %2$d அனுமதிக்கப்பட்டது</string>
     <plurals name="timeline_trackers_blocked">
         <item quantity="one">%d டிராக்கர் தடுக்கப்பட்டது</item>
         <item quantity="other">%d டிராக்கர்கள் தடுக்கப்பட்டன</item>
@@ -179,9 +139,6 @@
     <string name="summary_include_all_tracking">அனைத்து பயன்பாடுகளுக்குமான டிராக்கர் கண்காணிப்பை மீண்டும் இயக்கு.</string>
     <string name="setting_block_domains">hosts கோப்பை இயக்கு</string>
     <string name="setting_rcode">hosts தடுப்பு பதில்: %s</string>
-    <string name="setting_vpn4">VPN IPv4: %s</string>
-    <string name="setting_vpn6">VPN IPv6: %s</string>
-    <string name="setting_dns">VPN DNS: %s</string>
     <string name="setting_validate">சரிபார்ப்பு இடம்: %s</string>
     <string name="setting_ttl">குறைந்தபட்ச DNS TTL: %s வி</string>
     <string name="setting_socks5_enabled">SOCKS5 ப்ராக்ஸியைப் பயன்படுத்து</string>
@@ -208,6 +165,7 @@
     <string name="setting_pcap_record_size">PCAP பதிவு அளவு: %s B</string>
     <string name="setting_pcap_file_size">PCAP அதிகபட்சக் கோப்பு அளவு: %s MB</string>
     <string name="setting_watchdog">காவல்கண்காணி: ஒவ்வொரு %s நிமிடங்களுக்கும்</string>
+    <!-- Secure DNS (DoH) -->
     <string name="setting_doh_enabled">பாதுகாப்பான DNS (DoH)</string>
     <string name="summary_doh_enabled">DNS-over-HTTPS-ஐப் பயன்படுத்தி DNS வினவல்களை மறையாக்கவும். WireGuard செயலில் இருக்கும்போது தானாக இடைநிறுத்தப்படும்; ஏனெனில் அந்த வினவல்கள் WireGuard சுரங்கத்தைப் பயன்படுத்துகின்றன.</string>
     <string name="warning_beta">பீட்டா அம்சம். எதிர்பார்த்தபடி செயல்படாமல் இருக்கலாம்.</string>
@@ -215,6 +173,7 @@
     <string name="summary_doh_endpoint">DNS-over-HTTPS வினவல்களுக்கான HTTPS URL</string>
     <string name="setting_doh_dns_fallback">DNS மாற்றுவழி</string>
     <string name="summary_doh_dns_fallback">DoH கிடைக்காதபோது வழக்கமான (மறையாக்கப்படாத) DNS-ஐப் பயன்படுத்து. இதை முடக்கினால் DoH சேவையகம் செயலிழந்தபோது பயன்பாடுகள் பாதிக்கப்படலாம்.</string>
+    <!-- Block DNS-over-TLS (DoT) -->
     <string name="setting_block_dot">Android-ன் Private DNS-ஐத் தடு</string>
     <string name="summary_block_dot">Android-ன் Private DNS இயக்கப்பட்டால், TC எந்தக் கண்காணிப்பையும் கண்டறிய முடியாது; சரியாகவும் செயல்படாது.</string>
     <string name="setting_stats_frequency">மாதிரி இடைவெளி: %s ms</string>
@@ -256,7 +215,7 @@
     <string name="msg_wg_profile_empty">இன்னும் சுயவிவரங்கள் இல்லை</string>
     <string name="msg_wg_profile_active">செயலில் உள்ளது</string>
     <string name="msg_wg_profile_set_active">செயலில் உள்ளதாக அமை</string>
-    <string name="msg_wg_profile_config_hint">[Interface]\nPrivateKey = …\nAddress = …\n\n[Peer]\nPublicKey = …\nAllowedIPs = 0.0.0.0/0, ::/0\nEndpoint = …</string>
+    <string name="msg_wg_profile_config_hint" tools:ignore="TypographyEllipsis">[Interface]\nPrivateKey = …\nAddress = …\n\n[Peer]\nPublicKey = …\nAllowedIPs = 0.0.0.0/0, ::/0\nEndpoint = …</string>
     <string name="msg_wg_profile_delete_confirm">இந்த WireGuard சுயவிவரத்தை நீக்கவா?</string>
     <string name="msg_wg_profile_scan_hint">உங்கள் VPN வழங்குநர் காட்டும் WireGuard QR குறியீட்டை நோக்கிக் கேமராவைப் பிடிக்கவும். ஸ்கேன் உங்கள் சாதனத்திலேயே நடைபெறும்.</string>
     <string name="msg_wg_profile_scan_no_camera">ஸ்கேன் செய்ய இந்தச் சாதனத்தில் கேமரா இல்லை</string>
@@ -281,27 +240,17 @@
     <string name="msg_wg_mullvad_countries_failed">Mullvad நாடுகளை ஏற்ற முடியவில்லை: %s</string>
     <string name="msg_wg_proton_note">Proton-ன் ஆவணப்படுத்தப்பட்ட மூன்றாம் தரப்பு அமைப்பு பதிவிறக்கக்கூடிய WireGuard உள்ளமைவுகளைப் பயன்படுத்துகிறது. TrackerControl-க்கு உங்கள் Proton நற்சான்றுகள் தேவையில்லை; உள்ளமைவைத் தானாகப் புதுப்பிக்கவும் முடியாது.\n\naccount.protonvpn.com-இல் உள்நுழைந்து, Downloads → WireGuard configuration என்பதற்குச் சென்று, உள்ளமைவைப் பதிவிறக்கவும். அதை உரைத் திருத்தியில் திறந்து, உள்ளடக்கத்தை இங்கே நகலெடுத்து ஒட்டவும்.</string>
     <string name="msg_wg_proton_open_dashboard">Proton VPN டாஷ்போர்டைத் திற</string>
-    <string name="vpn_status_mullvad">Mullvad</string>
     <string name="vpn_status_relay">ரிலே: %s</string>
     <string name="vpn_status_wireguard_connected">WireGuard இணைக்கப்பட்டது</string>
     <string name="vpn_status_disconnected">இணைக்கப்படவில்லை</string>
-    <string name="vpn_provider_mullvad">Mullvad VPN</string>
-    <string name="vpn_provider_ivpn">IVPN</string>
     <string name="vpn_intro_title">VPN முன்னோட்டம்</string>
     <string name="vpn_intro_body">VPN உங்கள் இணையப் போக்குவரத்தை மற்றொரு சேவையகம் வழியாக அனுப்பும். இது இணையதளங்களிடமிருந்தும் நெட்வொர்க் வழங்குநரிடமிருந்தும் உங்கள் IP முகவரியை மறைத்து, உங்கள் இணைப்புக்கான நாட்டைத் தேர்ந்தெடுக்க உதவும். இந்தத் தாவல் புதியது; எனவே இதை முன்னோட்டமாகக் கருதவும்.</string>
-    <string name="vpn_intro_mullvad_title">Mullvad</string>
     <string name="vpn_intro_mullvad_body">தனியுரிமையை மையமாகக் கொண்ட VPN வழங்குநர். இதன் விலை மாதத்திற்கு €5; மின்னஞ்சல் முகவரிகளுக்குப் பதிலாக கணக்கு எண்களைப் பயன்படுத்துகிறது. கணக்கு எண்ணை உள்ளிட்டு, TrackerControl-இல் ஒரு நாட்டைத் தேர்ந்தெடுக்கவும்.</string>
-    <string name="vpn_intro_ivpn_title">IVPN</string>
     <string name="vpn_intro_ivpn_body">WireGuard ஆதரவுடன் தனியுரிமையை மையமாகக் கொண்ட VPN வழங்குநர். IVPN கணக்கு ID-யை உள்ளிட்டு, TrackerControl-இல் ஒரு நாட்டைத் தேர்ந்தெடுக்கவும்.</string>
-    <string name="vpn_intro_proton_title">Proton VPN</string>
     <string name="vpn_intro_proton_body">உங்கள் Proton VPN கணக்கிலிருந்து WireGuard உள்ளமைவைப் பதிவிறக்கி TrackerControl-இல் ஒட்டவும். உங்கள் Proton நற்சான்றுகள் இங்கே ஒருபோதும் உள்ளிடப்படாது.</string>
-    <string name="vpn_intro_wireguard_title">WireGuard</string>
     <string name="vpn_intro_wireguard_body">வேறொரு VPN வழங்குநர், உங்கள் சொந்தச் சேவையகம் அல்லது பணியிடத்திலிருந்து WireGuard உள்ளமைவு ஏற்கெனவே இருந்தால் இதைப் பயன்படுத்தவும்.</string>
     <string name="vpn_enter_mullvad_account">கணக்கு எண்ணை உள்ளிடவும்</string>
     <string name="vpn_enter_ivpn_account">கணக்கு ID-யை உள்ளிடவும்</string>
-    <string name="vpn_mode_mullvad">Mullvad</string>
-    <string name="vpn_mode_ivpn">IVPN</string>
-    <string name="vpn_mode_wireguard">WireGuard</string>
     <string name="vpn_settings">Mullvad அமைப்புகள்</string>
     <string name="vpn_settings_title">Mullvad அமைப்புகள்</string>
     <string name="vpn_ivpn_settings">IVPN அமைப்புகள்</string>
@@ -352,7 +301,8 @@
     <string name="msg_revoked">TrackerControl துண்டிக்கப்பட்டது; இது வேறொரு VPN பயன்பாடு அல்லது கணினியால் ஏற்பட்டிருக்கலாம். சாத்தியமானபோது தானாக மீண்டும் இணையும்.</string>
     <string name="msg_installed">%1$s-இல் சிக்கல்களா?</string>
     <string name="msg_installed_description">பயன்பாடு நிறுவனங்களைத் தொடர்புகொள்ள அனுமதி</string>
-    <string name="msg_installed_tracker_libraries_found">%d டிராக்கர் நூலகங்கள் உள்ளன</string>
+    <!-- Keep as a string: call-site/API migration and multi-count grammar are intentionally separate. -->
+    <string name="msg_installed_tracker_libraries_found" tools:ignore="PluralsCandidate">%d டிராக்கர் நூலகங்கள் உள்ளன</string>
     <string name="msg_completed">செயல் முடிந்தது</string>
     <string name="msg_no_file_manager">கோப்பைத் தேர்ந்தெடுக்க கோப்பு மேலாளர் எதுவும் இல்லை.</string>
     <string name="msg_no_browser">இணைப்பைத் திறக்க உலாவிப் பயன்பாடு எதுவும் இல்லை.</string>
@@ -382,10 +332,6 @@
     <string name="msg_start_forward">%1$s போர்ட் %2$d-இலிருந்து \'%5$s\'-இன் %3$s:%4$d-க்கு முன்னனுப்பலைத் தொடங்கவா?</string>
     <string name="msg_stop_forward">%1$s போர்ட் %2$d-இன் முன்னனுப்பலை நிறுத்தவா?</string>
     <string name="msg_log_logcat">எச்சரிக்கை: ADB பதிவேற்றம் காரணமாகத் தடுப்பு முடக்கப்பட்டுள்ளது.</string>
-    <string-array name="protocolNames">
-        <item>UDP</item>
-        <item>TCP</item>
-    </string-array>
     <string name="menu_add">சேர்</string>
     <string name="menu_delete">நீக்கு</string>
     <string name="setting_forwarding">போர்ட் முன்னனுப்பல்</string>
@@ -413,16 +359,19 @@
     <string name="title_log_whois">%1$s-க்கான Whois</string>
     <string name="title_log_port">போர்ட் %1$d</string>
     <string name="title_log_copy">நகலெடு</string>
+    <!-- App Overview -->
     <string name="tracked_app_icon">இந்தப் பயன்பாட்டுக்கான இணைய அணுகலை முடக்கு</string>
     <string name="tracked_app_name">பயன்பாட்டுப் பெயர்</string>
+    <!-- Dynamic content descriptions for the app-icon Internet toggle in the app list (issue #231) -->
     <string name="toggle_block_internet_description">%1$s-க்கான இணைய அணுகலைத் தடு</string>
     <string name="toggle_allow_internet_description">%1$s-க்கான இணைய அணுகலை அனுமதி</string>
     <string name="toggle_no_internet_description">%1$s-க்கு இணைய அணுகல் இல்லை</string>
     <string name="toggle_internet_unavailable_description">%1$s-க்கான இணைய அணுகல் கட்டுப்பாடு கிடைக்கவில்லை</string>
+    <!-- Dynamic content description for the per-category tracker-blocking switch -->
     <string name="toggle_block_category_description">%1$s வகைக்கான டிராக்கர் தடுப்பு</string>
+    <!-- Dynamic content description for the home-screen widget toggle (accessibility follow-up, issue #636) -->
     <string name="widget_toggle_enable_description">டிராக்கர் தடுப்பை இயக்கு</string>
     <string name="widget_toggle_disable_description">டிராக்கர் தடுப்பை முடக்கு</string>
-    <string name="accessibility_stat_description">%1$s, %2$s</string>
     <string name="accessibility_tracker_blocking_enabled">டிராக்கர் தடுப்பு இயக்கப்பட்டது</string>
     <string name="accessibility_tracker_blocking_disabled">டிராக்கர் தடுப்பு முடக்கப்பட்டது</string>
     <plurals name="n_companies_found_week">
@@ -444,11 +393,13 @@
     <string name="exporting">ஏற்றுமதி செய்கிறது..</string>
     <string name="export_failed">ஏற்றுமதி தோல்வியடைந்தது</string>
     <string name="exported">சேமிப்பகத்திற்கு ஏற்றுமதி செய்யப்பட்டது!</string>
+    <!-- App Details -->
     <string name="title_activity_detail">விவரங்கள்</string>
     <string name="tab_trackers">டிராக்கர்கள்</string>
     <string name="tab_countries">நாடுகள்</string>
     <string name="tab_actions">தரவு உரிமைகள்</string>
     <string name="app_info">பயன்பாட்டை நிர்வகி</string>
+    <!-- Actions -->
     <string name="block_tracking">டிராக்கர்களைத் தடு</string>
     <string name="block_tracking_description">பல பயன்பாடுகள் மூன்றாம் தரப்பினருக்கு தரவை அனுப்புகின்றன; இவர்களை டிராக்கர்கள் என்கிறோம். இந்த நெட்வொர்க் பரிமாற்றங்களைத் தேர்ந்தெடுத்து தடுக்க TrackerControl உதவுகிறது. இருப்பினும் இதை அறிவுடன் பயன்படுத்தவும், குறிப்பாக விளம்பரம் போன்ற இந்தச் சேவைகளையே பயன்பாட்டு உருவாக்குநர்கள் சார்ந்திருக்கின்றனர்.</string>
     <string name="personalised_ads">தனிப்பயனாக்கலைக் கட்டுப்படுத்து</string>
@@ -463,11 +414,42 @@
     <string name="request_data">தரவைக் கோரு</string>
     <string name="request_deletion">நீக்கத்தைக் கோரு</string>
     <string name="contact_developer">உருவாக்குநர்</string>
-    <string name="contact_playstore">Google</string>
     <string name="contact_officials">EU அதிகாரிகள்</string>
-    <string name="google_dpo_mail">data-protection-office@google.com</string>
-    <string name="dpas_overview_url">https://edpb.europa.eu/about-edpb/board/members</string>
     <string name="subject_request_data">GDPR தரவுப் பொருள் அணுகல் கோரிக்கை</string>
+    <string name="body_request_data"><![CDATA[சம்பந்தப்பட்டவருக்கு:\n
+\n
+\n
+Android பயன்பாடு %1$s (ID: %2$s)-ன் தரவுக் கட்டுப்பாட்டாளராகிய நீங்கள் என்னைப் பற்றிய தனிப்பட்ட தரவைச் செயலாக்குகிறீர்களா என்பதை உறுதிப்படுத்துமாறு கோருகிறேன்.\n
+ஐரோப்பிய ஒன்றியத்தின் பொது தரவுப் பாதுகாப்பு ஒழுங்குமுறை (GDPR) கட்டுரை 15-ல் குறிப்பிடப்பட்டுள்ள தேவையான அனைத்து தகவல்களையும் வழங்கவும், அவற்றில்:\n
+\n
+• எனது தனிப்பட்ட தரவின் நகல்;\n
+• செயலாக்கத்தின் நோக்கங்கள்;\n
+• தொடர்புடைய தனிப்பட்ட தரவு வகைகள்;\n
+• எனது தனிப்பட்ட தரவை நீங்கள் வெளிப்படுத்தும் பெறுநர்களும் நீங்கள் வழங்கும் பாதுகாப்பு நடவடிக்கைகளும்;\n
+• எனது தனிப்பட்ட தரவைச் சேமிக்கும் காலம் அல்லது அந்தக் காலத்தை நிர்ணயிக்கப் பயன்படுத்திய அளவுகோல்கள்;\n
+• எனது தனிப்பட்ட தரவின் மூலத்தைப் பற்றிய தகவல்; மற்றும்\n
+• தானியங்கி முடிவெடுப்பு (சுயவிவர உருவாக்கம் உட்பட) இருப்பதும், இருந்தால்:\n
+    - முடிவெடுப்பு செயல்முறையில் உள்ள தர்க்கம்;\n
+    - எனக்கான முக்கியத்துவமும் எதிர்பார்க்கப்படும் விளைவுகளும்;\n
+    - பிழைகள், பாகுபாடு மற்றும் வேறுபடுத்தலைத் தடுக்க நீங்கள் எடுத்த நடவடிக்கைகள்; மற்றும்\n
+    - எனது கருத்தை எவ்வாறு தெரிவித்து ஒரு முடிவைச் சவால் செய்யலாம் என்பதற்கான விளக்கம்.\n
+\n
+உங்கள் சார்பாக தனிப்பட்ட தரவைச் செயலாக்கும் எந்தச் செயலிகளும் உட்பட, நீங்கள் மேற்கொள்ளும் எனது தனிப்பட்ட தரவின் எந்தச் செயலாக்கத்திற்கும் இந்தக் கோரிக்கை பொருந்தும்.\n
+\n
+மின்னஞ்சல் மூலம் பாதுகாப்பான வழியில் பதிலளிக்கவும். எனது கோரிக்கை கிடைத்த நாளிலிருந்து ஒரு மாதத்திற்குள் உங்கள் பதிலைப் பெறுவேன் என எதிர்பார்க்கிறேன்.\n
+\n
+உண்மையுடன்,\n\n]]></string>
+    <string name="body_delete_data"><![CDATA[சம்பந்தப்பட்டவருக்கு:\n
+\n
+\n
+ஐரோப்பிய ஒன்றியத்தின் பொது தரவுப் பாதுகாப்பு ஒழுங்குமுறை (GDPR) கட்டுரை 17-ல் குறிப்பிடப்பட்டுள்ளபடி, தரவை அழிக்க எனக்குள்ள உரிமையைப் பயன்படுத்துகிறேன். Android பயன்பாடு %1$s (ID: %2$s)-ன் தரவுக் கட்டுப்பாட்டாளராகிய நீங்கள், என்னைப் பற்றி செயலாக்கும் பின்வரும் தனிப்பட்ட தரவைத் தேவையற்ற தாமதமின்றி அழிக்குமாறு கோருகிறேன்:\n
+• அனைத்து தரவும்.\n
+\n
+தனிப்பட்ட தரவைச் செயலாக்குவதற்கான எனது ஒப்புதலை நான் திரும்பப் பெற்றுள்ளதே எனது அழிப்புக் கோரிக்கைக்கான காரணம். உங்கள் சார்பாக தனிப்பட்ட தரவைச் செயலாக்கும் எந்தச் செயலிகளும் உட்பட, நீங்கள் மேற்கொள்ளும் எனது தனிப்பட்ட தரவின் எந்தச் செயலாக்கத்திற்கும் இந்தக் கோரிக்கை பொருந்தும்.\n
+\n
+மின்னஞ்சல் மூலம் பாதுகாப்பான வழியில் பதிலளிக்கவும். எனது கோரிக்கை கிடைத்த நாளிலிருந்து ஒரு மாதத்திற்குள் உங்கள் பதிலைப் பெறுவேன் என எதிர்பார்க்கிறேன்.\n
+\n
+உண்மையுடன்,\n\n]]></string>
     <string name="crash_dialog_text">மன்னிக்கவும். TrackerControl இப்போது செயலிழந்தது.. விவரங்களுடன் எங்களுக்கு மின்னஞ்சல் அனுப்புவீர்களா?</string>
     <string name="crash_dialog_comment">கருத்துகள் ஏதேனும் உள்ளதா?</string>
     <string name="instructions_monitoring_private_dns">சுவிட்சை மாற்றி சில பயன்பாடுகளுடன் தொடர்புகொள்ளவும். Private DNS முடக்கப்பட்டிருக்க வேண்டும்.</string>
@@ -508,15 +490,39 @@
     <string name="onboarding_blockingmode_strict_desc">அத்தியாவசியச் சேவைகள் மற்றும் தெளிவற்ற டொமைன்கள் உட்பட அனைத்தையும் தடுக்கிறது. குறிப்பிடத்தக்க பயன்பாடு செயலிழப்பு — பல பயன்பாடுகளுக்கு குறைந்த கட்டுப்பாடுள்ள பாதுகாப்பு அமைப்பு தேவைப்படும்.</string>
     <string name="onboarding_blockingmode_research_label">ஆய்வு</string>
     <string name="onboarding_blockingmode_research_desc">டிராக்கர் தடுப்பு இல்லை. பரிமாற்றங்களை ADB-யில் பதிவுசெய்து, சிறந்த ஹோஸ்ட்பெயர் கண்டறிதலுக்காக SNI பிரித்தெடுப்பை இயக்குகிறது. ஆய்வுக்காக மட்டும்: இது உங்கள் IP முகவரியை டிராக்கர் சேவையகங்களுக்குக் கசியச் செய்யும்.</string>
+    <!-- Per-app remote VPN routing -->
+    <string name="setting_wg_route_mode">தொலைநிலை VPN வழியாக அனுப்பு</string>
+    <string name="summary_wg_route_mode">எந்த ஆப்ஸ் தொலைநிலை VPN வழியாகச் செல்லும். செல்லாதவையும் முழுமையாகக் கண்காணிக்கப்பட்டு தடுக்கப்படுகின்றன — அவை இந்தச் சாதனத்தின் சொந்த நெட்வொர்க்கிலிருந்து இணைகின்றன.</string>
+    <string name="wg_route_mode_all">எல்லா ஆப்ஸும்</string>
+    <string name="wg_route_mode_selected">தேர்ந்தெடுத்த ஆப்ஸ் மட்டும்</string>
+    <string name="app_route_through">தொலைநிலை VPN வழியாக</string>
+    <string name="app_route_through_explanation">இந்த ஆப்ஸ் உங்கள் தொலைநிலை VPN வழியாக இணைகிறது; உங்கள் நெட்வொர்க்குக்குப் பதிலாக VPN அதன் போக்குவரத்தைப் பார்க்கிறது.</string>
+    <string name="app_route_direct">இந்தச் சாதனத்திலிருந்து நேரடியாக</string>
+    <string name="app_route_direct_explanation">இந்த ஆப்ஸ் உங்கள் சொந்த நெட்வொர்க்கிலிருந்து இணைகிறது. டிராக்கர் கண்காணிப்பும் தடுப்பும் தொடர்ந்து பொருந்தும். அதன் DNS வினவல்கள் VPN-க்குப் பதிலாக உங்கள் நெட்வொர்க்கின் தீர்ப்பானுக்குச் செல்கின்றன, மேலும் அது இந்தச் சாதனத்தின் உண்மையான முகவரியைப் பார்க்கிறது — சில ஆப்ஸுக்கு இது தேவை, எடுத்துக்காட்டாக உள்ளூர் சாதனங்களை அணுகவோ captive portal-ஐச் சரிபார்க்கவோ.</string>
+    <string name="app_route_unavailable_no_vpn">தொலைநிலை VPN எதுவும் அமைக்கப்படவில்லை, எனவே எல்லாப் போக்குவரத்தும் ஏற்கெனவே நேரடியாக இந்தச் சாதனத்திலிருந்து செல்கிறது.</string>
+    <string name="app_route_unavailable_bypassed">இந்த ஆப்ஸ் TrackerControl-ஐ முழுமையாகத் தவிர்க்கிறது, எனவே அனுப்ப எந்தப் போக்குவரத்தும் இல்லை.</string>
+    <string name="app_route_unavailable_partial_routes">உங்கள் தொலைநிலை VPN எல்லாப் போக்குவரத்தையும் எடுத்துச் செல்வதில்லை (அதன் AllowedIPs முழு சுரங்கம் அல்ல). வழிகள் எல்லா ஆப்ஸாலும் பகிரப்படுவதால், ஆப்ஸ்வாரி வழியமைப்புக்கு முழு சுரங்கம் தேவை.</string>
+    <!-- Per-app protection state -->
     <string name="app_state_heading">தடுப்பு முறை</string>
     <string name="app_state_title_minimal">குறைந்தபட்சத் தடுப்பு</string>
     <string name="app_state_title_standard">தரநிலைத் தடுப்பு</string>
     <string name="app_state_title_strict">கடுமையான தடுப்பு</string>
     <string name="app_state_subtitle_misbehaving">பயன்பாடு சரியாகச் செயல்படவில்லையா? இங்கே குறைந்தபட்சத் தடுப்புக்கு மாற்றவும்.</string>
+    <string name="app_state_protected">பாதுகாக்கப்பட்டது</string>
+    <string name="app_state_protected_explanation">இந்த ஆப்ஸுக்கான டிராக்கர்கள் தடுக்கப்பட்டு பதிவு செய்யப்படுகின்றன.</string>
     <string name="app_state_essential_only">குறைந்தபட்சத் தடுப்பு மட்டும்</string>
     <string name="app_state_essential_only_explanation">குறைந்தபட்ச முறை தடுக்கும் உறுதிசெய்யப்பட்ட டிராக்கர்களை மட்டும் தடுக்கிறது. பிற டிராக்கர்கள் பதிவு செய்யப்படுகின்றன, ஆனால் அனுமதிக்கப்படுகின்றன. தரநிலைத் தடுப்பு பயன்பாட்டைச் செயலிழக்கச் செய்தால் இதைப் பயன்படுத்தவும்.</string>
+    <string name="app_state_trackers_allowed">டிராக்கர்கள் அனுமதிக்கப்பட்டன</string>
+    <string name="app_state_trackers_allowed_explanation">ஆப்ஸ் தொடர்ந்து TrackerControl வழியாகச் செல்கிறது, ஆனால் அதன் டிராக்கர்கள் தடுக்கப்படுவதுமில்லை, பதிவு செய்யப்படுவதுமில்லை. தடுப்பதால் ஆப்ஸ் வேலை செய்யாவிட்டால் இதைப் பயன்படுத்தவும்.</string>
+    <string name="app_state_no_internet">இணையம் இல்லை</string>
+    <string name="app_state_no_internet_explanation">இந்த ஆப்ஸின் அனைத்து இணைப்புகளும் தடுக்கப்படுகின்றன. முதன்மைத் திரையில் ஆப்ஸ் ஐகானைத் தட்டியும் மாற்றலாம்.</string>
+    <string name="app_state_no_internet_shared_uid">இந்த ஆப்ஸுடன் Android பயனர் ஐடியைப் பகிர்ந்துகொள்ளும் %1$s-க்கும் இது பொருந்தும்.</string>
+    <string name="app_state_bypassed">TrackerControl-ஐத் தவிர்</string>
+    <string name="app_state_bypassed_explanation">ஆப்ஸ் TrackerControl-ஐத் தவிர்த்து நேரடியாக இணைகிறது. அதற்காக எதுவும் கண்காணிக்கப்படுவதோ தடுக்கப்படுவதோ இல்லை. ஆப்ஸ் இன்னும் வேலை செய்யாவிட்டால் கடைசி வழியாக இதைப் பயன்படுத்தவும்.\n\nகுறிப்பு: இது வேலை செய்ய Android VPN அமைப்புகளில் \"VPN இல்லாத இணைப்புகளைத் தடு\" முடக்கப்பட்டிருக்க வேண்டும்.</string>
+    <!-- Per-app protection screen -->
     <string name="protection_title">பாதுகாப்பு</string>
     <string name="protection_route_heading">தொலைநிலை VPN</string>
+    <!-- Protection state and remote-VPN routing shown together on one row -->
     <string name="protection_app_not_working">பயன்பாடு வேலை செய்யவில்லையா? இங்கே தட்டவும்</string>
     <plurals name="protection_paused_resumes">
         <item quantity="one">இடைநிறுத்தப்பட்டது — %d நிமிடத்தில் மீண்டும் தொடங்கும்</item>
@@ -558,6 +564,7 @@
     <string name="analyze_tracker_libraries">டிராக்கர் நூலகங்களைப் பகுப்பாய்வு செய்</string>
     <string name="update_analysis">பகுப்பாய்வைப் புதுப்பி</string>
     <string name="analysis_outdated_version">\n\nகுறிப்பு: பகுப்பாய்வு முந்தைய பயன்பாட்டுப் பதிப்பைச் சார்ந்தது. ஒருங்கிணைக்கப்பட்ட டிராக்கர் நூலகங்கள் மாறியிருக்கலாம்.</string>
+    <!-- Tracker library screen, reached from the summary row on the Trackers tab -->
     <string name="libraries_title">டிராக்கர் நூலகங்கள்</string>
     <string name="libraries_row_heading">டிராக்கர் நூலகங்கள்</string>
     <string name="libraries_none_found">பயன்பாட்டுக் குறியீட்டில் டிராக்கர் நூலகங்கள் எதுவும் இல்லை</string>
@@ -595,6 +602,7 @@
     <string name="msg_private_dns_bypass_allowed_notify">சில பயன்பாடுகள் மறையாக்கப்பட்ட DNS-ஐப் பயன்படுத்துகின்றன; அவற்றின் டிராக்கர் தொடர்புகள் TrackerControl-க்குத் தெரியாது.</string>
     <string name="setting_monitor_system">கணினி பயன்பாடுகளைக் கண்காணி</string>
     <string name="summary_monitor_system">டிராக்கர்களைக் கண்டறிந்து தடுக்க, கணினி பயன்பாடுகளை (Play Services, கேரியர் சேவைகள் போன்றவை) VPN வழியாகச் செலுத்தி, பயன்பாடுகளின் பட்டியலில் காட்டவும்.\n\nஇயல்பாக முடக்கப்பட்டுள்ளது: கணினி பயன்பாடுகளை விலக்குவது மின்கலத்திற்கு உகந்தது; அவற்றின் பின்னணி போக்குவரத்து இனி VPN-ஐ விழிக்கச் செய்யாது. இதை இயக்குவது Android VPN அமைப்புகளில் உள்ள “VPN இல்லாத இணைப்புகளைத் தடு” என்பதுடன் முரண்படும்; அது முடக்கப்பட்டிருக்க வேண்டும்.</string>
+    <!-- Onboarding -->
     <string name="title_next">அடுத்து</string>
     <string name="title_previous">முந்தையது</string>
     <string name="title_finish">தொடங்குக</string>
@@ -619,40 +627,7 @@
     <string name="onboarding_lockdown_sure">Lockdown இயக்கப்பட்ட நிலையில் தொடர்வது இணைப்புச் சிக்கல்களை ஏற்படுத்தலாம். நிச்சயமாகவா?</string>
     <string name="onboarding_action_disabled">முடக்கப்பட்டது</string>
     <string name="onboarding_action_granted">வழங்கப்பட்டது</string>
-    <string name="body_request_data"><![CDATA[சம்பந்தப்பட்டவருக்கு:\n
-\n
-\n
-Android பயன்பாடு %1$s (ID: %2$s)-ன் தரவுக் கட்டுப்பாட்டாளராகிய நீங்கள் என்னைப் பற்றிய தனிப்பட்ட தரவைச் செயலாக்குகிறீர்களா என்பதை உறுதிப்படுத்துமாறு கோருகிறேன்.\n
-ஐரோப்பிய ஒன்றியத்தின் பொது தரவுப் பாதுகாப்பு ஒழுங்குமுறை (GDPR) கட்டுரை 15-ல் குறிப்பிடப்பட்டுள்ள தேவையான அனைத்து தகவல்களையும் வழங்கவும், அவற்றில்:\n
-\n
-• எனது தனிப்பட்ட தரவின் நகல்;\n
-• செயலாக்கத்தின் நோக்கங்கள்;\n
-• தொடர்புடைய தனிப்பட்ட தரவு வகைகள்;\n
-• எனது தனிப்பட்ட தரவை நீங்கள் வெளிப்படுத்தும் பெறுநர்களும் நீங்கள் வழங்கும் பாதுகாப்பு நடவடிக்கைகளும்;\n
-• எனது தனிப்பட்ட தரவைச் சேமிக்கும் காலம் அல்லது அந்தக் காலத்தை நிர்ணயிக்கப் பயன்படுத்திய அளவுகோல்கள்;\n
-• எனது தனிப்பட்ட தரவின் மூலத்தைப் பற்றிய தகவல்; மற்றும்\n
-• தானியங்கி முடிவெடுப்பு (சுயவிவர உருவாக்கம் உட்பட) இருப்பதும், இருந்தால்:\n
-    - முடிவெடுப்பு செயல்முறையில் உள்ள தர்க்கம்;\n
-    - எனக்கான முக்கியத்துவமும் எதிர்பார்க்கப்படும் விளைவுகளும்;\n
-    - பிழைகள், பாகுபாடு மற்றும் வேறுபடுத்தலைத் தடுக்க நீங்கள் எடுத்த நடவடிக்கைகள்; மற்றும்\n
-    - எனது கருத்தை எவ்வாறு தெரிவித்து ஒரு முடிவைச் சவால் செய்யலாம் என்பதற்கான விளக்கம்.\n
-\n
-உங்கள் சார்பாக தனிப்பட்ட தரவைச் செயலாக்கும் எந்தச் செயலிகளும் உட்பட, நீங்கள் மேற்கொள்ளும் எனது தனிப்பட்ட தரவின் எந்தச் செயலாக்கத்திற்கும் இந்தக் கோரிக்கை பொருந்தும்.\n
-\n
-மின்னஞ்சல் மூலம் பாதுகாப்பான வழியில் பதிலளிக்கவும். எனது கோரிக்கை கிடைத்த நாளிலிருந்து ஒரு மாதத்திற்குள் உங்கள் பதிலைப் பெறுவேன் என எதிர்பார்க்கிறேன்.\n
-\n
-உண்மையுடன்,\n\n]]></string>
-    <string name="body_delete_data"><![CDATA[சம்பந்தப்பட்டவருக்கு:\n
-\n
-\n
-ஐரோப்பிய ஒன்றியத்தின் பொது தரவுப் பாதுகாப்பு ஒழுங்குமுறை (GDPR) கட்டுரை 17-ல் குறிப்பிடப்பட்டுள்ளபடி, தரவை அழிக்க எனக்குள்ள உரிமையைப் பயன்படுத்துகிறேன். Android பயன்பாடு %1$s (ID: %2$s)-ன் தரவுக் கட்டுப்பாட்டாளராகிய நீங்கள், என்னைப் பற்றி செயலாக்கும் பின்வரும் தனிப்பட்ட தரவைத் தேவையற்ற தாமதமின்றி அழிக்குமாறு கோருகிறேன்:\n
-• அனைத்து தரவும்.\n
-\n
-தனிப்பட்ட தரவைச் செயலாக்குவதற்கான எனது ஒப்புதலை நான் திரும்பப் பெற்றுள்ளதே எனது அழிப்புக் கோரிக்கைக்கான காரணம். உங்கள் சார்பாக தனிப்பட்ட தரவைச் செயலாக்கும் எந்தச் செயலிகளும் உட்பட, நீங்கள் மேற்கொள்ளும் எனது தனிப்பட்ட தரவின் எந்தச் செயலாக்கத்திற்கும் இந்தக் கோரிக்கை பொருந்தும்.\n
-\n
-மின்னஞ்சல் மூலம் பாதுகாப்பான வழியில் பதிலளிக்கவும். எனது கோரிக்கை கிடைத்த நாளிலிருந்து ஒரு மாதத்திற்குள் உங்கள் பதிலைப் பெறுவேன் என எதிர்பார்க்கிறேன்.\n
-\n
-உண்மையுடன்,\n\n]]></string>
+    <!-- Insights Screen -->
     <string name="insights_title">உங்கள் தனியுரிமை நுண்ணறிவுகள்</string>
     <string name="insights_subtitle_7days">கடந்த 7 நாட்கள்</string>
     <string name="insights_tracking_attempts">தொடர்புகொள்ளப்பட்ட டிராக்கர் ஹோஸ்ட்கள்</string>
@@ -662,19 +637,25 @@ Android பயன்பாடு %1$s (ID: %2$s)-ன் தரவுக் க�
     <string name="insights_apps_with_trackers">டிராக்கர்களைக் கொண்ட பயன்பாடுகள்</string>
     <string name="insights_pervasive_trackers">மிகப் பரவலான டிராக்கர்கள்</string>
     <string name="insights_top_domains">முக்கிய டிராக்கர் டொமைன்கள்</string>
+    <!-- Joins the alternative domain names of one tracker, e.g. "example.com or example.net". Keep the surrounding spaces. -->
     <string name="insights_domain_alias_separator">" அல்லது "</string>
-    <string name="insights_in_apps">%d பயன்பாடுகளில்</string>
+    <!-- Keep as a string: call-site/API migration and multi-count grammar are intentionally separate. -->
+    <string name="insights_in_apps" tools:ignore="PluralsCandidate">%d பயன்பாடுகளில்</string>
     <plurals name="insights_apps_count">
         <item quantity="one">%d பயன்பாட்டில்</item>
         <item quantity="other">%d பயன்பாடுகளில்</item>
     </plurals>
     <string name="insights_no_data">இன்னும் கண்காணிப்புத் தரவு இல்லை. உங்கள் பயன்பாடுகளைப் பயன்படுத்தி மீண்டும் பாருங்கள்!</string>
-    <string name="insights_shocking_fact">இந்த வாரம் உங்கள் பயன்பாடுகள் %2$d டிராக்கர் ஹோஸ்ட்கள் வழியாக %1$d கண்காணிப்பு நிறுவனங்களைத் தொடர்புகொண்டன!</string>
+    <!-- Keep as a string: call-site/API migration and multi-count grammar are intentionally separate. -->
+    <string name="insights_shocking_fact" tools:ignore="PluralsCandidate">இந்த வாரம் உங்கள் பயன்பாடுகள் %2$d டிராக்கர் ஹோஸ்ட்கள் வழியாக %1$d கண்காணிப்பு நிறுவனங்களைத் தொடர்புகொண்டன!</string>
+    <!-- Retained for Play Store copy; call-site/API migration and multi-count grammar are intentionally separate. -->
     <string name="insights_share">நண்பர்களுடன் பகிர்</string>
     <string name="insights_share_trackers_blocked">தடுக்கப்பட்ட டிராக்கர் ஹோஸ்ட்கள்</string>
-    <string name="insights_share_url">TrackerControl.org</string>
-    <string name="insights_share_message">இந்த வாரம் TrackerControl-ஐப் பயன்படுத்தி %2$d நிறுவனங்களின் %1$d டிராக்கர் ஹோஸ்ட்களைத் தடுத்தேன்! உங்கள் தனியுரிமையை மீட்டெடுக்கவும்: https://trackercontrol.org</string>
+    <!-- Keep as a string: call-site/API migration and multi-count grammar are intentionally separate. -->
+    <string name="insights_share_message" tools:ignore="PluralsCandidate">இந்த வாரம் TrackerControl-ஐப் பயன்படுத்தி %2$d நிறுவனங்களின் %1$d டிராக்கர் ஹோஸ்ட்களைத் தடுத்தேன்! உங்கள் தனியுரிமையை மீட்டெடுக்கவும்: https://trackercontrol.org</string>
+    <!-- Retained for Play Store copy; call-site/API migration and multi-count grammar are intentionally separate. -->
     <string name="insights_see_more">மேலும் காண்க →</string>
+    <!-- What's New onboarding slide (not translated) -->
     <string name="title_blocklists">கூடுதல் hosts கோப்புகள்</string>
     <string name="summary_manage_blocklists">இவை மாற்றுவழிக்காக மட்டுமே. கண்காணிப்பின் பின்னாலுள்ள நிறுவனங்களைப் பற்றிய நுண்ணறிவுகளை வழங்கும் சொந்த hosts பட்டியல்கள் TrackerControl-ல் உள்ளன.</string>
     <string name="title_add_blocklist">hosts கோப்பைச் சேர்</string>
@@ -683,13 +664,12 @@ Android பயன்பாடு %1$s (ID: %2$s)-ன் தரவுக் க�
     <string name="msg_invalid_url">தவறான URL</string>
     <string name="msg_apply_blocklists_failed">hosts கோப்புகளைப் பயன்படுத்த முடியவில்லை</string>
     <string name="msg_last_update">கடைசிப் புதுப்பிப்பு: %s</string>
+    <!-- Accessibility labels -->
     <string name="switch_tracker_control_description">டிராக்கர் தடுப்பு</string>
-    <string name="vpn_enabled_switch_description">VPN</string>
     <string name="blocklist_delete_description">தடுப்புப் பட்டியலை நீக்கு</string>
     <string name="blocklist_enable_description">%s தடுப்புப் பட்டியலை இயக்கு</string>
     <string name="log_connection_allowed">அனுமதிக்கப்பட்டது</string>
     <string name="log_connection_blocked">தடுக்கப்பட்டது</string>
-    <string name="log_connection_wifi">Wi-Fi</string>
     <string name="log_connection_other">பிற நெட்வொர்க்</string>
     <string name="log_screen_on">திரை இயக்கத்தில்</string>
 </resources>
