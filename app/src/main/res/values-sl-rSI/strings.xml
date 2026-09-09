@@ -806,4 +806,38 @@ Vaš internetni promet se ne pošilja na oddaljeni strežnik VPN.</string>
     <string name="log_connection_other">Drugo omrežje</string>
     <string name="log_screen_on">Zaslon je vkl.</string>
     <string name="log_app_icon">Ikona programa</string>
+    <string name="body_request_data"><![CDATA[Spoštovani: \n
+\n
+\n
+Kot upravljavca podatkov aplikacije za Android %1$s (ID: %2$s) vas prosim, da potrdite, ali obdelujete kakršne koli osebne podatke o meni.\n
+Če jih, mi prosim posredujte vse zahtevane informacije iz 15. člena Splošne uredbe EU o varstvu podatkov (GDPR), vključno z:\n
+\n
+• kopijo mojih osebnih podatkov;\n
+• nameni obdelave;\n
+• vrstami zadevnih osebnih podatkov;\n
+• prejemniki, ki jim razkrivate moje osebne podatke, in zaščitnimi ukrepi, ki jih zagotavljate;\n
+• obdobjem hrambe mojih osebnih podatkov oziroma merili za določitev tega obdobja;\n
+• informacijami o viru mojih osebnih podatkov; in\n
+• obstojem avtomatiziranega odločanja (vključno z oblikovanjem profilov) ter, če obstaja:\n
+    - logiko, uporabljeno pri odločanju;\n
+    - pomenom in predvidenimi posledicami zame;\n
+    - ukrepi, ki ste jih sprejeli za preprečevanje napak, pristranskosti in diskriminacije; ter\n
+    - pojasnilom, kako lahko izrazim svoje stališče in izpodbijam odločitev.\n
+\n
+Ta zahteva se nanaša na vsako obdelavo mojih osebnih podatkov pri vas, vključno z obdelavo, ki jo v vašem imenu izvajajo obdelovalci.\n
+\n
+Prosimo, odgovor posredujte po varni poti po elektronski pošti. Odgovor pričakujem v enem mesecu od prejema svoje zahteve.\n
+\n
+S spoštovanjem,\n\n]]></string>
+    <string name="body_delete_data"><![CDATA[Spoštovani: \n
+\n
+\n
+Uveljavljam svojo pravico do izbrisa, kot je določena v 17. členu Splošne uredbe EU o varstvu podatkov (GDPR). Kot upravljavca podatkov aplikacije za Android %1$s (ID: %2$s) vas prosim, da brez nepotrebnega odlašanja izbrišete naslednje osebne podatke, ki jih obdelujete o meni:\n
+• Vse podatke.\n
+\n
+Razlog za mojo zahtevo za izbris je, da umikam oziroma sem umaknil/-a svojo privolitev za obdelavo osebnih podatkov. Ta zahteva se nanaša na vsako obdelavo mojih osebnih podatkov pri vas, vključno z obdelavo, ki jo v vašem imenu izvajajo obdelovalci.\n
+\n
+Prosimo, odgovor posredujte po varni poti po elektronski pošti. Odgovor pričakujem v enem mesecu od prejema svoje zahteve.\n
+\n
+S spoštovanjem,\n\n]]></string>
 </resources>

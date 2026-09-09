@@ -479,4 +479,344 @@ Het internetverkeer wordt niet naar een externe VPN-server gestuurd.</string>
     <!-- Joins the alternative domain names of one tracker, e.g. "example.com or example.net". Keep the surrounding spaces. -->
     <!-- What's New onboarding slide (not translated) -->
     <!-- Accessibility labels -->
+    <string name="app_ios"><a href="https://ios.trackercontrol.org">TrackerControl is ook beschikbaar voor iOS</a></string>
+    <string name="timeline_empty_recording_off_title">Registratie van trackers staat uit</string>
+    <string name="timeline_empty_recording_off_subtitle">‘Nieuwe trackers zoeken’ staat uit in de geavanceerde instellingen. Trackers worden nog steeds geblokkeerd, maar niet meer geregistreerd, dus deze tijdlijn blijft leeg. Schakel dit weer in om opnieuw trackeractiviteit te zien.</string>
+    <string name="timeline_empty_recording_unavailable_title">Registratie van trackers niet beschikbaar</string>
+    <string name="timeline_empty_recording_unavailable_subtitle">Deze versie van TrackerControl biedt geen registratie van trackeractiviteit. Blokkeren werkt nog steeds, maar deze tijdlijn blijft leeg.</string>
+    <string name="timeline_open_settings">Instellingen openen</string>
+    <string name="timeline_hint_tap_entry">Werkt een app niet? Tik op de app om de bescherming aan te passen.</string>
+    <string name="timeline_hint_dismiss">Begrepen</string>
+    <string name="unidentified_app_uid">Onbekende app (UID %1$d)</string>
+    <string name="insights_overview_status">%1$s %2$s · %3$s %4$s</string>
+    <string name="insights_overview_status_share">%1$s (%2$s)</string>
+    <string name="timeline_insights_status">%1$s %2$s · %3$s %4$s</string>
+    <string name="feed_section_last_contact">laatste contact: %s</string>
+    <plurals name="feed_show_more_companies">
+        <item quantity="one">Nog %d bedrijf tonen</item>
+        <item quantity="other">Nog %d bedrijven tonen</item>
+    </plurals>
+    <string name="feed_allow_company_in_app">%1$s toestaan in %2$s</string>
+    <string name="feed_block_company_in_app">%1$s blokkeren in %2$s</string>
+    <string name="feed_allowed_by_you">Door jou toegestaan</string>
+    <string name="feed_allowed_shared_ip">Toegestaan · gedeeld IP-adres</string>
+    <string name="feed_monitored">Gemonitord</string>
+    <string name="feed_company_expanded">Uitgeklapt</string>
+    <string name="feed_company_collapsed">Ingeklapt</string>
+    <string name="feed_essential_explainer">Nodig voor apps — toegestaan zodat %s blijft werken</string>
+    <string name="feed_essential_explainer_blocked">Nodig voor apps — blokkeren hiervan kan %s laten stoppen</string>
+    <plurals name="timeline_trackers_blocked">
+        <item quantity="one">%d tracker geblokkeerd</item>
+        <item quantity="other">%d trackers geblokkeerd</item>
+    </plurals>
+    <plurals name="timeline_trackers_allowed">
+        <item quantity="one">%d tracker toegestaan</item>
+        <item quantity="other">%d trackers toegestaan</item>
+    </plurals>
+    <string name="troubleshooting_local_network_title">Toegang tot lokaal netwerk</string>
+    <string name="troubleshooting_local_network_desc">Toestemming is nodig voor lokale DNS-servers, WireGuard-peers en proxy’s.</string>
+    <string name="troubleshooting_local_network_action">Toegang tot lokaal netwerk toestaan</string>
+    <string name="troubleshooting_local_network_ok">Toegang tot lokaal netwerk is toegestaan.</string>
+    <string name="troubleshooting_app_breakage_title">Een app werkt niet meer</string>
+    <string name="troubleshooting_app_breakage_desc">Tik op de app in de hoofdlijst en tik daarna op Bescherming. Probeer eerst ‘Alleen minimaal blokkeren’. Als de app nog steeds problemen heeft, kies dan ‘Trackers toestaan’. Gebruik ‘TrackerControl omzeilen’ alleen als laatste redmiddel.</string>
+    <string name="menu_clear_activity">Geregistreerde activiteit wissen</string>
+    <string name="setting_tcp_mss_clamp">Compatibiliteitsmodus voor tethering</string>
+    <string name="summary_tcp_mss_clamp">Leid al het verkeer via TrackerControl en beperk de grootte van TCP-segmenten om verbindingen via tethering te herstellen die vastlopen of geen internettoegang hebben. Toegang tot het lokale netwerk omzeilt TrackerControl niet meer; de prestaties kunnen afnemen.</string>
+    <string name="setting_exclude_all_tracking">Alle apps uitsluiten van tracking</string>
+    <string name="summary_exclude_all_tracking">Schakel trackingmonitoring voor alle apps uit. Je kunt dit daarna voor afzonderlijke apps weer inschakelen.</string>
+    <string name="setting_include_all_tracking">Alle apps opnemen in tracking</string>
+    <string name="summary_include_all_tracking">Schakel trackingmonitoring voor alle apps opnieuw in.</string>
+    <string name="setting_wg_profile_scan">QR-code scannen</string>
+    <string name="setting_wg_profile_import_file">Uit bestand of archief importeren</string>
+    <string name="setting_wg_proton_setup">Een Proton VPN-configuratie gebruiken</string>
+    <string name="accessibility_wg_profile_edit">WireGuard-profiel %1$s bewerken</string>
+    <string name="accessibility_wg_profile_delete">WireGuard-profiel %1$s verwijderen</string>
+    <string name="summary_wg_enabled">Verbergt het IP-adres van het apparaat. Leidt TCP- en UDP-verkeer via de tunnel. Tijdens storingen zien apps netwerkfouten — de verbinding wordt gesloten en valt niet terug op een rechtstreekse verbinding. Door de server geïnitieerde verbindingen naar de telefoon werken mogelijk niet wanneer de tunnel niet actief is (keepalive is uitgeschakeld om batterij te besparen).</string>
+    <string name="summary_wg_keepalive_when_screen_off">Verstuurt keepalive-pakketten met het interval uit je WireGuard-configuratie, ook wanneer het scherm uit is. Verbetert de betrouwbaarheid op netwerken waar inactieve verbindingen worden verbroken, maar verhoogt het batterijgebruik.</string>
+    <string name="summary_wg_status_handshaking">Handshake wordt uitgevoerd…</string>
+    <string name="summary_vpn_key_rotate_now">Forceer het vernieuwen van WireGuard-sleutels van Mullvad en IVPN voor foutopsporing</string>
+    <string name="msg_wg_config_invalid">Ongeldige WireGuard-configuratie: %s</string>
+    <string name="msg_wg_profile_default_name">Standaard</string>
+    <string name="msg_wg_profile_saved">WireGuard-profiel opgeslagen</string>
+    <string name="msg_wg_profile_no_config">Plak een WireGuard-configuratie voordat je een profiel opslaat</string>
+    <string name="msg_wg_profile_config_hint">[Interface]\nPrivateKey = …\nAddress = …\n\n[Peer]\nPublicKey = …\nAllowedIPs = 0.0.0.0/0, ::/0\nEndpoint = …</string>
+    <string name="msg_wg_profile_delete_confirm">Dit WireGuard-profiel verwijderen?</string>
+    <string name="msg_wg_profile_scan_hint">Richt de camera op de WireGuard-QR-code die je VPN-provider toont. Het scannen gebeurt op je apparaat.</string>
+    <string name="msg_wg_profile_scan_no_camera">Dit apparaat heeft geen camera om mee te scannen</string>
+    <string name="msg_wg_profile_scan_no_camera_permission">Cameratoegang is nodig om een QR-code te scannen</string>
+    <string name="msg_wg_profile_scan_failed">Kan de camera niet starten: %1$s</string>
+    <string name="msg_wg_profile_scan_not_config">Deze QR-code is geen WireGuard-configuratie: %1$s</string>
+    <string name="msg_wg_profile_import_none">Geen WireGuard-configuratie gevonden in het geselecteerde bestand</string>
+    <string name="msg_wg_profile_import_failed">Kan het geselecteerde bestand niet lezen: %1$s</string>
+    <plurals name="msg_wg_profile_imported">
+        <item quantity="one">%1$d WireGuard-profiel geïmporteerd</item>
+        <item quantity="other">%1$d WireGuard-profielen geïmporteerd</item>
+    </plurals>
+    <plurals name="msg_wg_profile_import_skipped">
+        <item quantity="one">%1$d bestand overgeslagen: geen geldige WireGuard-configuratie</item>
+        <item quantity="other">%1$d bestanden overgeslagen: geen geldige WireGuard-configuraties</item>
+    </plurals>
+    <string name="msg_wg_mullvad_note">TrackerControl maakt een Mullvad WireGuard-profiel aan. Het accountnummer wordt lokaal opgeslagen voor toekomstige Mullvad-profielen. Tokens worden niet opgeslagen en het hier verwijderen van het profiel verwijdert het apparaat niet uit Mullvad.</string>
+    <string name="msg_wg_mullvad_generating">WireGuard-profiel wordt aangemaakt…</string>
+    <string name="msg_wg_mullvad_failed">Mullvad-configuratie mislukt: %s</string>
+    <string name="msg_wg_mullvad_countries_failed">Kan Mullvad-landen niet laden: %s</string>
+    <string name="msg_wg_proton_note">De gedocumenteerde configuratie voor derden van Proton gebruikt downloadbare WireGuard-configuraties. TrackerControl heeft je Proton-inloggegevens niet nodig en kan de configuratie niet automatisch vernieuwen.\n\nMeld je aan bij account.protonvpn.com, ga naar Downloads → WireGuard-configuratie, download een configuratie, open die in een teksteditor en plak de inhoud hier.</string>
+    <string name="msg_wg_proton_open_dashboard">Proton VPN-dashboard openen</string>
+    <string name="vpn_status_connected">%s</string>
+    <string name="vpn_status_mullvad_connected">Mullvad - %s</string>
+    <string name="vpn_status_mullvad">Mullvad</string>
+    <string name="vpn_status_relay">Relay: %s</string>
+    <string name="vpn_status_mullvad_summary">Relay: %s</string>
+    <string name="vpn_status_wireguard_connected">WireGuard verbonden</string>
+    <string name="vpn_status_wireguard_summary">%1$s - %2$s</string>
+    <string name="vpn_provider_mullvad">Mullvad VPN</string>
+    <string name="vpn_provider_ivpn">IVPN</string>
+    <string name="vpn_intro_title">VPN-voorbeeld</string>
+    <string name="vpn_intro_body">Een VPN stuurt je internetverkeer via een andere server. Hierdoor kun je je IP-adres verbergen voor websites en je netwerkprovider, en een land voor je verbinding kiezen. Dit tabblad is nieuw, dus beschouw het als een voorbeeld.</string>
+    <string name="vpn_intro_mullvad_title">Mullvad</string>
+    <string name="vpn_intro_mullvad_body">Een privacygerichte VPN-provider. De dienst kost €5 per maand en gebruikt accountnummers in plaats van e-mailadressen. Voer een accountnummer in en kies daarna een land in TrackerControl.</string>
+    <string name="vpn_intro_ivpn_body">Een privacygerichte VPN-provider met WireGuard-ondersteuning. Voer een IVPN-account-ID in en kies daarna een land in TrackerControl.</string>
+    <string name="vpn_intro_proton_title">Proton VPN</string>
+    <string name="vpn_intro_proton_body">Download een WireGuard-configuratie uit je Proton VPN-account en plak die in TrackerControl. Je Proton-inloggegevens worden hier nooit ingevoerd.</string>
+    <string name="vpn_intro_wireguard_body">Gebruik dit als je al een WireGuard-configuratie van een andere VPN-provider, je eigen server of je werk hebt.</string>
+    <string name="vpn_account_number">Accountnummer: %s</string>
+    <string name="vpn_mullvad_intro">Voer je Mullvad-accountnummer in. Dit wordt op dit apparaat opgeslagen.</string>
+    <string name="vpn_mullvad_account_note">Dit account wordt gebruikt voor verbindingen met landen via Mullvad.</string>
+    <string name="vpn_get_mullvad_account">Mullvad-account ophalen</string>
+    <string name="vpn_get_ivpn_account">IVPN-account ophalen</string>
+    <string name="vpn_account_hint">Mullvad-accountnummer</string>
+    <string name="vpn_ivpn_intro">Voer je IVPN-account-ID in. Deze wordt op dit apparaat opgeslagen.</string>
+    <string name="vpn_ivpn_captcha_intro">IVPN vereist CAPTCHA-verificatie voordat een WireGuard-sessie wordt aangemaakt.</string>
+    <string name="vpn_ivpn_account_hint">IVPN-account-ID</string>
+    <string name="vpn_ivpn_captcha_hint">CAPTCHA-tekst</string>
+    <string name="vpn_account_save">Opslaan</string>
+    <string name="vpn_account_saved">Account opgeslagen</string>
+    <string name="vpn_no_wireguard_profiles">Nog geen aangepaste WireGuard-profielen</string>
+    <string name="vpn_import_wireguard_profile">WireGuard-profiel importeren</string>
+    <string name="vpn_manage_wireguard_profiles">WireGuard-profielen beheren</string>
+    <string name="vpn_country_load_failed">Kan %1$s-landen niet laden: %2$s</string>
+    <string name="vpn_country_load_failed_short">Kan landen niet laden</string>
+    <string name="vpn_choose_country_first">Kies eerst een land</string>
+    <string name="vpn_choose_profile_first">Kies eerst een WireGuard-profiel</string>
+    <string name="vpn_setup_required">Stel Mullvad in of importeer eerst een WireGuard-profiel</string>
+    <string name="vpn_loading_countries">Landen laden…</string>
+    <string name="vpn_generating">WireGuard-profiel wordt aangemaakt…</string>
+    <string name="vpn_generation_failed">VPN-configuratie mislukt: %s</string>
+    <string name="vpn_retry">Opnieuw proberen</string>
+    <string name="vpn_country_selected">OK</string>
+    <string name="msg_wg_blocked_title">WireGuard-tunnel niet beschikbaar</string>
+    <string name="msg_wg_blocked">Internettoegang is geblokkeerd totdat WireGuard start of de WireGuard-instelling wordt uitgeschakeld.</string>
+    <string name="msg_wg_blocked_detail">Internettoegang is geblokkeerd totdat WireGuard start of de WireGuard-instelling wordt uitgeschakeld. %s</string>
+    <string name="msg_wg_identity_renewed_title">VPN-apparaat opnieuw geregistreerd</string>
+    <string name="msg_wg_identity_renewed">%1$s kende dit apparaat niet meer, dus TrackerControl heeft het opnieuw geregistreerd en de %1$s-profielen op dit apparaat bijgewerkt.</string>
+    <string name="msg_wg_provider_rejected">%1$s weigerde dit apparaat in te stellen: %2$s</string>
+    <string name="msg_wg_recovery_failed">WireGuard reageert niet meer. TrackerControl probeert opnieuw verbinding te maken; internettoegang kan geblokkeerd blijven totdat WireGuard is hersteld.</string>
+    <string name="msg_no_file_manager">Geen bestandsbeheerder gevonden om een bestand te kiezen.</string>
+    <string name="msg_no_browser">Geen browser-app gevonden om de link te openen.</string>
+    <string name="msg_native_fd_recovery_exhausted">De VPN had herhaaldelijk geen bestandsdescriptors meer. De bescherming is gestopt nadat alle automatische herstartpogingen zijn mislukt.</string>
+    <string name="msg_native_fd_error">De VPN had geen bestandsdescriptors meer. Sluit ongebruikte apps of start het apparaat opnieuw op en start de bescherming daarna opnieuw.</string>
+    <string name="msg_vpn_replacement_recovery_exhausted">TrackerControl kon de VPN niet opnieuw instellen. Verkeer wordt geblokkeerd.</string>
+    <string name="msg_clear_activity">Hiermee wordt de geregistreerde activiteit voor deze app verwijderd. Instellingen voor het blokkeren/toestaan van afzonderlijke trackers voor deze app blijven behouden.</string>
+    <string name="title_version">Versie %1$d</string>
+    <string name="toggle_block_internet_description">Internettoegang blokkeren voor %1$s</string>
+    <string name="toggle_allow_internet_description">Internettoegang toestaan voor %1$s</string>
+    <string name="toggle_no_internet_description">%1$s heeft geen internettoegang</string>
+    <string name="toggle_internet_unavailable_description">Beheer van internettoegang niet beschikbaar voor %1$s</string>
+    <string name="toggle_block_category_description">Trackers blokkeren voor categorie %1$s</string>
+    <string name="widget_toggle_enable_description">Trackerblokkering inschakelen</string>
+    <string name="widget_toggle_disable_description">Trackerblokkering uitschakelen</string>
+    <string name="accessibility_stat_description">%1$s, %2$s</string>
+    <string name="accessibility_tracker_blocking_enabled">Trackerblokkering ingeschakeld</string>
+    <string name="accessibility_tracker_blocking_disabled">Trackerblokkering uitgeschakeld</string>
+    <string name="tab_actions">Gegevensrechten</string>
+    <string name="body_request_data"><![CDATA[Geachte heer/mevrouw:\n
+\n
+\n
+Ik verzoek u, als verwerkingsverantwoordelijke van de Android-app %1$s (ID: %2$s), te bevestigen of u persoonsgegevens over mij verwerkt.\n
+Als dat zo is, verzoek ik u alle informatie te verstrekken die vereist is op grond van artikel 15 van de Algemene verordening gegevensbescherming (AVG), waaronder:\n
+\n
+• een kopie van mijn persoonsgegevens;\n
+• de doeleinden van de verwerking;\n
+• de categorieën persoonsgegevens waarop de verwerking betrekking heeft;\n
+• de ontvangers aan wie u mijn persoonsgegevens bekendmaakt en de waarborgen die u biedt;\n
+• de bewaartermijn voor mijn persoonsgegevens of de criteria die u gebruikt om deze termijn te bepalen;\n
+• informatie over de bron van mijn persoonsgegevens; en\n
+• het bestaan van geautomatiseerde besluitvorming (waaronder profilering) en, als daarvan sprake is:\n
+    - de gebruikte logica bij het nemen van de beslissing;\n
+    - het belang en de verwachte gevolgen voor mij;\n
+    - de maatregelen die u heeft genomen om fouten, vooringenomenheid en discriminatie te voorkomen; en\n
+    - een uitleg over hoe ik mijn standpunt kenbaar kan maken en een beslissing kan aanvechten.\n
+\n
+Dit verzoek heeft betrekking op elke verwerking van mijn persoonsgegevens door u, met inbegrip van verwerkers die namens u persoonsgegevens verwerken.\n
+\n
+Verstrek uw antwoord om veiligheidsredenen per e-mail. Ik zie uw antwoord binnen één maand na ontvangst van mijn verzoek tegemoet.\n
+\n
+Hoogachtend,\n\n]]></string>
+    <string name="body_delete_data"><![CDATA[Geachte heer/mevrouw:\n
+\n
+\n
+Ik beroep mij op mijn recht op gegevenswissing zoals bepaald in artikel 17 van de Algemene verordening gegevensbescherming (AVG). Ik verzoek u, als verwerkingsverantwoordelijke van de Android-app %1$s (ID: %2$s), de volgende persoonsgegevens die u over mij verwerkt zonder onnodige vertraging te wissen:\n
+• Alle gegevens.\n
+\n
+De reden voor mijn verzoek tot verwijdering is dat ik mijn toestemming voor de verwerking van de persoonsgegevens intrek of heb ingetrokken. Dit verzoek heeft betrekking op elke verwerking van mijn persoonsgegevens door u, met inbegrip van verwerkers die namens u persoonsgegevens verwerken.\n
+\n
+Verstrek uw antwoord om veiligheidsredenen per e-mail. Ik zie uw antwoord binnen één maand na ontvangst van mijn verzoek tegemoet.\n
+\n
+Hoogachtend,\n\n]]></string>
+    <string name="launch_app_failed">Deze app kan niet worden gestart</string>
+    <string name="countries_map_highlighted">Gemarkeerde trackingbestemmingen: %1$s</string>
+    <string name="countries_map_none">Er zijn geen trackingbestemmingen gemarkeerd.</string>
+    <string name="summary_blocking_mode_minimal">Minimaal: blokkeert alleen trackers uit de DuckDuckGo-lijst die veilig kunnen worden geblokkeerd. Browsers blijven via de VPN gerouteerd, maar trackerbescherming staat standaard uit. Bekende incompatibele apps worden uitgesloten. Beperkte kans op problemen met apps.</string>
+    <string name="summary_blocking_mode_standard">Standaard: blokkeert alle bekende trackers uit meerdere lijsten (X-Ray, Disconnect, DuckDuckGo). Essentiële diensten worden toegestaan. Als een app niet meer werkt, pas je de beschermingsinstelling aan (zie Problemen oplossen in het appmenu).</string>
+    <string name="summary_blocking_mode_strict">Strikt: blokkeert alle bekende trackers, inclusief essentiële diensten en dubbelzinnige domeinen met gedeelde IP-adressen. Voor veel apps is een minder strikte beschermingsinstelling nodig (zie Problemen oplossen in het appmenu).</string>
+    <string name="summary_sni_wg_note">Let op: SNI-extractie geldt niet voor verkeer dat via de externe VPN wordt gerouteerd.</string>
+    <string name="onboarding_blockingmode_desc">Kies hoe TrackerControl met trackers moet omgaan. Blokkeermodi stoppen trackers met verschillende strengheidsniveaus; in de onderzoeksmodus blijft blokkeren uitgeschakeld en wordt SNI-extractie alleen voor metingen ingeschakeld. Je kunt dit later wijzigen in Instellingen.</string>
+    <string name="onboarding_blockingmode_minimal_label">Minimaal (aanbevolen voor nieuwe gebruikers)</string>
+    <string name="onboarding_blockingmode_minimal_desc">Blokkeert alleen bevestigde trackers die veilig kunnen worden geblokkeerd. Beperkte kans op problemen met apps. Geschikt voor de meeste gebruikers.</string>
+    <string name="onboarding_blockingmode_standard_desc">Blokkeert alle bekende trackers uit meerdere lijsten. Voor sommige apps is een minder strikte beschermingsinstelling nodig.</string>
+    <string name="onboarding_blockingmode_strict_desc">Blokkeert alles, inclusief essentiële diensten en dubbelzinnige domeinen. Apps kunnen hierdoor aanzienlijk minder goed werken; voor veel apps is een minder strikte beschermingsinstelling nodig.</string>
+    <string name="onboarding_blockingmode_research_desc">Geen trackerblokkering. Logt overdrachten naar ADB en schakelt SNI-extractie in voor betere hostnaamdetectie. Alleen voor onderzoek: hierdoor lekt je IP-adres naar trackerservers.</string>
+    <string name="app_state_heading">Blokkeermodus</string>
+    <string name="app_state_title_minimal">Minimaal blokkeren</string>
+    <string name="app_state_title_standard">Standaard blokkeren</string>
+    <string name="app_state_title_strict">Strikt blokkeren</string>
+    <string name="app_state_subtitle_misbehaving">Werkt een app niet goed? Schakel hier over naar minimaal blokkeren.</string>
+    <string name="app_state_essential_only">Alleen minimaal blokkeren</string>
+    <string name="app_state_essential_only_explanation">Blokkeert alleen de bevestigde trackers die de minimale modus blokkeert. Andere trackers worden nog steeds geregistreerd, maar toegestaan. Gebruik dit als standaard blokkeren de app laat stoppen.</string>
+    <string name="protection_title">Bescherming</string>
+    <string name="protection_route_heading">Externe VPN</string>
+    <string name="protection_app_not_working">Werkt de app niet? Tik hier</string>
+    <plurals name="protection_paused_resumes">
+        <item quantity="one">Gepauzeerd — wordt hervat over %d min</item>
+        <item quantity="other">Gepauzeerd — wordt hervat over %d min</item>
+    </plurals>
+    <string name="protection_resume">Nu hervatten</string>
+    <string name="protection_pause_shared_uid">Als je deze app pauzeert, wordt ook %1$s gepauzeerd omdat ze dezelfde Android-gebruikers-ID delen.</string>
+    <string name="protection_pause_lockdown_warning">Android-vergrendeling is ingeschakeld. Als je deze app pauzeert, worden de verbindingen ervan geblokkeerd totdat de bescherming wordt hervat.</string>
+    <string name="protection_lockdown_note">Android geeft de status van vergrendeling hier niet vrij. Als ‘Verbindingen zonder VPN blokkeren’ is ingeschakeld, kan een gepauzeerde app de netwerktoegang verliezen.</string>
+    <string name="protection_blocked_last_24h">Geblokkeerd in de afgelopen 24 uur</string>
+    <string name="protection_no_blocked_trackers">Er is onlangs niets geblokkeerd — waarschijnlijk niet door TrackerControl.</string>
+    <string name="protection_recording_unavailable">Registratie van trackers is niet beschikbaar omdat ‘Nieuwe trackers zoeken’ uit staat.</string>
+    <string name="protection_temporary">Tijdelijk, tijdens pauzeren</string>
+    <string name="bypass_vpn_error">"Internet kan niet worden geblokkeerd zolang de app TrackerControl omzeilt."</string>
+    <string name="category_unblocked_warning">Toegestaan met deze categorie — blokkeer de categorie om afzonderlijke bedrijven te wijzigen.</string>
+    <string name="trackers_static_disclaimer">Let op: detectie van code van trackerbibliotheken betekent niet dat deze actief wordt gebruikt. Sommige apps hebben deze bibliotheken verwijderd of uitgeschakeld, maar sporen ervan kunnen nog steeds worden gedetecteerd.</string>
+    <string name="analyze_tracker_libraries">Trackerbibliotheken analyseren</string>
+    <string name="update_analysis">Analyse bijwerken</string>
+    <string name="analysis_outdated_version">\n\nLet op: de analyse is gebaseerd op een eerdere appversie. Geïntegreerde trackinglibraries kunnen inmiddels zijn gewijzigd.</string>
+    <string name="libraries_title">Trackerbibliotheken</string>
+    <string name="libraries_row_heading">Trackerbibliotheken</string>
+    <string name="libraries_none_found">Geen trackerbibliotheken gevonden in de appcode</string>
+    <string name="libraries_not_analysed">Nog niet geanalyseerd</string>
+    <string name="libraries_analysing">Appcode wordt geanalyseerd\u2026</string>
+    <string name="libraries_analysis_failed">Analyse mislukt \u2014 tik om opnieuw te proberen</string>
+    <string name="libraries_outdated_suffix">%1$s (eerdere appversie)</string>
+    <string name="detected_tracker_libraries_heading">Gedetecteerd in appcode</string>
+    <string name="tracker_libraries_source">Websites uit trackerdata van Exodus Privacy</string>
+    <string name="open_tracker_website">Website van %1$s openen</string>
+    <plurals name="libraries_found">
+        <item quantity="one">%d trackerbibliotheek gevonden in de appcode</item>
+        <item quantity="other">%d trackerbibliotheken gevonden in de appcode</item>
+    </plurals>
+    <string name="allowed_shared_ip">Toegestaan — gedeeld IP-adres; schakel de strikte modus in om te blokkeren</string>
+    <string name="tracker_monitored_minimal">Gemonitord — niet geblokkeerd in de minimale modus</string>
+    <string name="browsers_not_supported_explanation">Dit lijkt een browserapp te zijn.\n\nBrowser-trackerbescherming werkt het best in de browser zelf, waar trackers op pagina- en verzoekniveau kunnen worden geblokkeerd. TrackerControl zorgt ervoor dat browserverkeer via de VPN-/WireGuard-tunnel loopt, maar trackerblokkering op appniveau staat standaard uit en kan websites laten stoppen als je deze inschakelt.</string>
+    <string name="msg_local_network">Tik om toegang tot het lokale netwerk toe te staan; Android vraagt hiernaar als ‘apparaten in de buurt’. Android 17 blokkeert dit standaard, waardoor je eigen DNS-server, beveiligde DNS-resolver, WireGuard-peer of proxy niet bereikbaar is.</string>
+    <string name="msg_local_network_title">Toegang tot lokaal netwerk vereist</string>
+    <string name="msg_local_network_notify">TrackerControl kan je eigen DNS-server, beveiligde DNS-resolver, WireGuard-peer of proxy niet bereiken, waardoor naamresolutie kan mislukken. Android 17 vereist hiervoor toestemming en vraagt hiernaar als ‘apparaten in de buurt’. Tik om TrackerControl te openen en dit toe te staan.</string>
+    <string name="msg_private_dns_title">Privé-DNS blokkeert naamresolutie</string>
+    <string name="msg_private_dns_notify">Android\'s ‘Privé-DNS’ is ingesteld op %1$s en TrackerControl blokkeert versleutelde DNS om trackers te kunnen detecteren. Android valt in deze modus niet terug op normale DNS, dus er wordt niets geladen. Tik om Privé-DNS in te stellen op ‘Automatisch’ of ‘Uit’ — TrackerControl biedt eigen beveiligde DNS in Instellingen.</string>
+    <string name="msg_private_dns_unknown_resolver">een aangepaste resolver</string>
+    <string name="msg_private_dns_row">Er wordt niets geladen: Android\'s ‘Privé-DNS’ is ingesteld op een specifieke resolver en TrackerControl blokkeert versleutelde DNS om trackers te kunnen detecteren. Tik om Privé-DNS in te stellen op ‘Automatisch’ of ‘Uit’ — TrackerControl biedt eigen beveiligde DNS in Instellingen.</string>
+    <string name="msg_private_dns_bypass_title">Privé-DNS omzeilt trackerdetectie</string>
+    <string name="msg_private_dns_bypass_notify">Trackerdetectie staat uit: DNS is versleuteld naar %1$s, dus appverbindingen kunnen niet worden geanalyseerd</string>
+    <string name="msg_private_dns_bypass_allowed_notify">Sommige apps gebruiken versleutelde DNS; hun trackercontacten zijn onzichtbaar voor TrackerControl.</string>
+    <string name="setting_monitor_system">Systeemapps monitoren</string>
+    <string name="summary_monitor_system">Leid systeemapps (Play Services, carrierdiensten enz.) via de VPN, zodat hun trackers worden gedetecteerd en geblokkeerd en in de applijst worden getoond.\n\nStandaard uit: het uitsluiten van systeemapps is beter voor de batterij, omdat hun achtergrondverkeer de VPN niet meer activeert. Dit inschakelen conflicteert met ‘Verbindingen zonder VPN blokkeren’ in de Android-VPN-instellingen; die optie moet UITGESCHAKELD zijn.</string>
+    <string name="onboarding_welcome_desc">TrackerControl is een door de gemeenschap gedragen onderzoeksproject waarmee je:\n\n• <b>Verborgen gegevensverzameling</b> door mobiele apps in realtime kunt monitoren.\n• Trackers en advertenties kunt <b>blokkeren</b> met onze database van <b>2.000.000 geanalyseerde apps</b>.\n• De bestemmingsbedrijven en landen die je gegevens ontvangen kunt <b>identificeren</b>.\n\nAlle analyses vinden <b>lokaal op je apparaat</b> plaats — je verkeer blijft volledig onder jouw controle.</string>
+    <string name="onboarding_vpn_title">Bescherming inschakelen</string>
+    <string name="onboarding_vpn_desc">TrackerControl gebruikt de lokale VPN-interface van Android om je internetverkeer te analyseren.\n\n<b>Belangrijk:</b> er is geen externe VPN-server betrokken. Wij zien je gegevens niet.</string>
+    <string name="onboarding_vpn_action">VPN op dit apparaat inschakelen</string>
+    <string name="onboarding_vpn_sure">TrackerControl kan zonder de lokale VPN geen verkeer filteren. Weet je zeker dat je wilt doorgaan zonder deze in te schakelen?</string>
+    <string name="onboarding_vpn_blocked_title">Er is al een andere VPN actief</string>
+    <string name="onboarding_vpn_blocked_desc">Android verhinderde dat TrackerControl zijn lokale VPN startte omdat een andere app is ingesteld als <b>altijd ingeschakelde VPN</b>. Open de VPN-instellingen, schakel Altijd ingeschakeld uit voor de andere VPN en probeer het opnieuw.</string>
+    <string name="onboarding_vpn_blocked_action">VPN-instellingen openen</string>
+    <string name="onboarding_battery_title">Onderbreking voorkomen</string>
+    <string name="onboarding_battery_desc">Android kan achtergrondapps beëindigen om batterij te besparen. Schakel optimalisaties voor TrackerControl uit om ononderbroken bescherming tegen trackers te garanderen.</string>
+    <string name="onboarding_battery_action">Optimalisatie uitschakelen</string>
+    <string name="onboarding_battery_sure">Als je batterijoptimalisaties niet uitschakelt, kan Android TrackerControl op elk moment stoppen. Weet je zeker dat je wilt doorgaan?</string>
+    <string name="onboarding_notify_desc">Sta meldingen toe om realtime-updates te zien en de bescherming rechtstreeks vanuit de statusbalk te bedienen.</string>
+    <string name="onboarding_notify_action">Meldingen toestaan</string>
+    <string name="onboarding_notify_sure">Zonder meldingstoestemming kun je geen realtime-updates zien of de bescherming vanuit de statusbalk bedienen. Weet je het zeker?</string>
+    <string name="onboarding_timeline_title">Zie hoe de tijdlijn zich vult</string>
+    <string name="onboarding_timeline_desc">TrackerControl start op de tijdlijn. In het begin kan die leeg zijn: apps nemen meestal alleen contact op met trackers wanneer je ze gebruikt.\n\nOpen na het voltooien van de configuratie enkele apps en ga daarna terug naar TrackerControl om gedetecteerde en geblokkeerde trackingactiviteit te bekijken.</string>
+    <string name="onboarding_network_title">Onbeperkt netwerk</string>
+    <string name="onboarding_network_desc">Opties voor gegevensbesparing kunnen ervoor zorgen dat TrackerControl op de achtergrond niet goed werkt. Verleen onbeperkte toegang voor de meest betrouwbare bescherming.</string>
+    <string name="onboarding_network_action">Onbeperkte toegang verlenen</string>
+    <string name="onboarding_network_sure">Beperkte achtergrondgegevens kunnen ervoor zorgen dat TrackerControl niet werkt. Weet je zeker dat je wilt doorgaan zonder onbeperkte toegang te verlenen?</string>
+    <string name="onboarding_lockdown_title">VPN-vergrendelingsinstelling</string>
+    <string name="onboarding_lockdown_desc">Android heeft een instelling ‘Verbindingen zonder VPN blokkeren’ die voorkomt dat apps verbinding maken voordat TrackerControl klaar is.\n\nAls deze is ingeschakeld, kunnen apps mogelijk niet laden. Voor de beste ervaring raden we aan deze instelling <b>uitgeschakeld</b> te houden.</string>
+    <string name="onboarding_lockdown_action">VPN-instellingen openen</string>
+    <string name="onboarding_lockdown_sure">Doorgaan met ingeschakelde vergrendeling kan verbindingsproblemen veroorzaken. Weet je het zeker?</string>
+    <string name="onboarding_dns_title">Beveiligde DNS (bètafunctie; werkt mogelijk niet zoals verwacht)</string>
+    <string name="onboarding_dns_desc">Bescherm je privacy tegen je internetprovider door je DNS-verkeer te versleutelen met DNS-over-HTTPS (DoH).\n\nHierdoor wordt ‘DNS-kaping’ voorkomen en blijven je surfgewoonten privé voor je netwerkprovider.</string>
+    <string name="onboarding_dns_action">Beveiligde DNS inschakelen</string>
+    <string name="onboarding_dns_action_disable">Beveiligde DNS uitschakelen</string>
+    <string name="onboarding_blocking_title">Trackers blokkeren</string>
+    <string name="onboarding_blocking_desc">Maak wijdverbreide tracking in je apps zichtbaar en blokkeer deze.\n\n• <b>Blokkeerlijsten</b>: combineert Firefox Disconnect met onze unieke analyse van <b>2.000.000 apps</b>.\n• <b>AVG</b>: oefen je rechten uit met <b>gegevenswissingsverzoeken met één klik</b>.\n• <b>Transparantie</b>: ontdek precies welke bedrijven en landen je gegevens verzamelen.</string>
+    <string name="onboarding_blocking_action">Blokkeren inschakelen</string>
+    <string name="onboarding_blocking_action_disable">Blokkeren uitschakelen</string>
+    <string name="onboarding_blocking_sure">Trackerblokkering is een kernfunctie van TrackerControl. Weet je zeker dat je deze wilt uitschakelen?</string>
+    <string name="onboarding_action_enabled">Ingeschakeld</string>
+    <string name="onboarding_action_disabled">Uitgeschakeld</string>
+    <string name="onboarding_action_granted">Toegestaan</string>
+    <string name="onboarding_action_optimized">Geoptimaliseerd</string>
+    <string name="onboarding_action_unrestricted">Onbeperkt</string>
+    <string name="menu_insights">Inzichten</string>
+    <string name="insights_title">Jouw privacy-inzichten</string>
+    <string name="insights_subtitle_7days">Afgelopen 7 dagen</string>
+    <string name="insights_tracking_attempts">Gecontacteerde trackerhosts</string>
+    <string name="insights_blocked">Geblokkeerd</string>
+    <string name="insights_allowed">Doorgelaten</string>
+    <string name="insights_tracker_companies">Trackingbedrijven</string>
+    <string name="insights_apps_with_trackers">Apps met trackers</string>
+    <string name="insights_top_tracking_apps">Apps met de meeste tracking</string>
+    <string name="insights_top_companies">Actiefste trackingbedrijven</string>
+    <string name="insights_pervasive_trackers">Meest wijdverbreide trackers</string>
+    <string name="insights_top_domains">Belangrijkste trackerdomeinen</string>
+    <string name="insights_domain_alias_separator">" of "</string>
+    <string name="insights_in_apps">in %d apps</string>
+    <plurals name="insights_apps_count">
+        <item quantity="one">in %d app</item>
+        <item quantity="other">in %d apps</item>
+    </plurals>
+    <string name="insights_no_data">Nog geen trackinggegevens. Gebruik je apps en kom later terug!</string>
+    <string name="insights_shocking_fact">Je apps hebben deze week contact opgenomen met %1$d trackingbedrijven via %2$d trackerhosts!</string>
+    <string name="insights_shocking_fact_playstore">Je apps hebben deze week contact opgenomen met %1$d trackingbedrijven!</string>
+    <string name="insights_share">Delen met vrienden</string>
+    <string name="insights_share_trackers_blocked">Geblokkeerde trackerhosts</string>
+    <string name="insights_share_trackers_detected">Gedetecteerde trackerhosts</string>
+    <string name="insights_share_url">TrackerControl.org</string>
+    <string name="insights_share_message">Deze week heb ik met TrackerControl %1$d trackerhosts van %2$d bedrijven geblokkeerd! Neem je privacy terug: https://trackercontrol.org</string>
+    <string name="insights_share_message_playstore">Deze week heb ik met TrackerControl %1$d trackerhosts van %2$d bedrijven gedetecteerd! Neem je privacy terug: https://trackercontrol.org</string>
+    <string name="insights_see_more">Meer bekijken →</string>
+    <string name="insights_view_timeline">Recente trackeractiviteit bekijken</string>
+    <string name="title_blocklists">Aanvullende hostbestanden</string>
+    <string name="summary_manage_blocklists">Deze zijn alleen bedoeld als terugvaloptie. TrackerControl bevat eigen hostlijsten met inzichten in de bedrijven achter tracking.</string>
+    <string name="title_add_blocklist">Hostbestand toevoegen</string>
+    <string name="title_delete_blocklist">Hostbestand verwijderen</string>
+    <string name="msg_delete_blocklist_confirm">Weet je zeker dat je dit hostbestand wilt verwijderen?</string>
+    <string name="msg_invalid_url">Ongeldige URL</string>
+    <string name="msg_apply_blocklists_failed">Hostbestanden toepassen mislukt</string>
+    <string name="msg_last_update">Laatste update: %s</string>
+    <string name="switch_tracker_control_description">Trackerblokkering</string>
+    <string name="vpn_enabled_switch_description">VPN</string>
+    <string name="blocklist_delete_description">Blokkeerlijst verwijderen</string>
+    <string name="blocklist_enable_description">Blokkeerlijst %s inschakelen</string>
+    <string name="log_connection_allowed">Toegestaan</string>
+    <string name="log_connection_blocked">Geblokkeerd</string>
+    <string name="log_connection_wifi">Wifi</string>
+    <string name="log_connection_other">Ander netwerk</string>
+    <string name="log_screen_on">Scherm aan</string>
+    <string name="log_app_icon">App-pictogram</string>
 </resources>
