@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_description">TrackerControl permet aux utilisateurs de surveiller et de contrôler la collecte (cachée et courante) des données relatives à leur comportement dans les applications mobiles (\"tracking\").</string>
     <string name="app_copyright">Copyright \u00A9 2019–2022 Konrad Kollnig\n\nTrackerControl est basé sur NetGuard, développé par Marcel Bokhorst (M66B).</string>
     <string name="app_android">TrackerControl nécessite Android 5.1 ou une version ultérieure</string>
@@ -85,6 +85,7 @@
     <string name="setting_update">Vérifier les mises à jour</string>
     <plurals name="pause">
         <item quantity="one">Suspendre pendant %d min</item>
+        <item quantity="many">Pause pour %d mins</item>
         <item quantity="other">Pause pour %d mins</item>
     </plurals>
     <string name="setting_network_options">Paramètres de réseau</string>
@@ -182,7 +183,7 @@
     <string name="msg_wg_profile_empty">Aucun profil</string>
     <string name="msg_wg_profile_active">Actif</string>
     <string name="msg_wg_profile_set_active">Définir comme actif</string>
-    <string name="msg_wg_profile_config_hint">[Interface]\nClé Privée = ...\nAdresse = ...\n\n[Pair]\nClé publique = ...\nIP autorisées = 0.0.0.0/0, ::/0\nPoint de terminaison = ...</string>
+    <string tools:ignore="TypographyEllipsis" name="msg_wg_profile_config_hint">[Interface]\nClé Privée = ...\nAdresse = ...\n\n[Pair]\nClé publique = ...\nIP autorisées = 0.0.0.0/0, ::/0\nPoint de terminaison = ...</string>
     <string name="msg_wg_mullvad_account">Numéro de compte Mullvad</string>
     <string name="msg_wg_mullvad_recommended">Emplacement recommandé</string>
     <string name="msg_wg_mullvad_failed">Échec de la configuration de Mullvad : %s</string>
@@ -234,15 +235,15 @@
     <string name="vpn_country_load_failed_short">Impossible de charger les pays</string>
     <string name="vpn_choose_country_first">Choisissez un pays d\'abord</string>
     <string name="vpn_choose_profile_first">Choisissez un profil WireGuard d\'abord</string>
-    <string name="vpn_loading_countries">Chargement des pays...</string>
-    <string name="vpn_generating">Création du profil WireGuard ...</string>
+    <string name="vpn_loading_countries">Chargement des pays…</string>
+    <string name="vpn_generating">Création du profil WireGuard …</string>
     <string name="vpn_retry">Réessayer</string>
     <string name="vpn_country_selected">OK</string>
     <string name="msg_wg_blocked_title">Tunnel WireGuard indisponible</string>
     <string name="summary_watchdog">Vérifiez périodiquement si TrackerControl est toujours en cours d\'exécution (saisir zéro pour désactiver cette option). Cela peut entraîner une surconsommation de la batterie.</string>
     <string name="summary_log_logcat">Mode recherche : les traqueurs identifiés sont enregistrés via ADB et l\'extraction SNI est activée pour une meilleure détection de nom d\'hôte. Récupérez les journaux avec la commande adb logcat en utilisant l\'étiquette \'TC-Log\'.</string>
     <string name="msg_sure">Êtes-vous sûr⋅e ?</string>
-    <string name="msg_started">Recherche de traqueurs...</string>
+    <string name="msg_started">Recherche de traqueurs…</string>
     <string name="msg_waiting">En attente d\'évènement</string>
     <string name="msg_disabled">Utilisez l\'interrupteur ci-dessus pour activer TrackerControl.</string>
     <string name="msg_revoked">TrackerControl a été désactivé, probablement en utilisant une autre application VPN</string>
@@ -354,10 +355,12 @@ Votre trafic internet n\'est pas envoyé vers un serveur VPN distant.</string>
     <!-- Dynamic content description for the home-screen widget toggle (accessibility follow-up, issue #636) -->
     <plurals name="n_companies_found_week">
         <item quantity="one">a contacté %d société la semaine dernière</item>
+        <item quantity="many">a contacté %d sociétés la semaine dernière</item>
         <item quantity="other">a contacté %d sociétés la semaine dernière</item>
     </plurals>
     <plurals name="n_companies_found">
         <item quantity="one">a contacté %d entreprise</item>
+        <item quantity="many">a contacté %d entreprises</item>
         <item quantity="other">a contacté %d entreprises</item>
     </plurals>
     <string name="confirm_ipinfo_title">Récupérer les informations sur l\'organisation?</string>

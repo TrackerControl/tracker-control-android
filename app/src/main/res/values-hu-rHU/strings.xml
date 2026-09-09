@@ -106,7 +106,7 @@
     <string name="summary_socks5_enabled">Csak a TCP forgalom küldése a proxy-szerverre</string>
     <string name="summary_watchdog">Rendszeresen ellenőrzi, ha a TrackerControl fut (a 0 beírása letiltja az opciót). Ez extra akkumulátor használattal járhat.</string>
     <string name="msg_sure">Biztos benne?</string>
-    <string name="msg_started">Nyomkövetők keresése...</string>
+    <string name="msg_started">Nyomkövetők keresése…</string>
     <string name="msg_waiting">Várakozás eseményre</string>
     <string name="msg_disabled">Használja a fenti kapcsolót a TrackerControl engedélyezéséhez.</string>
     <string name="msg_revoked">A TrackerControl le van tiltva, valószínűleg egy másik VPN alapú alkalmazással</string>
@@ -228,7 +228,7 @@ Az Ön internetes forgalmát nem küldi el egy távoli VPN-kiszolgálóra.</stri
     <string name="yes">Igen</string>
     <string name="no">Nem</string>
     <string name="menu_csv">Exportálás CSV-ként</string>
-    <string name="exporting">Exportálás...</string>
+    <string name="exporting">Exportálás…</string>
     <string name="share_csv">Megosztás</string>
     <string name="export_failed">Sikertelen exportálás</string>
     <string name="exported">Exportálva a tárhelyre!</string>

@@ -80,6 +80,7 @@
     <string name="setting_update">Comprobar actualizaciones</string>
     <plurals name="pause">
         <item quantity="one">Pausar por %d min</item>
+        <item quantity="many">Pausar por %d mins</item>
         <item quantity="other">Pausar por %d mins</item>
     </plurals>
     <string name="setting_network_options">Opciones de red</string>
@@ -138,7 +139,7 @@
     <string name="summary_socks5_enabled">Sólo el tráfico TCP será enviado al servidor proxy</string>
     <string name="summary_watchdog">Comprobar periódicamente si TrackerControl sigue funcionando (introducir cero para desactivar esta opción). Esto podría aumentar el consumo de la batería.</string>
     <string name="msg_sure">¿Estás seguro?</string>
-    <string name="msg_started">Buscando rastreadores...</string>
+    <string name="msg_started">Buscando rastreadores…</string>
     <string name="msg_waiting">Esperando evento</string>
     <string name="msg_disabled">Utiliza el interruptor de arriba para activar TrackerControl.</string>
     <string name="msg_revoked">TrackerControl ha sido desactivado, posiblemente por utilizar otra aplicación basada en VPN</string>
@@ -247,10 +248,12 @@ El tráfico de internet no será envíado a un servidor VPN ajeno.</string>
     <!-- Dynamic content description for the home-screen widget toggle (accessibility follow-up, issue #636) -->
     <plurals name="n_companies_found_week">
         <item quantity="one">contactó %d empresa la última semana</item>
+        <item quantity="many">contactó %d empresas la última semana</item>
         <item quantity="other">contactó %d empresas la última semana</item>
     </plurals>
     <plurals name="n_companies_found">
         <item quantity="one">contactó %d empresa en total</item>
+        <item quantity="many">contactó %d empresas en total</item>
         <item quantity="other">contactó %d empresas en total</item>
     </plurals>
     <string name="confirm_ipinfo_title">¿Conseguir info de organización?</string>
@@ -335,7 +338,7 @@ Atentamente,\n\n]]></string>
     <string name="launch_app">Lanzar &amp; Buscar rastreadores</string>
     <string name="countries">Países de destino</string>
     <string name="countries_explanation">Averigua a dónde envía tu teléfono los datos de rastreo.\n\nLa información se basa en búsquedas de DNS e información de IP, y podría ser inexacta.</string>
-    <string name="countries_loading_failed">Oops... El mapa del país falló al cargar. Por favor, dígale a tc@kollnig.net cómo sucedió esto.</string>
+    <string name="countries_loading_failed">Oops… El mapa del país falló al cargar. Por favor, dígale a tc@kollnig.net cómo sucedió esto.</string>
     <string name="tracker_advertising">Publicidad</string>
     <string name="tracker_analytics">Datos de análisis</string>
     <string name="tracker_content">Esencial</string>

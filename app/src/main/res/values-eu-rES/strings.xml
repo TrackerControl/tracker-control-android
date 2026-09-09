@@ -303,7 +303,7 @@ Sincerely,\n\n]]></string>
     <string name="launch_app">Hasi &amp; bilatu aztarnariak</string>
     <string name="countries">Helburu herrialdeak</string>
     <string name="countries_explanation">Jakin ezazu nora bidaltzen dituen zure telefonoak datuak.\n\nInformazioa DNS eta IP eragiketetatik ateratzen da eta agian ez da guztiz zehatza.</string>
-    <string name="countries_loading_failed">Oops... huts egin du mapa kargatzeak. Idatzi tc@kollnig.net helbidera eta esan zer gertatu den mesedez.</string>
+    <string name="countries_loading_failed">Oops… huts egin du mapa kargatzeak. Idatzi tc@kollnig.net helbidera eta esan zer gertatu den mesedez.</string>
     <string name="tracker_advertising">Iragarkiak</string>
     <string name="tracker_analytics">Estatistikak</string>
     <string name="tracker_content">Beharrezkoak</string>

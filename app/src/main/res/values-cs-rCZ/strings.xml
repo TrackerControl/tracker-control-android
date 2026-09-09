@@ -117,7 +117,7 @@
     <string name="summary_socks5_enabled">Pouze TCP přenosy budou přenášeny skrze proxy server</string>
     <string name="summary_watchdog">Pravidelně kontrolovat, zda TrackerControl stále běží (zadejte nulu pro vypnutí). Toto nastavení může mít vliv na spotřebu.</string>
     <string name="msg_sure">Jste si jistí?</string>
-    <string name="msg_started">Vyhledávání trackerů...</string>
+    <string name="msg_started">Vyhledávání trackerů…</string>
     <string name="msg_waiting">Čekání na událost</string>
     <string name="msg_disabled">Pomocí výše uvedeného přepínače povolte TrackerControl.</string>
     <string name="msg_revoked">TrackerControl byl deaktivován, pravděpodobně jinou aplikací používající VPN rozhraní</string>

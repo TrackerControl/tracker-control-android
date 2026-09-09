@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_description">TrackerControl允许用户监视和控制移动应用程序中有关用户行为的广泛的、正在进行的隐藏数据收集(‘跟踪’)。</string>
-    <string name="app_copyright">版权所有 \u00A9 2019-2022 Konrad Kollnig\n\nTrackerControl 基于 NetGuard, 由 Marcel Bokhorst (M66B) 开发。</string>
+    <string name="app_copyright">版权所有 \u00A9 2019–2022 Konrad Kollnig\n\nTrackerControl 基于 NetGuard, 由 Marcel Bokhorst (M66B) 开发。</string>
     <string name="app_android">TrackerControl需要Android 5.1或更高版本</string>
     <string name="app_xposed">Xposed会造成过多的崩溃，这可能导致TrackerControl从GooglePlay商店被移除，因此在安装xposed情况下不支持使用TrackerControl</string>
     <string name="app_eula">使用本应用程序的风险由您自行承担。没有应用程序可以提供对网络跟踪100%的保护。</string>
@@ -239,7 +239,7 @@
     <string name="msg_wg_profile_empty">暂无配置</string>
     <string name="msg_wg_profile_active">活跃</string>
     <string name="msg_wg_profile_set_active">设置为活跃</string>
-    <string name="msg_wg_profile_config_hint">[Interface]\nPrivateKey = ...\nAddress = ...\n\n[Peer]\nPublicKey = ...\nAllowedIPs = 0.0.0.0/0, ::/0\nEndpoint = ...</string>
+    <string tools:ignore="TypographyEllipsis" name="msg_wg_profile_config_hint">[Interface]\nPrivateKey = ...\nAddress = ...\n\n[Peer]\nPublicKey = ...\nAllowedIPs = 0.0.0.0/0, ::/0\nEndpoint = ...</string>
     <string name="msg_wg_profile_delete_confirm">删除这个WireGuard配置文件吗？</string>
     <string name="msg_wg_profile_scan_hint">将相机指向您的 VPN 提供商显示的 WireGuard QR 码。扫描发生在您的设备上。</string>
     <string name="msg_wg_profile_scan_no_camera">此设备没有可用来扫描的相机</string>
@@ -309,7 +309,7 @@
     <string name="vpn_choose_country_first">先选择一个地区</string>
     <string name="vpn_choose_profile_first">请先选择一个WireGuard配置</string>
     <string name="vpn_setup_required">设置Mullvad或先导入WireGuard 配置文件</string>
-    <string name="vpn_loading_countries">正在加载地区...</string>
+    <string name="vpn_loading_countries">正在加载地区…</string>
     <string name="vpn_generating">正在创建WireGuard配置文件……</string>
     <string name="vpn_generation_failed">VPN 设置失败: %s</string>
     <string name="vpn_retry">重试</string>
@@ -324,7 +324,7 @@
     <string name="summary_watchdog">定期检查TrackerControl是否仍在运行(输入零禁用此选项)。这可能会导致额外的电池使用。</string>
     <string name="summary_log_logcat">研究模式：已识别的追踪器会记录到 ADB 并启用 SNI 提取以更好地检测主机名。用 TC-Log 标签通过 adb logcat 获取日志。</string>
     <string name="msg_sure">你确定吗？</string>
-    <string name="msg_started">正在查找追踪器...</string>
+    <string name="msg_started">正在查找追踪器…</string>
     <string name="msg_waiting">等待事件</string>
     <string name="msg_disabled">使用上面的开关来启用TrackerControl</string>
     <string name="msg_revoked">TrackerControl已被禁用，可能是通过使用另一个基于VPN的应用程序</string>
@@ -468,7 +468,7 @@
     <string name="yes">是</string>
     <string name="no">否</string>
     <string name="menu_csv">导出为CSV</string>
-    <string name="exporting">正在导出...</string>
+    <string name="exporting">正在导出…</string>
     <string name="share_csv">分享</string>
     <string name="export_failed">导出失败</string>
     <string name="exported">已导出到存储！</string>

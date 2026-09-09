@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_description">TrackerControl permite aos usuários monitorar e controlar a coleta de dados global, contínua e oculta em aplicativos móveis sobre o comportamento do usuário (\"tracking\").</string>
-    <string name="app_copyright">Copyright \u00A9 2019-2022 Konrad Kollnig\n\nTrackerControl é baseado no NetGuard, desenvolvido por Marcel Bokhorst (M66B).</string>
+    <string name="app_copyright">Copyright \u00A9 2019–2022 Konrad Kollnig\n\nTrackerControl é baseado no NetGuard, desenvolvido por Marcel Bokhorst (M66B).</string>
     <string name="app_android">TrackerControl requer Android 5.1 ou posterior</string>
     <string name="app_xposed">O Xposed provoca muitos travamentos, o que pode levar à remoção do TrackerControl da Google Play Store, logo, TrackerControl não é suportado enquanto o Xposed está instalado</string>
     <string name="app_eula">O uso deste app está por sua própria conta e risco. Nenhum app pode oferecer 100% de proteção contra rastreamento.</string>
@@ -77,6 +77,7 @@
     <string name="setting_update">Verificar se há atualizações</string>
     <plurals name="pause">
         <item quantity="one">Pausar por %d min</item>
+        <item quantity="many">Pausar por %d mins</item>
         <item quantity="other">Pausar por %d mins</item>
     </plurals>
     <string name="setting_network_options">Opções de rede</string>
@@ -147,7 +148,7 @@
     <string name="summary_watchdog">Verificar periodicamente se TrackerControl ainda está sendo executado (digite zero para desativar essa opção). Isso pode resultar em uso extra de bateria.</string>
     <string name="summary_log_logcat">Modo de pesquisa: rastreadores identificados estão conectados ao ADB e a extração SNI está ativada para melhor detecção de nome de hosts. Recuperar logs com adb logcat usando a tag \'TC-Log\'.</string>
     <string name="msg_sure">Você tem certeza?</string>
-    <string name="msg_started">Procurando por rastreadores...</string>
+    <string name="msg_started">Procurando por rastreadores…</string>
     <string name="msg_waiting">Aguardando evento</string>
     <string name="msg_disabled">Use o interruptor acima para habilitar o TrackerControl.</string>
     <string name="msg_revoked">O TrackerControl foi desativado, provavelmente outro aplicativo baseado em VPN está sendo utilizado</string>
@@ -259,10 +260,12 @@ O seu tráfego de internet não está sendo enviado para um servidor VPN remoto.
     <!-- Dynamic content description for the home-screen widget toggle (accessibility follow-up, issue #636) -->
     <plurals name="n_companies_found_week">
         <item quantity="one">contactou %d empresa na semana passada</item>
+        <item quantity="many">contactou %d empresas na semana passada</item>
         <item quantity="other">contactou %d empresas na semana passada</item>
     </plurals>
     <plurals name="n_companies_found">
         <item quantity="one">contatou %d empresa o tempo todo</item>
+        <item quantity="many">contatou %d empresas o tempo todo</item>
         <item quantity="other">contatou %d empresas o tempo todo</item>
     </plurals>
     <string name="confirm_ipinfo_title">Obter informações da organização?</string>

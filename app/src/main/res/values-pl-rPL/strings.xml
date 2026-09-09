@@ -106,7 +106,7 @@
     <string name="summary_socks5_enabled">Tylko ruch TCP będzie wysyłany do serwera proxy</string>
     <string name="summary_watchdog">Okresowo sprawdzać, czy TrackerControl nadal działa (wpisać zero, aby wyłączyć tę opcję). Może to spowodować dodatkowe zużycie baterii.</string>
     <string name="msg_sure">Jesteś pewien?</string>
-    <string name="msg_started">Wyszukiwanie trackerów...</string>
+    <string name="msg_started">Wyszukiwanie trackerów…</string>
     <string name="msg_waiting">Oczekiwanie na zdarzenie</string>
     <string name="msg_disabled">Użyj powyższego przełącznika, aby włączyć TrackerControl.</string>
     <string name="msg_revoked">TrackerControl został wyłączony, prawdopodobnie przy użyciu innej aplikacji opartej na sieci VPN</string>
@@ -298,7 +298,7 @@ Powodem mojego wniosku o usunięcie danych jest to, że wycofałem lub wycofałe
 Prosimy o dostarczenie odpowiedzi za pomocą bezpiecznych środków pocztą elektroniczną. Z niecierpliwością oczekuję odpowiedzi w ciągu miesiąca od otrzymania mojego wniosku.\n
 \n
 Z poważaniem,\n\n]]></string>
-    <string name="crash_dialog_text">Przepraszam. TrackerControl się rozbił... Mógłbyś wysłać nam e-mail ze szczegółami?</string>
+    <string name="crash_dialog_text">Przepraszam. TrackerControl się rozbił… Mógłbyś wysłać nam e-mail ze szczegółami?</string>
     <string name="crash_dialog_comment">Jakieś uwagi?</string>
     <string name="instructions_monitoring_private_dns">Przełączaj przełącznik i współdziałaj z niektórymi aplikacjami. Prywatny DNS musi być wyłączony.</string>
     <string name="instructions_monitoring">Przełączaj przełącznik i współdziałaj z niektórymi aplikacjami.</string>
@@ -307,7 +307,7 @@ Z poważaniem,\n\n]]></string>
     <string name="launch_app">Launch &amp; Znajdź trackery</string>
     <string name="countries">Kraje docelowe</string>
     <string name="countries_explanation">Dowiedz się, gdzie Twój telefon wysyła dane śledzące.\n\nInformacje są oparte na wyszukiwaniu DNS i informacji IP i mogą być niedokładne.</string>
-    <string name="countries_loading_failed">Oops... Nie udało się załadować mapy kraju. Proszę powiedzieć tc@kollnig.net jak to się stało.</string>
+    <string name="countries_loading_failed">Oops… Nie udało się załadować mapy kraju. Proszę powiedzieć tc@kollnig.net jak to się stało.</string>
     <string name="tracker_advertising">Reklama</string>
     <string name="tracker_analytics">Analityka</string>
     <string name="tracker_content">Istotne</string>

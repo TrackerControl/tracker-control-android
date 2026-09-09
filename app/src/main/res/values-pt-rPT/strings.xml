@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_description">O TrackerControl permite que os utilizadores monitorem e controlem a coleta de dados generalizada, contínua e oculta em aplicativos móveis sobre o comportamento do utilizador (\'rastreamento\').</string>
-    <string name="app_copyright">Direitos de autor \u00A9 2019-2022 Konrad Kollnig\n\nTrackerControl é baseado em NetGuard, desenvolvido por Marcel Bokhorst (M66B).</string>
+    <string name="app_copyright">Direitos de autor \u00A9 2019–2022 Konrad Kollnig\n\nTrackerControl é baseado em NetGuard, desenvolvido por Marcel Bokhorst (M66B).</string>
     <string name="app_android">TrackerControl requer Android 5.1 ou superior</string>
     <string name="app_xposed">Xposed causa muitos erros, que podem resultar na remoção do TrackerControl da Google Play Store, portanto, TrackerControl não é suportado enquanto o Xposed está instalado</string>
     <string name="app_eula">O uso desta aplicação está no seu próprio risco. Nenhuma aplicação pode oferecer 100% de proteção contra rastreamento.</string>
@@ -73,6 +73,7 @@
     <string name="setting_update">Verificar por atualizações</string>
     <plurals name="pause">
         <item quantity="one">Pausar por %d min</item>
+        <item quantity="many">Pausar para %d min</item>
         <item quantity="other">Pausar para %d min</item>
     </plurals>
     <string name="setting_network_options">Opções de rede</string>
@@ -327,7 +328,7 @@ A razão da minha solicitação de remoção é que eu retiro ou retirei minha a
 Por favor, forneça sua resposta por meio de e-mail com segurança. Aguardo com expectativa uma resposta dentro de um mês a contar da recepção do meu pedido.\n
 \n
 disso,\n\n]]></string>
-    <string name="crash_dialog_text">Desculpe. O TrackerControl acabou de cair... Você se importaria de nos enviar um e-mail com detalhes?</string>
+    <string name="crash_dialog_text">Desculpe. O TrackerControl acabou de cair… Você se importaria de nos enviar um e-mail com detalhes?</string>
     <string name="crash_dialog_comment">Algum comentário?</string>
     <string name="instructions_monitoring_private_dns">Alternar o interruptor e interagir com algumas aplicações. O DNS privado deve ser desativado.</string>
     <string name="instructions_monitoring">Alternar o interruptor e interagir com algumas aplicações.</string>
@@ -336,7 +337,7 @@ disso,\n\n]]></string>
     <string name="launch_app">Lançamento &amp; Localizar rastreadores</string>
     <string name="countries">Países de destino</string>
     <string name="countries_explanation">Descubra onde seu telefone envia dados de rastreamento.\n\nA informação é baseada nas pesquisas de DNS e nas informações de IP, e pode ser impreciso.</string>
-    <string name="countries_loading_failed">Oops... O mapa do país não conseguiu carregar. Por favor, diga a tc@kollnig.net como isso aconteceu.</string>
+    <string name="countries_loading_failed">Oops… O mapa do país não conseguiu carregar. Por favor, diga a tc@kollnig.net como isso aconteceu.</string>
     <string name="tracker_advertising">Publicidade</string>
     <string name="tracker_analytics">Analíticos</string>
     <string name="tracker_content">Essencial</string>
