@@ -20,6 +20,7 @@
 
 package eu.faircode.netguard;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.database.Cursor;
@@ -98,6 +99,9 @@ public class AdapterAccess extends CursorAdapter {
     }
 
     @Override
+    // This one-shot hostname lookup is tied to a cursor row bind; migrating
+    // legacy AsyncTask to a lifecycle-aware executor is out of scope here.
+    @SuppressLint("StaticFieldLeak")
     public void bindView(final View view, final Context context, final Cursor cursor) {
         // Get values
         final int version = cursor.getInt(colVersion);

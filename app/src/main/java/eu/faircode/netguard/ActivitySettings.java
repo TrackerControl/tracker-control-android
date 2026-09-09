@@ -23,6 +23,7 @@ package eu.faircode.netguard;
 import static net.kollnig.missioncontrol.data.TrackerBlocklist.PREF_BLOCKLIST;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.ActivityNotFoundException;
 import android.content.ContentResolver;
@@ -210,6 +211,9 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
         configurePreferences();
     }
 
+    // This preference action launches a bounded database task; lifecycle-aware
+    // executor migration is deliberately outside this focused lint change.
+    @SuppressLint("StaticFieldLeak")
     private void configurePreferences() {
         final PreferenceScreen screen = getPreferenceScreen();
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
@@ -258,6 +262,8 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
 
                                 @Override
                                 protected void onPostExecute(Throwable ex) {
+                                    if (!running)
+                                        return;
                                     if (ex == null)
                                         Toast.makeText(ActivitySettings.this, R.string.msg_completed, Toast.LENGTH_LONG)
                                                 .show();
@@ -1224,6 +1230,9 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
         return intent;
     }
 
+    // The one-shot export callback already checks running; executor migration
+    // is intentionally outside this focused lint change.
+    @SuppressLint("StaticFieldLeak")
     private void handleExport(final Intent data) {
         new AsyncTask<Object, Object, Throwable>() {
             @Override
@@ -1263,6 +1272,9 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
         }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
+    // The one-shot import callback already checks running; executor migration
+    // is intentionally outside this focused lint change.
+    @SuppressLint("StaticFieldLeak")
     private void handleImport(final Intent data) {
         new AsyncTask<Object, Object, Throwable>() {
             @Override

@@ -7,6 +7,7 @@
 
 package net.kollnig.missioncontrol.data;
 
+import android.annotation.SuppressLint;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -74,6 +75,8 @@ public final class PausedApps {
         pause(context, packageName, uid, getConfiguredDurationMinutes(context) * 60_000L);
     }
 
+    // The snapshot must be durable before the live routing values are flipped.
+    @SuppressLint("ApplySharedPref")
     public static void pause(Context context, String packageName, int uid, long durationMs) {
         Context appContext = context.getApplicationContext();
         synchronized (LOCK) {
@@ -116,6 +119,8 @@ public final class PausedApps {
     }
 
     /** Drop a pause without changing any protection state. */
+    // Commit the removed snapshots before scheduling the next alarm.
+    @SuppressLint("ApplySharedPref")
     public static void cancel(Context context, String packageName, int uid) {
         Context appContext = context.getApplicationContext();
         synchronized (LOCK) {
@@ -129,6 +134,8 @@ public final class PausedApps {
     }
 
     /** Drop only the named package's pause snapshot. */
+    // Commit the removed snapshot before scheduling the next alarm.
+    @SuppressLint("ApplySharedPref")
     public static void cancel(Context context, String packageName) {
         if (packageName == null)
             return;
@@ -172,6 +179,8 @@ public final class PausedApps {
         onPackageRemoved(context, packageName);
     }
 
+    // Commit removal before scheduling an alarm so a deleted package cannot reappear.
+    @SuppressLint("ApplySharedPref")
     public static void onPackageRemoved(Context context, String packageName) {
         if (packageName == null)
             return;
@@ -277,6 +286,8 @@ public final class PausedApps {
         return readSnapshot(value);
     }
 
+    // Restore live values before durably deleting snapshots so a crash can retry.
+    @SuppressLint("ApplySharedPref")
     private static void restorePackages(Context context, List<String> packages) {
         if (packages.isEmpty())
             return;

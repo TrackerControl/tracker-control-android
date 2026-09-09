@@ -20,6 +20,7 @@
 
 package eu.faircode.netguard;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -113,6 +114,9 @@ public class ActivityDns extends AppCompatActivity {
         updateAdapter();
     }
 
+    // These one-shot database tasks are started only by this screen and gate
+    // their UI callbacks with running; executor migration is out of scope here.
+    @SuppressLint("StaticFieldLeak")
     private void cleanup() {
         new AsyncTask<Object, Object, Object>() {
             @Override
@@ -125,11 +129,15 @@ public class ActivityDns extends AppCompatActivity {
             @Override
             protected void onPostExecute(Object result) {
                 ServiceSinkhole.reload("DNS cleanup", ActivityDns.this, false);
-                updateAdapter();
+                if (running)
+                    updateAdapter();
             }
         }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
+    // This is another bounded database task; its UI callback is lifecycle-gated
+    // and migrating the legacy AsyncTask is deliberately outside this lint fix.
+    @SuppressLint("StaticFieldLeak")
     private void clear() {
         new AsyncTask<Object, Object, Object>() {
             @Override
@@ -142,7 +150,8 @@ public class ActivityDns extends AppCompatActivity {
             @Override
             protected void onPostExecute(Object result) {
                 ServiceSinkhole.reload("DNS clear", ActivityDns.this, false);
-                updateAdapter();
+                if (running)
+                    updateAdapter();
             }
         }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
@@ -169,6 +178,9 @@ public class ActivityDns extends AppCompatActivity {
         return intent;
     }
 
+    // The one-shot export callback already checks running; a lifecycle-aware
+    // executor migration is intentionally outside this focused lint change.
+    @SuppressLint("StaticFieldLeak")
     private void handleExport(final Intent data) {
         new AsyncTask<Object, Object, Throwable>() {
             @Override

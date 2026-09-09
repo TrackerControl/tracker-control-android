@@ -20,6 +20,7 @@
 
 package eu.faircode.netguard;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
@@ -96,6 +97,9 @@ public class HostsDownloadWorker extends Worker {
 
     @NonNull
     @Override
+    // These commits establish the durable merge-pending/merged ordering across
+    // worker retries; replacing either one with apply() could lose that state.
+    @SuppressLint("ApplySharedPref")
     public Result doWork() {
         Log.i(TAG, "Starting hosts download");
 

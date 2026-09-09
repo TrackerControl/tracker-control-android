@@ -17,6 +17,7 @@
 
 package net.kollnig.missioncontrol;
 
+import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -277,6 +278,9 @@ public class DetailsActivity extends AppCompatActivity {
     /**
      * Export tracking findings to CSV
      */
+    // onDestroy() cancels this task and dismisses its dialog; its UI callback is
+    // also gated by running, so the export is deliberately lifecycle-bounded.
+    @SuppressLint("StaticFieldLeak")
     class ExportDatabaseCSVTask extends AsyncTask<String, Void, Boolean> {
         private final ProgressDialog dialog = new ProgressDialog(DetailsActivity.this);
         TrackerList trackerList;

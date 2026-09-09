@@ -1,5 +1,6 @@
 package net.kollnig.missioncontrol.details;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -234,6 +235,9 @@ public class TrackersFragment extends Fragment {
      * Communicate with tracker database to show information about tracking in a
      * given app
      */
+    // The one-shot tracker query rejects stale view generations and gates UI
+    // updates; migrating the legacy AsyncTask is deliberately out of scope.
+    @SuppressLint("StaticFieldLeak")
     public void updateTrackerList() {
         refreshing = true;
         final int generation = viewGeneration;
