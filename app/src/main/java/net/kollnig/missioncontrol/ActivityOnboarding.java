@@ -342,6 +342,8 @@ public class ActivityOnboarding extends AppCompatActivity {
                 } else {
                     slide.actionListener = v -> {
                         ActivityCompat.requestPermissions(ActivityOnboarding.this,
+                                // API-gated request; the permission name is an inlined constant.
+                                //noinspection InlinedApi
                                 new String[] { Manifest.permission.POST_NOTIFICATIONS }, 1);
                     };
                 }
@@ -398,6 +400,9 @@ public class ActivityOnboarding extends AppCompatActivity {
                     if (lockdownEnabled) {
                         slide.actionListener = v -> {
                             try {
+                                // Android exposes this settings action from API 24; the string is
+                                // intentionally inlined for the API 23 fallback path.
+                                //noinspection InlinedApi
                                 Intent intent = new Intent(Settings.ACTION_VPN_SETTINGS);
                                 startActivity(intent);
                             } catch (Throwable ex) {
@@ -413,6 +418,9 @@ public class ActivityOnboarding extends AppCompatActivity {
                     slide.warningResId = 0;
                     slide.actionListener = v -> {
                         try {
+                            // Android exposes this settings action from API 24; the string is
+                            // intentionally inlined for the API 23 fallback path.
+                            //noinspection InlinedApi
                             Intent intent = new Intent(Settings.ACTION_VPN_SETTINGS);
                             startActivity(intent);
                         } catch (Throwable ex) {
@@ -482,6 +490,9 @@ public class ActivityOnboarding extends AppCompatActivity {
                 .setPositiveButton(R.string.onboarding_vpn_blocked_action,
                         (DialogInterface.OnClickListener) (dialog, which) -> {
                             try {
+                                // This is a user-facing recovery action; the settings action is
+                                // intentionally inlined for API 23 devices.
+                                //noinspection InlinedApi
                                 startActivity(new Intent(Settings.ACTION_VPN_SETTINGS));
                             } catch (Throwable ex) {
                                 Log.e("Onboarding", ex.toString());

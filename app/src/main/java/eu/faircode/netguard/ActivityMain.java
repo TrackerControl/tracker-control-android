@@ -34,7 +34,6 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.database.Cursor;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.net.VpnService;
 import android.os.AsyncTask;
@@ -46,7 +45,6 @@ import android.provider.Settings;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -74,7 +72,6 @@ import com.google.android.material.materialswitch.MaterialSwitch;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
-import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
@@ -149,8 +146,6 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
 
     private AlertDialog dialogTroubleshooting = null;
 
-    private static final int MIN_SDK = Build.VERSION_CODES.LOLLIPOP_MR1;
-
     public static final String ACTION_RULES_CHANGED = "eu.faircode.netguard.ACTION_RULES_CHANGED";
     public static final String ACTION_PRIVATE_DNS_WARNING_CHANGED =
             "eu.faircode.netguard.ACTION_PRIVATE_DNS_WARNING_CHANGED";
@@ -206,15 +201,6 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
             super.onCreate(savedInstanceState);
             startActivity(new Intent(this, ActivityOnboarding.class));
             finish();
-            return;
-        }
-
-        // Check minimum Android version
-        if (Build.VERSION.SDK_INT < MIN_SDK) {
-            Log.i(TAG, "SDK=" + Build.VERSION.SDK_INT);
-            super.onCreate(savedInstanceState);
-            setContentView(R.layout.android);
-            setCopyright(findViewById(android.R.id.content));
             return;
         }
 
@@ -609,18 +595,16 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         Util.logExtras(intent);
         super.onNewIntent(intent);
 
-        if (Build.VERSION.SDK_INT < MIN_SDK || Util.hasXposed(this))
+        if (Util.hasXposed(this))
             return;
 
         setIntent(intent);
 
-        if (Build.VERSION.SDK_INT >= MIN_SDK) {
-            if (intent.hasExtra(EXTRA_REFRESH))
-                updateApplicationList(intent.getStringExtra(EXTRA_SEARCH));
-            else
-                updateSearch(intent.getStringExtra(EXTRA_SEARCH));
-            checkExtras(intent);
-        }
+        if (intent.hasExtra(EXTRA_REFRESH))
+            updateApplicationList(intent.getStringExtra(EXTRA_SEARCH));
+        else
+            updateSearch(intent.getStringExtra(EXTRA_SEARCH));
+        checkExtras(intent);
     }
 
     @Override
@@ -630,7 +614,7 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
     protected void onResume() {
         Log.i(TAG, "Resume");
 
-        if (Build.VERSION.SDK_INT < MIN_SDK || Util.hasXposed(this)) {
+        if (Util.hasXposed(this)) {
             super.onResume();
             return;
         }
@@ -678,7 +662,7 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         Log.i(TAG, "Pause");
         super.onPause();
 
-        if (Build.VERSION.SDK_INT < MIN_SDK || Util.hasXposed(this))
+        if (Util.hasXposed(this))
             return;
 
         DatabaseHelper.getInstance(this).removeAccessChangedListener(accessChangedListener);
@@ -689,7 +673,7 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         Log.i(TAG, "Config");
         super.onConfigurationChanged(newConfig);
 
-        if (Build.VERSION.SDK_INT < MIN_SDK || Util.hasXposed(this))
+        if (Util.hasXposed(this))
             return;
 
         int horizontalPadding = getResources().getDimensionPixelSize(
@@ -758,7 +742,7 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         Log.i(TAG, "Destroy");
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        if (Build.VERSION.SDK_INT < MIN_SDK || Util.hasXposed(this) || !Util.canFilter(this)
+        if (Util.hasXposed(this) || !Util.canFilter(this)
                 || prefs.getInt("onboarding_version", 0) < ActivityOnboarding.ONBOARDING_VERSION) {
             super.onDestroy();
             return;
@@ -1113,9 +1097,6 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        if (Build.VERSION.SDK_INT < MIN_SDK)
-            return false;
-
         PackageManager pm = getPackageManager();
 
         MenuInflater inflater = getMenuInflater();
@@ -1469,13 +1450,15 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
 
         // Battery optimization button
         View btnBattery = view.findViewById(R.id.btnBattery);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && Util.batteryOptimizing(this)) {
+        if (Util.batteryOptimizing(this)) {
             btnBattery.setVisibility(View.VISIBLE);
             btnBattery.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     try {
                         if (!Util.isPlayStoreInstall()) {
+                            // This is an explicit user recovery action for the VPN service.
+                            //noinspection BatteryLife
                             startActivity(new Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS)
                                     .setData(Uri.parse("package:" + getPackageName())));
                         } else {
@@ -1526,6 +1509,9 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
             @Override
             public void onClick(View v) {
                 try {
+                    // Android exposes this settings action from API 24; the string is
+                    // intentionally inlined for the API 23 fallback path.
+                    //noinspection InlinedApi
                     startActivity(new Intent(Settings.ACTION_VPN_SETTINGS));
                 } catch (Throwable ex) {
                     Log.e(TAG, ex.toString());
@@ -1559,12 +1545,6 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
     }
 
     private void menu_legend() {
-        TypedValue tv = new TypedValue();
-        getTheme().resolveAttribute(R.attr.colorOn, tv, true);
-        int colorOn = tv.data;
-        getTheme().resolveAttribute(R.attr.colorOff, tv, true);
-        int colorOff = tv.data;
-
         // Create view
         LayoutInflater inflater = LayoutInflater.from(this);
         View view = inflater.inflate(R.layout.legend, null, false);
@@ -1575,24 +1555,6 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         ImageView ivScreenOn = view.findViewById(R.id.ivScreenOn);
         ImageView ivHostAllowed = view.findViewById(R.id.ivHostAllowed);
         ImageView ivHostBlocked = view.findViewById(R.id.ivHostBlocked);
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-            Drawable wrapWifiOn = DrawableCompat.wrap(ivWifiOn.getDrawable());
-            Drawable wrapWifiOff = DrawableCompat.wrap(ivWifiOff.getDrawable());
-            Drawable wrapOtherOn = DrawableCompat.wrap(ivOtherOn.getDrawable());
-            Drawable wrapOtherOff = DrawableCompat.wrap(ivOtherOff.getDrawable());
-            Drawable wrapScreenOn = DrawableCompat.wrap(ivScreenOn.getDrawable());
-            Drawable wrapHostAllowed = DrawableCompat.wrap(ivHostAllowed.getDrawable());
-            Drawable wrapHostBlocked = DrawableCompat.wrap(ivHostBlocked.getDrawable());
-
-            DrawableCompat.setTint(wrapWifiOn, colorOn);
-            DrawableCompat.setTint(wrapWifiOff, colorOff);
-            DrawableCompat.setTint(wrapOtherOn, colorOn);
-            DrawableCompat.setTint(wrapOtherOff, colorOff);
-            DrawableCompat.setTint(wrapScreenOn, colorOn);
-            DrawableCompat.setTint(wrapHostAllowed, colorOn);
-            DrawableCompat.setTint(wrapHostBlocked, colorOff);
-        }
-
         // Show dialog
         dialogLegend = new MaterialAlertDialogBuilder(this)
                 .setView(view)

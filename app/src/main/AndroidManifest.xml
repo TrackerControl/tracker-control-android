@@ -75,9 +75,12 @@
         android:name="android.hardware.touchscreen"
         android:required="false" />
 
+    <!-- appCategory, networkSecurityConfig and resizeableActivity are intentionally retained for their API 24+/26+ behaviour. -->
     <application
         android:name="eu.faircode.netguard.ApplicationEx"
         android:allowBackup="false"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="false"
         android:appCategory="productivity"
         android:description="@string/app_description"
         android:icon="@mipmap/ic_launcher_round"
@@ -85,7 +88,7 @@
         android:networkSecurityConfig="@xml/network_security_config"
         android:supportsRtl="true"
         android:theme="@style/AppThemeRed"
-        tools:ignore="ManifestResource"
+        tools:ignore="ManifestResource,UnusedAttribute"
         tools:replace="android:allowBackup,android:theme">
 
         <meta-data
@@ -96,7 +99,7 @@
             android:name="net.kollnig.missioncontrol.ActivityOnboarding"
             android:theme="@style/AppTheme.NoActionBar"
             android:screenOrientation="portrait"
-            tools:ignore="LockedOrientationActivity" />
+            tools:ignore="LockedOrientationActivity,DiscouragedApi" />
 
         <activity
             android:name="eu.faircode.netguard.ActivityMain"
@@ -161,7 +164,6 @@
             android:name="eu.faircode.netguard.ActivityForwardApproval"
             android:configChanges="orientation|screenSize"
             android:exported="true"
-            android:label="@string/app_name"
             android:permission="${applicationId}.permission.ADMIN"
             android:theme="@style/AppDialog">
             <intent-filter>
@@ -281,11 +283,14 @@
             </intent-filter>
         </service>
 
+        <!-- Public command contract: external callers send DOWNLOAD_HOSTS_FILE;
+             adding the app signature permission would break those callers. -->
         <service
             android:name="eu.faircode.netguard.ServiceExternal"
             android:exported="true"
             android:foregroundServiceType="specialUse"
-            android:label="@string/app_name">
+            android:label="@string/app_name"
+            tools:ignore="ExportedService">
             <property
                 android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
                 android:value="TrackerControl is a firewall app using the Android VPN service to filter traffic on the device. A foreground service is required to process internet traffic in real-time to be able to allow and block traffic as configured by the user of the app. There is no other way to do this, and other foreground service types are either too limited or not appropriate."  />
@@ -299,6 +304,7 @@
             android:exported="true"
             android:icon="@drawable/ic_rocket_white"
             android:label="@string/app_name"
+            tools:targetApi="n"
             android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
             <intent-filter>
                 <action android:name="android.service.quicksettings.action.QS_TILE" />

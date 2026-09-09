@@ -24,7 +24,6 @@ import static net.kollnig.missioncontrol.data.TrackerBlocklist.PREF_BLOCKLIST;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
 import android.content.ActivityNotFoundException;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -666,7 +665,6 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
     }
 
     @Override
-    @TargetApi(Build.VERSION_CODES.M)
     public void onSharedPreferenceChanged(SharedPreferences prefs, String name) {
         if ("show_stats".equals(name)) {
             ((TwoStatePreference) getPreferenceScreen().findPreference(name)).setChecked(prefs.getBoolean(name, false));
@@ -1127,7 +1125,6 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
         ServiceSinkhole.reload("bulk tracker protect changed", this, false);
     }
 
-    @TargetApi(Build.VERSION_CODES.M)
     private boolean checkPermissions(String name) {
         PreferenceScreen screen = getPreferenceScreen();
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
@@ -1221,10 +1218,7 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
 
     private Intent getIntentOpenExport() {
         Intent intent;
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT)
-            intent = new Intent(Intent.ACTION_GET_CONTENT);
-        else
-            intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+        intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
         intent.addCategory(Intent.CATEGORY_OPENABLE);
         intent.setType("*/*"); // text/xml
         return intent;

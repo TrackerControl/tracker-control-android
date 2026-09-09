@@ -22,7 +22,6 @@ package eu.faircode.netguard;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
 import android.app.Notification;
 import android.app.ApplicationErrorReport;
 import android.content.Context;
@@ -52,6 +51,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 
+import androidx.annotation.RequiresApi;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.app.ActivityCompat;
@@ -294,11 +294,8 @@ public class Util {
     }
 
     public static boolean hasPhoneStatePermission(Context context) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-            return (context
-                    .checkSelfPermission(Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED);
-        else
-            return true;
+        return (context
+                .checkSelfPermission(Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED);
     }
 
     public static List<String> getDefaultDNS(Context context) {
@@ -336,10 +333,7 @@ public class Util {
 
     public static boolean isInteractive(Context context) {
         PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT_WATCH)
-            return (pm != null && pm.isScreenOn());
-        else
-            return (pm != null && pm.isInteractive());
+        return (pm != null && pm.isInteractive());
     }
 
     public static boolean isPackageInstalled(String packageName, Context context) {
@@ -836,10 +830,8 @@ public class Util {
         }
 
         PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
-            sb.append(String.format("Power saving %B\r\n", pm.isPowerSaveMode()));
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-            sb.append(String.format("Battery optimizing %B\r\n", batteryOptimizing(context)));
+        sb.append(String.format("Power saving %B\r\n", pm.isPowerSaveMode()));
+        sb.append(String.format("Battery optimizing %B\r\n", batteryOptimizing(context)));
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
             sb.append(String.format("Data saving %B\r\n", dataSaving(context)));
 
@@ -856,14 +848,11 @@ public class Util {
         NetworkInfo ani = cm.getActiveNetworkInfo();
         List<NetworkInfo> listNI = new ArrayList<>();
 
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP)
-            listNI.addAll(Arrays.asList(cm.getAllNetworkInfo()));
-        else
-            for (Network network : cm.getAllNetworks()) {
-                NetworkInfo ni = cm.getNetworkInfo(network);
-                if (ni != null)
-                    listNI.add(ni);
-            }
+        for (Network network : cm.getAllNetworks()) {
+            NetworkInfo ni = cm.getNetworkInfo(network);
+            if (ni != null)
+                listNI.add(ni);
+        }
 
         for (NetworkInfo ni : listNI) {
             sb.append(ni.getTypeName()).append('/').append(ni.getSubtypeName())
@@ -905,13 +894,12 @@ public class Util {
         return sb.toString();
     }
 
-    @TargetApi(Build.VERSION_CODES.M)
     public static boolean batteryOptimizing(Context context) {
         PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
         return !pm.isIgnoringBatteryOptimizations(context.getPackageName());
     }
 
-    @TargetApi(Build.VERSION_CODES.N)
+    @RequiresApi(Build.VERSION_CODES.N)
     public static boolean dataSaving(Context context) {
         ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         return (cm.getRestrictBackgroundStatus() == ConnectivityManager.RESTRICT_BACKGROUND_STATUS_ENABLED);

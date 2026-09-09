@@ -83,10 +83,7 @@ public class WidgetAdmin extends ReceiverAutostart {
                 int auto = Integer.parseInt(prefs.getString("pause", "10"));
                 if (!enabled && auto > 0 && INTENT_PAUSE.equals(intent.getAction())) {
                     Log.i(TAG, "Scheduling enabled after minutes=" + auto);
-                    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M)
-                        am.set(AlarmManager.RTC_WAKEUP, new Date().getTime() + auto * 60 * 1000L, pi);
-                    else
-                        am.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, new Date().getTime() + auto * 60 * 1000L, pi);
+                    am.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, new Date().getTime() + auto * 60 * 1000L, pi);
                 }
             }
         } catch (Throwable ex) {

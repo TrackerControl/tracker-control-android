@@ -682,9 +682,7 @@ public class Rule {
     private static List<String> getHandlingPackages(PackageManager pm, Intent intent) {
         List<String> packagesList = new ArrayList<>();
 
-        int flag = 0;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-            flag = PackageManager.MATCH_ALL;
+        int flag = PackageManager.MATCH_ALL;
         List<ResolveInfo> activityList = pm.queryIntentActivities(intent, flag);
         for (ResolveInfo info : activityList)
             packagesList.add(info.activityInfo.packageName);

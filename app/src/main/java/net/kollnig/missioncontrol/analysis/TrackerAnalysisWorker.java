@@ -28,7 +28,6 @@ import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
-import android.os.Build;
 import android.provider.Settings;
 import android.util.Log;
 
@@ -168,9 +167,8 @@ public class TrackerAnalysisWorker extends Worker {
                 PendingIntent.FLAG_UPDATE_CURRENT);
         builder.addAction(0, context.getString(R.string.uninstall), piUninstall);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
-            builder.setCategory(NotificationCompat.CATEGORY_STATUS)
-                    .setVisibility(NotificationCompat.VISIBILITY_SECRET);
+        builder.setCategory(NotificationCompat.CATEGORY_STATUS)
+                .setVisibility(NotificationCompat.VISIBILITY_SECRET);
 
         return builder.build();
     }

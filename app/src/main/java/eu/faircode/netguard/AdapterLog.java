@@ -27,10 +27,8 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Typeface;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.TypedValue;
@@ -41,7 +39,6 @@ import android.widget.CursorAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.core.view.ViewCompat;
 import androidx.preference.PreferenceManager;
 
@@ -222,10 +219,6 @@ public class AdapterLog extends CursorAdapter {
                 ivConnection.setImageResource(connection == 1 ? R.drawable.wifi_off : R.drawable.other_off);
         }
         ivConnection.setContentDescription(connectionDescription);
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-            Drawable wrap = DrawableCompat.wrap(ivConnection.getDrawable());
-            DrawableCompat.setTint(wrap, allowed > 0 ? colorOn : colorOff);
-        }
 
         // Show if screen on
         if (interactive <= 0) {
@@ -234,10 +227,6 @@ public class AdapterLog extends CursorAdapter {
         } else {
             ivInteractive.setImageResource(R.drawable.screen_on);
             ivInteractive.setContentDescription(context.getString(R.string.log_screen_on));
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-                Drawable wrap = DrawableCompat.wrap(ivInteractive.getDrawable());
-                DrawableCompat.setTint(wrap, colorOn);
-            }
         }
 
         // Show protocol name

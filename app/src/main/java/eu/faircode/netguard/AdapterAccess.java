@@ -24,9 +24,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.database.Cursor;
-import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.text.SpannableString;
 import android.text.style.UnderlineSpan;
 import android.util.TypedValue;
@@ -38,7 +36,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.core.view.ViewCompat;
 
 import net.kollnig.missioncontrol.R;
@@ -132,10 +129,6 @@ public class AdapterAccess extends CursorAdapter {
         } else {
             ivBlock.setImageResource(block > 0 ? R.drawable.host_blocked : R.drawable.host_allowed);
             ivBlock.setContentDescription(context.getString(block > 0 ? R.string.blocked : R.string.allowed));
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-                Drawable wrap = DrawableCompat.wrap(ivBlock.getDrawable());
-                DrawableCompat.setTint(wrap, block > 0 ? colorOff : colorOn);
-            }
         }
 
         String dest = Util.getProtocolName(protocol, version, true) +
