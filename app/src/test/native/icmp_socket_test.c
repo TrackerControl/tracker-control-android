@@ -20,6 +20,8 @@ static int fcntl_fail_set;
 static int socket_calls;
 static int close_calls;
 static int sendto_calls;
+static int last_sendto_socket;
+static uint16_t last_sendto_id;
 static int last_sendto_family;
 static struct sockaddr_storage last_sendto_address;
 
@@ -117,10 +119,10 @@ int epoll_ctl(int epoll_fd, int operation, int descriptor,
 ssize_t __wrap_sendto(int socket, const void *buffer, size_t length, int flags,
                       const struct sockaddr *destination,
                       socklen_t destination_length) {
-    (void) socket;
-    (void) buffer;
     (void) flags;
     sendto_calls++;
+    last_sendto_socket = socket;
+    last_sendto_id = ((const struct icmp *) buffer)->icmp_id;
     last_sendto_family = destination->sa_family;
     memset(&last_sendto_address, 0, sizeof(last_sendto_address));
     if (destination_length <= sizeof(last_sendto_address))
@@ -174,7 +176,7 @@ static void test_nonblocking_socket_and_open_cleanup(void) {
     fcntl_fail_set = 0;
 }
 
-static size_t make_echo_packet(uint8_t *packet) {
+static size_t make_echo_packet(uint8_t *packet, uint16_t id, uint16_t seq) {
     memset(packet, 0, sizeof(struct iphdr) + ICMP_MINLEN);
     struct iphdr *ip4 = (struct iphdr *) packet;
     ip4->version = 4;
@@ -185,11 +187,12 @@ static size_t make_echo_packet(uint8_t *packet) {
 
     struct icmp *icmp = (struct icmp *) (packet + sizeof(struct iphdr));
     icmp->icmp_type = ICMP_ECHO;
-    icmp->icmp_id = htons(0x1234);
+    icmp->icmp_id = id;
+    icmp->icmp_seq = seq;
     return sizeof(struct iphdr) + ICMP_MINLEN;
 }
 
-static size_t make_echo_packet6(uint8_t *packet) {
+static size_t make_echo_packet6(uint8_t *packet, uint16_t id, uint16_t seq) {
     memset(packet, 0, sizeof(struct ip6_hdr) + ICMP_MINLEN);
     struct ip6_hdr *ip6 = (struct ip6_hdr *) packet;
     ip6->ip6_ctlun.ip6_un2_vfc = IPV6_VERSION;
@@ -200,13 +203,41 @@ static size_t make_echo_packet6(uint8_t *packet) {
 
     struct icmp *icmp = (struct icmp *) (packet + sizeof(struct ip6_hdr));
     icmp->icmp_type = ICMP6_ECHO_REQUEST;
-    icmp->icmp_id = htons(0x2345);
+    icmp->icmp_id = id;
+    icmp->icmp_seq = seq;
     return sizeof(struct ip6_hdr) + ICMP_MINLEN;
+}
+
+static size_t make_echo_packet_for_version(uint8_t *packet, int version,
+                                           uint16_t id, uint16_t seq) {
+    return version == 4 ? make_echo_packet(packet, id, seq)
+                        : make_echo_packet6(packet, id, seq);
+}
+
+static struct ng_session *find_icmp_session(struct context *context,
+                                            int version, uint16_t id) {
+    for (struct ng_session *session = context->ng_session;
+         session != NULL; session = session->next)
+        if ((session->protocol == IPPROTO_ICMP ||
+             session->protocol == IPPROTO_ICMPV6) &&
+            session->icmp.version == version && session->icmp.id == id)
+            return session;
+    return NULL;
+}
+
+static void free_test_sessions(struct context *context) {
+    struct ng_session *session = context->ng_session;
+    while (session != NULL) {
+        struct ng_session *next = session->next;
+        ng_free(session, __FILE__, __LINE__);
+        session = next;
+    }
+    context->ng_session = NULL;
 }
 
 static void test_epoll_add_failure_does_not_retain_session(void) {
     _Alignas(struct iphdr) uint8_t packet[sizeof(struct iphdr) + sizeof(struct icmp)];
-    size_t length = make_echo_packet(packet);
+    size_t length = make_echo_packet(packet, htons(0x1234), 1);
     struct context context = {0};
     struct arguments args = {0};
     args.ctx = &context;
@@ -226,7 +257,7 @@ static void test_epoll_add_failure_does_not_retain_session(void) {
 static void test_icmp_send_address_is_zero_initialised(void) {
     _Alignas(struct ip6_hdr) uint8_t packet[(sizeof(struct ip6_hdr) > sizeof(struct iphdr)
                     ? sizeof(struct ip6_hdr) : sizeof(struct iphdr)) + sizeof(struct icmp)];
-    size_t length = make_echo_packet(packet);
+    size_t length = make_echo_packet(packet, htons(0x1234), 1);
     struct context context = {0};
     struct arguments args = {0};
     args.ctx = &context;
@@ -254,7 +285,7 @@ static void test_icmp_send_address_is_zero_initialised(void) {
         ng_free(session, __FILE__, __LINE__);
     context.ng_session = NULL;
 
-    length = make_echo_packet6(packet);
+    length = make_echo_packet6(packet, htons(0x2345), 1);
     context.ng_session = NULL;
     sendto_calls = 0;
     CHECK(handle_icmp(&args, packet, length,
@@ -274,10 +305,78 @@ static void test_icmp_send_address_is_zero_initialised(void) {
     context.ng_session = NULL;
 }
 
+static void test_icmp_identifier_session_isolation(void) {
+    const uint16_t first_id = htons(0x1234);
+    const uint16_t second_id = htons(0x5678);
+    _Alignas(struct ip6_hdr) uint8_t packet[(sizeof(struct ip6_hdr) > sizeof(struct iphdr)
+                    ? sizeof(struct ip6_hdr) : sizeof(struct iphdr)) + sizeof(struct icmp)];
+
+    for (int version = 4; version <= 6; version += 2) {
+        struct context context = {0};
+        struct arguments args = {0};
+        args.ctx = &context;
+        protect_result = 0;
+        epoll_result = 0;
+        fcntl_fail_get = 0;
+        fcntl_fail_set = 0;
+        socket_calls = 0;
+        sendto_calls = 0;
+
+        size_t length = make_echo_packet_for_version(packet, version, first_id, 1);
+        size_t header_length = version == 4 ? sizeof(struct iphdr) : sizeof(struct ip6_hdr);
+        CHECK(handle_icmp(&args, packet, length, packet + header_length,
+                          10001, 99) == 1 && sendto_calls == 1,
+              "ICMP opens the first ID-specific session");
+        struct ng_session *first = find_icmp_session(&context, version, first_id);
+        CHECK(first != NULL && first->icmp.id == first_id && first->socket == 101,
+              "ICMP retains the first original ID and socket assignment");
+        CHECK(last_sendto_socket == 101 &&
+                      last_sendto_id == (uint16_t) ~first_id,
+              "ICMP sends the first probe on its ID-specific socket");
+
+        length = make_echo_packet_for_version(packet, version, second_id, 1);
+        CHECK(handle_icmp(&args, packet, length, packet + header_length,
+                          10001, 99) == 1 && sendto_calls == 2,
+              "ICMP opens a second ID-specific session");
+        struct ng_session *second = find_icmp_session(&context, version, second_id);
+        CHECK(socket_calls == 2 && second != NULL && second->socket == 102,
+              "distinct echo IDs allocate distinct sockets");
+        CHECK(last_sendto_socket == 102 &&
+                      last_sendto_id == (uint16_t) ~second_id,
+              "ICMP sends the second probe on its ID-specific socket");
+
+        length = make_echo_packet_for_version(packet, version, second_id, 2);
+        CHECK(handle_icmp(&args, packet, length, packet + header_length,
+                          10001, 99) == 1 && sendto_calls == 3 && socket_calls == 2 &&
+                      last_sendto_socket == 102,
+              "ICMP reuses the second session for a changed sequence");
+        length = make_echo_packet_for_version(packet, version, first_id, 3);
+        CHECK(handle_icmp(&args, packet, length, packet + header_length,
+                          10001, 99) == 1 && sendto_calls == 4 && socket_calls == 2 &&
+                      last_sendto_socket == 101,
+              "ICMP reuses the first session after interleaving probes");
+
+        if (first != NULL)
+            first->icmp.stop = 1;
+        length = make_echo_packet_for_version(packet, version, first_id, 4);
+        CHECK(handle_icmp(&args, packet, length, packet + header_length,
+                          10001, 99) == 1 && sendto_calls == 5 && socket_calls == 3 &&
+                      last_sendto_socket == 103,
+              "ICMP does not reuse a stopped session");
+        struct ng_session *replacement = find_icmp_session(&context, version, first_id);
+        CHECK(replacement != NULL && replacement != first &&
+                      replacement->socket == 103 && replacement->icmp.id == first_id,
+              "ICMP assigns the replacement socket to the original ID");
+
+        free_test_sessions(&context);
+    }
+}
+
 int main(void) {
     test_nonblocking_socket_and_open_cleanup();
     test_epoll_add_failure_does_not_retain_session();
     test_icmp_send_address_is_zero_initialised();
+    test_icmp_identifier_session_isolation();
 
     if (failures != 0)
         return 1;
