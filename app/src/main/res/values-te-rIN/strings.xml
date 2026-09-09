@@ -33,10 +33,7 @@
     <string name="menu_log_support">వివరణ</string>
     <string name="menu_troubleshooting">ట్రబుల్‌షూటింగ్</string>
     <string name="menu_about">గురించి</string>
-    <string name="menu_timeline">ట్రాకర్ కార్యకలాపం</string>
 
-    <string name="title_tracker_activity">ట్రాకర్ కార్యకలాపం</string>
-    <string name="timeline_empty">ఇటీవలి ట్రాకర్ కార్యకలాపం ఏదీ లేదు.\n\nఏ యాప్‌లు మిమ్మల్ని ట్రాక్ చేస్తున్నాయో చూడటానికి TrackerControlను ప్రారంభించండి.</string>
     <string name="timeline_empty_disabled_title">TrackerControl ఆఫ్‌లో ఉంది</string>
     <string name="timeline_empty_disabled_subtitle">కుడి ఎగువన ఉన్న స్విచ్‌ను ఉపయోగించి TrackerControlను ప్రారంభించండి. అప్పుడు మీ యాప్‌ల ట్రాకర్ కార్యకలాపం ఇక్కడ కనిపిస్తుంది.</string>
     <string name="timeline_empty_enabled_title">ట్రాకర్‌ల కోసం పర్యవేక్షిస్తోంది…</string>
@@ -128,14 +125,12 @@
     <string name="menu_clear">తొలగించు</string>
     <string name="menu_clear_activity">రికార్డ్ చేసిన కార్యకలాపాన్ని తొలగించు</string>
     <string name="menu_export">ఎగుమతి</string>
-    <string name="menu_reset">రీసెట్</string>
 
+    <string name="menu_reset">రీసెట్</string>
     <string name="menu_cleanup">క్లీన్‌అప్</string>
 
     <string name="setting_options">సాధారణ</string>
     <string name="setting_further_options">మరిన్ని ఎంపికలు</string>
-    <string name="setting_dark">డార్క్ థీమ్</string>
-    <string name="setting_install">కొత్త ఇన్‌స్టాలేషన్‌పై తెలియజేయి</string>
     <string name="setting_pause">%1$s నిమిషాల తర్వాత స్వయంచాలకంగా ప్రారంభించు</string>
     <string name="setting_update">నవీకరణల కోసం తనిఖీ చేయి</string>
 
@@ -144,10 +139,6 @@
         <item quantity="other">%d నిమిషాలు పాజ్ చేయి</item>
     </plurals>
 
-    <string name="setting_network_options">నెట్‌వర్క్ ఎంపికలు</string>
-    <string name="setting_subnet">సబ్‌నెట్ రూటింగ్</string>
-    <string name="setting_tethering">టెథరింగ్‌ను అనుమతించు</string>
-    <string name="setting_lan">LAN యాక్సెస్‌ను అనుమతించు</string>
     <string name="setting_ip6">IPv6 ట్రాఫిక్‌ను ప్రారంభించు</string>
     <string name="setting_call">కాల్‌లో నిలిపివేయి</string>
     <string name="setting_reload_onconnectivity">ప్రతి కనెక్టివిటీ మార్పుపై మళ్లీ లోడ్ చేయి</string>
@@ -155,13 +146,9 @@
     <string name="summary_tcp_mss_clamp">టెథర్ చేసిన కనెక్షన్‌లు ఆగిపోకుండా లేదా ఇంటర్నెట్ యాక్సెస్ లేకుండా ఉండకుండా, మొత్తం ట్రాఫిక్‌ను TrackerControl ద్వారా రూట్ చేసి TCP సెగ్మెంట్ పరిమాణాన్ని పరిమితం చేస్తుంది. స్థానిక నెట్‌వర్క్ యాక్సెస్ ఇకపై TrackerControlను దాటదు; పనితీరు తగ్గవచ్చు.</string>
 
     <string name="setting_advanced_options">అధునాతన ఎంపికలు (నిపుణుల కోసం)</string>
-    <string name="setting_system">సిస్టమ్ యాప్‌లను చూపు</string>
     <string name="setting_log_app">కొత్త ట్రాకర్‌ల కోసం శోధించు</string>
     <string name="setting_log_logcat">పరిశోధన</string>
-    <string name="setting_filter">ట్రాకర్‌లను నిరోధించు</string>
     <string name="setting_handover">రీలోడ్‌లో అంతరాయం లేని VPN హ్యాండోవర్</string>
-    <string name="setting_lockdown">ట్రాఫిక్‌ను లాక్‌డౌన్ చేయి</string>
-    <string name="setting_track_usage">నెట్‌వర్క్ వినియోగాన్ని ట్రాక్ చేయి</string>
     <string name="setting_reset_usage">నెట్‌వర్క్ వినియోగాన్ని రీసెట్ చేయి</string>
     <string name="setting_show_resolved">రిజాల్వ్ చేసిన డొమైన్ పేర్లను చూపు</string>
     <string name="setting_exclude_all_tracking">ట్రాకింగ్ నుంచి అన్ని యాప్‌లను మినహాయించు</string>
@@ -181,7 +168,6 @@
     <string name="setting_socks5_username">SOCKS5 వినియోగదారు పేరు: %s</string>
     <string name="setting_socks5_password">SOCKS5 పాస్‌వర్డ్: %s</string>
     <string name="setting_wg_enabled">WireGuard ద్వారా ట్రాఫిక్‌ను టన్నెల్ చేయి</string>
-    <string name="setting_wg_config">WireGuard కాన్ఫిగరేషన్</string>
     <string name="setting_wg_profile">WireGuard ప్రొఫైల్</string>
     <string name="setting_wg_profile_manage">కస్టమ్ WireGuard ప్రొఫైల్‌లు</string>
     <string name="setting_wg_profile_import">WireGuard కాన్ఫిగరేషన్‌ను దిగుమతి చేయి</string>
@@ -220,27 +206,17 @@
     <string name="setting_backup">బ్యాకప్</string>
     <string name="setting_export">సెట్టింగ్‌లను ఎగుమతి చేయి</string>
     <string name="setting_import">సెట్టింగ్‌లను దిగుమతి చేయి</string>
-    <string name="setting_hosts">హోస్ట్స్ ఫైల్‌ను దిగుమతి చేయి</string>
-    <string name="setting_hosts_append">హోస్ట్స్ ఫైల్‌ను దిగుమతి చేయి (జోడించు)</string>
-    <string name="setting_hosts_url">హోస్ట్స్ ఫైల్ URL</string>
-    <string name="setting_hosts_download">హోస్ట్స్ ఫైల్‌ను డౌన్‌లోడ్ చేయి</string>
     <string name="setting_hosts_update">హోస్ట్స్ ఫైల్‌ను నవీకరించు</string>
     <string name="setting_hosts_auto_update">హోస్ట్స్‌ను స్వయంచాలకంగా నవీకరించు</string>
     <string name="summary_hosts_auto_update">నేపథ్యంలో హోస్ట్స్ ఫైల్‌ను స్వయంచాలకంగా నవీకరించు</string>
 
-    <string name="summary_install">కొత్తగా ఇన్‌స్టాల్ చేసిన యాప్‌ల కోసం స్టేటస్ బార్ నోటిఫికేషన్‌ను చూపు</string>
     <string name="summary_pause">నోటిఫికేషన్ నుంచి పాజ్ చేసిన తర్వాత, ఎంచుకున్న నిమిషాల సంఖ్య పూర్తయ్యాక TrackerControlను స్వయంచాలకంగా మళ్లీ ప్రారంభించు (ఈ ఎంపికను నిలిపివేయడానికి 0 నమోదు చేయండి).</string>
     <string name="summary_update">GitHubలో కొత్త విడుదలల కోసం రోజుకు రెండుసార్లు తనిఖీ చేయి</string>
 
-    <string name="summary_tethering">Android వెర్షన్‌పై ఆధారపడి టెథరింగ్ పనిచేయవచ్చు లేదా పనిచేయకపోవచ్చు. టెథర్ చేసిన ట్రాఫిక్‌ను ఫిల్టర్ చేయలేం.</string>
-    <string name="summary_subnet">సబ్‌నెట్ రూటింగ్‌ను ప్రారంభించు; Wi‑Fi కాలింగ్‌ను ప్రారంభించవచ్చు, కానీ Androidలో బగ్‌లను కలిగించి బ్యాటరీ వినియోగాన్ని పెంచవచ్చు</string>
-    <string name="summary_lan">10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16 వంటి స్థానిక ప్రాంత నెట్‌వర్క్ చిరునామాలకు యాప్‌లు కనెక్ట్ కావడానికి అనుమతించు</string>
     <string name="summary_ip6">IP వెర్షన్ 6 ట్రాఫిక్‌ను TrackerControlకు రూట్ చేయి, తద్వారా దాన్ని ఎంపికగా అనుమతించవచ్చు లేదా నిరోధించవచ్చు</string>
     <string name="summary_call">ఇన్‌కమింగ్ లేదా అవుట్‌గోయింగ్ ఫోన్ కాల్‌లో TrackerControlను నిలిపివేయి. IP/Wi‑Fi కాలింగ్ సమస్యలకు ఇది పరిష్కారంగా ఉపయోగపడుతుంది.</string>
 
-    <string name="summary_system">యాప్ జాబితాలో సిస్టమ్ యాప్‌లను చూపు</string>
     <string name="summary_log_app">బ్యాటరీ వినియోగాన్ని తగ్గించడానికి నిలిపివేయి. కొత్త ట్రాకర్‌లు ఇంకా నిరోధించబడతాయి, కానీ చూపబడవు.</string>
-    <string name="summary_track_usage">ప్రతి యాప్ మరియు చిరునామా పంపిన, స్వీకరించిన బైట్‌ల సంఖ్యను ట్రాక్ చేయి. దీనివల్ల అదనపు బ్యాటరీ వినియోగం కావచ్చు.</string>
     <string name="summary_block_domains">హెచ్చరిక: నిరోధించిన హోస్ట్స్ UIలో చూపబడవు.</string>
     <string name="summary_rcode">డిఫాల్ట్ విలువ 3 (NXDOMAIN); అంటే “ఉనికిలో లేని డొమైన్”.</string>
     <string name="summary_validate">పోర్ట్ 443 (https) వద్ద ఇంటర్నెట్ కనెక్షన్‌ను ధృవీకరించడానికి ఉపయోగించే డొమైన్ పేరు.</string>
@@ -264,7 +240,6 @@
     <string name="msg_wg_profile_default_name">డిఫాల్ట్</string>
     <string name="msg_wg_profile_saved">WireGuard ప్రొఫైల్ సేవ్ చేయబడింది</string>
     <string name="msg_wg_profile_deleted">WireGuard ప్రొఫైల్ తొలగించబడింది</string>
-    <string name="msg_wg_profile_no_config">ప్రొఫైల్ సేవ్ చేయడానికి ముందు WireGuard కాన్ఫిగరేషన్‌ను పేస్ట్ చేయండి</string>
     <string name="msg_wg_profile_empty">ఇంకా ప్రొఫైల్‌లు లేవు</string>
     <string name="msg_wg_profile_active">సక్రియం</string>
     <string name="msg_wg_profile_set_active">సక్రియంగా సెట్ చేయి</string>
@@ -293,13 +268,9 @@
     <string name="msg_wg_mullvad_countries_failed">Mullvad దేశాలను లోడ్ చేయలేకపోయాం: %s</string>
     <string name="msg_wg_proton_note">Proton సూచించిన మూడవ పక్ష సెటప్‌లో డౌన్‌లోడ్ చేయగల WireGuard కాన్ఫిగరేషన్‌లు ఉపయోగిస్తారు. TrackerControlకు మీ Proton ఆధారాలు అవసరం లేదు; కాన్ఫిగరేషన్‌ను స్వయంచాలకంగా రిఫ్రెష్ చేయలదు.\n\naccount.protonvpn.comలో సైన్ ఇన్ చేసి, Downloads → WireGuard configurationకు వెళ్లి, కాన్ఫిగరేషన్‌ను డౌన్‌లోడ్ చేయండి. దాన్ని టెక్స్ట్ ఎడిటర్‌లో తెరిచి, దాని విషయాలను ఇక్కడ కాపీ చేసి పేస్ట్ చేయండి.</string>
     <string name="msg_wg_proton_open_dashboard">Proton VPN డ్యాష్‌బోర్డ్‌ను తెరువు</string>
-    <string name="vpn_status_connected">%s</string>
-    <string name="vpn_status_mullvad_connected">Mullvad - %s</string>
     <string name="vpn_status_mullvad">Mullvad</string>
     <string name="vpn_status_relay">రిలే: %s</string>
-    <string name="vpn_status_mullvad_summary">రిలే: %s</string>
     <string name="vpn_status_wireguard_connected">WireGuard కనెక్ట్ అయింది</string>
-    <string name="vpn_status_wireguard_summary">WireGuard: %1$s - %2$s</string>
     <string name="vpn_status_disconnected">కనెక్ట్ కాలేదు</string>
     <string name="vpn_provider_mullvad">Mullvad VPN</string>
     <string name="vpn_provider_ivpn">IVPN</string>
@@ -327,7 +298,6 @@
     <string name="vpn_account_show">చూపు</string>
     <string name="vpn_account_hide">దాచు</string>
     <string name="vpn_account_change">మార్చు</string>
-    <string name="vpn_account_done">పూర్తయింది</string>
     <string name="vpn_account_cancel">రద్దు చేయి</string>
     <string name="vpn_mullvad_intro">మీ Mullvad ఖాతా నంబర్‌ను నమోదు చేయండి. ఇది ఈ పరికరంలో సేవ్ అవుతుంది.</string>
     <string name="vpn_mullvad_account_note">ఈ ఖాతా Mullvad దేశ కనెక్షన్‌ల కోసం ఉపయోగించబడుతుంది.</string>
@@ -371,7 +341,6 @@
     <string name="msg_installed">%1$sతో సమస్యలున్నాయా?</string>
     <string name="msg_installed_description">యాప్‌ను కంపెనీలను సంప్రదించడానికి అనుమతించు</string>
     <string name="msg_installed_tracker_libraries_found">%d ట్రాకర్ లైబ్రరీలు ఉన్నాయి</string>
-    <string name="msg_installed_n">ఇన్‌స్టాల్ చేయబడింది</string>
     <string name="msg_completed">చర్య పూర్తయింది</string>
     <string name="msg_no_file_manager">ఫైల్‌ను ఎంచుకోవడానికి ఫైల్ మేనేజర్ ఏదీ కనుగొనబడలేదు.</string>
     <string name="msg_no_browser">లింక్‌ను తెరవడానికి బ్రౌజర్ యాప్ ఏదీ కనుగొనబడలేదు.</string>
@@ -386,37 +355,21 @@
     <string name="msg_doh_unreachable">మీకు క్రియాశీల ఇంటర్నెట్ కనెక్షన్ ఉన్నప్పటికీ సురక్షిత DNS (DoH)ను చేరుకోలేకపోయింది. ఇది పదేపదే జరిగితే, నెట్‌వర్క్ సెట్టింగ్‌లలో దీన్ని నిలిపివేయడాన్ని పరిశీలించండి.</string>
     <string name="msg_start_failed">ఈ సమయంలో Android VPN సేవను ప్రారంభించడానికి నిరాకరించింది. ఇది మీ Android వెర్షన్‌లోని బగ్ కారణంగా కావచ్చు.</string>
     <string name="msg_try">TrackerControlను ప్రయత్నించండి</string>
-    <string name="msg_doze">స్థిరమైన ఫలితాల కోసం, TrackerControlకు Android బ్యాటరీ ఆప్టిమైజేషన్‌లు నిలిపివేయాలి.
-\n\nతదుపరి డైలాగ్‌లో పైభాగంలో "అన్ని యాప్‌లు" ఎంచుకుని, జాబితాలో TrackerControlను నొక్కి, "ఆప్టిమైజ్ చేయవద్దు" ఎంచుకుని నిర్ధారించండి.</string>
-    <string name="msg_datasaving">స్థిరమైన ఫలితాల కోసం, TrackerControlకు Android డేటా సేవింగ్ ఎంపికలు నిలిపివేయాలి
-\n\nతదుపరి డైలాగ్‌లో "నేపథ్య డేటా", "అపరిమిత డేటా వినియోగం" ఎంపికలను ప్రారంభించండి</string>
-    <string name="msg_filter">ఫిల్టరింగ్ ఉపయోగిస్తే డేటా, పవర్ వినియోగాన్ని TrackerControlకు ఆపాదించమని Android భావిస్తుంది — అసలు యాప్‌లకు బదులుగా డేటా, పవర్ TrackerControl ఉపయోగిస్తున్నట్లు చూపుతుంది</string>
-    <string name="msg_filter4">Android 4లో ఫిల్టరింగ్ ప్రారంభించి ఉండాలి</string>
     <string name="msg_log_disabled">ట్రాఫిక్ లాగింగ్ నిలిపివేయబడింది; లాగింగ్‌ను ప్రారంభించడానికి పై స్విచ్‌ను ఉపయోగించండి. ట్రాఫిక్ లాగింగ్ వల్ల అదనపు బ్యాటరీ వినియోగం కావచ్చు.</string>
-    <string name="msg_clear_rules">ఇది నియమాలు, షరతులను వాటి డిఫాల్ట్ విలువలకు రీసెట్ చేస్తుంది</string>
     <string name="msg_clear_activity">ఈ యాప్ కోసం రికార్డ్ చేసిన కార్యకలాపాన్ని తొలగిస్తుంది. ఈ యాప్‌కు సంబంధించిన ప్రతి ట్రాకర్ నిరోధ/అనుమతి సెట్టింగ్‌లు ఉంచబడతాయి.</string>
-    <string name="msg_reset_access">అనుమతి/నిరోధ నియమాలు లేని యాక్సెస్ ప్రయత్న లాగ్ లైన్లను తొలగిస్తుంది</string>
-    <string name="msg_import_last">చివరి దిగుమతి: %s</string>
-    <string name="msg_downloading">డౌన్‌లోడ్ చేస్తోంది…</string>
-    <string name="msg_downloaded">హోస్ట్స్ ఫైల్ డౌన్‌లోడ్ చేయబడింది</string>
-    <string name="msg_updated">హోస్ట్స్ ఫైల్ నవీకరించి వర్తింపజేయబడింది!</string>
-    <string name="msg_download_last">చివరి డౌన్‌లోడ్: %s</string>
     <string name="msg_update_last">చివరి నవీకరణ: %s</string>
     <string name="msg_metered">నెట్‌వర్క్ మీటర్ చేయబడింది</string>
     <string name="msg_inactive">క్రియాశీల ఇంటర్నెట్ కనెక్షన్ లేదు</string>
     <string name="msg_queue">TrackerControl బిజీగా ఉంది</string>
     <string name="msg_update">నవీకరణ అందుబాటులో ఉంది; డౌన్‌లోడ్ చేయడానికి నొక్కండి</string>
     <string name="title_version">వెర్షన్ %1$d</string>
-    <string name="msg_usage">యాప్ పక్కన ఉన్న చిహ్నాలను నొక్కి Wi‑Fi లేదా మొబైల్ ఇంటర్నెట్ యాక్సెస్‌ను అనుమతించవచ్చు (ఆకుపచ్చగా) లేదా నిరాకరించవచ్చు (ఎరుపుగా)</string>
     <string name="msg_push">ఇన్‌కమింగ్ (పుష్) సందేశాలను సాధారణంగా సిస్టమ్ భాగమైన Play సేవలు నిర్వహిస్తాయి; అవి డిఫాల్ట్‌గా ఇంటర్నెట్ యాక్సెస్ అనుమతిని కలిగి ఉంటాయి</string>
     <string name="msg_system">సెట్టింగ్‌లలో అన్ని (సిస్టమ్) యాప్‌ల నిర్వహణను ప్రారంభించవచ్చు</string>
-    <string name="msg_issue">సమస్యను వివరించి, అది జరిగిన సమయాన్ని తెలియజేయండి:</string>
     <string name="msg_vpn_cancelled">VPN కనెక్షన్ రద్దు చేయబడింది\nమరో VPNను ఎల్లప్పుడూ-ఆన్ VPNగా కాన్ఫిగర్ చేశారా?</string>
     <string name="msg_unavailable">ఈ Android వెర్షన్‌లో ఈ ఫీచర్ అందుబాటులో లేదు</string>
     <string name="msg_always_on">మరో VPN ఎల్లప్పుడూ-ఆన్ VPNగా సెట్ చేయబడింది</string>
     <string name="msg_always_on_lockdown">TrackerControlను ఉపయోగించడానికి Android VPN సెట్టింగ్‌లలో “VPN లేకుండా కనెక్షన్‌లను నిరోధించు”ను ఆఫ్ చేయండి</string>
 
-    <string name="msg_private_dns">Android నెట్‌వర్క్ సెట్టింగ్‌లలో “Private DNS”ను ఆఫ్ చేయండి. TrackerControl సెట్టింగ్‌లలో స్వంత సురక్షిత DNS ఫీచర్‌ను అందిస్తుంది.</string>
     <string name="msg_start_forward">%1$s పోర్ట్ %2$d నుంచి \'%5$s\'లోని %3$s:%4$dకు ఫార్వార్డింగ్ ప్రారంభించాలా?</string>
     <string name="msg_stop_forward">%1$s పోర్ట్ %2$d ఫార్వార్డింగ్ ఆపాలా?</string>
     <string name="msg_log_logcat">హెచ్చరిక: ADB లాగింగ్ కారణంగా నిరోధించడం నిలిపివేయబడింది.</string>
@@ -449,41 +402,13 @@
     <string name="title_roaming_blocked">రోమింగ్‌లో నిరోధించు</string>
     <string name="title_metered">డిఫాల్ట్‌గా Wi‑Fi కనెక్షన్ మీటర్ లేనిదిగా, మొబైల్ కనెక్షన్ మీటర్ చేసినదిగా పరిగణించబడుతుంది</string>
 
-    <string name="title_internet">ఇంటర్నెట్‌ను యాక్సెస్ చేయలేరు</string>
-    <string name="title_disabled">నిలిపివేయబడింది</string>
-    <string name="title_messaging">ఇన్‌కమింగ్ సందేశాలు ఈ యాప్ ద్వారా కాకుండా Google Play సేవల ద్వారా అందుతాయి; అందువల్ల ఈ యాప్‌ను నిరోధించడం ద్వారా వాటిని నిరోధించలేరు</string>
-    <string name="title_download">డౌన్‌లోడ్‌లు ఈ యాప్ ద్వారా కాకుండా డౌన్‌లోడ్ మేనేజర్ ద్వారా జరుగుతాయి; అందువల్ల ఈ యాప్‌ను నిరోధించడం ద్వారా వాటిని నిరోధించలేరు</string>
-    <string name="title_conditions">షరతులు</string>
-    <string name="title_screen_wifi">స్క్రీన్ ఆన్‌లో ఉన్నప్పుడు Wi‑Fiని అనుమతించు</string>
-    <string name="title_screen_other">స్క్రీన్ ఆన్‌లో ఉన్నప్పుడు మొబైల్‌ను అనుమతించు</string>
-    <string name="title_roaming">రోమింగ్‌లో నిరోధించు</string>
-    <string name="title_lockdown">లాక్‌డౌన్ మోడ్‌లో అనుమతించు</string>
-    <string name="title_related">సంబంధిత వాటిని ఫిల్టర్ చేయి</string>
-    <string name="title_access">యాక్సెస్ ప్రయత్నాలు</string>
-    <string name="title_precedence">యాక్సెస్ నియమాలకు ఇతర నియమాల కంటే ప్రాధాన్యత ఉంటుంది</string>
-    <string name="title_options">ఎంపికలు</string>
-    <string name="title_notify">ఇంటర్నెట్ యాక్సెస్ ప్రయత్నాల గురించి తెలియజేయి</string>
 
-    <string name="title_logging_disabled">లాగింగ్ లేదా ఫిల్టరింగ్ ప్రారంభించబడలేదు</string>
-    <string name="title_logging_enabled">లాగింగ్, ఫిల్టరింగ్ ప్రారంభించబడ్డాయి</string>
-    <string name="title_logging_configure">కాన్ఫిగర్ చేయి</string>
 
-    <string name="title_enable_logging">నిరోధించిన చిరునామాలను మాత్రమే లాగ్ చేయడాన్ని ప్రారంభించు</string>
-    <string name="title_enable_filtering">అనుమతించిన చిరునామాలను కూడా లాగ్ చేయడానికి ఫిల్టరింగ్‌ను ప్రారంభించు</string>
-    <string name="title_enable_notify">కొత్తగా లాగ్ చేసిన చిరునామాల కోసం యాక్సెస్ నోటిఫికేషన్‌లను ప్రారంభించు</string>
-    <string name="title_enable_help0">ఇవి అన్ని యాప్‌లకు వర్తించే గ్లోబల్ సెట్టింగ్‌లు</string>
-    <string name="title_enable_help1">వ్యక్తిగత చిరునామాలను అనుమతించడానికి లేదా నిరోధించడానికి కూడా ఫిల్టరింగ్ అవసరం</string>
-    <string name="title_enable_help2">లాగింగ్ (తక్కువ) లేదా ఫిల్టరింగ్ (ఎక్కువ) ప్రారంభిస్తే బ్యాటరీ వినియోగం పెరగవచ్చు, నెట్‌వర్క్ వేగం ప్రభావితమవచ్చు</string>
 
     <string name="title_rate">రేట్</string>
     <string name="title_allow">అనుమతించు</string>
     <string name="title_block">నిరోధించు</string>
-    <string name="title_allow_wifi">Wi‑Fiని అనుమతించు</string>
-    <string name="title_block_wifi">Wi‑Fiని నిరోధించు</string>
-    <string name="title_allow_other">మొబైల్‌ను అనుమతించు</string>
-    <string name="title_block_other">మొబైల్‌ను నిరోధించు</string>
     <string name="title_nobody">ఎవరూ కాదు</string>
-    <string name="title_dontask">మళ్లీ అడగవద్దు</string>
 
     <string name="title_log_whois">Whois: %1$s</string>
     <string name="title_log_port">పోర్ట్ %1$d</string>
@@ -526,7 +451,6 @@
 
     <string name="menu_csv">CSVగా ఎగుమతి చేయి</string>
     <string name="exporting">ఎగుమతి చేస్తోంది..</string>
-    <string name="share_csv">పంచుకోండి</string>
     <string name="export_failed">ఎగుమతి విఫలమైంది</string>
     <string name="exported">స్టోరేజ్‌కు ఎగుమతి చేయబడింది!</string>
 
@@ -535,7 +459,6 @@
     <string name="tab_trackers">ట్రాకర్‌లు</string>
     <string name="tab_countries">దేశాలు</string>
     <string name="tab_actions">డేటా హక్కులు</string>
-    <string name="tracker_name">ట్రాకర్ పేరు</string>
     <string name="app_info">యాప్‌ను నిర్వహించు</string>
 
     <!-- Actions -->
@@ -549,7 +472,6 @@
     <string name="contacts_description">ఒక యాప్ డేటా రక్షణ సూత్రాలను ఉల్లంఘిస్తోందని మీరు భావిస్తే, బాధ్యత వహించే సంస్థలను నేరుగా సంప్రదించవచ్చు.</string>
     <string name="play_services_required">ఇది Google Play Services సెట్టింగ్; అవి మీ పరికరంలో కనుగొనబడలేదు.</string>
     <string name="no_mail_service">దయచేసి ఒక ఇమెయిల్ క్లయింట్‌ను ఇన్‌స్టాల్ చేయండి.</string>
-    <string name="blocking_settings">ట్రాకర్‌లను ఎంచుకోండి</string>
     <string name="ad_settings">ఇప్పుడే మార్చు</string>
     <string name="request_data">డేటాను అభ్యర్థించు</string>
     <string name="request_deletion">తొలగింపును అభ్యర్థించు</string>
@@ -621,14 +543,7 @@ EU General Data Protection Regulation (GDPR)లోని ఆర్టికల�
     <string name="tracker_consent">సమ్మతి నిర్వహణ</string>
     <string name="tracker_uncategorised">వర్గీకరించనివి</string>
 
-    <string name="setting_strict_blocking">కఠిన నిరోధం</string>
-    <string name="summary_strict_blocking">కొత్తగా ఇన్‌స్టాల్ చేసిన యాప్‌ల కోసం కంపెనీలతో సాధ్యమైనంత ఎక్కువ డేటా భాగస్వామ్యాన్ని నిరోధించు. మరిన్ని యాప్‌లు పనిచేయకపోవచ్చు.</string>
-    <string name="strict_blocking_explanation">యాప్‌లు పనిచేయకపోవడం తగ్గించడానికి నిపుణులు కాని వారు ఈ ఎంపికను నిలిపివేయడం సిఫార్సు చేయబడింది. అయితే, ఇది కంపెనీలతో కొంత అవసరమైన భాగస్వామ్యాన్ని అనుమతిస్తుంది.</string>
-    <string name="setting_block_ambiguous_trackers">అస్పష్టమైన ట్రాకర్‌లను నిరోధించు</string>
-    <string name="summary_block_ambiguous_trackers">ఒక IPకి ట్రాకర్, ట్రాకర్ కాని హోస్ట్‌నేమ్ ఆధారాలు రెండూ ఉన్నా దాన్ని నిరోధించు. యాప్‌లు పనిచేయకపోవడం తగ్గించడానికి దీన్ని నిలిపివేయండి.</string>
 
-    <string name="setting_sni_enabled">SNI వెలికితీత (పరిశోధన)</string>
-    <string name="summary_sni_enabled">మరింత ఖచ్చితమైన ట్రాకర్ గుర్తింపు కోసం TLS కనెక్షన్‌ల నుంచి హోస్ట్‌నేమ్‌లను వెలికితీయి. హెచ్చరిక: ఇది మీ IP చిరునామాను ట్రాకర్ సర్వర్‌లకు (రిమోట్ రూటింగ్ ప్రారంభించి ఉంటే VPN ప్రొవైడర్ IPకు) లీక్ చేస్తుంది. పరిశోధన కోసం మాత్రమే ప్రారంభించండి.</string>
 
     <string name="setting_blocking_mode">నిరోధన మోడ్</string>
     <string name="summary_blocking_mode_minimal">కనిష్ఠ: నిరోధించడానికి సురక్షితమైన DuckDuckGo జాబితా ట్రాకర్‌లను మాత్రమే నిరోధిస్తుంది. బ్రౌజర్‌లు VPN ద్వారా రూట్ అవుతాయి, కానీ ట్రాకర్ రక్షణ డిఫాల్ట్‌గా ఆఫ్‌లో ఉంటుంది. తెలిసిన అననుకూల యాప్‌లు మినహాయించబడతాయి. యాప్‌లు పనిచేయకపోవడం పరిమితం.</string>
@@ -656,7 +571,6 @@ EU General Data Protection Regulation (GDPR)లోని ఆర్టికల�
     <string name="wg_route_mode_all">అన్ని యాప్‌లు</string>
     <string name="wg_route_mode_selected">ఎంచుకున్న యాప్‌లు మాత్రమే</string>
 
-    <string name="app_route_heading">రిమోట్ VPN</string>
     <string name="app_route_through">రిమోట్ VPN ద్వారా</string>
     <string name="app_route_through_explanation">ఈ యాప్ మీ రిమోట్ VPN ద్వారా కనెక్ట్ అవుతుంది; మీ నెట్‌వర్క్ బదులు VPN దాని ట్రాఫిక్‌ను చూస్తుంది.</string>
     <string name="app_route_direct">ఈ పరికరం నుండి నేరుగా</string>
@@ -716,26 +630,19 @@ EU General Data Protection Regulation (GDPR)లోని ఆర్టికల�
     <string name="your_privacy">మీ గోప్యత</string>
 
     <string name="tracker_hostlist">వినియోగదారు నిర్వచించిన హోస్ట్స్</string>
-    <string name="unblocked">నిరోధించబడలేదు</string>
-    <string name="enable">ప్రారంభించు</string>
 
     <string name="internet_blocked">ఇంటర్నెట్ యాక్సెస్ నిరోధించబడింది</string>
     <string name="internet_unblocked">ఇంటర్నెట్ యాక్సెస్ నిరోధం తొలగించబడింది</string>
 
-    <string name="category_blocked">వర్గంలోని ట్రాకర్‌లు నిరోధించబడ్డాయి</string>
     <string name="category_unblocked">వర్గంలోని ట్రాకర్‌లు అనుమతించబడ్డాయి</string>
     <string name="category_unblocked_warning">ఈ వర్గంతో అనుమతించబడింది — వ్యక్తిగత కంపెనీలను మార్చడానికి వర్గాన్ని నిరోధించండి.</string>
-    <string name="switch_strict_blocking">అవసరమైన డేటా భాగస్వామ్యాన్ని నిరోధించు</string>
 
     <string name="tracking_detection_failed">ట్రాకర్ లైబ్రరీ గుర్తింపు విఫలమైంది.</string>
     <string name="tracking_detection_failed_ram">ట్రాకర్ లైబ్రరీ గుర్తింపు విఫలమైంది. RAM సరిపోవడం లేదు.</string>
     <string name="tracking_detection_failed_report">ట్రాకర్ లైబ్రరీ గుర్తింపు విఫలమైంది. ఈ సమస్యను డెవలపర్‌కు నివేదించండి.</string>
     <string name="detected_trackers">గుర్తించిన ట్రాకర్ లైబ్రరీలు: %s</string>
-    <string name="analyzing_classes">క్లాస్‌లను విశ్లేషిస్తోంది…</string>
     <string name="analyzing_classes_progress">క్లాస్‌లను విశ్లేషిస్తోంది… %d%%</string>
-    <string name="analysis_already_running">విశ్లేషణ ఇప్పటికే కొనసాగుతోంది</string>
     <string name="none">ఏదీ లేదు</string>
-    <string name="trackers_static">ట్రాకర్ లైబ్రరీలు</string>
     <string name="trackers_static_explanation">TrackerControl యాప్‌ల కోడ్‌లో (‘లైబ్రరీలు’) మరియు నెట్‌వర్క్ ట్రాఫిక్‌లో ట్రాకింగ్‌ను గుర్తిస్తుంది.\n\nనెట్‌వర్క్ ట్రాఫిక్‌లో గుర్తించిన ట్రాకింగ్‌ను TrackerControlతో నిరోధించవచ్చు.</string>
     <string name="trackers_static_explanation_playstore">TrackerControl యాప్‌ల కోడ్‌లో (‘లైబ్రరీలు’) మరియు నెట్‌వర్క్ ట్రాఫిక్‌లో ట్రాకింగ్‌ను గుర్తిస్తుంది.</string>
     <string name="trackers_static_disclaimer">గమనిక: ట్రాకర్ లైబ్రరీ కోడ్‌ను గుర్తించడం అంటే అది చురుకుగా ఉపయోగించబడుతుందని కాదు. కొన్ని యాప్‌లు ఈ లైబ్రరీలను తొలగించి లేదా నిలిపివేసి ఉండవచ్చు, కానీ వాటి ఆనవాళ్లు ఇంకా గుర్తించబడవచ్చు.</string>
@@ -765,12 +672,9 @@ EU General Data Protection Regulation (GDPR)లోని ఆర్టికల�
 
     <string name="setting_domain_based_blocked">డొమైన్ ఆధారిత నిరోధం</string>
     <string name="summary_domain_based_blocking">మరింత సూక్ష్మమైన నిరోధాన్ని అనుమతిస్తుంది. ఇంకా అభివృద్ధిలో ఉంది.</string>
-    <string name="untap_unblock">చిట్కా: ఎంట్రీలను నొక్కడం ద్వారా వ్యక్తిగత ఎంట్రీల నిరోధాన్ని తొలగించవచ్చు.</string>
     <string name="uncertain_entry">‘*’తో గుర్తించిన ఎంట్రీలు Android పరిమితుల కారణంగా తప్పుగా ఉండవచ్చు. సాధారణంగా ఒకే కంపెనీ వివిధ డొమైన్‌ల కింద ఒకే IP చిరునామాను ఉపయోగిస్తుందని దీని అర్థం; అయితే వేర్వేరు కంపెనీలు ఒకే IP వెనుక ఉండడమూ కావచ్చు (ఉదా. Content Delivery Network ఉపయోగిస్తే).</string>
     <string name="browsers_not_supported">బ్రౌజర్ గుర్తించబడింది ⚠️</string>
     <string name="browsers_not_supported_explanation">ఇది బ్రౌజర్ యాప్‌గా కనిపిస్తోంది.\n\nట్రాకర్‌లను పేజీ, అభ్యర్థన స్థాయిలో నిరోధించగల బ్రౌజర్‌లోనే బ్రౌజర్ ట్రాకింగ్ రక్షణ ఉత్తమంగా పనిచేస్తుంది. TrackerControl బ్రౌజర్ ట్రాఫిక్‌ను VPN/WireGuard టన్నెల్ ద్వారా రూట్ చేస్తుంది, కానీ యాప్-స్థాయి ట్రాకర్ నిరోధం డిఫాల్ట్‌గా ఆఫ్‌లో ఉంటుంది; ప్రారంభిస్తే సైట్‌లు పనిచేయకపోవచ్చు.</string>
-    <string name="static_analysis">యాప్ కోడ్‌లో ట్రాకర్‌లను గుర్తించు</string>
-    <string name="failed_loading_cached_analysis">క్యాష్ చేసిన ట్రాకర్ ఫలితాలను లోడ్ చేయడం విఫలమైంది. దీన్ని hello@trackercontrol.org వద్ద డెవలపర్‌కు నివేదించండి</string>
     <string name="msg_notifications">నోటిఫికేషన్ అనుమతులు ఇవ్వడానికి నొక్కండి (లోప సందేశాల కోసం మొదలైనవి)</string>
     <string name="msg_local_network">స్థానిక నెట్‌వర్క్ యాక్సెస్‌ను అనుమతించడానికి నొక్కండి; Android దీనిని “సమీప పరికరాలు”గా అడుగుతుంది. Android 17 డిఫాల్ట్‌గా దీన్ని నిరోధిస్తుంది, అందువల్ల మీ స్వంత DNS సర్వర్, సురక్షిత DNS రిజాల్వర్, WireGuard పీర్ లేదా ప్రాక్సీని చేరుకోలేరు.</string>
     <string name="msg_local_network_title">స్థానిక నెట్‌వర్క్ యాక్సెస్ అవసరం</string>
@@ -789,7 +693,6 @@ EU General Data Protection Regulation (GDPR)లోని ఆర్టికల�
 
     <!-- Onboarding -->
     <string name="title_next">తదుపరి</string>
-    <string name="title_skip">దాటవేయి</string>
     <string name="title_previous">మునుపటి</string>
     <string name="title_finish">ప్రారంభించండి</string>
 
@@ -804,10 +707,6 @@ EU General Data Protection Regulation (GDPR)లోని ఆర్టికల�
     <string name="onboarding_vpn_blocked_desc">మరో యాప్ <b>ఎల్లప్పుడూ-ఆన్ VPN</b>గా సెట్ చేయబడినందున TrackerControl స్థానిక VPNను ప్రారంభించకుండా Android నిరోధించింది. VPN సెట్టింగ్‌లను తెరిచి, మరో VPN కోసం ఎల్లప్పుడూ-ఆన్‌ను నిలిపివేసి, మళ్లీ ప్రయత్నించండి.</string>
     <string name="onboarding_vpn_blocked_action">VPN సెట్టింగ్‌లను తెరువు</string>
 
-    <string name="onboarding_battery_title">అంతరాయాన్ని నివారించండి</string>
-    <string name="onboarding_battery_desc">బ్యాటరీని ఆదా చేయడానికి Android నేపథ్యంలో ఉన్న యాప్‌లను మూసివేయవచ్చు. ట్రాకర్‌లకు నిరంతర రక్షణ కోసం TrackerControl ఆప్టిమైజేషన్‌లను నిలిపివేయండి.</string>
-    <string name="onboarding_battery_action">ఆప్టిమైజేషన్‌ను నిలిపివేయి</string>
-    <string name="onboarding_battery_sure">బ్యాటరీ ఆప్టిమైజేషన్‌లను నిలిపివేయకపోతే Android ఎప్పుడైనా TrackerControlను ఆపవచ్చు. కొనసాగించాలనుకుంటున్నారా?</string>
 
     <string name="onboarding_notify_title">సమాచారంతో ఉండండి</string>
     <string name="onboarding_notify_desc">నిజ-సమయ నవీకరణలను చూడటానికి, స్టేటస్ బార్ నుంచే రక్షణను నియంత్రించడానికి నోటిఫికేషన్‌లను అనుమతించండి.</string>
@@ -818,35 +717,18 @@ EU General Data Protection Regulation (GDPR)లోని ఆర్టికల�
     <string name="onboarding_timeline_title">టైమ్‌లైన్ నిండడాన్ని చూడండి</string>
     <string name="onboarding_timeline_desc">TrackerControl టైమ్‌లైన్‌లో ప్రారంభమవుతుంది. మొదట అది ఖాళీగా ఉండవచ్చు: మీరు యాప్‌లను ఉపయోగిస్తున్నప్పుడే అవి సాధారణంగా ట్రాకర్‌లను సంప్రదిస్తాయి.\n\nసెటప్ పూర్తయిన తర్వాత, కొన్ని యాప్‌లను తెరిచి, గుర్తించిన మరియు నిరోధించిన ట్రాకింగ్ కార్యకలాపాన్ని చూడటానికి TrackerControlకు తిరిగి రండి.</string>
 
-    <string name="onboarding_network_title">అపరిమిత నెట్‌వర్క్</string>
-    <string name="onboarding_network_desc">డేటా సేవింగ్ ఎంపికలు నేపథ్యంలో TrackerControl సరిగ్గా పనిచేయకుండా చేయవచ్చు. అత్యంత విశ్వసనీయ రక్షణ కోసం అపరిమిత యాక్సెస్ ఇవ్వండి.</string>
-    <string name="onboarding_network_action">అపరిమిత యాక్సెస్ ఇవ్వు</string>
-    <string name="onboarding_network_sure">పరిమిత నేపథ్య డేటా TrackerControl విఫలమయ్యేలా చేయవచ్చు. అపరిమిత యాక్సెస్ ఇవ్వకుండా కొనసాగించాలనుకుంటున్నారా?</string>
 
     <string name="onboarding_lockdown_title">VPN లాక్‌డౌన్ సెట్టింగ్</string>
     <string name="onboarding_lockdown_desc">TrackerControl సిద్ధంగా ఉండకముందే యాప్‌లు కనెక్ట్ కాకుండా Androidలో “VPN లేకుండా కనెక్షన్‌లను నిరోధించు” అనే సెట్టింగ్ ఉంది.\n\nదీన్ని ప్రారంభిస్తే యాప్‌లు లోడ్ కాకపోవచ్చు. ఉత్తమ అనుభవం కోసం ఈ సెట్టింగ్‌ను <b>నిలిపివేయడం</b> సిఫార్సు చేస్తున్నాం.</string>
     <string name="onboarding_lockdown_action">VPN సెట్టింగ్‌లను తెరువు</string>
     <string name="onboarding_lockdown_sure">లాక్‌డౌన్ ప్రారంభించి కొనసాగితే కనెక్టివిటీ సమస్యలు రావచ్చు. ఖచ్చితంగా కొనసాగించాలా?</string>
 
-    <string name="onboarding_dns_title">సురక్షిత DNS (బీటా ఫీచర్; ఆశించిన విధంగా పనిచేయకపోవచ్చు)</string>
-    <string name="onboarding_dns_desc">DNS ట్రాఫిక్‌ను DNS-over-HTTPS (DoH)తో గుప్తీకరించడం ద్వారా మీ ISP నుంచి గోప్యతను రక్షించండి.\n\nఇది “DNS హైజాకింగ్”ను నిరోధించి, మీ నెట్‌వర్క్ ప్రొవైడర్ నుంచి బ్రౌజింగ్ అలవాట్లను గోప్యంగా ఉంచుతుంది.</string>
-    <string name="onboarding_dns_action">సురక్షిత DNSను ప్రారంభించు</string>
-    <string name="onboarding_dns_action_disable">సురక్షిత DNSను నిలిపివేయి</string>
 
-    <string name="onboarding_blocking_title">ట్రాకర్‌లను నిరోధించు</string>
-    <string name="onboarding_blocking_desc">మీ యాప్‌లలో విస్తృతమైన ట్రాకింగ్‌ను బయటపెట్టి నిరోధించండి.\n\n• <b>బ్లాక్‌లిస్ట్‌లు</b>: Firefox Disconnectను  <b>2,000,000 యాప్‌ల</b> మా ప్రత్యేక విశ్లేషణతో కలుపుతుంది.\n• <b>GDPR</b>: <b>ఒక క్లిక్ డేటా తొలగింపు అభ్యర్థనలతో</b> మీ హక్కులను వినియోగించుకోండి.\n• <b>పారదర్శకత</b>: మీ డేటాను ఏ కంపెనీలు, దేశాలు సేకరిస్తున్నాయో ఖచ్చితంగా తెలుసుకోండి.</string>
-    <string name="onboarding_blocking_action">నిరోధాన్ని ప్రారంభించు</string>
-    <string name="onboarding_blocking_action_disable">నిరోధాన్ని నిలిపివేయి</string>
-    <string name="onboarding_blocking_sure">ట్రాకర్ నిరోధం TrackerControl ప్రధాన ఫీచర్. దీన్ని నిలిపివేయాలనుకుంటున్నారా?</string>
 
-    <string name="onboarding_action_enabled">ప్రారంభించబడింది</string>
     <string name="onboarding_action_disabled">నిలిపివేయబడింది</string>
     <string name="onboarding_action_granted">ఇవ్వబడింది</string>
-    <string name="onboarding_action_optimized">ఆప్టిమైజ్ చేయబడింది</string>
-    <string name="onboarding_action_unrestricted">అపరిమితం</string>
 
     <!-- Insights Screen -->
-    <string name="menu_insights">అంతర్దృష్టులు</string>
     <string name="insights_title">మీ గోప్యతా అంతర్దృష్టులు</string>
     <string name="insights_subtitle_7days">గత 7 రోజులు</string>
     <string name="insights_tracking_attempts">సంప్రదించిన ట్రాకర్ హోస్ట్‌లు</string>
@@ -854,8 +736,6 @@ EU General Data Protection Regulation (GDPR)లోని ఆర్టికల�
     <string name="insights_allowed">అనుమతించబడింది</string>
     <string name="insights_tracker_companies">ట్రాకింగ్ కంపెనీలు</string>
     <string name="insights_apps_with_trackers">ట్రాకర్‌లున్న యాప్‌లు</string>
-    <string name="insights_top_tracking_apps">అత్యధిక ట్రాకింగ్ చేసే యాప్‌లు</string>
-    <string name="insights_top_companies">అత్యంత చురుకైన ట్రాకింగ్ కంపెనీలు</string>
     <string name="insights_pervasive_trackers">అత్యంత విస్తృతమైన ట్రాకర్‌లు</string>
     <string name="insights_top_domains">అగ్ర ట్రాకర్ డొమైన్‌లు</string>
     <!-- Joins the alternative domain names of one tracker, e.g. "example.com or example.net". Keep the surrounding spaces. -->
@@ -867,15 +747,11 @@ EU General Data Protection Regulation (GDPR)లోని ఆర్టికల�
     </plurals>
     <string name="insights_no_data">ఇంకా ట్రాకింగ్ డేటా లేదు. మీ యాప్‌లను ఉపయోగించి మళ్లీ చూడండి!</string>
     <string name="insights_shocking_fact">ఈ వారం మీ యాప్‌లు %2$d ట్రాకర్ హోస్ట్‌ల ద్వారా %1$d ట్రాకింగ్ కంపెనీలను సంప్రదించాయి!</string>
-    <string name="insights_shocking_fact_playstore">ఈ వారం మీ యాప్‌లు %1$d ట్రాకింగ్ కంపెనీలను సంప్రదించాయి!</string>
     <string name="insights_share">స్నేహితులతో పంచుకోండి</string>
     <string name="insights_share_trackers_blocked">నిరోధించిన ట్రాకర్ హోస్ట్‌లు</string>
-    <string name="insights_share_trackers_detected">గుర్తించిన ట్రాకర్ హోస్ట్‌లు</string>
     <string name="insights_share_url">TrackerControl.org</string>
     <string name="insights_share_message">ఈ వారం TrackerControl ఉపయోగించి %2$d కంపెనీలకు చెందిన %1$d ట్రాకర్ హోస్ట్‌లను నేను నిరోధించాను! మీ గోప్యతను తిరిగి పొందండి: https://trackercontrol.org</string>
-    <string name="insights_share_message_playstore">ఈ వారం TrackerControl ఉపయోగించి %2$d కంపెనీలకు చెందిన %1$d ట్రాకర్ హోస్ట్‌లను నేను గుర్తించాను! మీ గోప్యతను తిరిగి పొందండి: https://trackercontrol.org</string>
     <string name="insights_see_more">మరిన్ని చూడండి →</string>
-    <string name="insights_view_timeline">ఇటీవలి ట్రాకర్ కార్యకలాపాన్ని చూడండి</string>
 
     <!-- What's New onboarding slide (not translated) -->
 
@@ -898,5 +774,4 @@ EU General Data Protection Regulation (GDPR)లోని ఆర్టికల�
     <string name="log_connection_wifi">Wi‑Fi</string>
     <string name="log_connection_other">ఇతర నెట్‌వర్క్</string>
     <string name="log_screen_on">స్క్రీన్ ఆన్</string>
-    <string name="log_app_icon">యాప్ చిహ్నం</string>
 </resources>

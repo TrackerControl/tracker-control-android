@@ -46,20 +46,13 @@
     <string name="menu_pcap_enabled">PCAP on kasutusel</string>
     <string name="menu_export">Ekspordi</string>
     <string name="setting_further_options">Täiendavad võimalused</string>
-    <string name="setting_dark">Tume kujundus</string>
-    <string name="setting_install">Teavitu uue paigalduse puhul</string>
     <string name="setting_pause">Lülita automaatselt sisse %1$s minuti pärast</string>
     <string name="setting_update">Kontrolli uuendusi</string>
-    <string name="setting_network_options">Võrgueelistused</string>
-    <string name="setting_lan">Luba ligipääs kohtvõrku</string>
     <string name="setting_ip6">Luba kasutada IPv6 liiklust</string>
     <string name="setting_call">Lülita helistamise ajaks välja</string>
     <string name="setting_reload_onconnectivity">Laadi uuesti igal välisühenduse muutumisel</string>
     <string name="setting_advanced_options">Täiendavad valikud (ekspertidele)</string>
-    <string name="setting_system">Näita süsteemirakendusi</string>
     <string name="setting_log_app">Otsi uusi jälitajaid</string>
-    <string name="setting_filter">Blokeeri jälitajaid</string>
-    <string name="setting_track_usage">Jälgi võrgukasutust</string>
     <string name="setting_reset_usage">Lähtesta võrgukasutuse andmed</string>
     <string name="setting_block_domains">Kasuta hosts-faili</string>
     <string name="setting_vpn4">VPN IPv4: %s</string>
@@ -75,16 +68,10 @@
     <string name="summary_block_dot">Kui Androidi privaatne nimelahendus on kasutusel, siis TrackerControl ei suuda ühtegi jälitamist tuvastada ega seega tööta korralikult.</string>
     <string name="setting_backup">Varundus</string>
     <string name="setting_import">Impordi seadistused</string>
-    <string name="setting_hosts">Impordi hosts fail</string>
-    <string name="setting_hosts_append">Impordi hosts fail (lisades olemasolevale)</string>
-    <string name="setting_hosts_url">Hosts-faili võrguaadress</string>
-    <string name="setting_hosts_download">Laadi alla hosts fail</string>
     <string name="setting_hosts_update">Uuenda hosts faili</string>
-    <string name="summary_install">Näita olekuribal teavitusi hiljuti paigaldatud rakenduste kohta</string>
     <string name="vpn_account_show">Näita</string>
     <string name="vpn_account_hide">Peida</string>
     <string name="vpn_account_change">Muuda</string>
-    <string name="vpn_account_done">Valmis</string>
     <string name="vpn_account_cancel">Katkesta</string>
     <string name="vpn_mullvad_intro">Sisesta oma Mullvadi kasutajakonto number. Ta on salvestatud selles seadmes.</string>
     <string name="vpn_mullvad_account_note">See konto on kasutusel Mullvadi maakohaste ühenduste jaoks.</string>
@@ -100,12 +87,7 @@
     <string name="msg_disabled">TrackerControli sisselülitamiseks kasuta ülal asuvat liugurlülitit.</string>
     <string name="msg_revoked">TrackerControl on lülitatud välja, ilmselt mõne teise VPN-põhise rakenduse tõttu</string>
     <string name="msg_installed_tracker_libraries_found">Sisaldab %d jälitajate teeki</string>
-    <string name="msg_installed_n">On paigaldatud</string>
     <string name="msg_error">Tekkis ootamatu viga: „%s“</string>
-    <string name="msg_import_last">Viimane import: %s</string>
-    <string name="msg_downloaded">Hosts-fail on allalaaditud</string>
-    <string name="msg_updated">Hosts-fail on uuendatud ja kasutusel!</string>
-    <string name="msg_download_last">Viimati allalaaditud: %s</string>
     <string name="msg_update_last">Viimati uuendatud: %s</string>
     <string name="msg_metered">Võrguühendus on mahupõhine</string>
     <string name="msg_inactive">Aktiivne internetiühendus puudub</string>
@@ -136,11 +118,6 @@
     <string name="title_metered">Vaikimisi eelab rakendus, et WiFi ühendus pole mahupõhine ja mobiilne andmeside on mahupõhine</string>
     <string name="title_allow">Luba</string>
     <string name="title_block">Keela</string>
-    <string name="title_allow_wifi">Luba WiFi kasutamine</string>
-    <string name="title_block_wifi">Keela WiFi kasutamine</string>
-    <string name="title_allow_other">Luba mobiilse andmeside kasutamine</string>
-    <string name="title_block_other">Keela mobiilse andmeside kasutamine</string>
-    <string name="title_dontask">Ära küsi enam uuesti</string>
     <string name="title_log_copy">Kopeeri</string>
     <!-- App Overview -->
     <!-- Dynamic content descriptions for the app-icon Internet toggle in the app list (issue #231) -->
@@ -151,14 +128,12 @@
     <string name="no">Ei</string>
     <string name="menu_csv">Ekspordi CSV-failina</string>
     <string name="exporting">Ekspordin…</string>
-    <string name="share_csv">Jaga</string>
     <string name="export_failed">Eksportimine ei õnenstunud</string>
     <string name="exported">Eksportimine andmeruumi õnnestus!</string>
     <!-- App Details -->
     <string name="title_activity_detail">Üksikasjad</string>
     <string name="tab_trackers">Jälitajad</string>
     <string name="tab_countries">Maad</string>
-    <string name="tracker_name">Jälitaja nimi</string>
     <string name="app_info">Halda rakendust</string>
     <!-- Actions -->
     <string name="block_tracking">Blokeeri jälitajaid</string>
@@ -168,7 +143,6 @@
     <string name="contacts_description">Kui sa arvad, et rakendus rikub andmekaitsereegleid, siis sa võid vastavate organisatsioonidega otse ühendust võtta.</string>
     <string name="play_services_required">See on Google Play teenuste seadistus ning need puuduvad sinu nutiseadmest.</string>
     <string name="no_mail_service">Palun paigalda e-posti klient.</string>
-    <string name="blocking_settings">Vali jälitajad</string>
     <string name="ad_settings">Muuda kohe</string>
     <string name="contact_developer">Arendaja</string>
     <string name="contact_playstore">Google</string>
@@ -195,7 +169,6 @@
     <string name="summary_wg_route_mode">Millised rakendused suunatakse läbi kaug-VPN-i. Ülejäänud jäävad täielikult jälgituks ja filtreerituks — nad lihtsalt ühenduvad selle seadme enda võrgust.</string>
     <string name="wg_route_mode_all">Kõik rakendused</string>
     <string name="wg_route_mode_selected">Ainult valitud rakendused</string>
-    <string name="app_route_heading">Kaug-VPN</string>
     <string name="app_route_through">Läbi kaug-VPN-i</string>
     <string name="app_route_through_explanation">See rakendus ühendub sinu kaug-VPN-i kaudu, mis näeb selle liiklust sinu võrgu asemel.</string>
     <string name="app_route_direct">Otse sellest seadmest</string>
@@ -222,30 +195,24 @@
     <string name="no_internet">Puudub toimiv internetiühendus</string>
     <string name="back">Tagasi</string>
     <string name="your_privacy">Sinu privaatsus</string>
-    <string name="category_blocked">Blokeeritud jälitajad</string>
     <string name="category_unblocked">Lubatud jälitajad</string>
-    <string name="switch_strict_blocking">Blokeeri põhiline andmejagamine</string>
     <string name="tracking_detection_failed">Jälitajate teekide tuvastamine ei õnnestunud.</string>
     <string name="tracking_detection_failed_ram">Jälitajate teekide tuvastamine ei õnnestunud. Pole piisavalt muutmälu.</string>
     <string name="tracking_detection_failed_report">Jälitajate teekide tuvastamine ei õnnestunud. Palun teata sellest veast arendajatele.</string>
     <string name="detected_trackers">Tuvastatud jälitajate teegid: %s</string>
     <string name="none">Puudub</string>
-    <string name="trackers_static">Jälitajate teegid</string>
     <!-- Tracker library screen, reached from the summary row on the Trackers tab -->
     <string name="blocked">BLOKEERITUD</string>
     <string name="allowed">LUBATUD</string>
     <string name="setting_domain_based_blocked">Domeenipõhine blokeerimine</string>
-    <string name="static_analysis">Tuvasta jälitajaid rakenduse koodist</string>
     <string name="msg_notifications">Teavituste õiguste lubamiseks klõpsi (näiteks veasõnumite jaoks)</string>
     <!-- Onboarding -->
     <string name="title_next">Järgmine</string>
-    <string name="title_skip">Jäta vahele</string>
     <string name="title_previous">Eelmine</string>
     <!-- Insights Screen -->
     <!-- Joins the alternative domain names of one tracker, e.g. "example.com or example.net". Keep the surrounding spaces. -->
     <string name="insights_share">Jaga sõpradega</string>
     <string name="insights_see_more">Vaata lisaks →</string>
-    <string name="insights_view_timeline">Vaata hiljutist jälitajate tegevust</string>
     <!-- What's New onboarding slide (not translated) -->
     <string name="msg_invalid_url">Vigane võrguaadress</string>
     <string name="msg_last_update">Viimane uuendus: %s</string>
@@ -258,7 +225,6 @@
     <string name="log_connection_blocked">Blokeeritud</string>
     <string name="log_connection_wifi">WiFi</string>
     <string name="log_connection_other">Muu võrk</string>
-    <string name="log_app_icon">Rakenduse ikoon</string>
     <string name="app_xposed">Xposed põhjustab liiga palju krahhe, mis võivad viia TrackerControli eemaldamiseni Google Play poest; seetõttu ei toetata TrackerControli Xposedi paigaldamise korral</string>
     <string name="app_eula">Kasutad seda rakendust omal vastutusel. Ükski rakendus ei saa pakkuda 100% kaitset jälitamise eest.</string>
     <string name="app_ios"><a href="https://ios.trackercontrol.org">TrackerControl on saadaval ka iOS-i jaoks</a></string>
@@ -268,9 +234,6 @@
     <string name="menu_invite">Kutsu</string>
     <string name="menu_legend">Legend</string>
     <string name="menu_troubleshooting">Veaotsing</string>
-    <string name="menu_timeline">Jälitajate tegevus</string>
-    <string name="title_tracker_activity">Jälitajate tegevus</string>
-    <string name="timeline_empty">Hiljutine jälitajate tegevus puudub.\n\nLülita TrackerControl sisse, et näha, millised rakendused sind jälitavad.</string>
     <string name="timeline_empty_disabled_title">TrackerControl on välja lülitatud</string>
     <string name="timeline_empty_disabled_subtitle">Lülita TrackerControl sisse paremas ülanurgas oleva lülitiga. Seejärel kuvatakse siin sinu rakenduste jälitajate tegevus.</string>
     <string name="timeline_empty_enabled_title">Otsime jälitajaid…</string>
@@ -338,13 +301,10 @@
         <item quantity="one">Peata %d minutiks</item>
         <item quantity="other">Peata %d minutiks</item>
     </plurals>
-    <string name="setting_subnet">Alamvõrgu marsruutimine</string>
-    <string name="setting_tethering">Luba interneti jagamine</string>
     <string name="setting_tcp_mss_clamp">Jagatud ühenduse ühilduvusrežiim</string>
     <string name="summary_tcp_mss_clamp">Suunab kogu liikluse läbi TrackerControli ja piirab TCP-segmendi suurust, et parandada jagatud ühendusi, mis takerduvad või ei saa internetiühendust. Kohtvõrgu juurdepääs ei möödu enam TrackerControlist ning jõudlus võib väheneda.</string>
     <string name="setting_log_logcat">Uurimisrežiim</string>
     <string name="setting_handover">Sujuv VPN-i üleandmine uuesti laadimisel</string>
-    <string name="setting_lockdown">Lukustatud liiklus</string>
     <string name="setting_show_resolved">Näita lahendatud domeeninimesid</string>
     <string name="setting_exclude_all_tracking">Välista kõik rakendused jälgimisest</string>
     <string name="summary_exclude_all_tracking">Keela kõigi rakenduste jälgimise seire. Seejärel saad selle üksikute rakenduste puhul uuesti lubada.</string>
@@ -355,7 +315,6 @@
     <string name="setting_ttl">Minimaalne DNS-i TTL: %s s</string>
     <string name="setting_socks5_enabled">Kasuta SOCKS5-puhverserverit</string>
     <string name="setting_wg_enabled">Suuna liiklus läbi WireGuardi</string>
-    <string name="setting_wg_config">WireGuardi seadistus</string>
     <string name="setting_wg_profile">WireGuardi profiil</string>
     <string name="setting_wg_profile_manage">Kohandatud WireGuardi profiilid</string>
     <string name="setting_wg_profile_import">Impordi WireGuardi seadistus</string>
@@ -388,14 +347,9 @@
     <string name="summary_hosts_auto_update">Uuenda hosts-faili taustal automaatselt</string>
     <string name="summary_pause">Pärast teavitusest peatamist lülita TrackerControl valitud arvu minutite möödudes automaatselt uuesti sisse (selle valiku keelamiseks sisesta 0).</string>
     <string name="summary_update">Kontrolli uusi väljalaskeid GitHubis kaks korda päevas</string>
-    <string name="summary_tethering">Sõltuvalt Androidi versioonist võib interneti jagamine töötada või mitte. Jagatud liiklust ei saa filtreerida.</string>
-    <string name="summary_subnet">Luba alamvõrgu marsruutimine; see võib lubada Wi-Fi-kõned, kuid võib ka Androidis vigu põhjustada ja akukasutust suurendada</string>
-    <string name="summary_lan">Luba rakendustel ühenduda kohtvõrgu aadressidega, näiteks 10.0.0.0/8, 172.16.0.0/12 ja 192.168.0.0/16</string>
     <string name="summary_ip6">Suuna IP-versiooni 6 liiklus TrackerControli, et seda saaks valikuliselt lubada või blokeerida</string>
     <string name="summary_call">Keela TrackerControl sisse- või väljuva telefonikõne ajal. Seda saab kasutada IP-/Wi-Fi-kõnede probleemidest möödumiseks.</string>
-    <string name="summary_system">Näita rakenduste loendis süsteemirakendusi</string>
     <string name="summary_log_app">Keela akukasutuse vähendamiseks. Uued jälitajad blokeeritakse endiselt, kuid neid ei näidata.</string>
-    <string name="summary_track_usage">Jälgi iga rakenduse ja aadressi saadetud ning vastuvõetud baitide arvu. See võib suurendada akukasutust.</string>
     <string name="summary_block_domains">HOIATUS: Blokeeritud hoste ei näidata kasutajaliideses.</string>
     <string name="summary_rcode">Vaikeväärtus on 3 (NXDOMAIN), mis tähendab „olematut domeeni“.</string>
     <string name="summary_validate">Domeeninimi, mida kasutatakse internetiühenduse kontrollimiseks pordis 443 (https).</string>
@@ -419,7 +373,6 @@
     <string name="msg_wg_profile_default_name">Vaikimisi</string>
     <string name="msg_wg_profile_saved">WireGuardi profiil salvestatud</string>
     <string name="msg_wg_profile_deleted">WireGuardi profiil kustutatud</string>
-    <string name="msg_wg_profile_no_config">Kleebi enne profiili salvestamist WireGuardi seadistus</string>
     <string name="msg_wg_profile_empty">Profiile pole veel</string>
     <string name="msg_wg_profile_active">Aktiivne</string>
     <string name="msg_wg_profile_set_active">Määra aktiivseks</string>
@@ -448,13 +401,9 @@
     <string name="msg_wg_mullvad_countries_failed">Mullvadi riikide laadimine ei õnnestunud: %s</string>
     <string name="msg_wg_proton_note">Protoni dokumenteeritud kolmanda osapoole seadistus kasutab allalaaditavaid WireGuardi seadistusi. TrackerControl ei vaja sinu Protoni mandaate ega saa seadistust automaatselt värskendada.\n\nLogi sisse aadressil account.protonvpn.com, ava Downloads → WireGuard configuration, laadi seadistus alla, ava see tekstiredaktoris ning kopeeri ja kleebi selle sisu siia.</string>
     <string name="msg_wg_proton_open_dashboard">Ava Proton VPN-i juhtpaneel</string>
-    <string name="vpn_status_connected">%s</string>
-    <string name="vpn_status_mullvad_connected">Mullvad – %s</string>
     <string name="vpn_status_mullvad">Mullvad</string>
     <string name="vpn_status_relay">Relee: %s</string>
-    <string name="vpn_status_mullvad_summary">Relee: %s</string>
     <string name="vpn_status_wireguard_connected">WireGuard ühendatud</string>
-    <string name="vpn_status_wireguard_summary">%1$s – %2$s</string>
     <string name="vpn_status_disconnected">Ühendamata</string>
     <string name="vpn_provider_mullvad">Mullvad VPN</string>
     <string name="vpn_provider_ivpn">IVPN</string>
@@ -519,54 +468,19 @@ Sinu internetiliiklust ei saadeta kaug-VPN-i serverisse.</string>
     <string name="msg_doh_unreachable">Turvaline DNS (DoH) pole saavutatav, kuigi sul on aktiivne internetiühendus. Kui see kordub, kaalu selle keelamist võrguseadetes.</string>
     <string name="msg_start_failed">Android keeldus VPN-teenust praegu käivitamast. Tõenäoliselt on põhjuseks sinu Androidi versiooni viga.</string>
     <string name="msg_try">Proovi TrackerControli</string>
-    <string name="msg_doze">Ühtlaste tulemuste saamiseks tuleb TrackerControli Androidi akukasutuse optimeerimine välja lülitada.
-\n\nVali järgmises dialoogis ülaosas \"Kõik rakendused\", puuduta loendis TrackerControli ning vali ja kinnita \"Ära optimeeri\".</string>
-    <string name="msg_datasaving">Ühtlaste tulemuste saamiseks tuleb TrackerControli Androidi andmesäästuvalikud välja lülitada
-\n\nLuba järgmises dialoogis valikud \"Taustaandmed\" ja \"Piiramatu andmekasutus\"</string>
-    <string name="msg_filter">Filtreerimise kasutamisel omistab Android andme- ja energiakasutuse TrackerControlile — Android eeldab, et andmeid ja energiat kasutab TrackerControl, mitte algsed rakendused</string>
-    <string name="msg_filter4">Android 4 nõuab filtreerimise lubamist</string>
     <string name="msg_log_disabled">Liikluse logimine on välja lülitatud; logimise lubamiseks kasuta ülalolevat lülitit. Liikluse logimine võib suurendada akukasutust.</string>
-    <string name="msg_clear_rules">See lähtestab reeglid ja tingimused vaikeväärtustele</string>
     <string name="msg_clear_activity">See eemaldab selle rakenduse salvestatud tegevuse. Selle rakenduse jälitajapõhised blokeerimis- ja lubamisseaded säilitatakse.</string>
-    <string name="msg_reset_access">See kustutab juurdepääsukatsete logiread, millel pole lubamis- ega blokeerimisreegleid</string>
-    <string name="msg_downloading">Allalaadimine…</string>
     <string name="title_version">Versioon %1$d</string>
-    <string name="msg_usage">Saad rakenduse kõrval olevaid ikoone puudutades lubada (rohekas) või keelata (punakas) Wi-Fi- või mobiilse internetiühenduse</string>
     <string name="msg_push">Sissetulevaid tõukesõnumeid haldab enamasti süsteemikomponent Play teenused, millel on internetiühendus vaikimisi lubatud</string>
     <string name="msg_system">Kõigi (süsteemi) rakenduste haldamise saab seadetes lubada</string>
-    <string name="msg_issue">Kirjelda probleemi ja märgi probleemi tekkimise aeg:</string>
     <string name="msg_vpn_cancelled">VPN-ühendus tühistati\nKas seadistasid mõne teise VPN-i alati sisse lülitatud VPN-iks?</string>
     <string name="msg_unavailable">See funktsioon pole selle Androidi versiooni puhul saadaval</string>
     <string name="msg_always_on">Teine VPN on määratud alati sisse lülitatud VPN-iks</string>
     <string name="msg_always_on_lockdown">TrackerControli kasutamiseks lülita Androidi VPN-i seadetes välja „Blokeeri ühendused ilma VPN-ita“</string>
-    <string name="msg_private_dns">Lülita Androidi võrguseadetes välja \"Privaatne DNS\". TrackerControl pakub seadetes oma turvalise DNS-i funktsiooni.</string>
     <string name="msg_start_forward">Kas alustada rakenduse „%5$s“ pordi %2$d edastamist aadressilt %1$s aadressile %3$s:%4$d?</string>
     <string name="msg_stop_forward">Kas lõpetada pordi %2$d edastamine aadressilt %1$s?</string>
     <string name="msg_log_logcat">Hoiatus: ADB logimise tõttu on blokeerimine keelatud.</string>
     <string name="title_external">Välise serveri jaoks vali „mitte keegi“</string>
-    <string name="title_internet">ei pääse internetti</string>
-    <string name="title_disabled">on keelatud</string>
-    <string name="title_messaging">Sissetulevaid sõnumeid võtavad vastu Google Play teenused, mitte see rakendus, mistõttu ei saa neid selle rakenduse blokeerimisega blokeerida</string>
-    <string name="title_download">Allalaadimisi teeb allalaadimishaldur, mitte see rakendus, mistõttu ei saa neid selle rakenduse blokeerimisega blokeerida</string>
-    <string name="title_conditions">Tingimused</string>
-    <string name="title_screen_wifi">Luba Wi-Fi, kui ekraan on sisse lülitatud</string>
-    <string name="title_screen_other">Luba mobiilivõrk, kui ekraan on sisse lülitatud</string>
-    <string name="title_roaming">Blokeeri rändluse ajal</string>
-    <string name="title_lockdown">Luba lukustusrežiimis</string>
-    <string name="title_related">Filtreeri seotud</string>
-    <string name="title_access">Juurdepääsukatsed</string>
-    <string name="title_precedence">Juurdepääsureeglid on teiste reeglite suhtes ülimuslikud</string>
-    <string name="title_options">Valikud</string>
-    <string name="title_notify">Teavita internetiühenduse katsetest</string>
-    <string name="title_logging_disabled">Logimine või filtreerimine pole lubatud</string>
-    <string name="title_logging_enabled">Logimine ja filtreerimine on lubatud</string>
-    <string name="title_logging_configure">Seadista</string>
-    <string name="title_enable_logging">Luba ainult blokeeritud aadresside logimine</string>
-    <string name="title_enable_filtering">Luba lubatud aadresside logimiseks filtreerimine</string>
-    <string name="title_enable_notify">Luba äsja logitud aadresside juurdepääsuteavitused</string>
-    <string name="title_enable_help0">Need on üldised seaded, mis kehtivad kõigile rakendustele</string>
-    <string name="title_enable_help1">Filtreerimine on vajalik ka üksikute aadresside lubamiseks või blokeerimiseks</string>
-    <string name="title_enable_help2">Logimise (vähem) või filtreerimise (rohkem) lubamine võib suurendada akukasutust ja mõjutada võrgu kiirust</string>
     <string name="title_rate">Määra hinnang</string>
     <string name="title_nobody">mitte keegi</string>
     <string name="title_log_whois">Whois %1$s</string>
@@ -643,13 +557,6 @@ Lugupidamisega,\n\n]]></string>
     <string name="device_not_supported_msg">Sinu seadme operatsioonisüsteem ei võimalda võrgusuhtluse jälgimist ega filtreerimist. See on TrackerControli tööks vajalik.</string>
     <string name="countries_map_highlighted">Esiletõstetud jälgimise sihtkohad: %1$s</string>
     <string name="countries_map_none">Ühtegi jälgimise sihtkohta pole esile tõstetud.</string>
-    <string name="setting_strict_blocking">Range blokeerimine</string>
-    <string name="summary_strict_blocking">Äsja paigaldatud rakenduste puhul blokeeri ettevõtetega võimalikult palju andmejagamist. Rohkem rakendusi võib lakata töötamast.</string>
-    <string name="strict_blocking_explanation">Mitteasjatundjatel soovitatakse rakenduste tõrgete vähendamiseks see valik keelata. Samas võimaldab see mõningast olulist andmejagamist ettevõtetega.</string>
-    <string name="setting_block_ambiguous_trackers">Blokeeri ebaselged jälitajad</string>
-    <string name="summary_block_ambiguous_trackers">Kui IP-aadressi kohta on nii jälitaja kui ka mittejälitaja hostinime tõendeid, blokeeri see siiski. Rakenduste tõrgete vähendamiseks keela see.</string>
-    <string name="setting_sni_enabled">SNI eraldamine (uurimine)</string>
-    <string name="summary_sni_enabled">Eralda TLS-ühendustest hostinimed jälitajate täpsemaks tuvastamiseks. Hoiatus: see lekib sinu IP-aadressi jälitajate serveritele (või kaugmarsruutimise korral VPN-i teenusepakkuja IP-aadressi). Luba ainult uurimiseks.</string>
     <string name="setting_blocking_mode">Blokeerimisrežiim</string>
     <string name="summary_blocking_mode_minimal">Minimaalne: blokeerib ainult DuckDuckGo loendis olevad jälitajad, mida on ohutu blokeerida. Brauserid jäävad VPN-i kaudu marsruudituks, kuid jälitajate kaitse on vaikimisi välja lülitatud. Teadaolevalt ühildumatud rakendused jäetakse välja. Rakenduste tõrkeid on vähe.</string>
     <string name="summary_blocking_mode_standard">Standardne: blokeerib kõik teadaolevad jälitajad mitmest loendist (X-Ray, Disconnect, DuckDuckGo). Olulised teenused on lubatud. Kui rakendus lakkab töötamast, muuda selle kaitseseadet (vt rakenduse menüüs olevat veaotsingut).</string>
@@ -695,14 +602,10 @@ Lugupidamisega,\n\n]]></string>
     <string name="bypass_vpn_error">„Internetti ei saa blokeerida, kui rakendus möödub TrackerControlist.“</string>
     <string name="forever_free">Alati tasuta</string>
     <string name="tracker_hostlist">Kasutaja määratud hostid</string>
-    <string name="unblocked">Blokeerimata</string>
-    <string name="enable">Luba</string>
     <string name="internet_blocked">Internetiühendus blokeeritud</string>
     <string name="internet_unblocked">Internetiühendus blokeerimata</string>
     <string name="category_unblocked_warning">Selle kategooriaga lubatud — üksikute ettevõtete muutmiseks blokeeri kategooria.</string>
-    <string name="analyzing_classes">Klasside analüüsimine…</string>
     <string name="analyzing_classes_progress">Klasside analüüsimine… %d%%</string>
-    <string name="analysis_already_running">Analüüs juba käib</string>
     <string name="trackers_static_explanation">TrackerControl tuvastab jälitamist rakenduste koodis (jälitajateegid) ja võrguliikluses.\n\nVõrguliikluses tuvastatud jälitamist saab TrackerControliga blokeerida.</string>
     <string name="trackers_static_explanation_playstore">TrackerControl tuvastab jälitamist rakenduste koodis (jälitajateegid) ja võrguliikluses.</string>
     <string name="trackers_static_disclaimer">Märkus: jälitajateegi koodi tuvastamine ei tähenda, et seda aktiivselt kasutatakse. Mõni rakendus võib need teegid olla eemaldanud või keelanud, kuid jälgi saab siiski tuvastada.</string>
@@ -727,11 +630,9 @@ Lugupidamisega,\n\n]]></string>
     <string name="allowed_shared_ip">Lubatud — blokeerimiseks luba range režiim</string>
     <string name="tracker_monitored_minimal">Jälgitav — minimaalses režiimis ei blokeerita</string>
     <string name="summary_domain_based_blocking">Võimaldab täpsemat blokeerimist. Alles arendamisel.</string>
-    <string name="untap_unblock">Nõuanne: üksikute kirjete blokeeringu saad eemaldada neid puudutades.</string>
     <string name="uncertain_entry">Tärniga „*“ märgitud kirjed võivad Androidi piirangute tõttu olla ebatäpsed. Tavaliselt tähendab see, et sama ettevõte kasutab eri domeenide all sama IP-aadressi, kuid see võib tähendada ka seda, et sama IP-aadressi taga on eri ettevõtted (nt kui nad kasutavad sisu edastusvõrku).</string>
     <string name="browsers_not_supported">Brauser tuvastatud ⚠️</string>
     <string name="browsers_not_supported_explanation">See näib olevat brauserirakendus.\n\nBrauseri jälitajate kaitse töötab kõige paremini brauseri sees, kus jälitajaid saab blokeerida lehe ja päringu tasandil. TrackerControl hoiab brauseriliikluse VPN-i/WireGuardi tunneli kaudu marsruudituna, kuid rakendusepõhine jälitajate blokeerimine on vaikimisi välja lülitatud ja võib lubamise korral veebisaite rikkuda.</string>
-    <string name="failed_loading_cached_analysis">Vahemällu salvestatud jälitajate tulemuste laadimine ebaõnnestus. Palun teata sellest arendajale aadressil hello@trackercontrol.org</string>
     <string name="msg_local_network">Puuduta, et lubada juurdepääs kohtvõrgule, mille kohta Android küsib \"lähedal asuvate seadmete\" luba. Android 17 blokeerib selle vaikimisi, mistõttu ei pääse ligi sinu DNS-serverile, turvalise DNS-i lahendajale, WireGuardi partnerile ega puhverserverile.</string>
     <string name="msg_local_network_title">Vaja on juurdepääsu kohtvõrgule</string>
     <string name="msg_local_network_notify">TrackerControl ei pääse sinu DNS-serverile, turvalise DNS-i lahendajale, WireGuardi partnerile ega puhverserverile, mistõttu võib nimelahendus ebaõnnestuda. Android 17 nõuab selleks luba ja küsib seda \"lähedal asuvate seadmete\" loana. Puuduta, et avada TrackerControl ja luba anda.</string>
@@ -754,39 +655,18 @@ Lugupidamisega,\n\n]]></string>
     <string name="onboarding_vpn_blocked_title">Teine VPN on aktiivne</string>
     <string name="onboarding_vpn_blocked_desc">Android takistas TrackerControlil kohaliku VPN-i käivitamist, sest teine rakendus on määratud <b>alati sisse lülitatud VPN-iks</b>. Ava VPN-i seaded ja keela teise VPN-i alati sees olek ning proovi uuesti.</string>
     <string name="onboarding_vpn_blocked_action">Ava VPN-i seaded</string>
-    <string name="onboarding_battery_title">Väldi katkestusi</string>
-    <string name="onboarding_battery_desc">Android võib aku säästmiseks taustarakendused sulgeda. Pideva jälitajatevastase kaitse tagamiseks keela TrackerControli optimeerimine.</string>
-    <string name="onboarding_battery_action">Keela optimeerimine</string>
-    <string name="onboarding_battery_sure">Kui akukasutuse optimeerimist ei keelata, võib Android TrackerControli igal ajal peatada. Kas oled kindel, et soovid jätkata?</string>
     <string name="onboarding_notify_title">Ole kursis</string>
     <string name="onboarding_notify_desc">Luba teavitused, et näha reaalajas uuendusi ja juhtida kaitset otse olekuribalt.</string>
     <string name="onboarding_notify_action">Luba teavitused</string>
     <string name="onboarding_notify_sure">Ilma teavitusloata ei näe sa reaalajas uuendusi ega saa kaitset olekuribalt juhtida. Kas oled kindel?</string>
     <string name="onboarding_timeline_title">Vaata ajajoone täitumist</string>
     <string name="onboarding_timeline_desc">TrackerControl avaneb ajajoonel. Alguses võib see tühi olla: rakendused võtavad jälitajatega tavaliselt ühendust ainult kasutamise ajal.\n\nPärast seadistamise lõpetamist ava mõni rakendus ja naase TrackerControli, et näha tuvastatud ja blokeeritud jälitajate tegevust.</string>
-    <string name="onboarding_network_title">Piiramatu võrk</string>
-    <string name="onboarding_network_desc">Andmesäästuvalikud võivad takistada TrackerControli korralikku taustal töötamist. Kõige töökindlama kaitse tagamiseks anna piiramatu juurdepääs.</string>
-    <string name="onboarding_network_action">Anna piiramatu juurdepääs</string>
-    <string name="onboarding_network_sure">Piiratud taustaandmed võivad põhjustada TrackerControli tõrke. Kas oled kindel, et soovid jätkata piiramatu juurdepääsuta?</string>
     <string name="onboarding_lockdown_title">VPN-i lukustuse seade</string>
     <string name="onboarding_lockdown_desc">Androidil on seade \"Blokeeri ühendused ilma VPN-ita\", mis takistab rakendustel enne TrackerControli valmisolekut ühenduda.\n\nKui see on lubatud, võivad rakendused laadimise lõpetada. Parima kasutuskogemuse jaoks soovitame jätta selle seade <b>keelatuks</b>.</string>
     <string name="onboarding_lockdown_action">Ava VPN-i seaded</string>
     <string name="onboarding_lockdown_sure">Kui lukustus on lubatud, võivad tekkida ühendusprobleemid. Kas oled kindel?</string>
-    <string name="onboarding_dns_title">Turvaline DNS (beetafunktsioon; ei pruugi ootuspäraselt töötada)</string>
-    <string name="onboarding_dns_desc">Kaitse oma privaatsust internetiteenuse pakkuja eest, krüptides DNS-liikluse DNS-i üle HTTPS-i (DoH) abil.\n\nSee takistab „DNS-i kaaperdamist“ ja hoiab sinu sirvimisharjumused võrguteenusepakkuja eest privaatsena.</string>
-    <string name="onboarding_dns_action">Luba turvaline DNS</string>
-    <string name="onboarding_dns_action_disable">Keela turvaline DNS</string>
-    <string name="onboarding_blocking_title">Blokeeri jälitajad</string>
-    <string name="onboarding_blocking_desc">Too oma rakendustes laialdane jälitamine nähtavale ja blokeeri see.\n\n• <b>Keeluloendid</b>: ühendab Firefox Disconnecti meie ainulaadse <b>2 000 000 rakenduse</b> analüüsiga.\n• <b>GDPR</b>: kasuta oma õigusi <b>ühe klõpsuga andmete kustutamise taotluste</b> esitamiseks.\n• <b>Läbipaistvus</b>: saa täpselt teada, millised ettevõtted ja riigid sinu andmeid koguvad.</string>
-    <string name="onboarding_blocking_action">Luba blokeerimine</string>
-    <string name="onboarding_blocking_action_disable">Keela blokeerimine</string>
-    <string name="onboarding_blocking_sure">Jälitajate blokeerimine on TrackerControli põhifunktsioon. Kas oled kindel, et soovid selle keelata?</string>
-    <string name="onboarding_action_enabled">Lubatud</string>
     <string name="onboarding_action_disabled">Keelatud</string>
     <string name="onboarding_action_granted">Antud</string>
-    <string name="onboarding_action_optimized">Optimeeritud</string>
-    <string name="onboarding_action_unrestricted">Piiramatu</string>
-    <string name="menu_insights">Ülevaated</string>
     <string name="insights_title">Sinu privaatsuse ülevaated</string>
     <string name="insights_subtitle_7days">Viimased 7 päeva</string>
     <string name="insights_tracking_attempts">Jälitaja hostid, millega ühendust võeti</string>
@@ -794,8 +674,6 @@ Lugupidamisega,\n\n]]></string>
     <string name="insights_allowed">Läbi lastud</string>
     <string name="insights_tracker_companies">Jälitavad ettevõtted</string>
     <string name="insights_apps_with_trackers">Jälitajatega rakendused</string>
-    <string name="insights_top_tracking_apps">Kõige probleemsemad rakendused</string>
-    <string name="insights_top_companies">Kõige aktiivsemad jälitavad ettevõtted</string>
     <string name="insights_pervasive_trackers">Kõige levinumad jälitajad</string>
     <string name="insights_top_domains">Peamised jälitajate domeenid</string>
     <string name="insights_domain_alias_separator">„ või „</string>
@@ -806,12 +684,9 @@ Lugupidamisega,\n\n]]></string>
     </plurals>
     <string name="insights_no_data">Jälitamisandmeid pole veel. Kasuta oma rakendusi ja vaata hiljem uuesti!</string>
     <string name="insights_shocking_fact">Sinu rakendused võtsid sel nädalal %2$d jälitaja hosti kaudu ühendust %1$d jälitava ettevõttega!</string>
-    <string name="insights_shocking_fact_playstore">Sinu rakendused võtsid sel nädalal ühendust %1$d jälitava ettevõttega!</string>
     <string name="insights_share_trackers_blocked">Blokeeritud jälitaja hostid</string>
-    <string name="insights_share_trackers_detected">Tuvastatud jälitaja hostid</string>
     <string name="insights_share_url">TrackerControl.org</string>
     <string name="insights_share_message">Blokeerisin sel nädalal TrackerControli abil %2$d ettevõtte %1$d jälitaja hosti! Võta oma privaatsus tagasi: https://trackercontrol.org</string>
-    <string name="insights_share_message_playstore">Tuvastasin sel nädalal TrackerControli abil %2$d ettevõtte %1$d jälitaja hosti! Võta oma privaatsus tagasi: https://trackercontrol.org</string>
     <string name="title_blocklists">Täiendavad hosts-failid</string>
     <string name="summary_manage_blocklists">Need on ainult varuvariandiks. TrackerControl sisaldab oma hostiloendeid, mis annavad ülevaate jälitamise taga olevatest ettevõtetest.</string>
     <string name="title_add_blocklist">Lisa hosts-fail</string>
