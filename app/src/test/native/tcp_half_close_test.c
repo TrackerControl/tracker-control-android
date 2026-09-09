@@ -410,6 +410,52 @@ static void test_upstream_eof_keeps_write_half(void) {
     clear_tcp_data(&session.tcp);
 }
 
+static void test_finished_session_releases_upstream_socket(void) {
+    int upstream[2];
+    int tun[2];
+    CHECK(socketpair(AF_UNIX, SOCK_STREAM, 0, upstream) == 0,
+          "socketpair for finished session");
+    CHECK(pipe(tun) == 0, "pipe for finished session FINs");
+    if (failures != 0)
+        return;
+    fcntl(tun[0], F_SETFL, O_NONBLOCK);
+
+    struct ng_session session;
+    struct context context;
+    struct arguments args;
+    make_session(&session, upstream[0], TCP_ESTABLISHED);
+    make_args(&args, &context, &session, tun[1]);
+
+    uint8_t packet[256];
+    size_t length = make_packet(packet, 100, session.tcp.local_seq, 65535,
+                                NULL, 0, 1);
+    CHECK(handle_tcp(&args, packet, length, packet + sizeof(struct iphdr), 1, 1,
+                     NULL, -1) == 1, "client FIN is accepted");
+    CHECK(session.tcp.client_fin_consumed && session.socket >= 0,
+          "a consumed client FIN alone keeps the read half open");
+
+    int closed_before = close_calls;
+    CHECK(shutdown(upstream[1], SHUT_WR) == 0, "peer sends EOF after the client FIN");
+    struct epoll_event event = {.events = EPOLLIN, .data.ptr = &session};
+    check_tcp_socket(&args, &event, -1);
+
+    CHECK(session.tcp.upstream_read_eof && session.tcp.server_fin_sent &&
+                  session.tcp.state == TCP_LAST_ACK,
+          "upstream EOF after a consumed FIN sends the last FIN");
+    // A fully closed socket left registered reports EPOLLHUP on every
+    // epoll_wait(), which would spin the event loop until the session is
+    // reaped.  Releasing the descriptor removes it from the epoll set.
+    CHECK(session.socket < 0 && close_calls == closed_before + 1,
+          "a finished session releases its upstream socket once");
+
+    drain_tun(tun[0]);
+    close(upstream[0]);
+    close(upstream[1]);
+    close(tun[0]);
+    close(tun[1]);
+    clear_tcp_data(&session.tcp);
+}
+
 static void test_hup_marks_only_read_half_closed(void) {
     int upstream[2];
     int tun[2];
@@ -621,6 +667,15 @@ static void test_tcp_epoll_add_failure_does_not_retain_session(void) {
     epoll_result = 0;
 }
 
+// Whether this host can create an AF_INET6 socket at all.
+static int host_supports_ipv6(void) {
+    int probe = socket(PF_INET6, SOCK_STREAM, 0);
+    if (probe < 0)
+        return 0;
+    close(probe);
+    return 1;
+}
+
 static void test_tcp_connect_address_is_zero_initialised(void) {
     struct tcp_session session = {0};
     session.version = 4;
@@ -650,6 +705,12 @@ static void test_tcp_connect_address_is_zero_initialised(void) {
     inet_pton(AF_INET6, "2001:db8::10", &session.daddr.ip6);
     session.dest = htons(443);
     connect_calls = 0;
+    if (!host_supports_ipv6()) {
+        // Some containers offer no AF_INET6 at all; that is a property of the
+        // host, not of the code under test.
+        puts("SKIP: host has no IPv6 support");
+        return;
+    }
     int socket6 = open_tcp_socket(&args, &session, NULL);
     CHECK(socket6 >= 0 && connect_calls == 1 && last_connect_family == AF_INET6,
           "TCP opener connects with an IPv6 sockaddr");
@@ -800,6 +861,7 @@ static void test_socks5_stream_fragmentation_and_short_writes(void) {
 int main(void) {
     test_queued_fin_waits_for_gap_and_drains();
     test_upstream_eof_keeps_write_half();
+    test_finished_session_releases_upstream_socket();
     test_hup_marks_only_read_half_closed();
     test_hup_waits_for_unread_data_behind_closed_window();
     test_closed_session_releases_queued_payload();
