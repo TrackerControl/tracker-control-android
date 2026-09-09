@@ -195,6 +195,15 @@ int route_wants_tunnel(int local_dest, int is_dns, int tunnel_uid, int dns_direc
 #define ROUTE_FLOW_SETS 256         // power of two; SETS * WAYS = 1024 entries
 #define ROUTE_FLOW_MAX_AGE 300      // seconds idle before an entry is reusable
 
+// Numeric TCP ownership is separate from the route/policy cache.  A route
+// entry only needs to remember whether its route lookup succeeded; policy
+// revalidation needs the actual owner when Android no longer reports the
+// original app UID while a closing socket is disappearing from the kernel
+// table.
+#define TCP_OWNER_WAYS 4
+#define TCP_OWNER_SETS 256         // bounded to 1024 retained TCP owners
+#define TCP_OWNER_MAX_AGE 300      // seconds idle before an owner is forgotten
+
 struct route_flow_entry {
     uint32_t gen;                   // 0 = never written
     uint8_t version;
@@ -211,6 +220,21 @@ struct route_flow_entry {
 
 static struct route_flow_entry route_flows[ROUTE_FLOW_SETS][ROUTE_FLOW_WAYS];
 static _Atomic uint32_t route_flow_gen = 1;
+
+struct tcp_owner_entry {
+    uint32_t gen;
+    uint8_t valid;
+    uint8_t version;
+    uint16_t sport;
+    uint16_t dport;
+    uint8_t saddr[16];
+    uint8_t daddr[16];
+    jint uid;
+    struct timespec last_used;
+};
+
+static struct tcp_owner_entry tcp_owners[TCP_OWNER_SETS][TCP_OWNER_WAYS];
+static _Atomic uint32_t tcp_owner_gen = 1;
 
 void route_flow_invalidate() {
     // Wrapping to 0 would make every never-written slot look current, so skip it.
@@ -238,6 +262,137 @@ static size_t route_flow_set(int version, int protocol,
     h = (h ^ (uint8_t) (dport & 0xff)) * 16777619u;
     h = (h ^ (uint8_t) (dport >> 8)) * 16777619u;
     return (size_t) (h & (ROUTE_FLOW_SETS - 1));
+}
+
+static int tcp_owner_now(struct timespec *now) {
+    return clock_gettime(CLOCK_MONOTONIC, now) == 0;
+}
+
+static int tcp_owner_expired(const struct timespec *now,
+                             const struct timespec *last_used) {
+    if (now->tv_sec < last_used->tv_sec ||
+        (now->tv_sec == last_used->tv_sec && now->tv_nsec < last_used->tv_nsec))
+        return 0;
+
+    time_t seconds = now->tv_sec - last_used->tv_sec;
+    return seconds > TCP_OWNER_MAX_AGE ||
+           (seconds == TCP_OWNER_MAX_AGE && now->tv_nsec >= last_used->tv_nsec);
+}
+
+static int tcp_owner_matches(const struct tcp_owner_entry *entry,
+                             uint32_t gen,
+                             int version,
+                             const void *saddr, uint16_t sport,
+                             const void *daddr, uint16_t dport) {
+    size_t alen = version == 4 ? 4u : 16u;
+    return entry->valid && entry->gen == gen && entry->version == (uint8_t) version &&
+           entry->sport == sport && entry->dport == dport &&
+           memcmp(entry->saddr, saddr, alen) == 0 &&
+           memcmp(entry->daddr, daddr, alen) == 0;
+}
+
+int tcp_owner_lookup(int version,
+                     const void *saddr, uint16_t sport,
+                     const void *daddr, uint16_t dport,
+                     jint *uid) {
+    if ((version != 4 && version != 6) || uid == NULL)
+        return 0;
+
+    struct timespec now;
+    if (!tcp_owner_now(&now))
+        return 0;
+
+    uint32_t gen = atomic_load_explicit(&tcp_owner_gen, memory_order_acquire);
+    struct tcp_owner_entry *set = tcp_owners[route_flow_set(
+            version, IPPROTO_TCP, saddr, sport, daddr, dport)];
+    for (int way = 0; way < TCP_OWNER_WAYS; way++) {
+        struct tcp_owner_entry *entry = &set[way];
+        if (!tcp_owner_matches(entry, gen, version, saddr, sport, daddr, dport))
+            continue;
+        if (tcp_owner_expired(&now, &entry->last_used)) {
+            entry->valid = 0;
+            continue;
+        }
+        entry->last_used = now;
+        *uid = entry->uid;
+        return 1;
+    }
+    return 0;
+}
+
+void tcp_owner_store(int version,
+                     const void *saddr, uint16_t sport,
+                     const void *daddr, uint16_t dport,
+                     jint uid) {
+    if ((version != 4 && version != 6) || uid < 0)
+        return;
+
+    struct timespec now;
+    if (!tcp_owner_now(&now))
+        return;
+
+    size_t alen = version == 4 ? 4u : 16u;
+    uint32_t gen = atomic_load_explicit(&tcp_owner_gen, memory_order_acquire);
+    struct tcp_owner_entry *set = tcp_owners[route_flow_set(
+            version, IPPROTO_TCP, saddr, sport, daddr, dport)];
+    struct tcp_owner_entry *victim = NULL;
+    struct tcp_owner_entry *oldest = NULL;
+    struct tcp_owner_entry *reusable = NULL;
+
+    for (int way = 0; way < TCP_OWNER_WAYS; way++) {
+        struct tcp_owner_entry *entry = &set[way];
+        if (tcp_owner_matches(entry, gen, version, saddr, sport, daddr, dport)) {
+            victim = entry;
+            break;
+        }
+        if (reusable == NULL &&
+            (entry->gen != gen || !entry->valid ||
+             tcp_owner_expired(&now, &entry->last_used)))
+            reusable = entry;
+        if (oldest == NULL ||
+            entry->last_used.tv_sec < oldest->last_used.tv_sec ||
+            (entry->last_used.tv_sec == oldest->last_used.tv_sec &&
+             entry->last_used.tv_nsec < oldest->last_used.tv_nsec))
+            oldest = entry;
+    }
+    if (victim == NULL)
+        victim = reusable;
+    if (victim == NULL)
+        victim = oldest;
+
+    victim->valid = 1;
+    victim->gen = gen;
+    victim->version = (uint8_t) version;
+    victim->sport = sport;
+    victim->dport = dport;
+    memset(victim->saddr, 0, sizeof(victim->saddr));
+    memset(victim->daddr, 0, sizeof(victim->daddr));
+    memcpy(victim->saddr, saddr, alen);
+    memcpy(victim->daddr, daddr, alen);
+    victim->uid = uid;
+    victim->last_used = now;
+}
+
+void tcp_owner_forget(int version,
+                      const void *saddr, uint16_t sport,
+                      const void *daddr, uint16_t dport) {
+    if (version != 4 && version != 6)
+        return;
+
+    uint32_t gen = atomic_load_explicit(&tcp_owner_gen, memory_order_acquire);
+    struct tcp_owner_entry *set = tcp_owners[route_flow_set(
+            version, IPPROTO_TCP, saddr, sport, daddr, dport)];
+    for (int way = 0; way < TCP_OWNER_WAYS; way++) {
+        struct tcp_owner_entry *entry = &set[way];
+        if (tcp_owner_matches(entry, gen, version, saddr, sport, daddr, dport))
+            entry->valid = 0;
+    }
+}
+
+void tcp_owner_reset() {
+    uint32_t next = atomic_fetch_add_explicit(&tcp_owner_gen, 1, memory_order_release) + 1;
+    if (next == 0)
+        atomic_store_explicit(&tcp_owner_gen, 1, memory_order_release);
 }
 
 static int route_flow_matches(const struct route_flow_entry *e, uint32_t gen,

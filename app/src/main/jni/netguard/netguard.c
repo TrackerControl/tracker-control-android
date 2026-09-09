@@ -151,6 +151,10 @@ Java_eu_faircode_netguard_ServiceSinkhole_jni_1init(
     // Resolve the routing policy now: the packet path must never pay a dlopen,
     // and a failure should be logged while there is still something to read it.
     policy_ensure();
+    // Owner state belongs to this process-wide packet-path lifecycle. Keep it
+    // across ordinary WireGuard stop/start and route reloads, but do not carry
+    // it into a newly initialised native context.
+    tcp_owner_reset();
 
     struct context *ctx = ng_calloc(1, sizeof(struct context), "init");
     ctx->sdk = sdk;

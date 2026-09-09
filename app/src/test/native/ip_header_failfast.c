@@ -27,5 +27,9 @@ void parse_tls_header(void) { abort(); }
 void is_tunnel_uid(void) { abort(); }
 void route_default_is_tunnel(void) { abort(); }
 void route_flow_store(void) { abort(); }
+void tcp_owner_lookup(void) { abort(); }
+void tcp_owner_store(void) { abort(); }
+void tcp_owner_forget(void) { abort(); }
+void tcp_owner_reset(void) { abort(); }
 void write_tcp(void) { abort(); }
 void hex2bytes(void) { abort(); }
