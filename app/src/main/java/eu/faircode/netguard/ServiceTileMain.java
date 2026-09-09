@@ -20,7 +20,6 @@
 
 package eu.faircode.netguard;
 
-import android.annotation.TargetApi;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -33,10 +32,11 @@ import android.service.quicksettings.TileService;
 import android.util.Log;
 
 import androidx.preference.PreferenceManager;
+import androidx.annotation.RequiresApi;
 
 import net.kollnig.missioncontrol.R;
 
-@TargetApi(Build.VERSION_CODES.N)
+@RequiresApi(Build.VERSION_CODES.N)
 public class ServiceTileMain extends TileService implements SharedPreferences.OnSharedPreferenceChangeListener {
     private static final String TAG = "TrackerControl.TileMain";
 

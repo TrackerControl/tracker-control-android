@@ -26,7 +26,6 @@ import static net.kollnig.missioncontrol.DetailsActivity.INTENT_EXTRA_APP_PACKAG
 import static net.kollnig.missioncontrol.DetailsActivity.INTENT_EXTRA_APP_UID;
 import static eu.faircode.netguard.WidgetAdmin.INTENT_PAUSE;
 
-import android.annotation.TargetApi;
 import android.app.AlarmManager;
 import android.app.ForegroundServiceStartNotAllowedException;
 import android.app.Notification;
@@ -73,6 +72,7 @@ import android.util.Pair;
 import android.util.TypedValue;
 import android.widget.RemoteViews;
 
+import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
@@ -871,27 +871,11 @@ public class ServiceSinkhole extends VpnService {
             List<Rule> listAllowed = getAllowedRules(listRule);
             ServiceSinkhole.Builder builder = getBuilder(listAllowed, listRule);
 
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP_MR1) {
-                last_builder = builder;
-                Log.i(TAG, "Legacy restart");
-
-                if (vpn != null) {
-                    stopNative(vpn);
-                    stopVPN(vpn);
-                    vpn = null;
-                    try {
-                        Thread.sleep(500);
-                    } catch (InterruptedException ignored) {
-                    }
-                }
-                vpn = startVPN(last_builder);
-
-            } else {
-                if (vpn != null && builder.equals(last_builder)) {
+            if (vpn != null && builder.equals(last_builder)) {
                     Log.i(TAG, "Native restart");
                     stopNative(vpn);
 
-                } else {
+            } else {
                     last_builder = builder;
 
                     if (vpn == null)
@@ -921,7 +905,6 @@ public class ServiceSinkhole extends VpnService {
                             throw ex;
                         }
                     }
-                }
             }
 
             if (vpn == null)
@@ -1605,9 +1588,8 @@ public class ServiceSinkhole extends VpnService {
                     .setOngoing(true)
                     .setAutoCancel(false);
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
-                builder.setCategory(NotificationCompat.CATEGORY_STATUS)
-                        .setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
+            builder.setCategory(NotificationCompat.CATEGORY_STATUS)
+                    .setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
 
             if (state == State.none || state == State.waiting) {
                 if (state != State.none) {
@@ -1790,7 +1772,6 @@ public class ServiceSinkhole extends VpnService {
         return listDns;
     }
 
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private ParcelFileDescriptor startVPN(Builder builder) throws SecurityException {
         try {
             ParcelFileDescriptor pfd = builder.establish();
@@ -1848,9 +1829,6 @@ public class ServiceSinkhole extends VpnService {
         // Set underlying network so Android can correctly assess connectivity,
         // metering, and network scoring for the VPN.
         // Mirrors DuckDuckGo ATP approach (Apache 2.0).
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M)
-            return;
-
         try {
             Network active = getActiveNetwork();
             if (active == null) {
@@ -1938,19 +1916,18 @@ public class ServiceSinkhole extends VpnService {
             }
         }
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-            try {
-                ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-                Network active = (cm == null ? null : cm.getActiveNetwork());
-                LinkProperties props = (active == null ? null : cm.getLinkProperties(active));
-                String domain = (props == null ? null : props.getDomains());
-                if (domain != null) {
-                    Log.i(TAG, "Using search domain=" + domain);
-                    builder.addSearchDomain(domain);
-                }
-            } catch (Throwable ex) {
-                Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
+        try {
+            ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+            Network active = (cm == null ? null : cm.getActiveNetwork());
+            LinkProperties props = (active == null ? null : cm.getLinkProperties(active));
+            String domain = (props == null ? null : props.getDomains());
+            if (domain != null) {
+                Log.i(TAG, "Using search domain=" + domain);
+                builder.addSearchDomain(domain);
             }
+        } catch (Throwable ex) {
+            Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
+        }
 
         // WireGuard AllowedIPs can opt RFC 1918 ranges into the VPN routes;
         // without WireGuard, private and reserved ranges remain excluded.
@@ -2097,23 +2074,21 @@ public class ServiceSinkhole extends VpnService {
         builder.setMtu(mtu);
 
         // Add list of allowed applications
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            try {
-                builder.addDisallowedApplication(getPackageName());
-            } catch (PackageManager.NameNotFoundException ex) {
-                Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
-            }
-            for (Rule rule : listRule)
-                // Exclude from VPN if explicitly excluded OR if system app and includeSystem is
-                // false
-                if (!rule.apply || (!includeSystem && rule.system))
-                    try {
-                        Log.i(TAG, "Not routing " + rule.packageName);
-                        builder.addDisallowedApplication(rule.packageName);
-                    } catch (PackageManager.NameNotFoundException ex) {
-                        Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
-                    }
+        try {
+            builder.addDisallowedApplication(getPackageName());
+        } catch (PackageManager.NameNotFoundException ex) {
+            Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
         }
+        for (Rule rule : listRule)
+            // Exclude from VPN if explicitly excluded OR if system app and includeSystem is
+            // false
+            if (!rule.apply || (!includeSystem && rule.system))
+                try {
+                    Log.i(TAG, "Not routing " + rule.packageName);
+                    builder.addDisallowedApplication(rule.packageName);
+                } catch (PackageManager.NameNotFoundException ex) {
+                    Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
+                }
 
         // Build configure intent
         Intent configure = new Intent(this, ActivityMain.class);
@@ -2853,7 +2828,7 @@ public class ServiceSinkhole extends VpnService {
     }
 
     // Called from native code
-    @TargetApi(Build.VERSION_CODES.Q)
+    @RequiresApi(Build.VERSION_CODES.Q)
     private int getUidQ(int version, int protocol, String saddr, int sport, String daddr, int dport) {
         if (protocol != 6 /* TCP */ && protocol != 17 /* UDP */)
             return Process.INVALID_UID;
@@ -3343,7 +3318,6 @@ public class ServiceSinkhole extends VpnService {
 
     private BroadcastReceiver userReceiver = new BroadcastReceiver() {
         @Override
-        @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
         public void onReceive(Context context, Intent intent) {
             Log.i(TAG, "Received " + intent);
             Util.logExtras(intent);
@@ -3369,7 +3343,6 @@ public class ServiceSinkhole extends VpnService {
 
     private BroadcastReceiver idleStateReceiver = new BroadcastReceiver() {
         @Override
-        @TargetApi(Build.VERSION_CODES.M)
         public void onReceive(Context context, Intent intent) {
             Log.i(TAG, "Received " + intent);
             Util.logExtras(intent);
@@ -3402,7 +3375,6 @@ public class ServiceSinkhole extends VpnService {
 
     private BroadcastReceiver apStateReceiver = new BroadcastReceiver() {
         @Override
-        @TargetApi(Build.VERSION_CODES.M)
         public void onReceive(Context context, Intent intent) {
             Log.i(TAG, "Received " + intent);
             Util.logExtras(intent);
@@ -3414,12 +3386,10 @@ public class ServiceSinkhole extends VpnService {
         @Override
         public void onReceive(Context context, Intent intent) {
             // Filter VPN connectivity changes
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-                int networkType = intent.getIntExtra(ConnectivityManager.EXTRA_NETWORK_TYPE,
-                        ConnectivityManager.TYPE_DUMMY);
-                if (networkType == ConnectivityManager.TYPE_VPN)
-                    return;
-            }
+            int networkType = intent.getIntExtra(ConnectivityManager.EXTRA_NETWORK_TYPE,
+                    ConnectivityManager.TYPE_DUMMY);
+            if (networkType == ConnectivityManager.TYPE_VPN)
+                return;
 
             // Reload rules
             Log.i(TAG, "Received " + intent);
@@ -3542,11 +3512,9 @@ public class ServiceSinkhole extends VpnService {
                                         mapValidated.put(network, new Date().getTime());
                                     }
                                     mapValidateFailure.remove(network);
-                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                                        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-                                        cm.reportNetworkConnectivity(network, true);
-                                        Log.i(TAG, "Reported " + network + " " + ni);
-                                    }
+                                    ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+                                    cm.reportNetworkConnectivity(network, true);
+                                    Log.i(TAG, "Reported " + network + " " + ni);
                                 } catch (IOException ex) {
                                     Log.e(TAG, ex.toString());
                                     Log.i(TAG, "No connectivity " + network + " " + ni);
@@ -3748,9 +3716,8 @@ public class ServiceSinkhole extends VpnService {
                     PendingIntent.FLAG_UPDATE_CURRENT);
             builder.addAction(0, getString(R.string.uninstall), piUninstall);
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
-                builder.setCategory(NotificationCompat.CATEGORY_STATUS)
-                        .setVisibility(NotificationCompat.VISIBILITY_SECRET);
+            builder.setCategory(NotificationCompat.CATEGORY_STATUS)
+                    .setVisibility(NotificationCompat.VISIBILITY_SECRET);
 
             // Show notification
             if (internet) {
@@ -3852,21 +3819,17 @@ public class ServiceSinkhole extends VpnService {
         net.kollnig.missioncontrol.wg.WgEgress.INSTANCE.addStateListener(wgStateListener);
 
         // Listen for user switches
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            IntentFilter ifUser = new IntentFilter();
-            ifUser.addAction(Intent.ACTION_USER_BACKGROUND);
-            ifUser.addAction(Intent.ACTION_USER_FOREGROUND);
-            ContextCompat.registerReceiver(this, userReceiver, ifUser, ContextCompat.RECEIVER_NOT_EXPORTED);
-            registeredUser = true;
-        }
+        IntentFilter ifUser = new IntentFilter();
+        ifUser.addAction(Intent.ACTION_USER_BACKGROUND);
+        ifUser.addAction(Intent.ACTION_USER_FOREGROUND);
+        ContextCompat.registerReceiver(this, userReceiver, ifUser, ContextCompat.RECEIVER_NOT_EXPORTED);
+        registeredUser = true;
 
         // Listen for idle mode state changes
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            IntentFilter ifIdle = new IntentFilter();
-            ifIdle.addAction(PowerManager.ACTION_DEVICE_IDLE_MODE_CHANGED);
-            ContextCompat.registerReceiver(this, idleStateReceiver, ifIdle, ContextCompat.RECEIVER_NOT_EXPORTED);
-            registeredIdleState = true;
-        }
+        IntentFilter ifIdle = new IntentFilter();
+        ifIdle.addAction(PowerManager.ACTION_DEVICE_IDLE_MODE_CHANGED);
+        ContextCompat.registerReceiver(this, idleStateReceiver, ifIdle, ContextCompat.RECEIVER_NOT_EXPORTED);
+        registeredIdleState = true;
 
         IntentFilter ifAp = new IntentFilter();
         ifAp.addAction("android.net.wifi.WIFI_AP_STATE_CHANGED");
@@ -3881,15 +3844,12 @@ public class ServiceSinkhole extends VpnService {
         ContextCompat.registerReceiver(this, packageChangedReceiver, ifPackage, ContextCompat.RECEIVER_NOT_EXPORTED);
         registeredPackageChanged = true;
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-            try {
-                listenNetworkChanges();
-            } catch (Throwable ex) {
-                Log.w(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
-                listenConnectivityChanges();
-            }
-        else
+        try {
+            listenNetworkChanges();
+        } catch (Throwable ex) {
+            Log.w(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
             listenConnectivityChanges();
+        }
 
         // Monitor networks
         ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -3916,7 +3876,6 @@ public class ServiceSinkhole extends VpnService {
         initialized = true;
     }
 
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private void listenNetworkChanges() {
         // Listen for network changes
         Log.i(TAG, "Starting listening to network changes");
@@ -4066,20 +4025,17 @@ public class ServiceSinkhole extends VpnService {
         if (cm == null)
             return null;
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            Network active = cm.getActiveNetwork();
-            if (active == null) {
-                Log.i(TAG, "getActiveNetwork: no active network");
-                return null;
-            }
-
-            NetworkCapabilities caps = cm.getNetworkCapabilities(active);
-            if (caps != null && caps.hasCapability(NetworkCapabilities.NET_CAPABILITY_NOT_VPN))
-                return active;
-            else
-                Log.w(TAG, "getActiveNetwork: active network is VPN");
-
+        Network active = cm.getActiveNetwork();
+        if (active == null) {
+            Log.i(TAG, "getActiveNetwork: no active network");
+            return null;
         }
+
+        NetworkCapabilities activeCapabilities = cm.getNetworkCapabilities(active);
+        if (activeCapabilities != null && activeCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_NOT_VPN))
+            return active;
+        else
+            Log.w(TAG, "getActiveNetwork: active network is VPN");
 
         NetworkInfo ani = cm.getActiveNetworkInfo();
         if (ani == null)
@@ -4353,7 +4309,6 @@ public class ServiceSinkhole extends VpnService {
         super.onDestroy();
     }
 
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private void unlistenNetworkChanges() {
         ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         cm.unregisterNetworkCallback((ConnectivityManager.NetworkCallback) networkCallback);
@@ -4384,10 +4339,9 @@ public class ServiceSinkhole extends VpnService {
             builder.setContentTitle(getString(R.string.app_name))
                     .setContentText(getString(R.string.msg_started));
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
-            builder.setCategory(NotificationCompat.CATEGORY_STATUS)
-                    .setVisibility(NotificationCompat.VISIBILITY_SECRET)
-                    .setPriority(NotificationCompat.PRIORITY_MIN);
+        builder.setCategory(NotificationCompat.CATEGORY_STATUS)
+                .setVisibility(NotificationCompat.VISIBILITY_SECRET)
+                .setPriority(NotificationCompat.PRIORITY_MIN);
 
         if (allowed >= 0)
             last_allowed = allowed;
@@ -4470,9 +4424,8 @@ public class ServiceSinkhole extends VpnService {
                 .setOngoing(false)
                 .setAutoCancel(true);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
-            builder.setCategory(NotificationCompat.CATEGORY_STATUS)
-                    .setVisibility(NotificationCompat.VISIBILITY_SECRET);
+        builder.setCategory(NotificationCompat.CATEGORY_STATUS)
+                .setVisibility(NotificationCompat.VISIBILITY_SECRET);
 
         NotificationCompat.BigTextStyle notification = new NotificationCompat.BigTextStyle(builder);
         notification.bigText(getString(R.string.msg_revoked));
@@ -4497,9 +4450,8 @@ public class ServiceSinkhole extends VpnService {
                 .setOngoing(false)
                 .setAutoCancel(true);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
-            builder.setCategory(NotificationCompat.CATEGORY_STATUS)
-                    .setVisibility(NotificationCompat.VISIBILITY_SECRET);
+        builder.setCategory(NotificationCompat.CATEGORY_STATUS)
+                .setVisibility(NotificationCompat.VISIBILITY_SECRET);
 
         NotificationCompat.BigTextStyle notification = new NotificationCompat.BigTextStyle(builder);
         notification.bigText(getString(R.string.msg_autostart));
@@ -4532,9 +4484,8 @@ public class ServiceSinkhole extends VpnService {
                 .setOngoing(false)
                 .setAutoCancel(true);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
-            builder.setCategory(NotificationCompat.CATEGORY_STATUS)
-                    .setVisibility(NotificationCompat.VISIBILITY_SECRET);
+        builder.setCategory(NotificationCompat.CATEGORY_STATUS)
+                .setVisibility(NotificationCompat.VISIBILITY_SECRET);
 
         NotificationCompat.BigTextStyle notification = new NotificationCompat.BigTextStyle(builder);
         notification.bigText(text);
@@ -4565,9 +4516,8 @@ public class ServiceSinkhole extends VpnService {
                 .setAutoCancel(true)
                 .setOnlyAlertOnce(true);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
-            builder.setCategory(NotificationCompat.CATEGORY_STATUS)
-                    .setVisibility(NotificationCompat.VISIBILITY_SECRET);
+        builder.setCategory(NotificationCompat.CATEGORY_STATUS)
+                .setVisibility(NotificationCompat.VISIBILITY_SECRET);
 
         NotificationCompat.BigTextStyle notification = new NotificationCompat.BigTextStyle(builder);
         notification.bigText(getString(R.string.msg_doh_unreachable));
@@ -4601,9 +4551,8 @@ public class ServiceSinkhole extends VpnService {
                 .setOngoing(true)
                 .setAutoCancel(false);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
-            builder.setCategory(NotificationCompat.CATEGORY_STATUS)
-                    .setVisibility(NotificationCompat.VISIBILITY_SECRET);
+        builder.setCategory(NotificationCompat.CATEGORY_STATUS)
+                .setVisibility(NotificationCompat.VISIBILITY_SECRET);
 
         NotificationCompat.BigTextStyle notification = new NotificationCompat.BigTextStyle(builder);
         notification.bigText(detail);
@@ -4633,9 +4582,8 @@ public class ServiceSinkhole extends VpnService {
                 .setColor(getResources().getColor(R.color.colorTrackerControl))
                 .setAutoCancel(true);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
-            builder.setCategory(NotificationCompat.CATEGORY_STATUS)
-                    .setVisibility(NotificationCompat.VISIBILITY_SECRET);
+        builder.setCategory(NotificationCompat.CATEGORY_STATUS)
+                .setVisibility(NotificationCompat.VISIBILITY_SECRET);
 
         NotificationCompat.BigTextStyle notification = new NotificationCompat.BigTextStyle(builder);
         notification.bigText(detail);
@@ -4669,9 +4617,8 @@ public class ServiceSinkhole extends VpnService {
                 // Rebuilt on every network change; alert once, then sit quietly.
                 .setOnlyAlertOnce(true);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
-            builder.setCategory(NotificationCompat.CATEGORY_STATUS)
-                    .setVisibility(NotificationCompat.VISIBILITY_SECRET);
+        builder.setCategory(NotificationCompat.CATEGORY_STATUS)
+                .setVisibility(NotificationCompat.VISIBILITY_SECRET);
 
         NotificationCompat.BigTextStyle notification = new NotificationCompat.BigTextStyle(builder);
         notification.bigText(detail);
@@ -4709,9 +4656,8 @@ public class ServiceSinkhole extends VpnService {
                 // Rebuilt on every network change; alert once, then sit quietly.
                 .setOnlyAlertOnce(true);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
-            builder.setCategory(NotificationCompat.CATEGORY_STATUS)
-                    .setVisibility(NotificationCompat.VISIBILITY_SECRET);
+        builder.setCategory(NotificationCompat.CATEGORY_STATUS)
+                .setVisibility(NotificationCompat.VISIBILITY_SECRET);
 
         NotificationCompat.BigTextStyle notification = new NotificationCompat.BigTextStyle(builder);
         notification.bigText(detail);
@@ -4819,9 +4765,8 @@ public class ServiceSinkhole extends VpnService {
                 .setAutoCancel(true)
                 .setOnlyAlertOnce(true);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
-            builder.setCategory(NotificationCompat.CATEGORY_STATUS)
-                    .setVisibility(NotificationCompat.VISIBILITY_SECRET);
+        builder.setCategory(NotificationCompat.CATEGORY_STATUS)
+                .setVisibility(NotificationCompat.VISIBILITY_SECRET);
 
         NotificationCompat.BigTextStyle notification = new NotificationCompat.BigTextStyle(builder);
         notification.bigText(detail);
@@ -4849,9 +4794,8 @@ public class ServiceSinkhole extends VpnService {
                 .setOngoing(false)
                 .setAutoCancel(true);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
-            builder.setCategory(NotificationCompat.CATEGORY_STATUS)
-                    .setVisibility(NotificationCompat.VISIBILITY_SECRET);
+        builder.setCategory(NotificationCompat.CATEGORY_STATUS)
+                .setVisibility(NotificationCompat.VISIBILITY_SECRET);
 
         Util.notify(this, NOTIFY_UPDATE, builder.build());
     }
@@ -4875,7 +4819,7 @@ public class ServiceSinkhole extends VpnService {
         private Builder() {
             super();
             ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-            activeNetwork = (Build.VERSION.SDK_INT < Build.VERSION_CODES.M ? null : cm.getActiveNetwork());
+            activeNetwork = cm.getActiveNetwork();
             networkInfo = cm.getActiveNetworkInfo();
         }
 
