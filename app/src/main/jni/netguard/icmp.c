@@ -175,6 +175,7 @@ jboolean handle_icmp(const struct arguments *args,
     while (cur != NULL &&
            !((cur->protocol == IPPROTO_ICMP || cur->protocol == IPPROTO_ICMPV6) &&
              !cur->icmp.stop && cur->icmp.version == version &&
+             cur->icmp.id == icmp->icmp_id &&
              (version == 4 ? cur->icmp.saddr.ip4 == ip4->saddr &&
                              cur->icmp.daddr.ip4 == ip4->daddr
                            : memcmp(&cur->icmp.saddr.ip6, &ip6->ip6_src, 16) == 0 &&
