@@ -136,7 +136,6 @@
     <string name="setting_doh_endpoint">DoH Endpoint URL</string>
     <string name="summary_doh_endpoint">URL HTTPS pour les requêtes DNS-sur-HTTPS</string>
     <string name="setting_doh_dns_fallback">DNS de secours</string>
-    <string name="summary_doh_dns_fallback">Utiliser le DNS standard (non chiffré) lorsque le DoH n\'est pas disponible. Désactiver ceci peut faire dysfonctionner les applications si le serveur DoH est hors service.</string>
     <!-- Block DNS-over-TLS (DoT) -->
     <string name="setting_block_dot">Bloquer le DNS privé d\'Android</string>
     <string name="summary_block_dot">Avec l\'activation du DNS privé d\'Android, TC ne peut détecter aucun traqueur et ne fonctionne pas correctement.</string>
