@@ -18,6 +18,8 @@ pub struct TunFdSend {
     dns_inspector: DnsInspector,
     write_failures_total: Arc<AtomicU64>,
     write_failures_streak: Arc<AtomicU64>,
+    delivered_bytes: Arc<AtomicU64>,
+    probes: Option<Arc<crate::probe::ProbeTracker>>,
 }
 
 impl TunFdSend {
@@ -45,7 +47,19 @@ impl TunFdSend {
             dns_inspector: DnsInspector::default(),
             write_failures_total,
             write_failures_streak,
+            delivered_bytes: Arc::new(AtomicU64::new(0)),
+            probes: None,
         }
+    }
+
+    pub fn with_delivered_counter(mut self, counter: Arc<AtomicU64>) -> Self {
+        self.delivered_bytes = counter;
+        self
+    }
+
+    pub fn with_probes(mut self, probes: Arc<crate::probe::ProbeTracker>) -> Self {
+        self.probes = Some(probes);
+        self
     }
 }
 
@@ -68,6 +82,9 @@ fn record_tun_write(total: &AtomicU64, streak: &AtomicU64, full_write: bool) -> 
 impl IpSend for TunFdSend {
     async fn send(&mut self, packet: Packet<Ip>) -> io::Result<()> {
         let mut packet: Packet<[u8]> = packet.into();
+        if self.probes.as_ref().is_some_and(|p| p.consume_reply(packet.as_ref())) {
+            return Ok(());
+        }
 
         if let Some(dns) = &self.dns {
             // The inspector records A/AAAA mappings before it blanks
@@ -83,6 +100,9 @@ impl IpSend for TunFdSend {
         let data = packet.as_ref();
 
         let n = write_fd(self.fd.as_raw_fd(), data);
+        if n == data.len() as isize {
+            self.delivered_bytes.fetch_add(data.len() as u64, Ordering::Relaxed);
+        }
         let (errors, streak) = record_tun_write(
             &self.write_failures_total,
             &self.write_failures_streak,
@@ -154,17 +174,21 @@ mod tests {
         let writer = unsafe { OwnedFd::from_raw_fd(fds[1]) };
         let total = Arc::new(AtomicU64::new(7));
         let streak = Arc::new(AtomicU64::new(3));
+        let delivered = Arc::new(AtomicU64::new(0));
         let mut sender = TunFdSend::with_counters(
             writer,
             None,
             Arc::clone(&total),
             Arc::clone(&streak),
         );
+        sender = sender.with_delivered_counter(Arc::clone(&delivered));
         let (packet, expected) = minimal_ipv4_packet();
 
         assert!(sender.send(packet).await.is_ok());
         assert_eq!(total.load(Ordering::Relaxed), 7);
         assert_eq!(streak.load(Ordering::Relaxed), 0);
+
+        assert_eq!(delivered.load(Ordering::Relaxed), expected.len() as u64);
 
         let reader = std::os::unix::net::UnixDatagram::from(reader);
         reader.set_read_timeout(Some(std::time::Duration::from_secs(1))).unwrap();
@@ -182,6 +206,7 @@ mod tests {
         let fd: OwnedFd = file.into();
         let total = Arc::new(AtomicU64::new(5));
         let streak = Arc::new(AtomicU64::new(2));
+        let delivered = Arc::new(AtomicU64::new(0));
         let mut sender = TunFdSend::with_counters(
             fd,
             None,
@@ -189,6 +214,7 @@ mod tests {
             Arc::clone(&streak),
         );
 
+        sender = sender.with_delivered_counter(Arc::clone(&delivered));
         for _ in 0..3 {
             let (packet, _) = minimal_ipv4_packet();
             assert!(sender.send(packet).await.is_ok());
@@ -196,5 +222,24 @@ mod tests {
 
         assert_eq!(total.load(Ordering::Relaxed), 8);
         assert_eq!(streak.load(Ordering::Relaxed), 5);
+        assert_eq!(delivered.load(Ordering::Relaxed), 0);
+    }
+
+    #[tokio::test]
+    async fn probe_reply_is_consumed_without_tun_write_or_delivery_credit() {
+        let probes = Arc::new(crate::probe::ProbeTracker::default());
+        let query = probes.prepare("10.0.0.2".parse().unwrap(), "10.0.0.53".parse().unwrap(), 42).unwrap();
+        let reply = crate::probe::test_reply(&query);
+        // A write would fail on this read-only fd, making accidental delivery
+        // observable through the failure counter as well as delivered bytes.
+        let fd = OpenOptions::new().read(true).open("/dev/null").unwrap().into();
+        let failures = Arc::new(AtomicU64::new(0));
+        let delivered = Arc::new(AtomicU64::new(0));
+        let mut sender = TunFdSend::with_counters(fd, None, Arc::clone(&failures), Arc::new(AtomicU64::new(0)))
+            .with_delivered_counter(Arc::clone(&delivered)).with_probes(Arc::clone(&probes));
+        sender.send(Packet::copy_from(reply.as_slice()).try_into_ip().unwrap()).await.unwrap();
+        assert_eq!(probes.reply_token(), 42);
+        assert_eq!(failures.load(Ordering::Relaxed), 0);
+        assert_eq!(delivered.load(Ordering::Relaxed), 0);
     }
 }

@@ -21,6 +21,7 @@ pub mod config;
 pub mod dns;
 pub mod keys;
 pub mod policy;
+pub mod probe;
 // The C ABI the NetGuard engine links against. It lives in this crate, not
 // in tc-dns, so the cdylib itself defines the exported symbols rather than
 // inheriting them from an rlib dependency (see app/gradle/wgbridge.gradle).

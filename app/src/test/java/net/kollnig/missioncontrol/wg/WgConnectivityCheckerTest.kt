@@ -24,8 +24,9 @@ class WgConnectivityCheckerTest {
         tx: Long,
         freshHandshake: Boolean = false,
         tunFailuresTotal: Long = 0L,
-        tunFailuresStreak: Long = 0L
-    ) = WgStats(rx, tx, 0L, freshHandshake, tunFailuresTotal, tunFailuresStreak)
+        tunFailuresStreak: Long = 0L,
+        deliveredRxBytes: Long = rx
+    ) = WgStats(rx, tx, 0L, freshHandshake, tunFailuresTotal, tunFailuresStreak, deliveredRxBytes)
 
     // --- baseline / connecting ------------------------------------------
 
@@ -309,16 +310,24 @@ class WgConnectivityCheckerTest {
         c.tick(3000, stats(0, 20, freshHandshake = true))
         assertEquals(false, c.lastTickSawRx)
 
-        // Return traffic arrives.
-        c.tick(4000, stats(50, 20))
+        // Raw WireGuard rx bytes are not proof that decrypted traffic reached the TUN.
+        c.tick(4000, stats(50, 20, deliveredRxBytes = 0))
+        assertEquals(false, c.lastTickSawRx)
+
+        // A full TUN write advances the dedicated delivered counter.
+        c.tick(5000, stats(50, 20, deliveredRxBytes = 7))
         assertEquals(true, c.lastTickSawRx)
 
         // Back to idle: the flag reflects the latest tick only.
-        c.tick(5000, stats(50, 20))
+        c.tick(5500, stats(50, 20, deliveredRxBytes = 7))
         assertEquals(false, c.lastTickSawRx)
 
-        // rx advancing during a fresh-handshake tick still counts.
-        c.tick(6000, stats(80, 30, freshHandshake = true))
+        // Raw rx and a fresh handshake alone still do not count.
+        c.tick(6000, stats(80, 30, freshHandshake = true, deliveredRxBytes = 7))
+        assertEquals(false, c.lastTickSawRx)
+
+        // Delivered traffic during a fresh-handshake tick does count.
+        c.tick(7000, stats(80, 30, freshHandshake = true, deliveredRxBytes = 8))
         assertEquals(true, c.lastTickSawRx)
     }
 
