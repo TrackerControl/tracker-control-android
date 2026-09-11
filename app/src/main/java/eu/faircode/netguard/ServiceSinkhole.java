@@ -180,7 +180,9 @@ public class ServiceSinkhole extends VpnService {
             clearWireGuardErrorNotification();
     };
 
-    private Object networkCallback = null;
+    private ConnectivityManager.NetworkCallback networkCallback = null;
+    private ConnectivityManager.NetworkCallback defaultNetworkCallback = null;
+    private final PhysicalNetworkState physicalNetworkState = new PhysicalNetworkState();
 
     private boolean registeredInteractiveState = false;
     private PhoneStateListener callStateListener = null;
@@ -3877,64 +3879,30 @@ public class ServiceSinkhole extends VpnService {
     }
 
     private void listenNetworkChanges() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
+            listenConnectivityChanges();
+            return;
+        }
+
         // Listen for network changes
         Log.i(TAG, "Starting listening to network changes");
         ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkRequest.Builder builder = new NetworkRequest.Builder();
         builder.addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET);
-        builder.addCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED);
+        builder.addCapability(NetworkCapabilities.NET_CAPABILITY_NOT_VPN);
 
         ConnectivityManager.NetworkCallback nc = new ConnectivityManager.NetworkCallback() {
-            private Network last_active = null;
-            private Network last_network = null;
-            private Boolean last_connected = null;
-            private Boolean last_metered = null;
-            private List<InetAddress> last_dns = null;
-            private String last_private_dns = null;
-
             @Override
             public void onAvailable(Network network) {
                 Log.i(TAG, "Available network=" + network);
-                if (!isActiveNetwork(network))
-                    return;
-
-                last_active = network;
-                last_network = network;
-                last_connected = Util.isConnected(ServiceSinkhole.this);
-                last_metered = Util.isMeteredNetwork(ServiceSinkhole.this);
-                reloadAfterNetworkChange(NetworkReloadPolicy.onNetworkAvailable());
+                handlePhysicalNetworkChange(physicalNetworkState.onPhysicalAvailable(network));
             }
 
             @Override
             public void onLinkPropertiesChanged(Network network, LinkProperties linkProperties) {
                 Log.i(TAG, "Changed properties=" + network + " props=" + linkProperties);
-                if (!isActiveNetwork(network))
-                    return;
-
-                // Make sure the right DNS servers are being used
-                List<InetAddress> dns = linkProperties.getDnsServers();
-                // Non-null only when Private DNS is pinned to a hostname, which
-                // leaves the resolver list untouched — so this is the only part
-                // of the properties that reveals the change.
-                String private_dns = (Build.VERSION.SDK_INT < Build.VERSION_CODES.P
-                        ? null : linkProperties.getPrivateDnsServerName());
-                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ServiceSinkhole.this);
-                String reason = NetworkReloadPolicy.onLinkPropertiesChanged(
-                        last_dns,
-                        dns,
-                        Build.VERSION.SDK_INT >= Build.VERSION_CODES.O,
-                        prefs.getBoolean("reload_onconnectivity", false),
-                        last_private_dns,
-                        private_dns);
-                if (reason != null) {
-                    Log.i(TAG, "Changed link properties=" + linkProperties +
-                            "DNS cur=" + TextUtils.join(",", dns) +
-                            "DNS prv=" + (last_dns == null ? null : TextUtils.join(",", last_dns)) +
-                            " private DNS cur=" + private_dns + " prv=" + last_private_dns);
-                    last_dns = dns;
-                    last_private_dns = private_dns;
-                    reloadAfterNetworkChange(reason);
-                }
+                handlePhysicalNetworkChange(physicalNetworkState.onPhysicalLinkPropertiesChanged(
+                        network, linkProperties));
                 if (vpn != null)
                     requestPrivateDnsWarningUpdate();
             }
@@ -3942,42 +3910,63 @@ public class ServiceSinkhole extends VpnService {
             @Override
             public void onCapabilitiesChanged(Network network, NetworkCapabilities networkCapabilities) {
                 Log.i(TAG, "Changed capabilities=" + network + " caps=" + networkCapabilities);
-                if (!isActiveNetwork(network))
-                    return;
-
-                boolean connected = Util.isConnected(ServiceSinkhole.this);
-                boolean metered = Util.isMeteredNetwork(ServiceSinkhole.this);
-                Log.i(TAG, "Connected=" + connected + "/" + last_connected +
-                        " metered=" + metered + "/" + last_metered);
-
-                String reason = NetworkReloadPolicy.onCapabilitiesChanged(
-                        network, last_network,
-                        last_connected, connected,
-                        last_metered, metered);
-
-                if (reason != null)
-                    reloadAfterNetworkChange(reason);
-
-                last_network = network;
-                last_connected = connected;
-                last_metered = metered;
+                handlePhysicalNetworkChange(physicalNetworkState.onPhysicalCapabilitiesChanged(
+                        network, networkCapabilities));
             }
 
             @Override
             public void onLost(Network network) {
-                Log.i(TAG, "Lost network=" + network + " active=" + isActiveNetwork(network));
-                if (last_active == null || !last_active.equals(network))
-                    return;
-
-                String reason = NetworkReloadPolicy.onNetworkLost(network, last_active);
-                last_active = null;
-                last_connected = Util.isConnected(ServiceSinkhole.this);
-                if (reason != null)
-                    reloadAfterNetworkChange(reason);
+                Log.i(TAG, "Lost network=" + network);
+                handlePhysicalNetworkChange(physicalNetworkState.onPhysicalLost(network));
             }
         };
+
+        ConnectivityManager.NetworkCallback dnc = new ConnectivityManager.NetworkCallback() {
+            @Override
+            public void onAvailable(Network network) {
+                Log.i(TAG, "Default network available=" + network);
+                handlePhysicalNetworkChange(physicalNetworkState.onDefaultNetworkAvailable(network));
+            }
+
+            @Override
+            public void onCapabilitiesChanged(Network network, NetworkCapabilities capabilities) {
+                Log.i(TAG, "Default network capabilities=" + network + " caps=" + capabilities);
+                handlePhysicalNetworkChange(physicalNetworkState.onDefaultNetworkCapabilitiesChanged(
+                        network, capabilities));
+            }
+
+            @Override
+            public void onLinkPropertiesChanged(Network network, LinkProperties linkProperties) {
+                Log.i(TAG, "Default network properties=" + network + " props=" + linkProperties);
+                handlePhysicalNetworkChange(physicalNetworkState.onDefaultNetworkLinkPropertiesChanged(
+                        network, linkProperties));
+                if (vpn != null)
+                    requestPrivateDnsWarningUpdate();
+            }
+
+            @Override
+            public void onLost(Network network) {
+                Log.i(TAG, "Default network lost=" + network);
+                handlePhysicalNetworkChange(physicalNetworkState.onDefaultNetworkLost(network));
+            }
+        };
+
         cm.registerNetworkCallback(builder.build(), nc);
         networkCallback = nc;
+        try {
+            cm.registerDefaultNetworkCallback(dnc);
+            defaultNetworkCallback = dnc;
+        } catch (Throwable ex) {
+            cm.unregisterNetworkCallback(nc);
+            networkCallback = null;
+            physicalNetworkState.reset();
+            throw ex;
+        }
+    }
+
+    private void handlePhysicalNetworkChange(String reason) {
+        if (reason != null)
+            reloadAfterNetworkChange(reason);
     }
 
     // Network flapping (Wi-Fi<->cellular handoffs, DHCP renewals) fires several
@@ -4250,9 +4239,13 @@ public class ServiceSinkhole extends VpnService {
                 registeredPackageChanged = false;
             }
 
-            if (networkCallback != null) {
-                unlistenNetworkChanges();
-                networkCallback = null;
+            if (networkCallback != null || defaultNetworkCallback != null) {
+                try {
+                    unlistenNetworkChanges();
+                } finally {
+                    networkCallback = null;
+                    defaultNetworkCallback = null;
+                }
             }
             if (registeredConnectivityChanged) {
                 unregisterReceiver(connectivityChangedReceiver);
@@ -4311,7 +4304,19 @@ public class ServiceSinkhole extends VpnService {
 
     private void unlistenNetworkChanges() {
         ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        cm.unregisterNetworkCallback((ConnectivityManager.NetworkCallback) networkCallback);
+        try {
+            if (networkCallback != null)
+                cm.unregisterNetworkCallback(networkCallback);
+        } finally {
+            try {
+                if (defaultNetworkCallback != null)
+                    cm.unregisterNetworkCallback(defaultNetworkCallback);
+            } finally {
+                networkCallback = null;
+                defaultNetworkCallback = null;
+                physicalNetworkState.reset();
+            }
+        }
     }
 
     private Notification getEnforcingNotification(int allowed, int blocked, int hosts) {

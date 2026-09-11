@@ -85,8 +85,8 @@ internal class WgMonitorLifecycle<T>(
  * Lifecycle is driven by [startOrUpdate] from `ServiceSinkhole.startNative`
  * and [stop] from the actual VPN-shutdown path. Crucially, `stopNative` does
  * NOT call [stop] — when NetGuard does a "Native restart" reload (same
- * builder, same TUN fd) we want WG to keep running so we don't redo the
- * handshake on every DHCP/connectivity blip.
+ * builder, same TUN fd) ordinarily preserves WG. A debounced physical-network
+ * change explicitly requests a fresh tunnel through that same reload path.
  *
  * The wgbridge classes used here are hand-written JNI bindings to the Rust
  * crate in `wgbridge-rs/`; build instructions live in `wgbridge-rs/README.md`.
@@ -188,19 +188,6 @@ object WgEgress {
             }
         }
     }
-
-    // Single-thread executor for network-change rebinds: bounds the thread
-    // count on a flapping network (instead of one raw Thread per event).
-    // rebindInFlight means a rebind task is running; a network change arriving
-    // during that window sets rebindDirty so the task re-runs once with the
-    // latest network instead of being dropped — otherwise the sockets could
-    // stay bound to a network that has already gone away.
-    private val rebindExecutor = java.util.concurrent.Executors.newSingleThreadExecutor {
-        Thread(it, "wg-rebind").apply { isDaemon = true }
-    }
-    private val rebindLock = Any()
-    private var rebindInFlight: Boolean = false
-    private var rebindDirty: Boolean = false
 
     @Volatile private var requestReloadCb: Runnable? = null
     @Volatile private var notifyBrokenCb: Runnable? = null
@@ -717,78 +704,12 @@ object WgEgress {
     fun onUnderlyingNetworkChanged() {
         verificationGeneration++
         clearEndpointCache()
-        if (tunnel == null) return
-        // A full restart is already queued (and the accompanying reload() is
-        // in flight); rebinding concurrently would just race it.
-        if (forceRestartPending) return
-
-        // Rebind the protected UDP sockets onto the new default network and
-        // re-resolve the endpoint instead of tearing the tunnel down: the
-        // WireGuard session survives outer-address changes, so this recovers
-        // roaming (Wi-Fi <-> cellular, crossing borders) without a
-        // re-handshake. Runs off-thread because endpoint re-resolution does
-        // blocking DNS. Falls back to a full restart if the rebind fails.
-        synchronized(rebindLock) {
-            if (rebindInFlight) {
-                // A rebind is already running; the network changed again, so
-                // mark it for a re-run rather than dropping this event.
-                rebindDirty = true
-                Log.i(TAG, "underlying network changed; rebind in flight, scheduling re-run")
-                return
-            }
-            rebindInFlight = true
-            rebindDirty = false
-        }
-
-        Log.i(TAG, "underlying network changed; rebinding WG sockets")
-        rebindExecutor.execute {
-            try {
-                while (true) {
-                    val expected = captureTunnel()
-                    if (expected == null) {
-                        synchronized(rebindLock) {
-                            rebindInFlight = false
-                            rebindDirty = false
-                        }
-                        return@execute
-                    }
-                    when (tryCheapRecovery(expected)) {
-                        RecoveryResult.SUCCEEDED -> {
-                            if (isCurrent(expected)) lastCheapRecoveryMs = now()
-                        }
-                        RecoveryResult.FAILED -> {
-                            if (!forceRestartPending) {
-                                requestFullRestart(
-                                    "WG rebind failed after network change",
-                                    notify = false,
-                                    expected = expected,
-                                    // A rebind failure means the local network
-                                    // changed under us, not that the relay is
-                                    // dead — don't let it count toward
-                                    // switching relays.
-                                    eligibleForFailover = false
-                                )
-                            }
-                        }
-                        RecoveryResult.STALE -> Unit
-                    }
-                    synchronized(rebindLock) {
-                        if (!rebindDirty) {
-                            rebindInFlight = false
-                            return@execute
-                        }
-                        // Another network change landed mid-rebind; loop once
-                        // more with the now-current default network.
-                        rebindDirty = false
-                    }
-                }
-            } catch (e: Throwable) {
-                Log.w(TAG, "WG rebind task failed", e)
-                synchronized(rebindLock) {
-                    rebindInFlight = false
-                    rebindDirty = false
-                }
-            }
+        // ServiceSinkhole calls this once per debounced network-change burst,
+        // immediately before reload. Recreate the tunnel in that reload even
+        // if its configuration and TUN are unchanged: a successful socket
+        // rebind does not prove the new path can carry application traffic.
+        synchronized(tunnelLifecycleLock) {
+            if (tunnel != null) forceRestartPending = true
         }
     }
 
