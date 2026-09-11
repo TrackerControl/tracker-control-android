@@ -39,27 +39,6 @@ class WgConnectivityMonitorTest {
     }
 
     @Test
-    fun sampleCallbackRunsThroughTheMonitorGenerationGate() {
-        var samples = 0
-        var monitor: WgConnectivityMonitor? = null
-        monitor = WgConnectivityMonitor(
-            statsProvider = { stats() },
-            prod = {},
-            onBroken = { fail("sample callback test entered recovery") },
-            onSample = {
-                samples++
-                monitor!!.stop()
-            },
-            sleep = {},
-            clock = { 0L }
-        )
-
-        monitor.start()
-        awaitStopped(monitor)
-        assertEquals(1, samples)
-    }
-
-    @Test
     fun screenOffCadenceIsSlow() {
         val idle = WgConnectivityMonitor.pollIntervalMs(false)
         assertTrue(idle >= 10_000L)

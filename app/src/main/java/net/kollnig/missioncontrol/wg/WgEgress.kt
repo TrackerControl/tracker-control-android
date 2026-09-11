@@ -85,8 +85,8 @@ internal class WgMonitorLifecycle<T>(
  * Lifecycle is driven by [startOrUpdate] from `ServiceSinkhole.startNative`
  * and [stop] from the actual VPN-shutdown path. Crucially, `stopNative` does
  * NOT call [stop] — when NetGuard does a "Native restart" reload (same
- * builder, same TUN fd) we want WG to keep running so we don't redo the
- * handshake on every DHCP/connectivity blip.
+ * builder, same TUN fd) ordinarily preserves WG. A debounced physical-network
+ * change explicitly requests a fresh tunnel through that same reload path.
  *
  * The wgbridge classes used here are hand-written JNI bindings to the Rust
  * crate in `wgbridge-rs/`; build instructions live in `wgbridge-rs/README.md`.
@@ -143,11 +143,6 @@ object WgEgress {
     // [reportProviderFailure].
     @Volatile private var pendingProviderFailure: String? = null
     @Volatile private var verificationGeneration: Long = 0
-    @Volatile private var pendingHandoverVerification: Boolean = false
-    @Volatile private var handoverUpdateInProgress: Boolean = false
-    @Volatile private var currentProbeSources: List<String> = emptyList()
-    @Volatile private var currentProbeResolvers: List<String> = emptyList()
-    private val handoverVerifier = WgHandoverVerifier()
     @Volatile private var currentConfig: String? = null
     private var currentTunFd: Int = -1
     // The exact ParcelFileDescriptor the running tunnel was started with. A
@@ -193,19 +188,6 @@ object WgEgress {
             }
         }
     }
-
-    // Single-thread executor for network-change rebinds: bounds the thread
-    // count on a flapping network (instead of one raw Thread per event).
-    // rebindInFlight means a rebind task is running; a network change arriving
-    // during that window sets rebindDirty so the task re-runs once with the
-    // latest network instead of being dropped — otherwise the sockets could
-    // stay bound to a network that has already gone away.
-    private val rebindExecutor = java.util.concurrent.Executors.newSingleThreadExecutor {
-        Thread(it, "wg-rebind").apply { isDaemon = true }
-    }
-    private val rebindLock = Any()
-    private var rebindInFlight: Boolean = false
-    private var rebindDirty: Boolean = false
 
     @Volatile private var requestReloadCb: Runnable? = null
     @Volatile private var notifyBrokenCb: Runnable? = null
@@ -279,134 +261,117 @@ object WgEgress {
         interactive: Boolean,
         keepaliveAlwaysOn: Boolean,
         startSocketpair: () -> Int,
-        stopSocketpair: () -> Unit,
-        probeSources: List<String> = emptyList(),
-        probeResolvers: List<String> = emptyList()
+        stopSocketpair: () -> Unit
     ): Boolean {
-        synchronized(tunnelLifecycleLock) {
-            handoverUpdateInProgress = true
-            pendingHandoverVerification = pendingHandoverVerification || handoverVerifier.isPending()
-            verificationGeneration++
-            handoverVerifier.cancel()
-        }
-        try {
-            val wantRunning = wgEnabled && !configText.isNullOrEmpty()
-            val desiredFd = vpnFd.fd
-            lastError = null
+        verificationGeneration++
+        val wantRunning = wgEnabled && !configText.isNullOrEmpty()
+        val desiredFd = vpnFd.fd
+        lastError = null
 
-            if (!wantRunning) {
-                clearRecoveryState()
-                pendingHandoverVerification = false
-                handoverVerifier.cancel()
-                clearAllEndpointState()
-                if (tunnel != null) {
-                    Log.i(TAG, "WG disabled — tearing down tunnel")
-                    stopInternal(stopSocketpair)
-                    notifyStateChanged()
-                }
-                return true
-            }
-
-            if (tunnel != null && currentConfig == configText && currentTunPfd === vpnFd && !forceRestartPending) {
-                val oldKeepaliveEnabled = currentInteractive || currentKeepaliveAlwaysOn
-                val newKeepaliveEnabled = interactive || keepaliveAlwaysOn
-                if (oldKeepaliveEnabled != newKeepaliveEnabled &&
-                    !updateKeepaliveOrError(configText!!, newKeepaliveEnabled, interactive, keepaliveAlwaysOn))
-                    return false
-                // The tunnel can outlive a monitor whose initial stats read raced
-                // tunnel startup (or which exited after a stale sample). Keep the
-                // idempotent tunnel path, but recreate a dead watchdog so a
-                // same-config start does not silently leave connectivity unwatched.
-                startMonitorIfDead()
-                currentProbeSources = probeSources.toList()
-                currentProbeResolvers = probeResolvers.toList()
-                Log.v(TAG, "startOrUpdate: same config + same TUN pfd, no-op")
-                return true
-            }
-
+        if (!wantRunning) {
+            clearRecoveryState()
+            clearAllEndpointState()
             if (tunnel != null) {
-                Log.i(TAG, "WG config, TUN fd, or recovery state changed — restarting")
+                Log.i(TAG, "WG disabled — tearing down tunnel")
                 stopInternal(stopSocketpair)
-            }
-            forceRestartPending = false
-            val keepaliveEnabled = interactive || keepaliveAlwaysOn
-
-            val parsed = try {
-                WgConfigParser.parse(configText!!)
-            } catch (e: Exception) {
-                lastError = "Invalid WireGuard config: ${e.message}"
-                Log.e(TAG, "config parse: ${e.message}")
                 notifyStateChanged()
-                return false
             }
-
-            val resolved = try {
-                withResolvedEndpoints(parsed)
-            } catch (e: Exception) {
-                lastError = "WireGuard endpoint resolution failed: ${e.message}"
-                Log.e(TAG, "endpoint resolve: ${e.message}")
-                notifyStateChanged()
-                return false
-            }
-
-            val rxFd = startSocketpair()
-            if (rxFd < 0) {
-                lastError = "Could not create WireGuard packet socket"
-                Log.e(TAG, "jni_wireguard_start failed")
-                notifyStateChanged()
-                return false
-            }
-
-            val mtu = resolved.mtu ?: DEFAULT_MTU
-            val protector = object : WgProtector {
-                override fun protect(fd: Int): Boolean = vpnService.protect(fd)
-            }
-            val logger = object : WgLogger {
-                override fun verbosef(s: String) { Log.v(TAG, s) }
-                override fun errorf(s: String)   { Log.e(TAG, s) }
-            }
-            val dnsRecorder = object : WgDnsRecorder {
-                override fun recordDns(qname: String, aname: String, resource: String, ttl: Int) {
-                    if (vpnService is eu.faircode.netguard.ServiceSinkhole)
-                        vpnService.wireGuardDnsResolved(qname, aname, resource, ttl)
-                }
-            }
-
-            val startedTunnel = try {
-                Wgbridge.startTunnel(
-                    resolved.toUapi(keepaliveEnabled), rxFd, desiredFd, mtu, protector, logger, dnsRecorder
-                )
-            } catch (e: Throwable) {
-                lastError = "WireGuard tunnel failed to start: ${e.message ?: e.javaClass.simpleName}"
-                Log.e(TAG, "Wgbridge.startTunnel failed", e)
-                stopSocketpair()
-                notifyStateChanged()
-                return false
-            } finally {
-                closeRawFd(rxFd)
-            }
-
-            currentConfig = configText
-            currentTunFd = desiredFd
-            currentTunPfd = vpnFd
-            currentInteractive = interactive
-            currentKeepaliveAlwaysOn = keepaliveAlwaysOn
-            currentProbeSources = probeSources.toList()
-            currentProbeResolvers = probeResolvers.toList()
-            synchronized(tunnelLifecycleLock) {
-                tunnelGeneration.incrementAndGet()
-                // Volatile publication happens only after all companion state has
-                // been installed above.
-                tunnel = startedTunnel
-            }
-            Log.i(TAG, "WG up: tunFd=$desiredFd mtu=$mtu peers=${resolved.peers.size}")
-            notifyStateChanged()
-            scheduleFreshHandshakeNotificationCheck()
-            startMonitor()
             return true
-        } finally {
-            handoverUpdateInProgress = false
         }
+
+        if (tunnel != null && currentConfig == configText && currentTunPfd === vpnFd && !forceRestartPending) {
+            val oldKeepaliveEnabled = currentInteractive || currentKeepaliveAlwaysOn
+            val newKeepaliveEnabled = interactive || keepaliveAlwaysOn
+            if (oldKeepaliveEnabled != newKeepaliveEnabled &&
+                !updateKeepaliveOrError(configText!!, newKeepaliveEnabled, interactive, keepaliveAlwaysOn))
+                return false
+            // The tunnel can outlive a monitor whose initial stats read raced
+            // tunnel startup (or which exited after a stale sample). Keep the
+            // idempotent tunnel path, but recreate a dead watchdog so a
+            // same-config start does not silently leave connectivity unwatched.
+            startMonitorIfDead()
+            Log.v(TAG, "startOrUpdate: same config + same TUN pfd, no-op")
+            return true
+        }
+
+        if (tunnel != null) {
+            Log.i(TAG, "WG config, TUN fd, or recovery state changed — restarting")
+            stopInternal(stopSocketpair)
+        }
+        forceRestartPending = false
+        val keepaliveEnabled = interactive || keepaliveAlwaysOn
+
+        val parsed = try {
+            WgConfigParser.parse(configText!!)
+        } catch (e: Exception) {
+            lastError = "Invalid WireGuard config: ${e.message}"
+            Log.e(TAG, "config parse: ${e.message}")
+            notifyStateChanged()
+            return false
+        }
+
+        val resolved = try {
+            withResolvedEndpoints(parsed)
+        } catch (e: Exception) {
+            lastError = "WireGuard endpoint resolution failed: ${e.message}"
+            Log.e(TAG, "endpoint resolve: ${e.message}")
+            notifyStateChanged()
+            return false
+        }
+
+        val rxFd = startSocketpair()
+        if (rxFd < 0) {
+            lastError = "Could not create WireGuard packet socket"
+            Log.e(TAG, "jni_wireguard_start failed")
+            notifyStateChanged()
+            return false
+        }
+
+        val mtu = resolved.mtu ?: DEFAULT_MTU
+        val protector = object : WgProtector {
+            override fun protect(fd: Int): Boolean = vpnService.protect(fd)
+        }
+        val logger = object : WgLogger {
+            override fun verbosef(s: String) { Log.v(TAG, s) }
+            override fun errorf(s: String)   { Log.e(TAG, s) }
+        }
+        val dnsRecorder = object : WgDnsRecorder {
+            override fun recordDns(qname: String, aname: String, resource: String, ttl: Int) {
+                if (vpnService is eu.faircode.netguard.ServiceSinkhole)
+                    vpnService.wireGuardDnsResolved(qname, aname, resource, ttl)
+            }
+        }
+
+        val startedTunnel = try {
+            Wgbridge.startTunnel(
+                resolved.toUapi(keepaliveEnabled), rxFd, desiredFd, mtu, protector, logger, dnsRecorder
+            )
+        } catch (e: Throwable) {
+            lastError = "WireGuard tunnel failed to start: ${e.message ?: e.javaClass.simpleName}"
+            Log.e(TAG, "Wgbridge.startTunnel failed", e)
+            stopSocketpair()
+            notifyStateChanged()
+            return false
+        } finally {
+            closeRawFd(rxFd)
+        }
+
+        currentConfig = configText
+        currentTunFd = desiredFd
+        currentTunPfd = vpnFd
+        currentInteractive = interactive
+        currentKeepaliveAlwaysOn = keepaliveAlwaysOn
+        synchronized(tunnelLifecycleLock) {
+            tunnelGeneration.incrementAndGet()
+            // Volatile publication happens only after all companion state has
+            // been installed above.
+            tunnel = startedTunnel
+        }
+        Log.i(TAG, "WG up: tunFd=$desiredFd mtu=$mtu peers=${resolved.peers.size}")
+        notifyStateChanged()
+        scheduleFreshHandshakeNotificationCheck()
+        startMonitor()
+        return true
     }
 
     private fun startMonitor() {
@@ -441,91 +406,13 @@ object WgEgress {
             // produces, so resetting on it would defeat the backoff.
             onRxAdvanced = { if (isCurrent(expected)) restartAttempts = 0 },
             isInteractive = { currentInteractive },
-            isCurrent = { isCurrent(expected) },
-            onSample = { stats -> onHandoverSample(expected, stats) },
-            onSuspended = { handoverVerifier.onSuspended() }
+            isCurrent = { isCurrent(expected) }
         )
         monitorLifecycle.replace(
             candidate,
             isCurrent = { isCurrent(expected) },
             onlyIfDead = onlyIfDead
         )
-    }
-
-    private fun beginHandoverVerification(expected: TunnelSnapshot, baseline: WgStats? = null) {
-        val generation = synchronized(tunnelLifecycleLock) {
-            if (!pendingHandoverVerification || handoverUpdateInProgress || forceRestartPending ||
-                !isCurrentLocked(expected)) return
-            verificationGeneration
-        }
-        synchronized(rebindLock) {
-            if (rebindInFlight) return
-        }
-        val sample = baseline ?: statsOrNull(expected) ?: return
-        val config = currentConfig ?: return
-        val targets = try {
-            val parsed = WgConfigParser.parse(config)
-            WgProbeTargetSelector.select(
-                currentProbeSources,
-                currentProbeResolvers,
-                parsed.peers.flatMap { it.allowedIPs }
-            )
-        } catch (e: Throwable) {
-            Log.w(TAG, "handover probe target selection failed", e)
-            emptyList()
-        }
-        val action = synchronized(tunnelLifecycleLock) {
-            if (!pendingHandoverVerification || handoverUpdateInProgress || forceRestartPending || !isCurrentLocked(expected) ||
-                generation != verificationGeneration) return
-            pendingHandoverVerification = false
-            handoverVerifier.begin(generation, sample, targets, currentInteractive)
-        }
-        dispatchHandoverAction(expected, action)
-    }
-
-    private fun onHandoverSample(expected: TunnelSnapshot, stats: WgStats) {
-        if (!isCurrent(expected)) return
-        if (pendingHandoverVerification) {
-            beginHandoverVerification(expected, stats)
-            return
-        }
-        dispatchHandoverAction(
-            expected,
-            handoverVerifier.onSample(verificationGeneration, stats, currentInteractive)
-        )
-    }
-
-    private fun dispatchHandoverAction(expected: TunnelSnapshot, action: WgHandoverVerifier.Action) {
-        when (action) {
-            WgHandoverVerifier.Action.None -> Unit
-            is WgHandoverVerifier.Action.Probe -> {
-                rebindExecutor.execute {
-                    if (!currentInteractive || !isCurrent(expected) ||
-                        !handoverVerifier.isCurrent(action.generation, action.token)) return@execute
-                    try {
-                        if (!expected.tunnel.sendDnsProbe(
-                                action.target.sourceIp,
-                                action.target.resolverIp,
-                                action.token
-                            )
-                        ) Log.i(TAG, "handover probe enqueue was rejected; awaiting bounded retry")
-                    } catch (e: Throwable) {
-                        Log.w(TAG, "handover probe enqueue failed; awaiting bounded retry", e)
-                    }
-                }
-            }
-            is WgHandoverVerifier.Action.Restart -> {
-                if (action.generation == verificationGeneration && isCurrent(expected)) {
-                    requestFullRestart(
-                        "WG handover verification failed",
-                        notify = false,
-                        expected = expected,
-                        eligibleForFailover = false,
-                        expectedVerificationGeneration = action.generation
-                    )
-                }
-            }
-        }
     }
 
     private fun stopMonitor() {
@@ -570,8 +457,7 @@ object WgEgress {
         reason: String,
         notify: Boolean,
         expected: TunnelSnapshot,
-        eligibleForFailover: Boolean,
-        expectedVerificationGeneration: Long? = null
+        eligibleForFailover: Boolean
     ) {
         val attempt: Int
         synchronized(tunnelLifecycleLock) {
@@ -579,12 +465,6 @@ object WgEgress {
             // tunnel replacement. Otherwise a replacement can land between
             // them and inherit forceRestartPending from an obsolete failure.
             if (!isCurrentLocked(expected)) return
-            if (expectedVerificationGeneration != null &&
-                (expectedVerificationGeneration != verificationGeneration || !currentInteractive)) return
-            // Verify the replacement too. A successful construction/handshake
-            // alone must not end recovery of a handover that lost its data path.
-            if (expectedVerificationGeneration != null)
-                pendingHandoverVerification = true
             clearEndpointCache()
             attempt = restartAttempts++
             forceRestartPending = true
@@ -779,9 +659,7 @@ object WgEgress {
                 it.latestHandshakeMillis,
                 it.latestHandshakeMillis > 0 && now() - it.latestHandshakeMillis < HANDSHAKE_DEAD_AFTER_MS,
                 it.tunWriteFailuresTotal,
-                it.tunWriteFailuresStreak,
-                it.deliveredRxBytes,
-                it.probeReplyToken
+                it.tunWriteFailuresStreak
             )
         }
     } catch (e: Throwable) {
@@ -824,88 +702,14 @@ object WgEgress {
         try { tunnel?.latestHandshakeMillis() } catch (_: Throwable) { null }
 
     fun onUnderlyingNetworkChanged() {
-        synchronized(tunnelLifecycleLock) {
-            verificationGeneration++
-            pendingHandoverVerification = tunnel != null
-            handoverVerifier.cancel()
-        }
+        verificationGeneration++
         clearEndpointCache()
-        if (tunnel == null) return
-        // A full restart is already queued (and the accompanying reload() is
-        // in flight); rebinding concurrently would just race it.
-        if (forceRestartPending) return
-
-        // Rebind the protected UDP sockets onto the new default network and
-        // re-resolve the endpoint instead of tearing the tunnel down: the
-        // WireGuard session survives outer-address changes, so this recovers
-        // roaming (Wi-Fi <-> cellular, crossing borders) without a
-        // re-handshake. Runs off-thread because endpoint re-resolution does
-        // blocking DNS. Falls back to a full restart if the rebind fails.
-        synchronized(rebindLock) {
-            if (rebindInFlight) {
-                // A rebind is already running; the network changed again, so
-                // mark it for a re-run rather than dropping this event.
-                rebindDirty = true
-                Log.i(TAG, "underlying network changed; rebind in flight, scheduling re-run")
-                return
-            }
-            rebindInFlight = true
-            rebindDirty = false
-        }
-
-        Log.i(TAG, "underlying network changed; rebinding WG sockets")
-        rebindExecutor.execute {
-            try {
-                while (true) {
-                    val expected = captureTunnel()
-                    if (expected == null) {
-                        synchronized(rebindLock) {
-                            rebindInFlight = false
-                            rebindDirty = false
-                        }
-                        return@execute
-                    }
-                    when (tryCheapRecovery(expected)) {
-                        RecoveryResult.SUCCEEDED -> {
-                            if (isCurrent(expected)) {
-                                lastCheapRecoveryMs = now()
-                                // The monitor starts verification after this
-                                // rebind (and any dirty re-run) leaves the queue.
-                            }
-                        }
-                        RecoveryResult.FAILED -> {
-                            if (!forceRestartPending) {
-                                requestFullRestart(
-                                    "WG rebind failed after network change",
-                                    notify = false,
-                                    expected = expected,
-                                    // A rebind failure means the local network
-                                    // changed under us, not that the relay is
-                                    // dead — don't let it count toward
-                                    // switching relays.
-                                    eligibleForFailover = false
-                                )
-                            }
-                        }
-                        RecoveryResult.STALE -> Unit
-                    }
-                    synchronized(rebindLock) {
-                        if (!rebindDirty) {
-                            rebindInFlight = false
-                            return@execute
-                        }
-                        // Another network change landed mid-rebind; loop once
-                        // more with the now-current default network.
-                        rebindDirty = false
-                    }
-                }
-            } catch (e: Throwable) {
-                Log.w(TAG, "WG rebind task failed", e)
-                synchronized(rebindLock) {
-                    rebindInFlight = false
-                    rebindDirty = false
-                }
-            }
+        // ServiceSinkhole calls this once per debounced network-change burst,
+        // immediately before reload. Recreate the tunnel in that reload even
+        // if its configuration and TUN are unchanged: a successful socket
+        // rebind does not prove the new path can carry application traffic.
+        synchronized(tunnelLifecycleLock) {
+            if (tunnel != null) forceRestartPending = true
         }
     }
 
@@ -927,10 +731,6 @@ object WgEgress {
 
         val oldKeepaliveEnabled = currentInteractive || currentKeepaliveAlwaysOn
         val newKeepaliveEnabled = interactive || keepaliveAlwaysOn
-        synchronized(tunnelLifecycleLock) {
-            currentInteractive = interactive
-            handoverVerifier.setInteractive(interactive)
-        }
         if (oldKeepaliveEnabled == newKeepaliveEnabled) {
             currentInteractive = interactive
             currentKeepaliveAlwaysOn = keepaliveAlwaysOn
@@ -973,8 +773,7 @@ object WgEgress {
         currentTunPfd = null
         currentKeepaliveAlwaysOn = false
         lastCheapRecoveryMs = 0
-        bumpVerificationGeneration()
-        handoverVerifier.cancel()
+        verificationGeneration++
         // An error describes a tunnel that no longer exists. Listeners check
         // lastError before isRunning — deliberately, so a start that fails
         // without ever producing a tunnel still reports — so leaving it set
@@ -1058,9 +857,7 @@ object WgEgress {
     }
 
     private fun clearRecoveryState() {
-        bumpVerificationGeneration()
-        pendingHandoverVerification = false
-        handoverVerifier.cancel()
+        verificationGeneration++
         recoveryNotificationGeneration++
         providerFailureReason = null
         pendingProviderFailure = null
@@ -1099,12 +896,6 @@ object WgEgress {
     }
 
     private fun now(): Long = System.currentTimeMillis()
-
-    private fun bumpVerificationGeneration() {
-        synchronized(tunnelLifecycleLock) {
-            verificationGeneration++
-        }
-    }
 
     private fun withResolvedEndpoints(config: WgConfig): WgConfig {
         return config.copy(peers = config.peers.map { peer ->

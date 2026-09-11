@@ -336,8 +336,6 @@ pub extern "system" fn Java_net_kollnig_missioncontrol_wgbridge_Tunnel_nativeSta
                     stats.latest_handshake_millis,
                     stats.tun_write_failures_total,
                     stats.tun_write_failures_streak,
-                    stats.delivered_rx_bytes,
-                    stats.probe_reply_token,
                 ];
                 match env.new_long_array(values.len()) {
                     Ok(array) => {
@@ -370,30 +368,6 @@ pub extern "system" fn Java_net_kollnig_missioncontrol_wgbridge_Tunnel_nativeSen
             return;
         };
         tunnel.send_keepalive();
-    })
-}
-
-#[no_mangle]
-pub extern "system" fn Java_net_kollnig_missioncontrol_wgbridge_Tunnel_nativeSendDnsProbe(
-    mut unowned_env: EnvUnowned,
-    _class: JClass,
-    handle: jlong,
-    source: JString,
-    resolver: JString,
-    token: jlong,
-) -> jni::sys::jboolean {
-    with_native_env!(unowned_env, env, {
-        let Some(tunnel) = tunnel_from_handle(handle) else { return false; };
-        let (Some(source), Some(resolver)) = (get_string(env, &source), get_string(env, &resolver)) else {
-            return false;
-        };
-        match tunnel.send_dns_probe(&source, &resolver, token) {
-            Ok(sent) => sent,
-            Err(error) => {
-                log::warn!("could not queue WireGuard DNS probe: {error}");
-                false
-            }
-        }
     })
 }
 

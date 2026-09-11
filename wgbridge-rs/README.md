@@ -188,7 +188,6 @@ class Tunnel {
     long latestHandshakeMillis();
     void sendKeepalive();
     void rebind();                // re-bind + re-protect UDP sockets (roaming)
-    boolean sendDnsProbe(String sourceIp, String resolverIp, long token);
     void updateEndpoint(String peerPublicKeyBase64, String endpoint);
     void setKeepalive(String peerPublicKeyBase64, int seconds);  // 0 disables
     void stop();
@@ -199,24 +198,6 @@ class Tunnel {
 `wg-quick` config; the Rust side maps it onto gotatun's typed API. Peer
 endpoints must arrive as resolved IP literals (`WgEgress` resolves
 hostnames, and re-resolves them on network changes via `updateEndpoint`).
-
-`TunnelStats.rxBytes` is the engine counter and includes handshakes.
-`deliveredRxBytes` counts only decrypted IP packets successfully written to
-Android; use it for data-path recovery evidence. `probeReplyToken` identifies
-the last correlated internal DNS probe reply. Probes enter the same encrypted
-IP transport as outbound application packets. Their sockets only reserve a
-source port and never send on the physical network. Matching replies are
-consumed before DNS policy and TUN delivery, so they do not inflate the
-delivered-IP counter. Probe destinations must be covered by a peer's AllowedIPs.
-
-After an underlying-network change, Android first rebinds the protected UDP
-sockets and refreshes endpoints. While interactive, it then verifies the path
-with up to three root-NS DNS queries at five-second intervals. Delivered
-application traffic or a correlated reply ends verification; fifteen seconds
-without either requests a full restart through the existing backoff, followed
-by verification of the replacement. Screen-off and suspend gaps defer/rebase
-the check. Profiles without a same-family, routed numeric resolver retain the
-ordinary watchdog. No probe opens a direct fallback path.
 
 ## Potential improvements
 

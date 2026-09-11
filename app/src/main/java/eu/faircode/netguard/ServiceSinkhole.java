@@ -2212,13 +2212,6 @@ public class ServiceSinkhole extends VpnService {
                         }));
         jni_wireguard_required(prefs.getBoolean("wg_enabled", false)
                 && !TextUtils.isEmpty(prefs.getString("wg_config", "")));
-        List<String> probeSources = (last_builder == null
-                ? new ArrayList<>() : new ArrayList<>(last_builder.listAddress));
-        List<String> probeResolvers = new ArrayList<>();
-        if (last_builder != null)
-            for (InetAddress dns : last_builder.listDns)
-                if (dns != null && dns.getHostAddress() != null)
-                    probeResolvers.add(dns.getHostAddress());
         boolean wgOk = net.kollnig.missioncontrol.wg.WgEgress.INSTANCE.startOrUpdate(
                 prefs.getBoolean("wg_enabled", false),
                 prefs.getString("wg_config", ""),
@@ -2227,9 +2220,7 @@ public class ServiceSinkhole extends VpnService {
                 Util.isInteractive(ServiceSinkhole.this),
                 prefs.getBoolean("wg_keepalive_when_screen_off", false),
                 () -> jni_wireguard_start(),
-                () -> { jni_wireguard_stop(); return kotlin.Unit.INSTANCE; },
-                probeSources,
-                probeResolvers);
+                () -> { jni_wireguard_stop(); return kotlin.Unit.INSTANCE; });
         if (!wgOk) {
             String wgError = net.kollnig.missioncontrol.wg.WgEgress.INSTANCE.getLastError();
             Log.w(TAG, "WireGuard egress failed to start; blocking traffic: " + wgError);
@@ -3973,9 +3964,9 @@ public class ServiceSinkhole extends VpnService {
         }
     }
 
-    private void handlePhysicalNetworkChange(PhysicalNetworkState.Change change) {
-        if (change.getReason() != null)
-            reloadAfterNetworkChange(change.getReason());
+    private void handlePhysicalNetworkChange(String reason) {
+        if (reason != null)
+            reloadAfterNetworkChange(reason);
     }
 
     // Network flapping (Wi-Fi<->cellular handoffs, DHCP renewals) fires several

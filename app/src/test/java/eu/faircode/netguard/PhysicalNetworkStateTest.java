@@ -2,9 +2,7 @@ package eu.faircode.netguard;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 
 import android.net.LinkProperties;
 import android.net.Network;
@@ -36,9 +34,8 @@ public class PhysicalNetworkStateTest {
         LinkProperties props = linkProperties("9.9.9.9");
         state.onPhysicalLinkPropertiesChanged(WIFI, props);
         props.setDnsServers(Collections.singleton(InetAddress.getByName("1.1.1.1")));
-        assertEquals("9.9.9.9", state.getLinkProperties(WIFI).getDnsServers().get(0).getHostAddress());
         assertEquals(NetworkReloadPolicy.REASON_LINK_PROPERTIES_CHANGED,
-                state.onPhysicalLinkPropertiesChanged(WIFI, props).getReason());
+                state.onPhysicalLinkPropertiesChanged(WIFI, props));
     }
 
     private static NetworkCapabilities capabilities(int transport) {
@@ -62,20 +59,20 @@ public class PhysicalNetworkStateTest {
         NetworkCapabilities wifiVpn = capabilities(NetworkCapabilities.TRANSPORT_WIFI);
         Shadows.shadowOf(wifiVpn).removeCapability(NetworkCapabilities.NET_CAPABILITY_NOT_VPN);
         Shadows.shadowOf(wifiVpn).addTransportType(NetworkCapabilities.TRANSPORT_VPN);
-        assertNull(state.onDefaultNetworkCapabilitiesChanged(VPN, wifiVpn).getReason());
+        assertNull(state.onDefaultNetworkCapabilitiesChanged(VPN, wifiVpn));
 
         NetworkCapabilities cellVpn = capabilities(NetworkCapabilities.TRANSPORT_CELLULAR);
         Shadows.shadowOf(cellVpn).removeCapability(NetworkCapabilities.NET_CAPABILITY_NOT_VPN);
         Shadows.shadowOf(cellVpn).addTransportType(NetworkCapabilities.TRANSPORT_VPN);
         assertEquals(NetworkReloadPolicy.REASON_NETWORK_CHANGED,
-                state.onDefaultNetworkCapabilitiesChanged(VPN, cellVpn).getReason());
+                state.onDefaultNetworkCapabilitiesChanged(VPN, cellVpn));
 
         Network replacement = ShadowNetwork.newInstance(104);
-        assertNull(state.onDefaultNetworkAvailable(replacement).getReason());
-        assertNull(state.onDefaultNetworkCapabilitiesChanged(replacement, cellVpn).getReason());
+        assertNull(state.onDefaultNetworkAvailable(replacement));
+        assertNull(state.onDefaultNetworkCapabilitiesChanged(replacement, cellVpn));
         assertNull(state.onDefaultNetworkLinkPropertiesChanged(replacement,
-                linkProperties("9.9.9.9")).getReason());
-        assertNull(state.onDefaultNetworkLost(VPN).getReason());
+                linkProperties("9.9.9.9")));
+        assertNull(state.onDefaultNetworkLost(VPN));
     }
 
     @Test
@@ -83,11 +80,11 @@ public class PhysicalNetworkStateTest {
         PhysicalNetworkState state = new PhysicalNetworkState();
 
         assertEquals(NetworkReloadPolicy.REASON_NETWORK_AVAILABLE,
-                state.onPhysicalAvailable(WIFI).getReason());
+                state.onPhysicalAvailable(WIFI));
         assertEquals(NetworkReloadPolicy.REASON_NETWORK_CHANGED,
                 state.onPhysicalCapabilitiesChanged(WIFI, capabilities(
-                        NetworkCapabilities.TRANSPORT_WIFI)).getReason());
-        assertNotNull(state.getCapabilities(WIFI));
+                        NetworkCapabilities.TRANSPORT_WIFI)));
+        assertNull(state.onPhysicalAvailable(WIFI));
         assertNull(state.getDefaultNetwork());
     }
 
@@ -99,11 +96,11 @@ public class PhysicalNetworkStateTest {
         state.onPhysicalAvailable(CELL);
         state.onPhysicalCapabilitiesChanged(CELL, capabilities(NetworkCapabilities.TRANSPORT_CELLULAR));
 
-        assertNull(state.onDefaultNetworkAvailable(WIFI).getReason());
+        assertNull(state.onDefaultNetworkAvailable(WIFI));
         assertNull(state.onDefaultNetworkCapabilitiesChanged(WIFI,
-                capabilities(NetworkCapabilities.TRANSPORT_WIFI)).getReason());
+                capabilities(NetworkCapabilities.TRANSPORT_WIFI)));
         assertEquals(NetworkReloadPolicy.REASON_NETWORK_CHANGED,
-                state.onDefaultNetworkAvailable(CELL).getReason());
+                state.onDefaultNetworkAvailable(CELL));
         assertEquals(CELL, state.getDefaultNetwork());
     }
 
@@ -118,7 +115,7 @@ public class PhysicalNetworkStateTest {
 
         assertEquals(NetworkReloadPolicy.REASON_NETWORK_CHANGED,
                 state.onDefaultNetworkCapabilitiesChanged(WIFI,
-                        capabilities(NetworkCapabilities.TRANSPORT_CELLULAR)).getReason());
+                        capabilities(NetworkCapabilities.TRANSPORT_CELLULAR)));
         assertEquals(WIFI, state.getDefaultNetwork());
     }
 
@@ -134,7 +131,7 @@ public class PhysicalNetworkStateTest {
         chatterShadow.setLinkDownstreamBandwidthKbps(12000);
         chatterShadow.setLinkUpstreamBandwidthKbps(3000);
         setSignalStrength(chatter, -55);
-        assertNull(state.onPhysicalCapabilitiesChanged(CELL, chatter).getReason());
+        assertNull(state.onPhysicalCapabilitiesChanged(CELL, chatter));
     }
 
     @Test
@@ -146,9 +143,9 @@ public class PhysicalNetworkStateTest {
         state.onPhysicalCapabilitiesChanged(CELL, capabilities(NetworkCapabilities.TRANSPORT_CELLULAR));
 
         assertEquals(NetworkReloadPolicy.REASON_NETWORK_LOST,
-                state.onPhysicalLost(CELL).getReason());
-        assertNull(state.onPhysicalLost(CELL).getReason());
-        assertNotNull(state.getCapabilities(WIFI));
+                state.onPhysicalLost(CELL));
+        assertNull(state.onPhysicalLost(CELL));
+        assertNull(state.onPhysicalAvailable(WIFI));
     }
 
     @Test
@@ -161,10 +158,9 @@ public class PhysicalNetworkStateTest {
 
         LinkProperties pinned = linkProperties("9.9.9.9");
         setPrivateDns(pinned, "dns.example", true);
-        PhysicalNetworkState.Change change = state.onPhysicalLinkPropertiesChanged(WIFI, pinned);
-        assertEquals(NetworkReloadPolicy.REASON_PRIVATE_DNS_CHANGED, change.getReason());
-        assertTrue(change.isPrivateDnsChanged());
-        assertFalse(NetworkReloadPolicy.shouldRestartWireGuard(change.getReason()));
+        String change = state.onPhysicalLinkPropertiesChanged(WIFI, pinned);
+        assertEquals(NetworkReloadPolicy.REASON_PRIVATE_DNS_CHANGED, change);
+        assertFalse(NetworkReloadPolicy.shouldRestartWireGuard(change));
     }
 
     @Test
@@ -180,11 +176,11 @@ public class PhysicalNetworkStateTest {
         vpnShadow.addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET);
         vpnShadow.removeCapability(NetworkCapabilities.NET_CAPABILITY_NOT_VPN);
         vpnShadow.addTransportType(NetworkCapabilities.TRANSPORT_VPN);
-        assertNull(state.onDefaultNetworkAvailable(VPN).getReason());
-        assertNull(state.onDefaultNetworkCapabilitiesChanged(VPN, vpn).getReason());
+        assertNull(state.onDefaultNetworkAvailable(VPN));
+        assertNull(state.onDefaultNetworkCapabilitiesChanged(VPN, vpn));
         assertNull(state.onDefaultNetworkLinkPropertiesChanged(VPN,
-                linkProperties("1.1.1.1")).getReason());
-        assertNull(state.onDefaultNetworkLost(VPN).getReason());
+                linkProperties("1.1.1.1")));
+        assertNull(state.onDefaultNetworkLost(VPN));
         assertEquals(WIFI, state.getDefaultNetwork());
     }
 

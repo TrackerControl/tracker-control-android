@@ -16,23 +16,16 @@ const MAX_BATCH: usize = 32;
 pub struct SocketpairRecv {
     afd: AsyncFd<OwnedFd>,
     mtu: MtuWatcher,
-    probes: tokio::sync::mpsc::Receiver<Vec<u8>>,
 }
 
 impl SocketpairRecv {
     /// Takes ownership of `fd` (already a private dup). Sets it non-blocking
     /// for use with the tokio reactor.
     pub fn new(fd: OwnedFd, mtu: u16) -> io::Result<Self> {
-        let (_, probes) = tokio::sync::mpsc::channel(1);
-        Self::with_probes(fd, mtu, probes)
-    }
-
-    pub fn with_probes(fd: OwnedFd, mtu: u16, probes: tokio::sync::mpsc::Receiver<Vec<u8>>) -> io::Result<Self> {
         set_nonblocking(&fd)?;
         Ok(Self {
             afd: AsyncFd::with_interest(fd, Interest::READABLE)?,
             mtu: MtuWatcher::new(mtu),
-            probes,
         })
     }
 }
@@ -62,15 +55,7 @@ impl IpRecv for SocketpairRecv {
         pool: &mut PacketBufPool,
     ) -> io::Result<impl Iterator<Item = Packet<Ip>> + Send + 'a> {
         loop {
-            let mut guard = tokio::select! {
-                Some(bytes) = self.probes.recv() => {
-                    if let Ok(packet) = Packet::copy_from(bytes.as_slice()).try_into_ip() {
-                        return Ok(vec![packet].into_iter());
-                    }
-                    continue;
-                }
-                ready = self.afd.readable() => ready?,
-            };
+            let mut guard = self.afd.readable().await?;
             let fd = self.afd.get_ref().as_raw_fd();
 
             let mut packets: Vec<Packet<Ip>> = Vec::new();
@@ -122,34 +107,5 @@ impl IpRecv for SocketpairRecv {
 
     fn mtu(&self) -> MtuWatcher {
         self.mtu.clone()
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use std::os::unix::net::UnixDatagram;
-    use std::time::Duration;
-
-    #[tokio::test]
-    async fn probes_and_normal_packets_share_recv_without_channel_close_stopping_it() {
-        let (writer, reader) = UnixDatagram::pair().unwrap();
-        let (tx, rx) = tokio::sync::mpsc::channel(1);
-        let mut recv = SocketpairRecv::with_probes(reader.into(), 1280, rx).unwrap();
-        let tracker = crate::probe::ProbeTracker::default();
-        let query = tracker.prepare("10.0.0.2".parse().unwrap(), "10.0.0.53".parse().unwrap(), 1).unwrap();
-        tx.send(query.clone()).await.unwrap();
-        let mut pool = PacketBufPool::new(2);
-        {
-            let mut packets = tokio::time::timeout(Duration::from_secs(1), recv.recv(&mut pool)).await.unwrap().unwrap();
-            let packet: Packet<[u8]> = packets.next().unwrap().into();
-            assert_eq!(packet.as_ref(), query.as_slice());
-            assert!(packets.next().is_none());
-        }
-        drop(tx);
-        writer.send(&query).unwrap();
-        let mut packets = tokio::time::timeout(Duration::from_secs(1), recv.recv(&mut pool)).await.unwrap().unwrap();
-        let packet: Packet<[u8]> = packets.next().unwrap().into();
-        assert_eq!(packet.as_ref(), query.as_slice());
     }
 }

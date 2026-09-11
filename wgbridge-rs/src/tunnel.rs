@@ -27,8 +27,6 @@ pub struct TunnelStats {
     pub latest_handshake_millis: i64,
     pub tun_write_failures_total: i64,
     pub tun_write_failures_streak: i64,
-    pub delivered_rx_bytes: i64,
-    pub probe_reply_token: i64,
 }
 
 struct Inner {
@@ -44,9 +42,6 @@ struct Inner {
     logger: Arc<dyn BridgeLogger>,
     tun_write_failures_total: Arc<std::sync::atomic::AtomicU64>,
     tun_write_failures_streak: Arc<std::sync::atomic::AtomicU64>,
-    delivered_rx_bytes: Arc<std::sync::atomic::AtomicU64>,
-    probes: Arc<crate::probe::ProbeTracker>,
-    probe_sender: tokio::sync::mpsc::Sender<Vec<u8>>,
 }
 
 pub struct Tunnel {
@@ -100,9 +95,6 @@ pub fn start_tunnel(
     let tun_write_failures_streak = Arc::new(std::sync::atomic::AtomicU64::new(0));
     let stats_total = Arc::clone(&tun_write_failures_total);
     let stats_streak = Arc::clone(&tun_write_failures_streak);
-    let delivered_rx_bytes = Arc::new(std::sync::atomic::AtomicU64::new(0));
-    let probes = Arc::new(crate::probe::ProbeTracker::default());
-    let (probe_sender, probe_receiver) = tokio::sync::mpsc::channel(1);
 
     let runtime = tokio::runtime::Builder::new_multi_thread()
         .worker_threads(2)
@@ -114,14 +106,13 @@ pub fn start_tunnel(
 
     let device = runtime
         .block_on(async {
-            let ip_recv = SocketpairRecv::with_probes(rx_fd, mtu, probe_receiver)?;
+            let ip_recv = SocketpairRecv::new(rx_fd, mtu)?;
             let ip_send = TunFdSend::with_counters(
                 tx_fd,
                 dns,
                 Arc::clone(&tun_write_failures_total),
                 Arc::clone(&tun_write_failures_streak),
-            ).with_delivered_counter(Arc::clone(&delivered_rx_bytes))
-                .with_probes(Arc::clone(&probes));
+            );
             gotatun::device::build()
                 .with_udp(ProtectedUdpFactory::new(protector))
                 .with_ip_pair(ip_send, ip_recv)
@@ -147,35 +138,11 @@ pub fn start_tunnel(
             logger,
             tun_write_failures_total: stats_total,
             tun_write_failures_streak: stats_streak,
-            delivered_rx_bytes,
-            probes,
-            probe_sender,
         }),
     })
 }
 
 impl Tunnel {
-    /// Queue one DNS probe on the encrypted IP transport. Returning true means
-    /// queued, not healthy; only probe_reply_token confirms a correlated reply.
-    pub fn send_dns_probe(&self, source: &str, resolver: &str, token: i64) -> Result<bool, String> {
-        let source: std::net::IpAddr = source.parse().map_err(|_| "invalid probe source")?;
-        let resolver: std::net::IpAddr = resolver.parse().map_err(|_| "invalid probe resolver")?;
-        let peers = self.inner.peers.lock().map_err(|_| "peer lock poisoned")?;
-        if !peers.iter().any(|peer| peer.allowed_ips.iter().any(|net| net.contains(resolver))) {
-            return Ok(false);
-        }
-        drop(peers);
-        let Ok(permit) = self.inner.probe_sender.try_reserve() else { return Ok(false); };
-        let packet = self.inner.probes.prepare(source, resolver, token).map_err(|e| e.to_string())?;
-        permit.send(packet);
-        let probes = Arc::clone(&self.inner.probes);
-        self.runtime.spawn(async move {
-            tokio::time::sleep(crate::probe::PROBE_LIFETIME).await;
-            probes.expire();
-        });
-        Ok(true)
-    }
-
     /// Reapplies UAPI configuration to the running device without restarting
     /// it. The screen-state keepalive toggle goes through [`Tunnel::set_keepalive`]
     /// instead, which touches one field per peer.
@@ -214,8 +181,9 @@ impl Tunnel {
     }
 
     /// Transfer counters and newest handshake, summed across all peers.
-    /// Engine rx_bytes includes handshake traffic. delivered_rx_bytes counts
-    /// only complete decrypted IP packets successfully written to Android.
+    /// rx_bytes counts decrypted transport payload, so it only advances when
+    /// the tunnel actually carries return traffic — that is the liveness
+    /// signal the connectivity monitor is biased toward.
     pub fn stats(&self) -> Result<TunnelStats, String> {
         let inner = Arc::clone(&self.inner);
         self.runtime.block_on(async move {
@@ -231,9 +199,6 @@ impl Tunnel {
                 rx_bytes: 0,
                 tx_bytes: 0,
                 latest_handshake_millis: 0,
-                probe_reply_token: inner.probes.reply_token(),
-                delivered_rx_bytes: inner.delivered_rx_bytes.load(
-                    std::sync::atomic::Ordering::Relaxed) as i64,
                 tun_write_failures_total: inner
                     .tun_write_failures_total
                     .load(std::sync::atomic::Ordering::Relaxed)

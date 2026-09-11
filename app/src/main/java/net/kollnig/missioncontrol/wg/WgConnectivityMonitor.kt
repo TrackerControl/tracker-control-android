@@ -10,9 +10,7 @@ data class WgStats(
     val latestHandshakeMillis: Long,
     val hasFreshHandshake: Boolean = false,
     val tunWriteFailuresTotal: Long = 0L,
-    val tunWriteFailuresStreak: Long = 0L,
-    val deliveredRxBytes: Long = 0L,
-    val probeReplyToken: Long = 0L
+    val tunWriteFailuresStreak: Long = 0L
 )
 
 /** Outcome of a single connectivity poll. */
@@ -84,10 +82,9 @@ internal class WgConnectivityChecker(private val prod: () -> Unit) {
     private var tunWriteFailureStartedAt: Long? = null
     private var tunWriteFailureRunIdentity: Long? = null
     private var tunWriteFailuresSuspended = false
-    private var deliveredRxBytes = 0L
 
     /**
-     * True when the most recent [tick] observed the delivered-IP counter advancing —
+     * True when the most recent [tick] observed the rx counter advancing —
      * decrypted return traffic, the only signal that proves the data path
      * works end to end. A completed handshake is NOT such proof (a path can
      * pass handshakes yet drop transport packets), so recovery backoff resets
@@ -100,7 +97,6 @@ internal class WgConnectivityChecker(private val prod: () -> Unit) {
     fun seed(now: Long, stats: WgStats) {
         state = ConnState.Connecting(now, false, stats.rxBytes, stats.txBytes)
         lastTickSawRx = false
-        deliveredRxBytes = stats.deliveredRxBytes
         resetProd()
         resetTunWriteFailures(stats.tunWriteFailuresTotal)
         tunWriteFailuresSuspended = false
@@ -112,8 +108,7 @@ internal class WgConnectivityChecker(private val prod: () -> Unit) {
         if (stats == null) return WgVerdict.GONE
 
         val rxAdvanced = update(now, stats.rxBytes, stats.txBytes)
-        lastTickSawRx = stats.deliveredRxBytes > deliveredRxBytes
-        deliveredRxBytes = stats.deliveredRxBytes
+        lastTickSawRx = rxAdvanced
 
         // A completed handshake can coexist with a TUN fd that rejects every
         // decrypted packet. Evaluate the write-failure evidence first so the
@@ -128,6 +123,7 @@ internal class WgConnectivityChecker(private val prod: () -> Unit) {
         }
 
         if (rxAdvanced) {
+            lastTickSawRx = true
             resetProd()
             return WgVerdict.HEALTHY
         }
@@ -338,11 +334,7 @@ internal class WgConnectivityMonitor(
     // Test-only barrier between callback authorization and dispatch. Keeping
     // this seam here makes the stop/callback ordering deterministic without
     // adding any production scheduling.
-    private val beforeCallback: () -> Unit = {},
-    // A generation-gated sample stream used by handover verification. The
-    // callback runs on the monitor thread and must only enqueue JNI work.
-    private val onSample: (WgStats) -> Unit = {},
-    private val onSuspended: () -> Unit = {}
+    private val beforeCallback: () -> Unit = {}
 ) {
     internal companion object {
         /** How often the loop samples the tunnel counters while the screen is on. */
@@ -619,7 +611,6 @@ internal class WgConnectivityMonitor(
                 // The device dozed; the elapsed gap is not evidence of a stall.
                 if (isSuspendGap(slept, intervalMs)) {
                     statsFailures = 0
-                    invokeCallback(generation, "onSuspended", onSuspended)
                     checker.onSuspended(now)
                     continue
                 }
@@ -650,9 +641,6 @@ internal class WgConnectivityMonitor(
                 }
                 statsFailures = 0
                 if (!isCurrent()) return
-
-                invokeCallback(generation, "onSample") { onSample(stats) }
-                if (!isActive(generation)) return
 
                 when (checker.tick(now, stats)) {
                     WgVerdict.HEALTHY, WgVerdict.WAITING -> {}

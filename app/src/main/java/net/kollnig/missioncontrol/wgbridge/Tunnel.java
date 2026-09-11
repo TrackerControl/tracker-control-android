@@ -21,16 +21,15 @@ public final class Tunnel {
 
     /**
      * Snapshot of the device's transfer counters and newest handshake, summed
-     * across all peers. Engine rxBytes includes handshakes; deliveredRxBytes
-     * counts only complete decrypted IP packets successfully written to Android.
+     * across all peers. rx bytes count decrypted transport payload, so they
+     * only advance when the tunnel actually carries return traffic — that is
+     * the liveness signal the connectivity monitor is biased toward.
      */
     public synchronized TunnelStats stats() {
         long[] values = nativeStats(handle);
         long totalFailures = values.length > 3 ? values[3] : 0L;
         long failureStreak = values.length > 4 ? values[4] : 0L;
-        long deliveredRx = values.length > 5 ? values[5] : 0L;
-        long probeReply = values.length > 6 ? values[6] : 0L;
-        return new TunnelStats(values[0], values[1], values[2], totalFailures, failureStreak, deliveredRx, probeReply);
+        return new TunnelStats(values[0], values[1], values[2], totalFailures, failureStreak);
     }
 
     /**
@@ -55,11 +54,6 @@ public final class Tunnel {
      */
     public synchronized void rebind() {
         nativeRebind(handle);
-    }
-
-    /** Queues a DNS reachability probe inside WireGuard. No direct socket send. */
-    public synchronized boolean sendDnsProbe(String sourceIp, String resolverIp, long token) {
-        return nativeSendDnsProbe(handle, sourceIp, resolverIp, token);
     }
 
     /**
@@ -97,8 +91,6 @@ public final class Tunnel {
     private static native void nativeSendKeepalive(long handle);
 
     private static native void nativeRebind(long handle);
-
-    private static native boolean nativeSendDnsProbe(long handle, String sourceIp, String resolverIp, long token);
 
     private static native void nativeUpdateEndpoint(long handle, String peerPublicKeyBase64, String endpoint);
 
