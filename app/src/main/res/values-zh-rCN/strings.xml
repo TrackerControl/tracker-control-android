@@ -174,7 +174,10 @@
     <string name="warning_beta">测试版功能。可能无法按预期工作。</string>
     <string name="setting_doh_endpoint">DoH 端点 URL</string>
     <string name="summary_doh_endpoint">DNS-over-HTTPS 查询的 HTTPS URL</string>
+    <string name="dialog_doh_endpoint">输入由您的DNS提供商提供的完整HTTPS URL，包括提供商特定路径(例如，https://dns.quad9.net/dns-query)。 排除在 TrackerControl 之外或使用自己加密的 DNS的应用程序绕过此设置。</string>
     <string name="setting_doh_dns_fallback">DNS 回退</string>
+    <string name="summary_doh_dns_fallback">DoH 失败时使用标准 (未加密) DNS 。该备份设置可使用不同的 DNS 提供者。禁用可能会在 DoH 服务器故障时中断应用连接。</string>
+    <string name="msg_invalid_doh_endpoint">输入完整的 DNS-over-HTTPS 的 HTTPS URL，包括提供商的路径 (例如，https://dns.quad9.net/dns-query)。</string>
     <!-- Block DNS-over-TLS (DoT) -->
     <string name="setting_block_dot">阻止Android的私人DNS</string>
     <string name="summary_block_dot">启用Android的私人DNS后，TC 无法检测到任何跟踪，无法正常工作。</string>
