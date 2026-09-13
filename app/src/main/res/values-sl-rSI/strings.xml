@@ -186,7 +186,10 @@
     <string name="warning_beta">Značilnost Beta.  Morda ne bo delovala po pričakovanjih.</string>
     <string name="setting_doh_endpoint">URL končne točke DoH</string>
     <string name="summary_doh_endpoint">URL HTTPS za poizvedbe DNS preko HTTPS-a</string>
+    <string name="dialog_doh_endpoint">Vnesite poln URL HTTPS od svojega ponudnika, vključno z njegovo potjo (npr. https://dns.quad9.net/dns-query).  Na programe, ki so izključeni iz nadzora ali uporabljajo svoj šifriran DNS, ta nastavitev ne vpliva.</string>
     <string name="setting_doh_dns_fallback">Zasilni DNS</string>
+    <string name="summary_doh_dns_fallback">Uporabi običajen (nešifriran) DNS, kadar DoH spodleti.  Ta zasilni način bo morda uporabil drugega ponudnika za DNS.  Onemogočanje te možnosti lahko vpliva na delovanje programa, če je strežnik DoH nedosegljiv.</string>
+    <string name="msg_invalid_doh_endpoint">Vnesite poln URL HTTPS za DNS preko HTTPS-a, vključno s ponudnikovo potjo  (npr. https://dns.quad9.net/dns-query).</string>
     <!-- Block DNS-over-TLS (DoT) -->
     <string name="setting_block_dot">Blokiraj Androidov zasebni DNS</string>
     <string name="summary_block_dot">Če je Androidova možnost \"Zasebni DNS\" omogočena, TC ne more zaznati sledenja in ne deluje pravilno.</string>
