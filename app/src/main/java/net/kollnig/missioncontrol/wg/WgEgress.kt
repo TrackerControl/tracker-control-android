@@ -119,8 +119,8 @@ object WgEgress {
     // Bounds the relay-list fetch + config rewrite so a stalled network call
     // can never withhold a restart for longer than the caller would have
     // waited anyway. forceRestartPending is already set by the time this
-    // runs, which makes onMonitorBroken/onUnderlyingNetworkChanged no-op
-    // until a restart is scheduled — without a bound, a hung call would
+    // runs, which makes onMonitorBroken no-op until a restart is scheduled —
+    // without a bound, a hung call would
     // silently stall recovery instead of merely skipping the relay switch.
     private const val FAILOVER_TIMEOUT_MS = 15_000L
 
@@ -247,7 +247,9 @@ object WgEgress {
     /**
      * Bring the tunnel up, take it down, or leave it alone — whichever the
      * desired state requires. Idempotent: same config + same TUN fd is a
-     * no-op so reload-induced restarts don't re-handshake.
+     * no-op so ordinary reload-induced restarts don't re-handshake. A
+     * debounced physical-network change can set [networkChanged] to request
+     * a fresh tunnel on that same reload path.
      *
      * Returns true on success or already-correct state. Returns false if
      * WG was supposed to start but failed; in that case the caller must keep
@@ -261,12 +263,15 @@ object WgEgress {
         interactive: Boolean,
         keepaliveAlwaysOn: Boolean,
         startSocketpair: () -> Int,
-        stopSocketpair: () -> Unit
+        stopSocketpair: () -> Unit,
+        networkChanged: Boolean = false
     ): Boolean {
         verificationGeneration++
         val wantRunning = wgEnabled && !configText.isNullOrEmpty()
         val desiredFd = vpnFd.fd
         lastError = null
+        if (networkChanged)
+            clearEndpointCache()
 
         if (!wantRunning) {
             clearRecoveryState()
@@ -279,7 +284,8 @@ object WgEgress {
             return true
         }
 
-        if (tunnel != null && currentConfig == configText && currentTunPfd === vpnFd && !forceRestartPending) {
+        if (tunnel != null && currentConfig == configText && currentTunPfd === vpnFd &&
+            !forceRestartPending && !networkChanged) {
             val oldKeepaliveEnabled = currentInteractive || currentKeepaliveAlwaysOn
             val newKeepaliveEnabled = interactive || keepaliveAlwaysOn
             if (oldKeepaliveEnabled != newKeepaliveEnabled &&
@@ -700,18 +706,6 @@ object WgEgress {
 
     fun latestHandshakeMillisOrNull(): Long? =
         try { tunnel?.latestHandshakeMillis() } catch (_: Throwable) { null }
-
-    fun onUnderlyingNetworkChanged() {
-        verificationGeneration++
-        clearEndpointCache()
-        // ServiceSinkhole calls this once per debounced network-change burst,
-        // immediately before reload. Recreate the tunnel in that reload even
-        // if its configuration and TUN are unchanged: a successful socket
-        // rebind does not prove the new path can carry application traffic.
-        synchronized(tunnelLifecycleLock) {
-            if (tunnel != null) forceRestartPending = true
-        }
-    }
 
     /**
      * Apply the screen-state keepalive policy (PersistentKeepalive is dropped

@@ -6,7 +6,6 @@ import android.net.NetworkCapabilities;
 import android.os.Build;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -16,147 +15,152 @@ import java.util.Objects;
 /** Callback-owned snapshots: never query ConnectivityManager from its callbacks. */
 final class PhysicalNetworkState {
     private static final class Entry {
-        List<?> capabilities;
-        List<String> links;
+        List<Integer> transports;
+        Boolean metered;
+        List<String> routes;
+        List<String> dns;
         String privateDns;
         boolean privateDnsActive;
     }
 
     private final Map<Network, Entry> entries = new HashMap<>();
     private Network defaultNetwork;
-    private boolean defaultSeen;
-    private List<Integer> vpnTransports;
+    private boolean defaultIsVpn;
+    private List<Integer> vpnTransports = Collections.emptyList();
+    private Network egress;
 
     synchronized String onPhysicalAvailable(Network network) {
-        if (network == null || entries.containsKey(network)) return null;
-        entries.put(network, new Entry());
-        return NetworkReloadPolicy.REASON_NETWORK_AVAILABLE;
+        if (network != null && !entries.containsKey(network)) entries.put(network, new Entry());
+        return null; // Availability alone says nothing about the selected egress.
     }
 
     synchronized String onPhysicalCapabilitiesChanged(Network network, NetworkCapabilities caps) {
-        if (network == null || caps == null ||
+        Entry entry = entries.get(network);
+        if (entry == null || caps == null ||
                 !caps.hasCapability(NetworkCapabilities.NET_CAPABILITY_NOT_VPN)) return null;
-        Entry entry = entry(network);
-        List<?> snapshot = capabilities(caps);
-        boolean changed = !snapshot.equals(entry.capabilities);
-        entry.capabilities = snapshot;
-        return changed ? NetworkReloadPolicy.REASON_NETWORK_CHANGED : null;
+        List<Integer> previous = entry.transports;
+        Boolean previousMetered = entry.metered;
+        entry.transports = transports(caps);
+        entry.metered = isMetered(caps);
+        String change = selectEgress();
+        if (change != null || !network.equals(egress)) return change;
+        if (previous != null && !previous.equals(entry.transports))
+            return NetworkReloadPolicy.REASON_NETWORK_CHANGED;
+        return previousMetered != null && !previousMetered.equals(entry.metered)
+                ? NetworkReloadPolicy.REASON_METERED_CHANGED : null;
     }
 
     synchronized String onPhysicalLinkPropertiesChanged(Network network, LinkProperties props) {
-        if (network == null || props == null) return null;
-        Entry entry = entry(network);
-        List<String> snapshot = links(props);
+        Entry entry = entries.get(network);
+        if (entry == null || props == null) return null;
+        List<String> routes = new ArrayList<>();
+        for (Object address : props.getLinkAddresses()) routes.add("address:" + address);
+        for (Object route : props.getRoutes()) routes.add("route:" + route);
+        Collections.sort(routes);
+        List<String> dns = new ArrayList<>();
+        for (java.net.InetAddress server : props.getDnsServers()) dns.add(server.getHostAddress());
+        dns.add("domains:" + props.getDomains());
+        Collections.sort(dns);
         String privateDns = Build.VERSION.SDK_INT >= Build.VERSION_CODES.P
                 ? props.getPrivateDnsServerName() : null;
         boolean active = Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && props.isPrivateDnsActive();
-        boolean changed = !snapshot.equals(entry.links);
+        boolean routeChanged = entry.routes != null && !entry.routes.equals(routes);
+        boolean dnsChanged = entry.dns != null && !entry.dns.equals(dns);
         boolean privateChanged = !Objects.equals(privateDns, entry.privateDns) ||
                 active != entry.privateDnsActive;
-        entry.links = snapshot;
+        entry.routes = routes;
+        entry.dns = dns;
         entry.privateDns = privateDns;
         entry.privateDnsActive = active;
-        if (changed) return NetworkReloadPolicy.REASON_LINK_PROPERTIES_CHANGED;
+        if (!network.equals(egress)) return null;
+        if (routeChanged) return NetworkReloadPolicy.REASON_LINK_PROPERTIES_CHANGED;
+        if (dnsChanged) return NetworkReloadPolicy.REASON_DNS_CHANGED;
         return privateChanged ? NetworkReloadPolicy.REASON_PRIVATE_DNS_CHANGED : null;
     }
 
     synchronized String onPhysicalLost(Network network) {
-        if (network == null || entries.remove(network) == null) return null;
-        if (network.equals(defaultNetwork)) defaultNetwork = null;
-        return NetworkReloadPolicy.REASON_NETWORK_LOST;
+        if (entries.remove(network) == null) return null;
+        return selectEgress();
     }
 
     synchronized String onDefaultNetworkAvailable(Network network) {
-        return acceptDefaultIfPhysical(network);
+        // onCapabilitiesChanged identifies physical versus VPN. Guessing here
+        // would treat our own replacement VPN as a physical handover.
+        return null;
     }
 
     synchronized String onDefaultNetworkCapabilitiesChanged(Network network, NetworkCapabilities caps) {
         if (network == null || caps == null) return null;
-        if (!caps.hasCapability(NetworkCapabilities.NET_CAPABILITY_NOT_VPN)) {
-            // A VPN can stay default while its underlying Wi-Fi/mobile transport
-            // changes. Ignore VPN identity churn caused by our own reloads.
-            List<Integer> snapshot = transports(caps);
-            if (snapshot.isEmpty()) return null;
-            boolean changed = vpnTransports != null && !vpnTransports.equals(snapshot);
-            vpnTransports = snapshot;
-            return changed ? NetworkReloadPolicy.REASON_NETWORK_CHANGED : null;
-        }
-        String change = onPhysicalCapabilitiesChanged(network, caps);
-        String defaultChange = acceptDefaultIfPhysical(network);
-        return defaultChange != null ? defaultChange : change;
+        boolean vpn = !caps.hasCapability(NetworkCapabilities.NET_CAPABILITY_NOT_VPN);
+        List<Integer> snapshot = transports(caps);
+        if (vpn && snapshot.isEmpty()) return null; // Replacement VPN has not inherited transports yet.
+        boolean transportChanged = vpn && defaultIsVpn && !vpnTransports.equals(snapshot);
+        defaultNetwork = network;
+        defaultIsVpn = vpn;
+        vpnTransports = vpn ? snapshot : Collections.emptyList();
+        // Never create physical entries from this unfiltered callback: only
+        // the physical registration guarantees a matching onLost later.
+        String change = vpn ? selectEgress() : onPhysicalCapabilitiesChanged(network, caps);
+        if (change == null) change = selectEgress();
+        return change != null ? change : transportChanged ? NetworkReloadPolicy.REASON_NETWORK_CHANGED : null;
     }
 
     synchronized String onDefaultNetworkLinkPropertiesChanged(Network network, LinkProperties props) {
-        Entry entry = entries.get(network);
-        if (entry == null || entry.capabilities == null) return null;
-        String change = onPhysicalLinkPropertiesChanged(network, props);
-        String defaultChange = acceptDefaultIfPhysical(network);
-        return defaultChange != null ? defaultChange : change;
+        return network != null && network.equals(defaultNetwork) && !defaultIsVpn
+                ? onPhysicalLinkPropertiesChanged(network, props) : null;
     }
 
     synchronized String onDefaultNetworkLost(Network network) {
-        if (network != null && network.equals(defaultNetwork)) defaultNetwork = null;
-        return null; // The physical callback reports actual loss; VPN loss is self-generated.
+        if (!Objects.equals(network, defaultNetwork) || defaultIsVpn) return null;
+        defaultNetwork = null;
+        return selectEgress();
     }
 
-    private String acceptDefaultIfPhysical(Network network) {
-        Entry entry = entries.get(network);
-        if (entry == null || entry.capabilities == null) return null;
-        boolean changed = defaultSeen && !network.equals(defaultNetwork);
-        defaultNetwork = network;
-        defaultSeen = true;
+    private String selectEgress() {
+        Network selected = null;
+        if (!defaultIsVpn) {
+            Entry entry = entries.get(defaultNetwork);
+            if (entry != null && entry.transports != null) selected = defaultNetwork;
+        } else {
+            // VPN capabilities expose physical transports, not necessarily an
+            // underlying Network identity. Retain a still-matching selection;
+            // otherwise select only an unambiguous candidate, never a standby
+            // merely because its validation/metered state changed.
+            Entry current = entries.get(egress);
+            if (current != null && current.transports != null &&
+                    !Collections.disjoint(current.transports, vpnTransports)) selected = egress;
+            else for (Map.Entry<Network, Entry> candidate : entries.entrySet()) {
+                List<Integer> transports = candidate.getValue().transports;
+                if (transports == null || Collections.disjoint(transports, vpnTransports)) continue;
+                if (selected != null) { selected = null; break; }
+                selected = candidate.getKey();
+            }
+        }
+        boolean changed = !Objects.equals(egress, selected);
+        egress = selected;
         return changed ? NetworkReloadPolicy.REASON_NETWORK_CHANGED : null;
     }
 
-    private Entry entry(Network network) {
-        Entry entry = entries.get(network);
-        if (entry == null) {
-            entry = new Entry();
-            entries.put(network, entry);
-        }
-        return entry;
-    }
-
-    // Compare only route-relevant values, not signal strength or bandwidth.
-    // Unknown capability integers safely return false on older Android versions.
     @android.annotation.SuppressLint("InlinedApi")
-    private static List<?> capabilities(NetworkCapabilities caps) {
-        return Arrays.asList(transports(caps),
-                caps.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET),
-                caps.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED),
-                caps.hasCapability(NetworkCapabilities.NET_CAPABILITY_NOT_SUSPENDED),
-                caps.hasCapability(NetworkCapabilities.NET_CAPABILITY_NOT_METERED),
-                caps.hasCapability(NetworkCapabilities.NET_CAPABILITY_TEMPORARILY_NOT_METERED));
+    private static boolean isMetered(NetworkCapabilities caps) {
+        return !caps.hasCapability(NetworkCapabilities.NET_CAPABILITY_NOT_METERED) &&
+                !caps.hasCapability(NetworkCapabilities.NET_CAPABILITY_TEMPORARILY_NOT_METERED);
     }
 
     private static List<Integer> transports(NetworkCapabilities caps) {
         List<Integer> result = new ArrayList<>();
         for (int transport = 0; transport < 32; transport++)
-            if (transport != NetworkCapabilities.TRANSPORT_VPN && caps.hasTransport(transport))
-                result.add(transport);
+            if (transport != NetworkCapabilities.TRANSPORT_VPN && caps.hasTransport(transport)) result.add(transport);
         return result;
     }
 
-    private static List<String> links(LinkProperties props) {
-        // Retain immutable values rather than mutable callback objects. This
-        // also avoids LinkProperties constructors/setters that require API 29.
-        List<String> result = new ArrayList<>();
-        for (Object address : props.getLinkAddresses()) result.add("address:" + address);
-        for (Object route : props.getRoutes()) result.add("route:" + route);
-        for (java.net.InetAddress dns : props.getDnsServers()) result.add("dns:" + dns.getHostAddress());
-        result.add("domains:" + props.getDomains());
-        Collections.sort(result);
-        return result;
-    }
-
-    synchronized Network getDefaultNetwork() {
-        return defaultNetwork;
-    }
+    synchronized Network getDefaultNetwork() { return egress; }
 
     synchronized void reset() {
         entries.clear();
         defaultNetwork = null;
-        defaultSeen = false;
-        vpnTransports = null;
+        defaultIsVpn = false;
+        vpnTransports = Collections.emptyList();
+        egress = null;
     }
 }

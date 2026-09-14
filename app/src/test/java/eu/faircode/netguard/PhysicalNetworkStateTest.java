@@ -1,23 +1,22 @@
 package eu.faircode.netguard;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.*;
 
+import android.net.LinkAddress;
 import android.net.LinkProperties;
 import android.net.Network;
 import android.net.NetworkCapabilities;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Shadows;
 import org.robolectric.RobolectricTestRunner;
+import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowNetwork;
 import org.robolectric.shadows.ShadowNetworkCapabilities;
-
-import java.net.InetAddress;
 import java.lang.reflect.Field;
+import java.net.InetAddress;
 import java.util.Collections;
+import java.util.Map;
 
 @RunWith(RobolectricTestRunner.class)
 public class PhysicalNetworkStateTest {
@@ -25,176 +24,184 @@ public class PhysicalNetworkStateTest {
     private static final Network CELL = ShadowNetwork.newInstance(102);
     private static final Network VPN = ShadowNetwork.newInstance(103);
 
-    @Test
-    @org.robolectric.annotation.Config(sdk = 24)
-    public void olderAndroidStoresIndependentCallbackSnapshots() throws Exception {
-        PhysicalNetworkState state = new PhysicalNetworkState();
-        NetworkCapabilities caps = capabilities(NetworkCapabilities.TRANSPORT_WIFI);
-        state.onPhysicalCapabilitiesChanged(WIFI, caps);
-        LinkProperties props = linkProperties("9.9.9.9");
-        state.onPhysicalLinkPropertiesChanged(WIFI, props);
-        props.setDnsServers(Collections.singleton(InetAddress.getByName("1.1.1.1")));
-        assertEquals(NetworkReloadPolicy.REASON_LINK_PROPERTIES_CHANGED,
-                state.onPhysicalLinkPropertiesChanged(WIFI, props));
-    }
-
     private static NetworkCapabilities capabilities(int transport) {
-        NetworkCapabilities capabilities = ShadowNetworkCapabilities.newInstance();
-        ShadowNetworkCapabilities shadow = Shadows.shadowOf(capabilities);
-        shadow.addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET);
-        shadow.addCapability(NetworkCapabilities.NET_CAPABILITY_NOT_VPN);
-        shadow.addTransportType(transport);
-        return capabilities;
+        NetworkCapabilities caps = ShadowNetworkCapabilities.newInstance();
+        Shadows.shadowOf(caps).addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET);
+        Shadows.shadowOf(caps).addCapability(NetworkCapabilities.NET_CAPABILITY_NOT_VPN);
+        Shadows.shadowOf(caps).addTransportType(transport);
+        return caps;
     }
 
-    private static LinkProperties linkProperties(String dns) throws Exception {
-        LinkProperties properties = new LinkProperties();
-        properties.setDnsServers(Collections.singleton(InetAddress.getByName(dns)));
-        return properties;
+    private static NetworkCapabilities vpn(int transport) {
+        NetworkCapabilities caps = capabilities(transport);
+        Shadows.shadowOf(caps).removeCapability(NetworkCapabilities.NET_CAPABILITY_NOT_VPN);
+        Shadows.shadowOf(caps).addTransportType(NetworkCapabilities.TRANSPORT_VPN);
+        return caps;
+    }
+
+    private static LinkProperties links(String address, String dns) throws Exception {
+        LinkProperties props = new LinkProperties();
+        props.setLinkAddresses(Collections.singleton(linkAddress(address)));
+        props.setDnsServers(Collections.singleton(InetAddress.getByName(dns)));
+        return props;
+    }
+
+    private static PhysicalNetworkState wifiWithStandbyCell() throws Exception {
+        PhysicalNetworkState state = new PhysicalNetworkState();
+        state.onPhysicalAvailable(WIFI);
+        state.onPhysicalCapabilitiesChanged(WIFI, capabilities(NetworkCapabilities.TRANSPORT_WIFI));
+        state.onPhysicalLinkPropertiesChanged(WIFI, links("192.0.2.2/24", "9.9.9.9"));
+        state.onPhysicalAvailable(CELL);
+        state.onPhysicalCapabilitiesChanged(CELL, capabilities(NetworkCapabilities.TRANSPORT_CELLULAR));
+        state.onPhysicalLinkPropertiesChanged(CELL, links("198.51.100.2/24", "1.1.1.1"));
+        assertEquals(NetworkReloadPolicy.REASON_NETWORK_CHANGED,
+                state.onDefaultNetworkCapabilitiesChanged(VPN, vpn(NetworkCapabilities.TRANSPORT_WIFI)));
+        assertEquals(WIFI, state.getDefaultNetwork());
+        return state;
     }
 
     @Test
-    public void vpnDefaultTransportHandoverReloadsWithoutVpnIdentityChurn() throws Exception {
-        PhysicalNetworkState state = new PhysicalNetworkState();
-        NetworkCapabilities wifiVpn = capabilities(NetworkCapabilities.TRANSPORT_WIFI);
-        Shadows.shadowOf(wifiVpn).removeCapability(NetworkCapabilities.NET_CAPABILITY_NOT_VPN);
-        Shadows.shadowOf(wifiVpn).addTransportType(NetworkCapabilities.TRANSPORT_VPN);
-        assertNull(state.onDefaultNetworkCapabilitiesChanged(VPN, wifiVpn));
+    public void standbyChatterAndLossNeverReloadActiveWifi() throws Exception {
+        PhysicalNetworkState state = wifiWithStandbyCell();
+        NetworkCapabilities cell = capabilities(NetworkCapabilities.TRANSPORT_CELLULAR);
+        Shadows.shadowOf(cell).addCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED);
+        Shadows.shadowOf(cell).addCapability(NetworkCapabilities.NET_CAPABILITY_NOT_SUSPENDED);
+        Shadows.shadowOf(cell).addCapability(NetworkCapabilities.NET_CAPABILITY_NOT_METERED);
+        assertNull(state.onPhysicalCapabilitiesChanged(CELL, cell));
+        assertNull(state.onPhysicalLinkPropertiesChanged(CELL, links("198.51.100.3/24", "8.8.8.8")));
+        assertNull(state.onPhysicalLost(CELL));
+        assertNull(state.onPhysicalLost(CELL));
+        assertEquals(WIFI, state.getDefaultNetwork());
+    }
 
-        NetworkCapabilities cellVpn = capabilities(NetworkCapabilities.TRANSPORT_CELLULAR);
-        Shadows.shadowOf(cellVpn).removeCapability(NetworkCapabilities.NET_CAPABILITY_NOT_VPN);
-        Shadows.shadowOf(cellVpn).addTransportType(NetworkCapabilities.TRANSPORT_VPN);
+    @Test
+    public void vpnTransportHandoverSelectsCellAndIgnoresLateWifiLoss() throws Exception {
+        PhysicalNetworkState state = wifiWithStandbyCell();
         assertEquals(NetworkReloadPolicy.REASON_NETWORK_CHANGED,
-                state.onDefaultNetworkCapabilitiesChanged(VPN, cellVpn));
-
+                state.onDefaultNetworkCapabilitiesChanged(VPN, vpn(NetworkCapabilities.TRANSPORT_CELLULAR)));
+        assertEquals(CELL, state.getDefaultNetwork());
+        assertNull(state.onPhysicalLost(WIFI));
         Network replacement = ShadowNetwork.newInstance(104);
         assertNull(state.onDefaultNetworkAvailable(replacement));
-        assertNull(state.onDefaultNetworkCapabilitiesChanged(replacement, cellVpn));
-        assertNull(state.onDefaultNetworkLinkPropertiesChanged(replacement,
-                linkProperties("9.9.9.9")));
+        NetworkCapabilities uninitialised = ShadowNetworkCapabilities.newInstance();
+        Shadows.shadowOf(uninitialised).removeCapability(NetworkCapabilities.NET_CAPABILITY_NOT_VPN);
+        Shadows.shadowOf(uninitialised).addTransportType(NetworkCapabilities.TRANSPORT_VPN);
+        assertNull(state.onDefaultNetworkCapabilitiesChanged(replacement, uninitialised));
+        assertNull(state.onDefaultNetworkCapabilitiesChanged(replacement, vpn(NetworkCapabilities.TRANSPORT_CELLULAR)));
+        assertNull(state.onDefaultNetworkLinkPropertiesChanged(replacement, links("10.0.0.2/32", "10.0.0.1")));
         assertNull(state.onDefaultNetworkLost(VPN));
     }
 
     @Test
-    public void physicalCallbacksWorkWhileVpnIsDefault() {
-        PhysicalNetworkState state = new PhysicalNetworkState();
-
-        assertEquals(NetworkReloadPolicy.REASON_NETWORK_AVAILABLE,
-                state.onPhysicalAvailable(WIFI));
+    public void unvalidatedPhysicalDefaultSwitchIsDetected() throws Exception {
+        PhysicalNetworkState state = wifiWithStandbyCell();
+        assertNull(state.onDefaultNetworkCapabilitiesChanged(WIFI, capabilities(NetworkCapabilities.TRANSPORT_WIFI)));
         assertEquals(NetworkReloadPolicy.REASON_NETWORK_CHANGED,
-                state.onPhysicalCapabilitiesChanged(WIFI, capabilities(
-                        NetworkCapabilities.TRANSPORT_WIFI)));
-        assertNull(state.onPhysicalAvailable(WIFI));
-        assertNull(state.getDefaultNetwork());
+                state.onDefaultNetworkCapabilitiesChanged(CELL, capabilities(NetworkCapabilities.TRANSPORT_CELLULAR)));
     }
 
     @Test
-    public void defaultSwitchIsDetectedWhenBothPhysicalNetworksRemain() {
-        PhysicalNetworkState state = new PhysicalNetworkState();
-        state.onPhysicalAvailable(WIFI);
-        state.onPhysicalCapabilitiesChanged(WIFI, capabilities(NetworkCapabilities.TRANSPORT_WIFI));
-        state.onPhysicalAvailable(CELL);
-        state.onPhysicalCapabilitiesChanged(CELL, capabilities(NetworkCapabilities.TRANSPORT_CELLULAR));
+    public void sameTransportStandbyDoesNotDisplaceLiveEgress() throws Exception {
+        PhysicalNetworkState state = wifiWithStandbyCell();
+        Network otherWifi = ShadowNetwork.newInstance(104);
+        assertNull(state.onPhysicalAvailable(otherWifi));
+        assertNull(state.onPhysicalCapabilitiesChanged(otherWifi, capabilities(NetworkCapabilities.TRANSPORT_WIFI)));
+        assertEquals(WIFI, state.getDefaultNetwork());
+        assertEquals(NetworkReloadPolicy.REASON_NETWORK_CHANGED, state.onPhysicalLost(WIFI));
+        assertEquals(otherWifi, state.getDefaultNetwork());
+        assertNull(state.onPhysicalCapabilitiesChanged(WIFI, capabilities(NetworkCapabilities.TRANSPORT_WIFI)));
+        assertNull(state.onPhysicalLinkPropertiesChanged(WIFI, links("192.0.2.2/24", "9.9.9.9")));
+    }
 
-        assertNull(state.onDefaultNetworkAvailable(WIFI));
-        assertNull(state.onDefaultNetworkCapabilitiesChanged(WIFI,
-                capabilities(NetworkCapabilities.TRANSPORT_WIFI)));
+    @Test
+    @Config(sdk = 23)
+    public void suppliedDefaultSnapshotSelectsEgressOnApi23() throws Exception {
+        PhysicalNetworkState state = wifiWithStandbyCell();
         assertEquals(NetworkReloadPolicy.REASON_NETWORK_CHANGED,
-                state.onDefaultNetworkAvailable(CELL));
+                state.onDefaultNetworkCapabilitiesChanged(VPN, vpn(NetworkCapabilities.TRANSPORT_CELLULAR)));
         assertEquals(CELL, state.getDefaultNetwork());
     }
 
     @Test
-    public void defaultPhysicalTransportChangeReloads() {
-        PhysicalNetworkState state = new PhysicalNetworkState();
-        state.onPhysicalAvailable(WIFI);
-        state.onPhysicalCapabilitiesChanged(WIFI, capabilities(NetworkCapabilities.TRANSPORT_WIFI));
-        state.onDefaultNetworkAvailable(WIFI);
-        state.onDefaultNetworkCapabilitiesChanged(WIFI,
-                capabilities(NetworkCapabilities.TRANSPORT_WIFI));
-
-        assertEquals(NetworkReloadPolicy.REASON_NETWORK_CHANGED,
-                state.onDefaultNetworkCapabilitiesChanged(WIFI,
-                        capabilities(NetworkCapabilities.TRANSPORT_CELLULAR)));
-        assertEquals(WIFI, state.getDefaultNetwork());
+    public void activeValidationSuspensionAndSignalChangesAreIgnored() throws Exception {
+        PhysicalNetworkState state = wifiWithStandbyCell();
+        NetworkCapabilities wifi = capabilities(NetworkCapabilities.TRANSPORT_WIFI);
+        Shadows.shadowOf(wifi).addCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED);
+        Shadows.shadowOf(wifi).addCapability(NetworkCapabilities.NET_CAPABILITY_NOT_SUSPENDED);
+        Shadows.shadowOf(wifi).setLinkDownstreamBandwidthKbps(12000);
+        // There is no public setter on all tested SDKs. Fail loudly if the
+        // AOSP field changes when updating Robolectric's Android runtime.
+        setField(wifi, "mSignalStrength", -55);
+        assertNull(state.onPhysicalCapabilitiesChanged(WIFI, wifi));
     }
 
     @Test
-    public void signalAndBandwidthChatterDoesNotReload() throws Exception {
-        PhysicalNetworkState state = new PhysicalNetworkState();
-        state.onPhysicalAvailable(CELL);
-        NetworkCapabilities initial = capabilities(NetworkCapabilities.TRANSPORT_CELLULAR);
-        state.onPhysicalCapabilitiesChanged(CELL, initial);
-
-        NetworkCapabilities chatter = new NetworkCapabilities(initial);
-        ShadowNetworkCapabilities chatterShadow = Shadows.shadowOf(chatter);
-        chatterShadow.setLinkDownstreamBandwidthKbps(12000);
-        chatterShadow.setLinkUpstreamBandwidthKbps(3000);
-        setSignalStrength(chatter, -55);
-        assertNull(state.onPhysicalCapabilitiesChanged(CELL, chatter));
+    public void activeMeteredAndDnsChangesReloadPolicyWithoutForcingWireGuard() throws Exception {
+        PhysicalNetworkState state = wifiWithStandbyCell();
+        NetworkCapabilities wifi = capabilities(NetworkCapabilities.TRANSPORT_WIFI);
+        Shadows.shadowOf(wifi).addCapability(NetworkCapabilities.NET_CAPABILITY_NOT_METERED);
+        String metered = state.onPhysicalCapabilitiesChanged(WIFI, wifi);
+        assertEquals(NetworkReloadPolicy.REASON_METERED_CHANGED, metered);
+        assertFalse(NetworkReloadPolicy.shouldRestartWireGuard(metered));
+        String dns = state.onPhysicalLinkPropertiesChanged(WIFI, links("192.0.2.2/24", "8.8.8.8"));
+        assertEquals(NetworkReloadPolicy.REASON_DNS_CHANGED, dns);
+        assertFalse(NetworkReloadPolicy.shouldRestartWireGuard(dns));
     }
 
     @Test
-    public void standbyLossIsTrackedAndStaleLossIsIgnored() {
-        PhysicalNetworkState state = new PhysicalNetworkState();
-        state.onPhysicalAvailable(WIFI);
-        state.onPhysicalCapabilitiesChanged(WIFI, capabilities(NetworkCapabilities.TRANSPORT_WIFI));
-        state.onPhysicalAvailable(CELL);
-        state.onPhysicalCapabilitiesChanged(CELL, capabilities(NetworkCapabilities.TRANSPORT_CELLULAR));
-
-        assertEquals(NetworkReloadPolicy.REASON_NETWORK_LOST,
-                state.onPhysicalLost(CELL));
-        assertNull(state.onPhysicalLost(CELL));
-        assertNull(state.onPhysicalAvailable(WIFI));
+    @Config(sdk = 24)
+    public void activeAddressChangesUseIndependentSnapshotsOnOlderAndroid() throws Exception {
+        PhysicalNetworkState state = wifiWithStandbyCell();
+        LinkProperties props = links("192.0.2.2/24", "9.9.9.9");
+        assertNull(state.onPhysicalLinkPropertiesChanged(WIFI, props));
+        props.setLinkAddresses(Collections.singleton(linkAddress("192.0.2.3/24")));
+        String change = state.onPhysicalLinkPropertiesChanged(WIFI, props);
+        assertEquals(NetworkReloadPolicy.REASON_LINK_PROPERTIES_CHANGED, change);
+        assertTrue(NetworkReloadPolicy.shouldRestartWireGuard(change));
     }
 
     @Test
-    public void privateDnsOnlyChangeDoesNotRestartWireGuard() throws Exception {
-        PhysicalNetworkState state = new PhysicalNetworkState();
-        state.onPhysicalAvailable(WIFI);
-        state.onPhysicalCapabilitiesChanged(WIFI, capabilities(NetworkCapabilities.TRANSPORT_WIFI));
-        LinkProperties initial = linkProperties("9.9.9.9");
-        state.onPhysicalLinkPropertiesChanged(WIFI, initial);
-
-        LinkProperties pinned = linkProperties("9.9.9.9");
-        setPrivateDns(pinned, "dns.example", true);
-        String change = state.onPhysicalLinkPropertiesChanged(WIFI, pinned);
-        assertEquals(NetworkReloadPolicy.REASON_PRIVATE_DNS_CHANGED, change);
-        assertFalse(NetworkReloadPolicy.shouldRestartWireGuard(change));
+    @Config(sdk = 28)
+    public void privateDnsActiveAndHostnameChangesAreBothPolicyOnly() throws Exception {
+        PhysicalNetworkState state = wifiWithStandbyCell();
+        LinkProperties props = links("192.0.2.2/24", "9.9.9.9");
+        // Private DNS setters are hidden framework APIs; use reflection only
+        // in the fixture, keeping production on the public getters.
+        setField(props, "mUsePrivateDns", true);
+        String active = state.onPhysicalLinkPropertiesChanged(WIFI, props);
+        assertEquals(NetworkReloadPolicy.REASON_PRIVATE_DNS_CHANGED, active);
+        assertFalse(NetworkReloadPolicy.shouldRestartWireGuard(active));
+        setField(props, "mPrivateDnsServerName", "dns.example");
+        assertEquals(NetworkReloadPolicy.REASON_PRIVATE_DNS_CHANGED,
+                state.onPhysicalLinkPropertiesChanged(WIFI, props));
+        assertNull(state.onPhysicalLinkPropertiesChanged(WIFI, props));
     }
 
     @Test
-    public void vpnDefaultCallbacksDoNotCreatePhysicalDefault() throws Exception {
+    public void defaultOnlyNetworksCannotAccumulatePhysicalEntries() throws Exception {
         PhysicalNetworkState state = new PhysicalNetworkState();
-        state.onPhysicalAvailable(WIFI);
-        state.onPhysicalCapabilitiesChanged(WIFI, capabilities(NetworkCapabilities.TRANSPORT_WIFI));
-        state.onDefaultNetworkAvailable(WIFI);
-        state.onDefaultNetworkCapabilitiesChanged(WIFI, capabilities(NetworkCapabilities.TRANSPORT_WIFI));
-
-        NetworkCapabilities vpn = ShadowNetworkCapabilities.newInstance();
-        ShadowNetworkCapabilities vpnShadow = Shadows.shadowOf(vpn);
-        vpnShadow.addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET);
-        vpnShadow.removeCapability(NetworkCapabilities.NET_CAPABILITY_NOT_VPN);
-        vpnShadow.addTransportType(NetworkCapabilities.TRANSPORT_VPN);
-        assertNull(state.onDefaultNetworkAvailable(VPN));
-        assertNull(state.onDefaultNetworkCapabilitiesChanged(VPN, vpn));
-        assertNull(state.onDefaultNetworkLinkPropertiesChanged(VPN,
-                linkProperties("1.1.1.1")));
-        assertNull(state.onDefaultNetworkLost(VPN));
-        assertEquals(WIFI, state.getDefaultNetwork());
+        for (int id = 200; id < 220; id++) {
+            Network network = ShadowNetwork.newInstance(id);
+            state.onDefaultNetworkAvailable(network);
+            state.onDefaultNetworkCapabilitiesChanged(network, capabilities(NetworkCapabilities.TRANSPORT_WIFI));
+            state.onDefaultNetworkLost(network);
+        }
+        Field entries = PhysicalNetworkState.class.getDeclaredField("entries");
+        entries.setAccessible(true);
+        assertTrue(((Map<?, ?>) entries.get(state)).isEmpty());
+        assertNull(state.onPhysicalLost(WIFI));
     }
 
-    private static void setPrivateDns(LinkProperties properties, String name, boolean active)
-            throws Exception {
-        Field nameField = LinkProperties.class.getDeclaredField("mPrivateDnsServerName");
-        nameField.setAccessible(true);
-        nameField.set(properties, name);
+    private static void setField(Object object, String name, Object value) throws Exception {
+        Field field = object.getClass().getDeclaredField(name);
+        field.setAccessible(true);
+        field.set(object, value);
     }
 
-    private static void setSignalStrength(NetworkCapabilities capabilities, int strength)
-            throws Exception {
-        Field signalField = NetworkCapabilities.class.getDeclaredField("mSignalStrength");
-        signalField.setAccessible(true);
-        signalField.setInt(capabilities, strength);
+    private static LinkAddress linkAddress(String address) throws Exception {
+        // LinkAddress's value constructor is hidden in the public SDK stub.
+        String[] parts = address.split("/");
+        return LinkAddress.class.getDeclaredConstructor(InetAddress.class, int.class)
+                .newInstance(InetAddress.getByName(parts[0]), Integer.parseInt(parts[1]));
     }
 }

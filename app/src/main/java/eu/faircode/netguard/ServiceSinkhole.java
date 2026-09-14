@@ -183,6 +183,8 @@ public class ServiceSinkhole extends VpnService {
     private ConnectivityManager.NetworkCallback networkCallback = null;
     private ConnectivityManager.NetworkCallback defaultNetworkCallback = null;
     private final PhysicalNetworkState physicalNetworkState = new PhysicalNetworkState();
+    private final Handler networkSnapshotHandler = new Handler(Looper.getMainLooper());
+    private final Runnable defaultNetworkSnapshotRunnable = this::refreshDefaultNetworkSnapshot;
 
     private boolean registeredInteractiveState = false;
     private PhoneStateListener callStateListener = null;
@@ -267,6 +269,7 @@ public class ServiceSinkhole extends VpnService {
     private static final long WG_STARTUP_RECOVERY_INITIAL_DELAY_MS = 1_000L;
     private static final long WG_STARTUP_RECOVERY_STABLE_WINDOW_MS = 2 * 60_000L;
     private static final String EXTRA_WG_STARTUP_RETRY = "WireGuardStartupRetry";
+    private static final String EXTRA_WG_NETWORK_CHANGED = "WireGuardNetworkChanged";
     private final WireGuardStartupRecoveryPolicy wgStartupRecoveryPolicy =
             new WireGuardStartupRecoveryPolicy(
                     WG_STARTUP_RECOVERY_MAX_RETRIES,
@@ -733,7 +736,8 @@ public class ServiceSinkhole extends VpnService {
                             cancelWireGuardStartupRecovery(false);
                         if (!intent.getBooleanExtra(EXTRA_REPLACEMENT_RETRY, false))
                             cancelVpnReplacementRecovery(false);
-                        reload(intent.getBooleanExtra(EXTRA_INTERACTIVE, false));
+                        reload(intent.getBooleanExtra(EXTRA_INTERACTIVE, false),
+                                intent.getBooleanExtra(EXTRA_WG_NETWORK_CHANGED, false));
                         break;
 
                     case stop:
@@ -838,7 +842,7 @@ public class ServiceSinkhole extends VpnService {
                 if (vpn == null)
                     throw new StartFailedException(getString((R.string.msg_start_failed)));
 
-                if (!startNative(vpn, listAllowed, listRule))
+                if (!startNative(vpn, listAllowed, listRule, false))
                     return;
 
                 // Start DoH proxy if enabled and not superseded by WireGuard DNS.
@@ -849,7 +853,7 @@ public class ServiceSinkhole extends VpnService {
             }
         }
 
-        private void reload(boolean interactive) {
+        private void reload(boolean interactive, boolean networkChanged) {
             List<Rule> listRule = Rule.getRules(true, ServiceSinkhole.this);
 
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ServiceSinkhole.this);
@@ -912,7 +916,7 @@ public class ServiceSinkhole extends VpnService {
             if (vpn == null)
                 throw new StartFailedException(getString((R.string.msg_start_failed)));
 
-            if (!startNative(vpn, listAllowed, listRule))
+            if (!startNative(vpn, listAllowed, listRule, networkChanged))
                 return;
 
             // Update DoH proxy state based on current settings.
@@ -2139,7 +2143,8 @@ public class ServiceSinkhole extends VpnService {
         return builder;
     }
 
-    private boolean startNative(final ParcelFileDescriptor vpn, List<Rule> listAllowed, List<Rule> listRule) {
+    private boolean startNative(final ParcelFileDescriptor vpn, List<Rule> listAllowed,
+            List<Rule> listRule, boolean networkChanged) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ServiceSinkhole.this);
         boolean log = prefs.getBoolean("log", false);
         boolean log_app = prefs.getBoolean("log_app", true);
@@ -2220,7 +2225,8 @@ public class ServiceSinkhole extends VpnService {
                 Util.isInteractive(ServiceSinkhole.this),
                 prefs.getBoolean("wg_keepalive_when_screen_off", false),
                 () -> jni_wireguard_start(),
-                () -> { jni_wireguard_stop(); return kotlin.Unit.INSTANCE; });
+                () -> { jni_wireguard_stop(); return kotlin.Unit.INSTANCE; },
+                networkChanged);
         if (!wgOk) {
             String wgError = net.kollnig.missioncontrol.wg.WgEgress.INSTANCE.getLastError();
             Log.w(TAG, "WireGuard egress failed to start; blocking traffic: " + wgError);
@@ -3879,11 +3885,6 @@ public class ServiceSinkhole extends VpnService {
     }
 
     private void listenNetworkChanges() {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
-            listenConnectivityChanges();
-            return;
-        }
-
         // Listen for network changes
         Log.i(TAG, "Starting listening to network changes");
         ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -3896,6 +3897,9 @@ public class ServiceSinkhole extends VpnService {
             public void onAvailable(Network network) {
                 Log.i(TAG, "Available network=" + network);
                 handlePhysicalNetworkChange(physicalNetworkState.onPhysicalAvailable(network));
+                // Initial capability/link callbacks are only guaranteed from API 26.
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
+                    refreshPhysicalNetworkSnapshot(network);
             }
 
             @Override
@@ -3940,8 +3944,6 @@ public class ServiceSinkhole extends VpnService {
                 Log.i(TAG, "Default network properties=" + network + " props=" + linkProperties);
                 handlePhysicalNetworkChange(physicalNetworkState.onDefaultNetworkLinkPropertiesChanged(
                         network, linkProperties));
-                if (vpn != null)
-                    requestPrivateDnsWarningUpdate();
             }
 
             @Override
@@ -3953,27 +3955,66 @@ public class ServiceSinkhole extends VpnService {
 
         cm.registerNetworkCallback(builder.build(), nc);
         networkCallback = nc;
-        try {
-            cm.registerDefaultNetworkCallback(dnc);
-            defaultNetworkCallback = dnc;
-        } catch (Throwable ex) {
-            cm.unregisterNetworkCallback(nc);
-            networkCallback = null;
-            physicalNetworkState.reset();
-            throw ex;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            try {
+                cm.registerDefaultNetworkCallback(dnc);
+                defaultNetworkCallback = dnc;
+            } catch (Throwable ex) {
+                cm.unregisterNetworkCallback(nc);
+                networkCallback = null;
+                physicalNetworkState.reset();
+                throw ex;
+            }
         }
     }
 
     private void handlePhysicalNetworkChange(String reason) {
+        handlePhysicalNetworkChange(reason, true);
+    }
+
+    private void handlePhysicalNetworkChange(String reason, boolean refreshDefault) {
         if (reason != null)
             reloadAfterNetworkChange(reason);
+        if (refreshDefault)
+            scheduleDefaultNetworkSnapshot();
+    }
+
+    private void scheduleDefaultNetworkSnapshot() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
+            networkSnapshotHandler.removeCallbacks(defaultNetworkSnapshotRunnable);
+            networkSnapshotHandler.post(defaultNetworkSnapshotRunnable);
+        }
+    }
+
+    private void refreshDefaultNetworkSnapshot() {
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (cm == null)
+            return;
+        Network active = cm.getActiveNetwork();
+        NetworkCapabilities capabilities = active == null ? null : cm.getNetworkCapabilities(active);
+        String reason = physicalNetworkState.onDefaultNetworkCapabilitiesChanged(active, capabilities);
+        handlePhysicalNetworkChange(reason, false);
+    }
+
+    private void refreshPhysicalNetworkSnapshot(final Network network) {
+        networkSnapshotHandler.post(() -> {
+            ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+            if (cm == null)
+                return;
+            NetworkCapabilities capabilities = cm.getNetworkCapabilities(network);
+            LinkProperties properties = cm.getLinkProperties(network);
+            handlePhysicalNetworkChange(physicalNetworkState.onPhysicalCapabilitiesChanged(
+                    network, capabilities));
+            handlePhysicalNetworkChange(physicalNetworkState.onPhysicalLinkPropertiesChanged(
+                    network, properties));
+        });
     }
 
     // Network flapping (Wi-Fi<->cellular handoffs, DHCP renewals) fires several
     // ConnectivityManager callbacks within milliseconds of each other. Each
     // reload is a foreground-service update + wakelock + native VPN restart +
-    // WireGuard rebind, so bursts are coalesced into a single reload using the
-    // last reason once the burst settles. Not every reason needs the rebind, so
+    // WireGuard restart, so bursts are coalesced into a single reload using the
+    // last reason once the burst settles. Not every reason needs the restart, so
     // the need for one is accumulated across the burst rather than read off the
     // surviving reason: a reason that does not need it must not cancel one that
     // did, or the tunnel keeps a socket bound to a network that is gone.
@@ -3991,14 +4032,15 @@ public class ServiceSinkhole extends VpnService {
         networkReloadDebounceHandler.postAtTime(new Runnable() {
             @Override
             public void run() {
-                if (pendingWireGuardRestart.getAndSet(false))
-                    net.kollnig.missioncontrol.wg.WgEgress.INSTANCE.onUnderlyingNetworkChanged();
-                reload(reason, ServiceSinkhole.this, false);
+                boolean networkChanged = pendingWireGuardRestart.getAndSet(false);
+                reload(reason, ServiceSinkhole.this, false, networkChanged);
             }
         }, NETWORK_RELOAD_TOKEN, SystemClock.uptimeMillis() + NETWORK_RELOAD_DEBOUNCE_MS);
     }
 
     private void listenConnectivityChanges() {
+        if (registeredConnectivityChanged)
+            return;
         // Listen for connectivity updates
         Log.i(TAG, "Starting listening to connectivity changes");
         IntentFilter ifConnectivity = new IntentFilter();
@@ -4304,6 +4346,7 @@ public class ServiceSinkhole extends VpnService {
 
     private void unlistenNetworkChanges() {
         ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        networkSnapshotHandler.removeCallbacksAndMessages(null);
         try {
             if (networkCallback != null)
                 cm.unregisterNetworkCallback(networkCallback);
@@ -4969,12 +5012,18 @@ public class ServiceSinkhole extends VpnService {
     }
 
     public static void reload(String reason, Context context, boolean interactive) {
+        reload(reason, context, interactive, false);
+    }
+
+    private static void reload(String reason, Context context, boolean interactive,
+            boolean networkChanged) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         if (prefs.getBoolean("enabled", false)) {
             Intent intent = new Intent(context, ServiceSinkhole.class);
             intent.putExtra(EXTRA_COMMAND, Command.reload);
             intent.putExtra(EXTRA_REASON, reason);
             intent.putExtra(EXTRA_INTERACTIVE, interactive);
+            intent.putExtra(EXTRA_WG_NETWORK_CHANGED, networkChanged);
             try {
                 ContextCompat.startForegroundService(context, intent);
             } catch (Throwable ex) {
