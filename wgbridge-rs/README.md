@@ -64,7 +64,7 @@ runtime code in the APK.
 - **Rust 1.95.0** via [rustup](https://rustup.rs). The version and Android
   targets are pinned in the repository's `rust-toolchain.toml`.
 - **cargo-ndk 4.1.2**.
-- **Android NDK 27.2.12479018 (r27c)** (the Gradle task points cargo-ndk at
+- **Android NDK 29.0.14206865 (r29)** (the Gradle task points cargo-ndk at
   the NDK configured for the app module).
 
 Install the pinned Rust prerequisites and pre-fetch the locked crates with:
@@ -109,7 +109,7 @@ sudo:
   - apt-get install -y rustup gcc libc-dev
 prebuild:
   - ../scripts/setup_rust_android.sh
-ndk: r27c
+ndk: r29
 ```
 
 The existing `gradle: [fdroid]` setting remains unchanged. The prebuild step
