@@ -5,7 +5,7 @@ flavour matrix, the native builds, and the reproducibility flags.
 
 ## Prerequisites
 
-JDK 17, Android SDK (compile/target SDK 37, min SDK 23), NDK `27.2.12479018`,
+JDK 17, Android SDK (compile/target SDK 37, min SDK 23), NDK `29.0.14206865`,
 CMake. Native builds also need Rust ≥ 1.95 with the four Android targets;
 the WireGuard bridge additionally needs `cargo-ndk`. Gradle wires both Rust
 builds in but deliberately does not install tools or fetch crates. See
