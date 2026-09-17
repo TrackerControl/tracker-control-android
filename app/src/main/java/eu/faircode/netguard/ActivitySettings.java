@@ -277,13 +277,11 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
             });
         }
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            TwoStatePreference pref_reload_onconnectivity = (TwoStatePreference) screen
-                    .findPreference("reload_onconnectivity");
-            if (pref_reload_onconnectivity != null) {
-                pref_reload_onconnectivity.setChecked(true);
-                pref_reload_onconnectivity.setEnabled(false);
-            }
+        TwoStatePreference pref_reload_onconnectivity = (TwoStatePreference) screen
+                .findPreference("reload_onconnectivity");
+        if (pref_reload_onconnectivity != null) {
+            pref_reload_onconnectivity.setChecked(true);
+            pref_reload_onconnectivity.setEnabled(false);
         }
 
         // Handle port forwarding
