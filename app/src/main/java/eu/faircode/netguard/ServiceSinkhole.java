@@ -1852,10 +1852,17 @@ public class ServiceSinkhole extends VpnService {
         Builder builder = new Builder();
         builder.setSession(getString(R.string.app_name));
 
-        // Match the physical network's metered status so apps behave the
-        // same as without the VPN. (Android defaults VPNs to metered.)
+        // Android defaults VPNs to metered, which makes every app on the device
+        // treat an unmetered Wi-Fi as metered while the VPN runs (#959). Passing
+        // false does not force the network unmetered: it tells the platform to
+        // inherit meteredness from the underlying networks, so the VPN tracks
+        // the physical network as it changes. Snapshotting isMeteredNetwork()
+        // here cannot do that — the value is read once per establish, is true
+        // whenever there is no active network yet (a boot or always-on start
+        // before Wi-Fi associates), and then never reaches the live interface
+        // again while the tunnel lives.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
-            builder.setMetered(Util.isMeteredNetwork(this));
+            builder.setMetered(false);
 
         // Use blocking I/O on the TUN file descriptor for CPU efficiency
         // (avoids polling when there is no traffic)
@@ -2107,8 +2114,10 @@ public class ServiceSinkhole extends VpnService {
         builder.setSession(getString(R.string.app_name));
         builder.setBlocking(true);
         builder.setMtu(1280);
+        // Inherit meteredness from the underlying networks, as getBuilder does:
+        // the placeholder must not flip apps to metered mid-replacement.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
-            builder.setMetered(Util.isMeteredNetwork(this));
+            builder.setMetered(false);
 
         builder.addAddress("192.0.2.1", 32);
         builder.addRoute("0.0.0.0", 0);
@@ -4811,6 +4820,7 @@ public class ServiceSinkhole extends VpnService {
         private Network activeNetwork;
         private NetworkInfo networkInfo;
         private int mtu;
+        private boolean metered = true;
         private List<String> listAddress = new ArrayList<>();
         private List<String> listRoute = new ArrayList<>();
         private List<InetAddress> listDns = new ArrayList<>();
@@ -4821,6 +4831,19 @@ public class ServiceSinkhole extends VpnService {
             ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
             activeNetwork = cm.getActiveNetwork();
             networkInfo = cm.getActiveNetworkInfo();
+        }
+
+        /**
+         * Kept in the comparison below so a changed metered flag forces a real
+         * re-establish instead of the "Native restart" shortcut (#763): the flag
+         * only reaches apps through {@link VpnService.Builder#establish()}.
+         */
+        @RequiresApi(api = Build.VERSION_CODES.Q)
+        @Override
+        public VpnService.Builder setMetered(boolean metered) {
+            this.metered = metered;
+            super.setMetered(metered);
+            return this;
         }
 
         @Override
@@ -4888,6 +4911,9 @@ public class ServiceSinkhole extends VpnService {
                 return false;
 
             if (this.mtu != other.mtu)
+                return false;
+
+            if (this.metered != other.metered)
                 return false;
 
             if (this.listAddress.size() != other.listAddress.size())
