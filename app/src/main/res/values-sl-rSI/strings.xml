@@ -277,8 +277,8 @@
     <string name="vpn_intro_proton_body">Iz svojega računa VPN-a Proton prejmite nastavitve WireGuard in jih prilepite v TrackerControl.  Tukaj vam ni treba vnašati poveril za Proton.</string>
     <string name="vpn_intro_wireguard_title">WireGuard</string>
     <string name="vpn_intro_wireguard_body">To uporabite, če že imate nastavljen WireGuard od drugega ponudnika VPN-a, svojega strežnika ali službe.</string>
-    <string name="vpn_enter_mullvad_account">Vnesite št. računa</string>
-    <string name="vpn_enter_ivpn_account">Vnesite ID računa</string>
+    <string name="vpn_enter_mullvad_account">Vnesi št. računa</string>
+    <string name="vpn_enter_ivpn_account">Vnesi ID računa</string>
     <string name="vpn_mode_mullvad">Mullvad</string>
     <string name="vpn_mode_ivpn">IVPN</string>
     <string name="vpn_mode_wireguard">WireGuard</string>
