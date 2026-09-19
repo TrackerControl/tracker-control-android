@@ -200,6 +200,13 @@ public class ServiceSinkhole extends VpnService {
     private volatile Thread tunnelThread = null;
     private ServiceSinkhole.Builder last_builder = null;
     private volatile ParcelFileDescriptor vpn = null;
+    // Set once a tun is established, cleared when the service tears it down or
+    // is destroyed. Static, and the app is single-process, so VpnRestartWorker
+    // reads the same field - and a killed process takes it down with it, which
+    // is how the worker tells a dead VPN from a live one. It does not track a
+    // tunnel that failed underneath the service: that window belongs to the
+    // in-service recovery paths, which either restore the tunnel or stop.
+    private static volatile boolean vpnEstablished = false;
     private boolean temporarilyStopped = false;
 
     private static long last_hosts_modified = 0;
@@ -392,6 +399,7 @@ public class ServiceSinkhole extends VpnService {
     public static final String EXTRA_INTERACTIVE = "Interactive";
     public static final String EXTRA_TEMPORARY = "Temporary";
     private static final String EXTRA_USER_INITIATED = "UserInitiated";
+    private static final String PREF_STOPPED_CLEANLY = "vpn_stopped_cleanly";
 
     private static final int MSG_STATS_START = 1;
     private static final int MSG_STATS_STOP = 2;
@@ -926,6 +934,11 @@ public class ServiceSinkhole extends VpnService {
                 stopNative(vpn);
                 stopVPN(vpn);
                 vpn = null;
+                vpnEstablished = false;
+                // A teardown the service performs itself, so it is not one
+                // VpnRestartWorker should undo, whether it is a switch-off or
+                // the pause for a phone call.
+                markStoppedCleanly(true);
                 // Final teardown — service is actually stopping (user toggled
                 // VPN off, OS is killing us, etc.) so WG should not survive.
                 net.kollnig.missioncontrol.wg.WgEgress.INSTANCE.stop(
@@ -1003,7 +1016,7 @@ public class ServiceSinkhole extends VpnService {
         }
 
         private void watchdog(Intent intent) {
-            if (vpn == null) {
+            if (vpn == null && !temporarilyStopped) {
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ServiceSinkhole.this);
                 if (prefs.getBoolean("enabled", false)) {
                     Log.e(TAG, "Service was killed");
@@ -1782,6 +1795,8 @@ public class ServiceSinkhole extends VpnService {
                 return null;
             }
             updateUnderlyingNetworks();
+            vpnEstablished = true;
+            markStoppedCleanly(false);
             return pfd;
         } catch (SecurityException ex) {
             throw ex;
@@ -4181,12 +4196,38 @@ public class ServiceSinkhole extends VpnService {
         prefs.edit().putBoolean("enabled", enabled).apply();
         Log.i(TAG, "Revoke always-on=" + alwaysOn + " enabled=" + enabled);
 
+        // A revoke is the system telling us the tunnel is gone on purpose, so
+        // it is recorded like any other deliberate teardown and the restart
+        // worker leaves it alone. Coming back from one is the OS's job, through
+        // the always-on designation it either kept or cleared above.
+        vpnEstablished = false;
+        markStoppedCleanly(true);
+
         // Feedback: the tunnel really did drop, so inform the user (mirrors
         // Android's own "VPN disconnected" notice). This does not disable TC.
         showDisabledNotification();
         WidgetMain.updateWidgets(this);
 
         super.onRevoke();
+    }
+
+    static boolean isVpnEstablished() {
+        return vpnEstablished;
+    }
+
+    /**
+     * Whether the last teardown was one the service carried out itself. A kill
+     * records nothing, so the flag still reads false afterwards, and that is
+     * what {@link VpnRestartWorker} restarts on.
+     */
+    static boolean wasStoppedCleanly(Context context) {
+        return PreferenceManager.getDefaultSharedPreferences(context)
+                .getBoolean(PREF_STOPPED_CLEANLY, false);
+    }
+
+    private void markStoppedCleanly(boolean stopped) {
+        PreferenceManager.getDefaultSharedPreferences(this).edit()
+                .putBoolean(PREF_STOPPED_CLEANLY, stopped).apply();
     }
 
     static boolean resolveEnabledAfterRevoke(boolean enabled, Boolean alwaysOn) {
@@ -4282,6 +4323,10 @@ public class ServiceSinkhole extends VpnService {
                     stopNative(vpn);
                     stopVPN(vpn);
                     vpn = null;
+                    // Deliberately not marked as a clean stop: a service the
+                    // system takes down is exactly what the restart worker is
+                    // for, and a stop the service meant has already marked it.
+                    vpnEstablished = false;
                     unprepare();
                 }
             } catch (Throwable ex) {

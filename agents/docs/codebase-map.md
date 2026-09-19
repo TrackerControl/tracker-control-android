@@ -33,7 +33,9 @@ wgbridge-rs/                 Rust crate embedding gotatun (Mullvad WireGuard)
     — Quick-Settings tile. `ReceiverAutostart.java` — boot/always-on restart.
   - `VpnRoutes.java` — the tun route set (RFC1918/CGNAT excludes).
   - Policy helpers: `InteractiveStatePolicy`, `NativeFailureRecoveryPolicy`,
-    `NetworkReloadPolicy`, `VpnReplacementSequencer`.
+    `NetworkReloadPolicy`, `VpnReplacementSequencer`, `VpnRestartPolicy`
+    (whether `VpnRestartWorker`, the periodic out-of-process check, should bring
+    a killed VPN back).
 - **Tracker detection + TC UI** — `net.kollnig.missioncontrol`:
   - `data/TrackerList.java` — loads the blocklists into the static
     `hostnameToTracker` map; the heart of detection. Blocking-mode list selection

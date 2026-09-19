@@ -143,6 +143,14 @@ public class ApplicationEx extends Application {
         } catch (Throwable ex) {
             Log.w(TAG, "Could not reconcile the hosts auto-update: " + ex);
         }
+        // A VPN the system killed leaves nothing in the app to notice, so the
+        // check lives outside the service. Guarded like the reconcile above:
+        // this is the startup path.
+        try {
+            VpnRestartWorker.schedule(this);
+        } catch (Throwable ex) {
+            Log.w(TAG, "Could not schedule the VPN restart monitor: " + ex);
+        }
         BlockingMode.enforcePlayStoreMode(this);
 
         // Keep VPN exclusions aligned with the selected blocking mode on startup.
