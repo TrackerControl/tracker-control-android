@@ -165,6 +165,23 @@ android {
     }
     testOptions {
         unitTests.includeAndroidResources = true
+        // Robolectric 4.17 reflects into JDK internals, which the module system
+        // denies from Java 17 onwards: without these the whole framework-backed
+        // suite dies in AndroidInterceptors with an IllegalAccessException.
+        // Keep in sync with https://robolectric.org/getting-started/
+        unitTests.all {
+            jvmArgs += [
+                    '--add-opens=java.base/java.lang=ALL-UNNAMED',
+                    '--add-opens=java.base/java.util=ALL-UNNAMED',
+                    '--add-opens=java.base/java.io=ALL-UNNAMED',
+                    '--add-opens=java.base/java.net=ALL-UNNAMED',
+                    '--add-opens=java.base/java.security=ALL-UNNAMED',
+                    '--add-opens=java.base/java.text=ALL-UNNAMED',
+                    '--add-opens=java.base/jdk.internal.access=ALL-UNNAMED',
+                    '--add-opens=java.desktop/java.awt.font=ALL-UNNAMED',
+                    '--add-opens=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED',
+            ]
+        }
     }
     namespace = 'net.kollnig.missioncontrol'
     buildFeatures {
