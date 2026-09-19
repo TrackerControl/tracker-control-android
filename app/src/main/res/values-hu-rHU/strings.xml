@@ -46,6 +46,7 @@
     <string name="unidentified_app_uid">Azonosítatlan alkalmazás (UID: %1$d)</string>
     <string name="tab_timeline">Idővonal</string>
     <string name="tab_apps">Alkalmazások</string>
+    <string name="tab_vpn">VPN</string>
     <string name="timeline_section_last_hour">Elmúlt óra</string>
     <string name="timeline_section_today">Ma</string>
     <string name="timeline_section_yesterday">Tegnap</string>
@@ -55,6 +56,7 @@
     <string name="timeline_tracker_blocked">Blokkolva</string>
     <string name="timeline_tracker_allowed">Engedélyezve</string>
     <!-- A blocked/allowed label followed by its share of all tracking attempts. -->
+    <string name="timeline_insights_status"></string>
     <string name="feed_section_last_contact">utolsó kapcsolatfelvétel: %s</string>
     <plurals name="feed_show_more_companies">
         <item quantity="one">Még %d vállalat megjelenítése</item>
@@ -174,6 +176,7 @@
     <string name="warning_beta">Bétafunkció. Előfordulhat, hogy nem a várt módon működik.</string>
     <string name="setting_doh_endpoint">DoH-végpont URL-je</string>
     <string name="summary_doh_endpoint">HTTPS-URL a DNS-over-HTTPS-lekérdezésekhez</string>
+    <string name="dialog_doh_endpoint"></string>
     <string name="setting_doh_dns_fallback">DNS-tartalék</string>
     <string name="summary_doh_dns_fallback">Szabványos (titkosítatlan) DNS használata, ha a DoH nem érhető el. A kikapcsolás megakadályozhatja az alkalmazások működését, ha a DoH-kiszolgáló nem elérhető.</string>
     <!-- Block DNS-over-TLS (DoT) -->
@@ -662,6 +665,7 @@ Tisztelettel,\n\n]]></string>
     <!-- Retained for Play Store copy; call-site/API migration and multi-count grammar are intentionally separate. -->
     <string name="insights_share">Megosztás barátokkal</string>
     <string name="insights_share_trackers_blocked">Blokkolt nyomkövető-hosztok</string>
+    <string name="insights_share_url"></string>
     <!-- Keep as a string: call-site/API migration and multi-count grammar are intentionally separate. -->
     <string name="insights_share_message" tools:ignore="PluralsCandidate">Ezen a héten %1$d nyomkövető-hosztot blokkoltam %2$d vállalattól a TrackerControllal! Vegye vissza az adatvédelmét: https://trackercontrol.org</string>
     <!-- Retained for Play Store copy; call-site/API migration and multi-count grammar are intentionally separate. -->
