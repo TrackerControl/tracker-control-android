@@ -368,33 +368,6 @@ typedef struct dns_rr {
     __be16 rdlength;
 } __packed dns_rr;
 
-// DHCP
-
-#define DHCP_OPTION_MAGIC_NUMBER (0x63825363)
-
-typedef struct dhcp_packet {
-    uint8_t opcode;
-    uint8_t htype;
-    uint8_t hlen;
-    uint8_t hops;
-    uint32_t xid;
-    uint16_t secs;
-    uint16_t flags;
-    uint32_t ciaddr;
-    uint32_t yiaddr;
-    uint32_t siaddr;
-    uint32_t giaddr;
-    uint8_t chaddr[16];
-    uint8_t sname[64];
-    uint8_t file[128];
-    uint32_t option_format;
-} __packed dhcp_packet;
-
-typedef struct dhcp_option {
-    uint8_t code;
-    uint8_t length;
-} __packed dhcp_option;
-
 // Prototypes
 
 void handle_signal(int sig, siginfo_t *info, void *context);
@@ -492,9 +465,6 @@ jboolean handle_udp(const struct arguments *args,
                     const uint8_t *payload,
                     int uid, struct allowed *redirect,
                     const int epoll_fd);
-
-int check_dhcp(const struct arguments *args, const struct udp_session *u,
-               const uint8_t *data, const size_t datalen);
 
 void clear_tcp_data(struct tcp_session *cur);
 
