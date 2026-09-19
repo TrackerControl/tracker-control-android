@@ -74,12 +74,23 @@ public class ApplicationEx extends Application {
                             ReportField.USER_APP_START_DATE,
                             ReportField.USER_CRASH_DATE,
                             ReportField.ANDROID_VERSION,
+                            ReportField.APP_VERSION_NAME,
+                            ReportField.APP_VERSION_CODE,
+                            ReportField.PACKAGE_NAME,
+                            ReportField.BRAND,
+                            ReportField.PHONE_MODEL,
                             ReportField.BUILD_CONFIG,
                             ReportField.STACK_TRACE,
                             ReportField.STACK_TRACE_HASH,
+                            ReportField.THREAD_DETAILS,
                             ReportField.AVAILABLE_MEM_SIZE,
                             ReportField.TOTAL_MEM_SIZE)
                     .withReportFormat(KEY_VALUE_LIST)
+                    // ACRA resolves BuildConfig from the runtime package name unless it
+                    // is named explicitly. Every flavour but the GitHub release carries an
+                    // applicationIdSuffix, so the lookup misses the class at the namespace
+                    // and the whole BUILD_CONFIG block is dropped from those reports.
+                    .withBuildConfigClass(BuildConfig.class)
                     .withPluginConfigurations(
                             new MailSenderConfigurationBuilder()
                                     .withMailTo("crash@trackercontrol.org")
