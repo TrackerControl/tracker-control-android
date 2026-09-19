@@ -200,9 +200,12 @@ public class ServiceSinkhole extends VpnService {
     private volatile Thread tunnelThread = null;
     private ServiceSinkhole.Builder last_builder = null;
     private volatile ParcelFileDescriptor vpn = null;
-    // Whether a tunnel is up, readable without the service: a killed process
-    // takes the flag down with it, which is precisely what VpnRestartWorker
-    // needs to tell a dead VPN from a live one.
+    // Set once a tun is established, cleared when the service tears it down or
+    // is destroyed. Static, and the app is single-process, so VpnRestartWorker
+    // reads the same field - and a killed process takes it down with it, which
+    // is how the worker tells a dead VPN from a live one. It does not track a
+    // tunnel that failed underneath the service: that window belongs to the
+    // in-service recovery paths, which either restore the tunnel or stop.
     private static volatile boolean vpnEstablished = false;
     private boolean temporarilyStopped = false;
 
