@@ -166,7 +166,6 @@
     <string name="setting_vpn_key_rotate_now">Rotar ahora las claves del proveedor VPN</string>
     <string name="setting_pcap_record_size">Tamaño de registro PCAP: %s B</string>
     <string name="setting_pcap_file_size">Tamaño máximo del archivo PCAP: %s MB</string>
-    <string name="setting_watchdog">Watchdog: cada %s minutos</string>
     <!-- Secure DNS (DoH) -->
     <string name="setting_doh_enabled">DNS seguro (DoH)</string>
     <string name="summary_doh_enabled">Cifra las consultas DNS mediante DNS sobre HTTPS. Se pausa automáticamente cuando WireGuard está activo, porque esas consultas utilizan el túnel WireGuard.</string>
@@ -293,7 +292,6 @@
     <string name="msg_wg_identity_renewed">%1$s ya no reconocía este dispositivo, así que TrackerControl registró uno nuevo y actualizó los perfiles de %1$s en este dispositivo.</string>
     <string name="msg_wg_provider_rejected">%1$s rechazó configurar este dispositivo: %2$s</string>
     <string name="msg_wg_recovery_failed">WireGuard dejó de responder. TrackerControl intenta reconectarse y el acceso a Internet puede permanecer bloqueado hasta que WireGuard se recupere.</string>
-    <string name="summary_watchdog">Comprobar periódicamente si TrackerControl sigue funcionando (introducir cero para desactivar esta opción). Esto podría aumentar el consumo de la batería.</string>
     <string name="summary_log_logcat">Modo de investigación: los rastreadores identificados se registran en ADB y se activa la extracción de SNI para detectar mejor los nombres de host. Recupera los registros con adb logcat usando la etiqueta \'TC-Log\'.</string>
     <string name="msg_sure">¿Estás seguro?</string>
     <string name="msg_started">Buscando rastreadores…</string>

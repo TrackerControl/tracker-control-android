@@ -188,7 +188,6 @@
     <string name="setting_vpn_key_rotate_now">Rotate VPN provider keys now</string>
     <string name="setting_pcap_record_size">PCAP record size: %s B</string>
     <string name="setting_pcap_file_size">PCAP max. file size: %s MB</string>
-    <string name="setting_watchdog">Watchdog: every %s minutes</string>
 
     <!-- Secure DNS (DoH) -->
     <string name="setting_doh_enabled">Secure DNS (DoH)</string>
@@ -335,7 +334,6 @@
     <string name="msg_wg_identity_renewed">%1$s no longer knew this device, so TrackerControl registered a new one and updated the %1$s profiles on this device.</string>
     <string name="msg_wg_provider_rejected">%1$s refused to set up this device: %2$s</string>
     <string name="msg_wg_recovery_failed">WireGuard stopped responding. TrackerControl is trying to reconnect, and internet access may remain blocked until WireGuard recovers.</string>
-    <string name="summary_watchdog">Periodically check if TrackerControl is still running (enter zero to disable this option). This might result in extra battery usage.</string>
     <string name="summary_log_logcat">Research mode: identified trackers are logged to ADB and SNI extraction is enabled for better hostname detection. Retrieve logs with adb logcat using tag \'TC-Log\'.</string>
 
     <string name="msg_sure">Are you sure?</string>

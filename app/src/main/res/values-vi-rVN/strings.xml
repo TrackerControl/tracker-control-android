@@ -164,7 +164,6 @@
     <string name="setting_vpn_key_rotate_now">Xoay khoá nhà cung cấp VPN ngay</string>
     <string name="setting_pcap_record_size">Kích cỡ bản ghi PCAP: %s B</string>
     <string name="setting_pcap_file_size">Kích thước tệp PCAP lớn nhất: %s MB</string>
-    <string name="setting_watchdog">Giám sát: mỗi %s phút</string>
     <!-- Secure DNS (DoH) -->
     <string name="setting_doh_enabled">DNS bảo mật (DoH)</string>
     <string name="summary_doh_enabled">Mã hoá truy vấn DNS bằng DNS-over-HTTPS. Tự động tạm dừng khi WireGuard hoạt động vì các truy vấn đó dùng đường hầm WireGuard.</string>
@@ -293,7 +292,6 @@
     <string name="msg_wg_identity_renewed">%1$s không còn nhận ra thiết bị này, nên TrackerControl đã đăng ký thiết bị mới và cập nhật các cấu hình %1$s trên thiết bị này.</string>
     <string name="msg_wg_provider_rejected">%1$s từ chối thiết lập thiết bị này: %2$s</string>
     <string name="msg_wg_recovery_failed">WireGuard ngừng phản hồi. TrackerControl đang thử kết nối lại và quyền truy cập Internet có thể vẫn bị chặn cho đến khi WireGuard khôi phục.</string>
-    <string name="summary_watchdog">Kiểm tra định kỳ xem TrackerControl có vẫn chạy không (nhập 0 để tắt tùy chọn này). Điều này có thể dẫn đến sử dụng thêm pin.</string>
     <string name="summary_log_logcat">Chế độ nghiên cứu: trình theo dõi được nhận diện sẽ được ghi vào ADB và bật trích xuất SNI để phát hiện tên máy chủ tốt hơn. Lấy nhật ký bằng adb logcat với thẻ \'TC-Log\'.</string>
     <string name="msg_sure">Bạn có chắc không?</string>
     <string name="msg_started">Đang tìm trình theo dõi…</string>

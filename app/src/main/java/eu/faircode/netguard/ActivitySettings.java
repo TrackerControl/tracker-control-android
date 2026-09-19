@@ -342,11 +342,6 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
         if (pref != null)
             pref.setTitle(getString(R.string.setting_pcap_file_size, prefs.getString("pcap_file_size", "2")));
 
-        // Watchdog
-        pref = screen.findPreference("watchdog");
-        if (pref != null)
-            pref.setTitle(getString(R.string.setting_watchdog, prefs.getString("watchdog", "0")));
-
         // DoH endpoint
         EditTextPreference pref_doh_endpoint = (EditTextPreference) screen.findPreference("doh_endpoint");
         if (pref_doh_endpoint != null) {
@@ -931,11 +926,6 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
 
             if (prefs.getBoolean("pcap", false))
                 ServiceSinkhole.setPcap(true, this);
-
-        } else if ("watchdog".equals(name)) {
-            getPreferenceScreen().findPreference(name)
-                    .setTitle(getString(R.string.setting_watchdog, prefs.getString(name, "0")));
-            ServiceSinkhole.reload("changed " + name, this, false);
 
         } else if ("show_stats".equals(name))
             ServiceSinkhole.reloadStats("changed " + name, this);

@@ -167,7 +167,6 @@
     <string name="setting_vpn_key_rotate_now">Vaheta VPN-i teenusepakkuja võtmed kohe</string>
     <string name="setting_pcap_record_size">PCAP-kirje suurus: %s B</string>
     <string name="setting_pcap_file_size">PCAP-faili maksimaalne suurus: %s MB</string>
-    <string name="setting_watchdog">Jälgimisteenus: iga %s minuti järel</string>
     <!-- Secure DNS (DoH) -->
     <string name="setting_doh_enabled">Turvaline DNS (DoH)</string>
     <string name="summary_doh_enabled">Krüpti DNS-päringud DNS-i üle HTTPS-i kasutades. Peatatakse automaatselt, kui WireGuard on aktiivne, sest need päringud kasutavad siis WireGuardi tunnelit.</string>
@@ -295,7 +294,6 @@
     <string name="msg_wg_identity_renewed">%1$s ei tundnud seda seadet enam ära, seega registreeris TrackerControl uue seadme ja uuendas selle seadme %1$s profiile.</string>
     <string name="msg_wg_provider_rejected">%1$s keeldus seda seadet seadistamast: %2$s</string>
     <string name="msg_wg_recovery_failed">WireGuard ei reageeri enam. TrackerControl proovib uuesti ühenduda ja internetiühendus võib jääda blokeerituks, kuni WireGuard taastub.</string>
-    <string name="summary_watchdog">Kontrolli perioodiliselt, kas TrackerControl töötab endiselt (selle valiku keelamiseks sisesta null). See võib suurendada akukasutust.</string>
     <string name="summary_log_logcat">Uurimisrežiim: tuvastatud jälitajad logitakse ADB-sse ja SNI eraldamine on täpsemaks hostinime tuvastamiseks lubatud. Hangi logid käsuga adb logcat, kasutades silti \'TC-Log\'.</string>
     <string name="msg_sure">Kas oled selles kindel?</string>
     <string name="msg_started">Otsin jälitajaid…</string>

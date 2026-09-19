@@ -164,7 +164,6 @@
     <string name="setting_vpn_key_rotate_now">VPN வழங்குநர் விசைகளை இப்போது மாற்று</string>
     <string name="setting_pcap_record_size">PCAP பதிவு அளவு: %s B</string>
     <string name="setting_pcap_file_size">PCAP அதிகபட்சக் கோப்பு அளவு: %s MB</string>
-    <string name="setting_watchdog">காவல்கண்காணி: ஒவ்வொரு %s நிமிடங்களுக்கும்</string>
     <!-- Secure DNS (DoH) -->
     <string name="setting_doh_enabled">பாதுகாப்பான DNS (DoH)</string>
     <string name="summary_doh_enabled">DNS-over-HTTPS-ஐப் பயன்படுத்தி DNS வினவல்களை மறையாக்கவும். WireGuard செயலில் இருக்கும்போது தானாக இடைநிறுத்தப்படும்; ஏனெனில் அந்த வினவல்கள் WireGuard சுரங்கத்தைப் பயன்படுத்துகின்றன.</string>
@@ -292,7 +291,6 @@
     <string name="msg_wg_identity_renewed">%1$s-க்கு இந்தச் சாதனம் இனி தெரியாததால், TrackerControl புதிய சாதனத்தைப் பதிவு செய்து இந்தச் சாதனத்தில் உள்ள %1$s சுயவிவரங்களைப் புதுப்பித்தது.</string>
     <string name="msg_wg_provider_rejected">இந்தச் சாதனத்தை %1$s அமைக்க மறுத்தது: %2$s</string>
     <string name="msg_wg_recovery_failed">WireGuard பதிலளிப்பதை நிறுத்தியது. TrackerControl மீண்டும் இணைக்க முயல்கிறது; WireGuard மீளும் வரை இணைய அணுகல் தடுக்கப்பட்டிருக்கலாம்.</string>
-    <string name="summary_watchdog">TrackerControl இன்னும் இயங்குகிறதா என்பதை அவ்வப்போது சரிபார்க்கவும் (இந்த விருப்பத்தை முடக்க பூஜ்ஜியத்தை உள்ளிடவும்). இது கூடுதல் மின்கலப் பயன்பாட்டை ஏற்படுத்தலாம்.</string>
     <string name="summary_log_logcat">ஆய்வு முறை: அடையாளம் காணப்பட்ட டிராக்கர்கள் ADB-யில் பதிவு செய்யப்படுகின்றன; சிறந்த ஹோஸ்ட்பெயர் கண்டறிதலுக்காக SNI பிரித்தெடுப்பு இயக்கப்பட்டுள்ளது. \'TC-Log\' குறிச்சொல்லைப் பயன்படுத்தி adb logcat மூலம் பதிவுகளைப் பெறவும்.</string>
     <string name="msg_sure">நிச்சயமாகவா?</string>
     <string name="msg_started">டிராக்கர்களைத் தேடுகிறது…</string>

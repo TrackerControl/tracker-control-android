@@ -175,7 +175,6 @@
     <string name="setting_vpn_key_rotate_now">Элемент VPN провайдер элемент элемент</string>
     <string name="setting_pcap_record_size">Размер записи PCAP: %s Б</string>
     <string name="setting_pcap_file_size">Макс. размер PCAP файла: %s МБ</string>
-    <string name="setting_watchdog">Сторожевой таймер: каждые %s минут</string>
     <!-- Secure DNS (DoH) -->
     <string name="setting_doh_enabled">Защищенный DNS (DoH)</string>
     <string name="summary_doh_enabled">Дополнительная информация: Защищённый DNS включено.</string>
@@ -305,7 +304,6 @@
     <string name="msg_wg_identity_renewed">%1$sWireGuard элемент элемент.%1$s профили элемент элемент элемент.</string>
     <string name="msg_wg_provider_rejected">%1$s элемент элемент элемент элемент элемент элемент: %2$s</string>
     <string name="msg_wg_recovery_failed">WireGuard элемент не удалось.</string>
-    <string name="summary_watchdog">Периодически проверять, запущен ли TrackerControl (введите ноль, чтобы отключить эту опцию). Это может привести к большему расходу батареи.</string>
     <string name="summary_log_logcat">Режим исследования: идентифицированные трекеры записываются в ADB и SNI извлечение включено для лучшего определения имени хоста. Восстановите логи с adb logcat с помощью тега \'TC-Log\'.</string>
     <string name="msg_sure">Вы уверены?</string>
     <string name="msg_started">Поиск трекеров…</string>

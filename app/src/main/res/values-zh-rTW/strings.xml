@@ -163,7 +163,6 @@
     <string name="setting_vpn_key_rotate_now">立即輪換 VPN 供應商金鑰</string>
     <string name="setting_pcap_record_size">PCAP 記錄大小：%s B</string>
     <string name="setting_pcap_file_size">PCAP 最大檔案大小：%s MB</string>
-    <string name="setting_watchdog">監控：每 %s 分鐘</string>
     <!-- Secure DNS (DoH) -->
     <string name="setting_doh_enabled">安全DNS (DoH)</string>
     <string name="summary_doh_enabled">使用 DNS-over-HTTPS 加密 DNS 查詢。WireGuard 啟用時會自動暫停，因為這些查詢會改走 WireGuard 隧道。</string>
@@ -289,7 +288,6 @@
     <string name="msg_wg_identity_renewed">%1$s 不再知道此裝置，所以TrackerControl註冊了一個新裝置，並更新了此裝置上的 %1$s 設定檔。</string>
     <string name="msg_wg_provider_rejected">%1$s 拒絕設定此裝置： %2$s</string>
     <string name="msg_wg_recovery_failed">WireGuard 停止響應。TrackerControl 正在嘗試重新連線，網路連線可能保持阻擋狀態，直到WireGuard恢復為止。</string>
-    <string name="summary_watchdog">定期檢查TrackerControl是否仍在執行(輸入零停用此選項)。這可能會導致額外的電池使用。</string>
     <string name="summary_log_logcat">研究模式：已識別的追蹤器會記錄到 ADB 並啟用 SNI 提取以更好地偵測主機名稱。用 TC-Log 標籤透過 adb logcat 取得日誌。</string>
     <string name="msg_sure">你確定嗎？</string>
     <string name="msg_started">正在查詢追蹤器…</string>

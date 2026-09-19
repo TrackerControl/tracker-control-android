@@ -196,7 +196,6 @@
     <string name="setting_vpn_key_rotate_now">Rotera VPN-leverantörsnycklar nu</string>
     <string name="setting_pcap_record_size">PCAP-poststorlek: %s B</string>
     <string name="setting_pcap_file_size">PCAP max. filstorlek: %s MB</string>
-    <string name="setting_watchdog">Watchdog: varje %s minut</string>
     <string name="setting_doh_enabled">Säker DNS (DoH)</string>
     <string name="summary_doh_enabled">Kryptera DNS-frågor med DNS-over-HTTPS. Pausas automatiskt när WireGuard är aktivt, eftersom dessa frågor använder WireGuard-tunneln istället.</string>
     <string name="warning_beta">Betafunktion. Kanske inte fungerar som förväntat.</string>
@@ -332,7 +331,6 @@
     <string name="msg_wg_identity_renewed">%1$s kände inte längre till den här enheten, så TrackerControl registrerade en ny och uppdaterade %1$s profiler på den här enheten.</string>
     <string name="msg_wg_provider_rejected">%1$s vägrade att konfigurera den här enheten: %2$s</string>
     <string name="msg_wg_recovery_failed">WireGuard slutade svara. TrackerControl försöker återansluta och internetåtkomst kan förbli blockerad tills WireGuard återställer sig.</string>
-    <string name="summary_watchdog">Kontrollera med jämna mellanrum om TrackerControl fortfarande körs (skriv in noll för att inaktivera det här alternativet). Detta kan leda till extra batterianvändning.</string>
     <string name="summary_log_logcat">Forskningsläge: identifierade spårare loggas till ADB och SNI-extraktion är aktiverad för bättre värdnamnsdetektering. Hämta loggar med adb logcat med taggen \'TC-Log\'.</string>
     <string name="msg_sure">Är du säker?</string>
     <string name="msg_started">Letar efter spårare…</string>

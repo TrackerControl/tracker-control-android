@@ -170,7 +170,6 @@
     <string name="setting_vpn_key_rotate_now">Rotește acum cheile furnizorului VPN</string>
     <string name="setting_pcap_record_size">Dimensiunea înregistrării PCAP: %s B</string>
     <string name="setting_pcap_file_size">Dimensiunea max. a fișierului PCAP: %s MB</string>
-    <string name="setting_watchdog">Supraveghere: la fiecare %s minute</string>
     <!-- Secure DNS (DoH) -->
     <string name="setting_doh_enabled">DNS securizat (DoH)</string>
     <string name="summary_doh_enabled">Criptează interogările DNS folosind DNS-over-HTTPS. Se pune automat pe pauză când WireGuard este activ, deoarece interogările folosesc atunci tunelul WireGuard.</string>
@@ -299,7 +298,6 @@
     <string name="msg_wg_identity_renewed">%1$s nu mai recunoștea acest dispozitiv, așa că TrackerControl a înregistrat unul nou și a actualizat profilurile %1$s de pe dispozitiv.</string>
     <string name="msg_wg_provider_rejected">%1$s a refuzat configurarea acestui dispozitiv: %2$s</string>
     <string name="msg_wg_recovery_failed">WireGuard nu mai răspunde. TrackerControl încearcă să se reconecteze, iar accesul la internet poate rămâne blocat până când WireGuard își revine.</string>
-    <string name="summary_watchdog">Verifică periodic dacă TrackerControl rulează în continuare (introdu zero pentru a dezactiva această opțiune). Aceasta poate crește consumul bateriei.</string>
     <string name="summary_log_logcat">Mod cercetare: urmăritorii identificați sunt înregistrați în ADB, iar extragerea SNI este activată pentru o detectare mai bună a numelor de gazdă. Preia jurnalele cu adb logcat folosind eticheta „TC-Log”.</string>
     <string name="msg_sure">Ești sigur?</string>
     <string name="msg_started">Se caută urmăritori…</string>
