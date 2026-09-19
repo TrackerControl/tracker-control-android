@@ -139,15 +139,6 @@ int __wrap_fcntl(int file_descriptor, int command, ...) {
     return -1;
 }
 
-int check_dhcp(const struct arguments *args, const struct udp_session *session,
-               const uint8_t *data, const size_t data_length) {
-    (void) args;
-    (void) session;
-    (void) data;
-    (void) data_length;
-    return -1;
-}
-
 int epoll_ctl(int epoll_fd, int operation, int descriptor,
               struct epoll_event *event) {
     (void) epoll_fd;

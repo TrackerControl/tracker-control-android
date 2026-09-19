@@ -58,7 +58,7 @@ wgbridge-rs/                 Rust crate embedding gotatun (Mullvad WireGuard)
     `Tunnel`, `Protector`, `Logger`, `DnsRecorder`. Mirror of `wgbridge-rs`.
 - **Native C packet engine** — `app/src/main/jni/netguard/`: `netguard.c`,
   `session.c`, `ip.c`, `tcp.c`, `udp.c`, `icmp.c`, `dns.c` (plaintext DNS parse),
-  `tls.c` (SNI, research-only), `dhcp.c`, `pcap.c`. Built by `CMakeLists.txt`.
+  `tls.c` (SNI, research-only), `pcap.c`. Built by `CMakeLists.txt`.
 - **Rust WireGuard bridge** — `wgbridge-rs/` (see its README): `jni_bindings.rs`,
   `tunnel.rs`, `config.rs` (UAPI), `dns.rs` (passive DNS inspection), `transport/`
   (socketpair + tun-fd transports), `keys.rs`, `callbacks.rs`.
