@@ -167,7 +167,6 @@
     <string name="setting_vpn_key_rotate_now">VPN-szolgáltatói kulcsok azonnali cseréje</string>
     <string name="setting_pcap_record_size">PCAP rekord mérete: %s B</string>
     <string name="setting_pcap_file_size">PCAP max. fájlméret: %s MB</string>
-    <string name="setting_watchdog">Watchdog: minden %s percben</string>
     <!-- Secure DNS (DoH) -->
     <string name="setting_doh_enabled">Biztonságos DNS (DoH)</string>
     <string name="summary_doh_enabled">DNS-lekérdezések titkosítása DNS-over-HTTPS használatával. A WireGuard aktív állapotában automatikusan szünetel, mert ezek a lekérdezések inkább a WireGuard-alagúton haladnak.</string>
@@ -294,7 +293,6 @@
     <string name="msg_wg_identity_renewed">%1$s már nem ismerte fel ezt az eszközt, ezért a TrackerControl új eszközként regisztrálta, és frissítette az eszközön lévő %1$s-profilokat.</string>
     <string name="msg_wg_provider_rejected">%1$s megtagadta az eszköz beállítását: %2$s</string>
     <string name="msg_wg_recovery_failed">A WireGuard nem válaszol. A TrackerControl megpróbál újracsatlakozni, és az internet-hozzáférés blokkolva maradhat a WireGuard helyreállásáig.</string>
-    <string name="summary_watchdog">Rendszeresen ellenőrzi, ha a TrackerControl fut (a 0 beírása letiltja az opciót). Ez extra akkumulátor használattal járhat.</string>
     <string name="summary_log_logcat">Kutatási mód: az észlelt nyomkövetők naplózása az ADB-be, valamint az SNI kinyerésének engedélyezése a pontosabb hosztnév-felismeréshez. A naplók lekérése az adb logcat használatával, a „TC-Log” címkével történik.</string>
     <string name="msg_sure">Biztos benne?</string>
     <string name="msg_started">Nyomkövetők keresése…</string>

@@ -166,7 +166,6 @@
     <string name="setting_vpn_key_rotate_now">Renovar VPN provedor elemento agora</string>
     <string name="setting_pcap_record_size">PCAP rexistro tamaño: %s Elemento</string>
     <string name="setting_pcap_file_size">PCAP elemento. ficheiro tamaño: %s Elemento</string>
-    <string name="setting_watchdog">Vixilancia: cada %s elemento</string>
     <!-- Secure DNS (DoH) -->
     <string name="summary_doh_enabled">Máis información sobre DNS seguro activado.</string>
     <string name="warning_beta">Elemento elemento. Pode non elemento como elemento.</string>
@@ -291,7 +290,6 @@
     <string name="msg_wg_identity_renewed">%1$sWireGuard elemento elemento.%1$s perfís en esta dispositivo.</string>
     <string name="msg_wg_provider_rejected">%1$s elemento a establecer elemento esta dispositivo: %2$s</string>
     <string name="msg_wg_recovery_failed">WireGuard recuperación fallou.</string>
-    <string name="summary_watchdog">Comprobación periódica de que TrackerControl está activo (poña cero para deshabilitar). Isto pode causar consumo extra de batería.</string>
     <string name="summary_log_logcat">Máis información sobre Rexistro elemento.\'Elemento\'.</string>
     <string name="msg_sure">¿Está seguro?</string>
     <string name="msg_started">Elemento para rastreadores…</string>

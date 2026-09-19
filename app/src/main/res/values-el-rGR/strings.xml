@@ -167,7 +167,6 @@
     <string name="setting_vpn_key_rotate_now">Άμεση περιστροφή κλειδιών παρόχου VPN</string>
     <string name="setting_pcap_record_size">PCAP μέγεθος εγγραφής: %s B</string>
     <string name="setting_pcap_file_size">PCAP μέγιστο μέγεθος αρχείου: %s MB</string>
-    <string name="setting_watchdog">Παρακολούθηση: κάθε %s λεπτά</string>
     <!-- Secure DNS (DoH) -->
     <string name="setting_doh_enabled">Ασφαλές DNS (DoH)</string>
     <string name="summary_doh_enabled">Κρυπτογράφηση ερωτημάτων DNS με DNS-over-HTTPS. Διακόπτεται αυτόματα όταν είναι ενεργό το WireGuard, επειδή τα ερωτήματα χρησιμοποιούν αντί γι’ αυτό τη σήραγγα WireGuard.</string>
@@ -294,7 +293,6 @@
     <string name="msg_wg_identity_renewed">Το %1$s δεν αναγνώριζε πλέον αυτή τη συσκευή, επομένως το TrackerControl την καταχώρισε ξανά και ενημέρωσε τα προφίλ %1$s σε αυτή τη συσκευή.</string>
     <string name="msg_wg_provider_rejected">Το %1$s αρνήθηκε να ρυθμίσει αυτή τη συσκευή: %2$s</string>
     <string name="msg_wg_recovery_failed">Το WireGuard σταμάτησε να ανταποκρίνεται. Το TrackerControl προσπαθεί να επανασυνδεθεί και η πρόσβαση στο διαδίκτυο μπορεί να παραμείνει αποκλεισμένη μέχρι να αποκατασταθεί το WireGuard.</string>
-    <string name="summary_watchdog">Ελέγχετε περιοδικά αν εκτελείται ακόμα το TrackerControl (εισάγετε το μηδέν για να απενεργοποιήσετε αυτή την επιλογή). Αυτό μπορεί να οδηγήσει σε πρόσθετη κατανάλωση μπαταρίας.</string>
     <string name="summary_log_logcat">Λειτουργία έρευνας: οι εντοπισμένοι ιχνηλάτες καταγράφονται στο ADB και η εξαγωγή SNI είναι ενεργοποιημένη για καλύτερο εντοπισμό ονομάτων κεντρικών υπολογιστών. Ανακτήστε τα αρχεία καταγραφής με adb logcat χρησιμοποιώντας την ετικέτα \'TC-Log\'.</string>
     <string name="msg_sure">Είστε σίγουρος;</string>
     <string name="msg_started">Αναζήτηση ιχνηλατών…</string>

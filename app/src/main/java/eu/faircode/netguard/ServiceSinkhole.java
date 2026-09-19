@@ -412,7 +412,7 @@ public class ServiceSinkhole extends VpnService {
     }
 
     public enum Command {
-        run, start, reload, stop, stats, set, householding, watchdog, doh_error
+        run, start, reload, stop, stats, set, householding, doh_error
     }
 
     private static volatile PowerManager.WakeLock wlInstance = null;
@@ -443,7 +443,6 @@ public class ServiceSinkhole extends VpnService {
     }
 
     private static final String ACTION_HOUSE_HOLDING = "eu.faircode.netguard.HOUSE_HOLDING";
-    private static final String ACTION_WATCHDOG = "eu.faircode.netguard.WATCHDOG";
 
     private native long jni_init(int sdk);
 
@@ -691,32 +690,6 @@ public class ServiceSinkhole extends VpnService {
                 }
             }
 
-            // Watchdog
-            if (cmd == Command.start || cmd == Command.reload || cmd == Command.stop) {
-                Intent watchdogIntent = new Intent(ServiceSinkhole.this, ServiceSinkhole.class);
-                watchdogIntent.setAction(ACTION_WATCHDOG);
-                PendingIntent pi;
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-                    pi = PendingIntentCompat.getForegroundService(ServiceSinkhole.this, 1, watchdogIntent,
-                            PendingIntent.FLAG_UPDATE_CURRENT);
-                else
-                    pi = PendingIntentCompat.getService(ServiceSinkhole.this, 1, watchdogIntent,
-                            PendingIntent.FLAG_UPDATE_CURRENT);
-
-                AlarmManager am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-                am.cancel(pi);
-
-                if (cmd != Command.stop) {
-                    int watchdog = getIntPref(prefs, "watchdog", 0);
-                    if (watchdog > 0) {
-                        Log.i(TAG, "Watchdog " + watchdog + " minutes");
-                        am.setInexactRepeating(AlarmManager.ELAPSED_REALTIME,
-                                SystemClock.elapsedRealtime() + watchdog * 60 * 1000L,
-                                watchdog * 60 * 1000L, pi);
-                    }
-                }
-            }
-
             try {
                 switch (cmd) {
                     case run:
@@ -756,10 +729,6 @@ public class ServiceSinkhole extends VpnService {
 
                     case householding:
                         householding(intent);
-                        break;
-
-                    case watchdog:
-                        watchdog(intent);
                         break;
 
                     case doh_error:
@@ -1013,16 +982,6 @@ public class ServiceSinkhole extends VpnService {
                     && !Util.isFDroidInstall()
                     && prefs.getBoolean("update_check", true))
                 checkUpdate();
-        }
-
-        private void watchdog(Intent intent) {
-            if (vpn == null && !temporarilyStopped) {
-                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ServiceSinkhole.this);
-                if (prefs.getBoolean("enabled", false)) {
-                    Log.e(TAG, "Service was killed");
-                    start();
-                }
-            }
         }
 
         private void checkUpdate() {
@@ -4125,9 +4084,6 @@ public class ServiceSinkhole extends VpnService {
 
         if (ACTION_HOUSE_HOLDING.equals(intent.getAction()))
             intent.putExtra(EXTRA_COMMAND, Command.householding);
-        if (ACTION_WATCHDOG.equals(intent.getAction()))
-            intent.putExtra(EXTRA_COMMAND, Command.watchdog);
-
         Command cmd = (Command) intent.getSerializableExtra(EXTRA_COMMAND);
         if (cmd == null)
             intent.putExtra(EXTRA_COMMAND, enabled ? Command.start : Command.stop);

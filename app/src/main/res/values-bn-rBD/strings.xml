@@ -164,7 +164,6 @@
     <string name="setting_vpn_key_rotate_now">এখনই VPN প্রদানকারীর কী ঘোরান</string>
     <string name="setting_pcap_record_size">PCAP রেকর্ডের আকার: %s B</string>
     <string name="setting_pcap_file_size">PCAP সর্বোচ্চ ফাইলের আকার: %s MB</string>
-    <string name="setting_watchdog">ওয়াচডগ: প্রতি %s মিনিটে</string>
     <!-- Secure DNS (DoH) -->
     <string name="setting_doh_enabled">সুরক্ষিত DNS (DoH)</string>
     <string name="summary_doh_enabled">DNS-over-HTTPS ব্যবহার করে DNS অনুরোধ এনক্রিপ্ট করুন। WireGuard সক্রিয় থাকলে স্বয়ংক্রিয়ভাবে বিরতি দেওয়া হয়, কারণ তখন ওই অনুরোধগুলি WireGuard টানেল ব্যবহার করে।</string>
@@ -292,7 +291,6 @@
     <string name="msg_wg_identity_renewed">%1$s আর এই ডিভাইসটিকে চিনতে পারেনি, তাই TrackerControl একটি নতুন ডিভাইস নিবন্ধন করে এই ডিভাইসে থাকা %1$s প্রোফাইলগুলি আপডেট করেছে।</string>
     <string name="msg_wg_provider_rejected">%1$s এই ডিভাইস সেট আপ করতে অস্বীকার করেছে: %2$s</string>
     <string name="msg_wg_recovery_failed">WireGuard সাড়া দেওয়া বন্ধ করেছে। TrackerControl পুনরায় সংযোগের চেষ্টা করছে, এবং WireGuard ঠিক না হওয়া পর্যন্ত ইন্টারনেট অ্যাক্সেস ব্লক থাকতে পারে।</string>
-    <string name="summary_watchdog">TrackerControl এখনও চলছে কি না পর্যায়ক্রমে পরীক্ষা করুন (এই বিকল্প বন্ধ করতে শূন্য লিখুন)। এতে অতিরিক্ত ব্যাটারি ব্যবহার হতে পারে।</string>
     <string name="summary_log_logcat">গবেষণা মোড: শনাক্ত ট্র্যাকারগুলি ADB-তে লগ হয় এবং উন্নত হোস্টনাম শনাক্তকরণের জন্য SNI extraction চালু থাকে। \'TC-Log\' ট্যাগ ব্যবহার করে adb logcat দিয়ে লগ নিন।</string>
     <string name="msg_sure">আপনি কি নিশ্চিত?</string>
     <string name="msg_started">ট্র্যাকার খোঁজা হচ্ছে…</string>

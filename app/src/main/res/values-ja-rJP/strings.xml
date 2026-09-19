@@ -164,7 +164,6 @@
     <string name="setting_vpn_key_rotate_now">VPN プロバイダーのキーを今すぐローテーション</string>
     <string name="setting_pcap_record_size">PCAP レコードサイズ: %s B</string>
     <string name="setting_pcap_file_size">PCAP 最大ファイルサイズ: %s MB</string>
-    <string name="setting_watchdog">監視タイマー: %s分毎</string>
     <!-- Secure DNS (DoH) -->
     <string name="setting_doh_enabled">セキュア DNS（DoH）</string>
     <string name="summary_doh_enabled">DNS-over-HTTPS で DNS クエリを暗号化します。WireGuard が有効なときは、クエリがそのトンネルを使用するため自動的に一時停止します。</string>
@@ -289,7 +288,6 @@
     <string name="msg_wg_identity_renewed">%1$s はこの端末を認識しなくなったため、TrackerControl は新しい端末として登録し、この端末の %1$s プロファイルを更新しました。</string>
     <string name="msg_wg_provider_rejected">%1$s はこの端末の設定を拒否しました: %2$s</string>
     <string name="msg_wg_recovery_failed">WireGuard が応答しなくなりました。TrackerControl は再接続を試みています。WireGuard が復旧するまで、インターネットアクセスはブロックされたままになる可能性があります。</string>
-    <string name="summary_watchdog">TrackerControl が動作しているか定期的にチェックします(このオプションを無効にするには0を入力してください)。バッテリー使用量が増えることがあります。</string>
     <string name="summary_log_logcat">研究モード: 識別されたトラッカーを ADB に記録し、ホスト名の検出精度を高めるため SNI 抽出を有効にします。adb logcat でタグ \'TC-Log\' を使用してログを取得してください。</string>
     <string name="msg_sure">よろしいですか？</string>
     <string name="msg_started">トラッカーを検索中…</string>

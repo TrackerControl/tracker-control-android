@@ -175,7 +175,6 @@
     <string name="setting_vpn_key_rotate_now">Nyní otočit klíče poskytovatele VPN</string>
     <string name="setting_pcap_record_size">Velikost záznamu PCAP: %s B</string>
     <string name="setting_pcap_file_size">Max. velikost souboru PCAP: %s MB</string>
-    <string name="setting_watchdog">Hlídač: každých %s minut</string>
     <!-- Secure DNS (DoH) -->
     <string name="setting_doh_enabled">Zabezpečený DNS (DoH)</string>
     <string name="summary_doh_enabled">Šifrovat dotazy DNS pomocí DNS-over-HTTPS. Při aktivním WireGuardu se automaticky pozastaví, protože tyto dotazy místo toho používají tunel WireGuard.</string>
@@ -306,7 +305,6 @@
     <string name="msg_wg_identity_renewed">%1$s toto zařízení již neznal, proto TrackerControl zaregistroval nové a aktualizoval profily %1$s v tomto zařízení.</string>
     <string name="msg_wg_provider_rejected">%1$s odmítl nastavit toto zařízení: %2$s</string>
     <string name="msg_wg_recovery_failed">WireGuard přestal odpovídat. TrackerControl se pokouší znovu připojit a přístup k internetu může zůstat blokovaný, dokud se WireGuard neobnoví.</string>
-    <string name="summary_watchdog">Pravidelně kontrolovat, zda TrackerControl stále běží (zadejte nulu pro vypnutí). Toto nastavení může mít vliv na spotřebu.</string>
     <string name="summary_log_logcat">Výzkumný režim: identifikované trackery se zapisují do ADB a je povolena extrakce SNI pro přesnější zjišťování názvů hostitelů. Pro načtení protokolů použijte adb logcat se značkou \'TC-Log\'.</string>
     <string name="msg_sure">Jste si jistí?</string>
     <string name="msg_started">Vyhledávání trackerů…</string>
