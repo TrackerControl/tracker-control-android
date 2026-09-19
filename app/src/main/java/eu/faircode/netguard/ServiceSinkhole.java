@@ -200,10 +200,11 @@ public class ServiceSinkhole extends VpnService {
     private volatile Thread tunnelThread = null;
     private ServiceSinkhole.Builder last_builder = null;
     private volatile ParcelFileDescriptor vpn = null;
+    // Whether a tunnel is up, readable without the service: a killed process
+    // takes the flag down with it, which is precisely what VpnRestartWorker
+    // needs to tell a dead VPN from a live one.
+    private static volatile boolean vpnEstablished = false;
     private boolean temporarilyStopped = false;
-    // Whether this service instance already handed a restart to the alarm, so
-    // its teardown does not advance the ladder a second time.
-    private boolean restartArmed = false;
 
     private static long last_hosts_modified = 0;
     public static Map<String, Boolean> mapHostsBlocked = new ConcurrentHashMap<>();
@@ -395,8 +396,7 @@ public class ServiceSinkhole extends VpnService {
     public static final String EXTRA_INTERACTIVE = "Interactive";
     public static final String EXTRA_TEMPORARY = "Temporary";
     private static final String EXTRA_USER_INITIATED = "UserInitiated";
-    private static final String EXTRA_RESTART_ATTEMPT = "RestartAttempt";
-    private static final String PREF_RESTART_ATTEMPT = "restart_attempt";
+    private static final String PREF_STOPPED_CLEANLY = "vpn_stopped_cleanly";
 
     private static final int MSG_STATS_START = 1;
     private static final int MSG_STATS_STOP = 2;
@@ -441,17 +441,6 @@ public class ServiceSinkhole extends VpnService {
 
     private static final String ACTION_HOUSE_HOLDING = "eu.faircode.netguard.HOUSE_HOLDING";
     private static final String ACTION_WATCHDOG = "eu.faircode.netguard.WATCHDOG";
-    private static final String ACTION_RESTART = "eu.faircode.netguard.RESTART";
-
-    private static final int REQUEST_CODE_WATCHDOG = 1;
-    private static final int REQUEST_CODE_RESTART = 2;
-
-    // The watchdog only has to catch a service that died without being able to
-    // say so; a teardown the service does see arms the restart ladder instead.
-    // Half an hour of latency is therefore acceptable, and keeps this off the
-    // battery budget: the alarm is inexact and non-wakeup, so it fires when the
-    // device is already awake rather than waking it.
-    private static final long WATCHDOG_DEFAULT_PERIOD_MS = 30 * 60_000L;
 
     private native long jni_init(int sdk);
 
@@ -701,23 +690,27 @@ public class ServiceSinkhole extends VpnService {
 
             // Watchdog
             if (cmd == Command.start || cmd == Command.reload || cmd == Command.stop) {
-                PendingIntent pi = getWatchdogIntent();
+                Intent watchdogIntent = new Intent(ServiceSinkhole.this, ServiceSinkhole.class);
+                watchdogIntent.setAction(ACTION_WATCHDOG);
+                PendingIntent pi;
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+                    pi = PendingIntentCompat.getForegroundService(ServiceSinkhole.this, 1, watchdogIntent,
+                            PendingIntent.FLAG_UPDATE_CURRENT);
+                else
+                    pi = PendingIntentCompat.getService(ServiceSinkhole.this, 1, watchdogIntent,
+                            PendingIntent.FLAG_UPDATE_CURRENT);
 
                 AlarmManager am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
                 am.cancel(pi);
 
                 if (cmd != Command.stop) {
-                    // A watchdog period the user set explicitly wins; otherwise
-                    // the default period applies, because the case this catches
-                    // - the process being killed without onDestroy ever running
-                    // - leaves nothing else in the app to notice. See #954.
                     int watchdog = getIntPref(prefs, "watchdog", 0);
-                    long periodMs = watchdog > 0
-                            ? watchdog * 60 * 1000L
-                            : WATCHDOG_DEFAULT_PERIOD_MS;
-                    Log.i(TAG, "Watchdog " + periodMs / 60_000L + " minutes");
-                    am.setInexactRepeating(AlarmManager.ELAPSED_REALTIME,
-                            SystemClock.elapsedRealtime() + periodMs, periodMs, pi);
+                    if (watchdog > 0) {
+                        Log.i(TAG, "Watchdog " + watchdog + " minutes");
+                        am.setInexactRepeating(AlarmManager.ELAPSED_REALTIME,
+                                SystemClock.elapsedRealtime() + watchdog * 60 * 1000L,
+                                watchdog * 60 * 1000L, pi);
+                    }
                 }
             }
 
@@ -824,12 +817,6 @@ public class ServiceSinkhole extends VpnService {
                     }
                 } else
                     showErrorNotification(ex.toString());
-            } finally {
-                // Protection that is enabled but not running is a state nothing
-                // in this process will notice once the service is gone, so it
-                // gets an alarm that outlives it. A command that leaves the
-                // tunnel up, or that turns protection off, retires the alarm.
-                updateRestartAlarm(intent.getIntExtra(EXTRA_RESTART_ATTEMPT, -1));
             }
         }
 
@@ -944,6 +931,11 @@ public class ServiceSinkhole extends VpnService {
                 stopNative(vpn);
                 stopVPN(vpn);
                 vpn = null;
+                vpnEstablished = false;
+                // A teardown the service performs itself, so it is not one
+                // VpnRestartWorker should undo, whether it is a switch-off or
+                // the pause for a phone call.
+                markStoppedCleanly(true);
                 // Final teardown — service is actually stopping (user toggled
                 // VPN off, OS is killing us, etc.) so WG should not survive.
                 net.kollnig.missioncontrol.wg.WgEgress.INSTANCE.stop(
@@ -1800,6 +1792,8 @@ public class ServiceSinkhole extends VpnService {
                 return null;
             }
             updateUnderlyingNetworks();
+            vpnEstablished = true;
+            markStoppedCleanly(false);
             return pfd;
         } catch (SecurityException ex) {
             throw ex;
@@ -4128,7 +4122,7 @@ public class ServiceSinkhole extends VpnService {
 
         if (ACTION_HOUSE_HOLDING.equals(intent.getAction()))
             intent.putExtra(EXTRA_COMMAND, Command.householding);
-        if (ACTION_WATCHDOG.equals(intent.getAction()) || ACTION_RESTART.equals(intent.getAction()))
+        if (ACTION_WATCHDOG.equals(intent.getAction()))
             intent.putExtra(EXTRA_COMMAND, Command.watchdog);
 
         Command cmd = (Command) intent.getSerializableExtra(EXTRA_COMMAND);
@@ -4165,88 +4159,6 @@ public class ServiceSinkhole extends VpnService {
         LocalBroadcastManager.getInstance(ServiceSinkhole.this).sendBroadcast(ruleset);
     }
 
-    private PendingIntent getWatchdogIntent() {
-        Intent intent = new Intent(this, ServiceSinkhole.class);
-        intent.setAction(ACTION_WATCHDOG);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-            return PendingIntentCompat.getForegroundService(this, REQUEST_CODE_WATCHDOG, intent,
-                    PendingIntent.FLAG_UPDATE_CURRENT);
-        return PendingIntentCompat.getService(this, REQUEST_CODE_WATCHDOG, intent,
-                PendingIntent.FLAG_UPDATE_CURRENT);
-    }
-
-    // Extras are not part of PendingIntent equality, so one request code covers
-    // scheduling and cancelling whatever attempt an earlier alarm carried.
-    private PendingIntent getRestartIntent(int attempt) {
-        Intent intent = new Intent(this, ServiceSinkhole.class);
-        intent.setAction(ACTION_RESTART);
-        intent.putExtra(EXTRA_RESTART_ATTEMPT, attempt);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-            return PendingIntentCompat.getForegroundService(this, REQUEST_CODE_RESTART, intent,
-                    PendingIntent.FLAG_UPDATE_CURRENT);
-        return PendingIntentCompat.getService(this, REQUEST_CODE_RESTART, intent,
-                PendingIntent.FLAG_UPDATE_CURRENT);
-    }
-
-    /**
-     * Arms or retires the restart alarm for the current state.
-     *
-     * @param attempt the rung the alarm that led here carried, or -1 to take
-     *                the rung from {@code PREF_RESTART_ATTEMPT}
-     */
-    private void updateRestartAlarm(int attempt) {
-        updateRestartAlarm(attempt, vpn != null);
-    }
-
-    /**
-     * @param vpnRunning normally the live descriptor, but false at revoke time,
-     *                   where the tunnel is gone before the field is cleared
-     */
-    private void updateRestartAlarm(int attempt, boolean vpnRunning) {
-        try {
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-            if (!VpnRestartPolicy.shouldArm(prefs.getBoolean("enabled", false), vpnRunning,
-                    temporarilyStopped)) {
-                cancelRestart();
-                return;
-            }
-
-            if (attempt < 0)
-                attempt = prefs.getInt(PREF_RESTART_ATTEMPT, -1);
-            scheduleRestart(attempt < 0 ? 0 : VpnRestartPolicy.nextAttempt(attempt));
-        } catch (Throwable ex) {
-            Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
-        }
-    }
-
-    private void scheduleRestart(int attempt) {
-        long delayMs = VpnRestartPolicy.delayMs(attempt);
-        AlarmManager am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        PendingIntent pi = getRestartIntent(attempt);
-        // Doze defers every other kind of alarm for as long as it lasts, which
-        // is exactly the window this alarm exists for, so it has to be one of
-        // the few the idle window lets through.
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-            am.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP,
-                    System.currentTimeMillis() + delayMs, pi);
-        else
-            am.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + delayMs, pi);
-        // A start the system refuses never reaches the command handler, so the
-        // rung has to survive the process for the ladder to advance at all.
-        PreferenceManager.getDefaultSharedPreferences(this).edit()
-                .putInt(PREF_RESTART_ATTEMPT, attempt).apply();
-        restartArmed = true;
-        Log.i(TAG, "Scheduled restart attempt=" + attempt + " in " + delayMs + " ms");
-    }
-
-    private void cancelRestart() {
-        AlarmManager am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        am.cancel(getRestartIntent(0));
-        PreferenceManager.getDefaultSharedPreferences(this).edit()
-                .remove(PREF_RESTART_ATTEMPT).apply();
-        restartArmed = false;
-    }
-
     @Override
     public void onRevoke() {
         Log.i(TAG, "Revoke");
@@ -4281,12 +4193,12 @@ public class ServiceSinkhole extends VpnService {
         prefs.edit().putBoolean("enabled", enabled).apply();
         Log.i(TAG, "Revoke always-on=" + alwaysOn + " enabled=" + enabled);
 
-        // A revoke stops the service, and with it every in-process recovery
-        // path, so the retry has to be handed to an alarm before that happens.
-        // The notification below promises a reconnection; this is what keeps
-        // that promise.
-        if (enabled)
-            updateRestartAlarm(-1, false);
+        // A revoke is the system telling us the tunnel is gone on purpose, so
+        // it is recorded like any other deliberate teardown and the restart
+        // worker leaves it alone. Coming back from one is the OS's job, through
+        // the always-on designation it either kept or cleared above.
+        vpnEstablished = false;
+        markStoppedCleanly(true);
 
         // Feedback: the tunnel really did drop, so inform the user (mirrors
         // Android's own "VPN disconnected" notice). This does not disable TC.
@@ -4294,6 +4206,25 @@ public class ServiceSinkhole extends VpnService {
         WidgetMain.updateWidgets(this);
 
         super.onRevoke();
+    }
+
+    static boolean isVpnEstablished() {
+        return vpnEstablished;
+    }
+
+    /**
+     * Whether the last teardown was one the service carried out itself. A kill
+     * records nothing, so the flag still reads false afterwards, and that is
+     * what {@link VpnRestartWorker} restarts on.
+     */
+    static boolean wasStoppedCleanly(Context context) {
+        return PreferenceManager.getDefaultSharedPreferences(context)
+                .getBoolean(PREF_STOPPED_CLEANLY, false);
+    }
+
+    private void markStoppedCleanly(boolean stopped) {
+        PreferenceManager.getDefaultSharedPreferences(this).edit()
+                .putBoolean(PREF_STOPPED_CLEANLY, stopped).apply();
     }
 
     static boolean resolveEnabledAfterRevoke(boolean enabled, Boolean alwaysOn) {
@@ -4389,6 +4320,10 @@ public class ServiceSinkhole extends VpnService {
                     stopNative(vpn);
                     stopVPN(vpn);
                     vpn = null;
+                    // Deliberately not marked as a clean stop: a service the
+                    // system takes down is exactly what the restart worker is
+                    // for, and a stop the service meant has already marked it.
+                    vpnEstablished = false;
                     unprepare();
                 }
             } catch (Throwable ex) {
@@ -4421,15 +4356,6 @@ public class ServiceSinkhole extends VpnService {
         }
 
         executor.shutdownNow();
-
-        // The service is going away while every recovery path it owns goes with
-        // it. If the user still wants protection - a system teardown, not a
-        // switch-off - the alarm is what brings the VPN back. See #954. A
-        // temporary stop no longer suppresses it either: the call-state
-        // listener that would have undone the stop is going away too.
-        temporarilyStopped = false;
-        if (!restartArmed)
-            updateRestartAlarm(-1);
 
         super.onDestroy();
     }
