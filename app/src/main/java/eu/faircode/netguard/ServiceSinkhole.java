@@ -4822,6 +4822,8 @@ public class ServiceSinkhole extends VpnService {
         private int mtu;
         private boolean metered = true;
         private List<String> listAddress = new ArrayList<>();
+        private List<String> listSearchDomain = new ArrayList<>();
+        private List<String> listExcludedRoute = new ArrayList<>();
         private List<String> listRoute = new ArrayList<>();
         private List<InetAddress> listDns = new ArrayList<>();
         private List<String> listDisallowed = new ArrayList<>();
@@ -4882,6 +4884,32 @@ public class ServiceSinkhole extends VpnService {
         }
 
         /**
+         * Recorded for the comparison below (#763): a changed search domain only
+         * reaches apps through {@link VpnService.Builder#establish()}.
+         */
+        @Override
+        public Builder addSearchDomain(String domain) {
+            listSearchDomain.add(domain);
+            super.addSearchDomain(domain);
+            return this;
+        }
+
+        /**
+         * Recorded for the comparison below (#763). The ePDG exclusions are
+         * re-resolved on every rebuild behind a short timeout, so a rebuild that
+         * resolves them after an earlier one timed out must replace the live
+         * interface — otherwise Wi-Fi calling stays broken until some unrelated
+         * change forces a real replacement.
+         */
+        @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
+        @Override
+        public Builder excludeRoute(IpPrefix prefix) {
+            listExcludedRoute.add(prefix.toString());
+            super.excludeRoute(prefix);
+            return this;
+        }
+
+        /**
          * Excludes apps, such as system apps if disabled, as well as deactivated apps
          * by user
          *
@@ -4898,16 +4926,21 @@ public class ServiceSinkhole extends VpnService {
 
         @Override
         public boolean equals(Object obj) {
-            Builder other = (Builder) obj;
-
-            if (other == null)
+            if (!(obj instanceof Builder))
                 return false;
+
+            Builder other = (Builder) obj;
 
             if (!Objects.equals(this.activeNetwork, other.activeNetwork))
                 return false;
 
-            if (this.networkInfo == null || other.networkInfo == null ||
-                    this.networkInfo.getType() != other.networkInfo.getType())
+            // Two offline builders are equal: treating both-null as different
+            // forced a needless interface replacement on every reload while
+            // there was no active network at all.
+            if (this.networkInfo == null || other.networkInfo == null) {
+                if (this.networkInfo != other.networkInfo)
+                    return false;
+            } else if (this.networkInfo.getType() != other.networkInfo.getType())
                 return false;
 
             if (this.mtu != other.mtu)
@@ -4928,6 +4961,12 @@ public class ServiceSinkhole extends VpnService {
             if (this.listDisallowed.size() != other.listDisallowed.size())
                 return false;
 
+            if (this.listSearchDomain.size() != other.listSearchDomain.size())
+                return false;
+
+            if (this.listExcludedRoute.size() != other.listExcludedRoute.size())
+                return false;
+
             for (String address : this.listAddress)
                 if (!other.listAddress.contains(address))
                     return false;
@@ -4942,6 +4981,14 @@ public class ServiceSinkhole extends VpnService {
 
             for (String pkg : this.listDisallowed)
                 if (!other.listDisallowed.contains(pkg))
+                    return false;
+
+            for (String domain : this.listSearchDomain)
+                if (!other.listSearchDomain.contains(domain))
+                    return false;
+
+            for (String route : this.listExcludedRoute)
+                if (!other.listExcludedRoute.contains(route))
                     return false;
 
             return true;
