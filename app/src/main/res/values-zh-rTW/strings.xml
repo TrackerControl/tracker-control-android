@@ -293,7 +293,6 @@
     <string name="msg_started">正在查詢追蹤器…</string>
     <string name="msg_waiting">等待事件</string>
     <string name="msg_disabled">使用上面的開關來啟用TrackerControl</string>
-    <string name="msg_revoked">TrackerControl已被停用，可能是透過使用另一個基於VPN的應用程式</string>
     <string name="msg_installed">遇到了 %1$s 的問題嗎？</string>
     <string name="msg_installed_description">允許應用程式聯絡公司</string>
     <!-- Keep as a string: call-site/API migration and multi-count grammar are intentionally separate. -->

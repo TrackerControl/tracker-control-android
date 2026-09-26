@@ -300,7 +300,6 @@
     <string name="msg_started">در حال جست‌وجوی ردیاب‌ها…</string>
     <string name="msg_waiting">در انتظار رویداد</string>
     <string name="msg_disabled">برای فعال کردن TrackerControl از کلید بالا استفاده کنید.</string>
-    <string name="msg_revoked">اتصال TrackerControl قطع شد، احتمالاً توسط برنامهٔ VPN دیگری یا سیستم. هر زمان ممکن باشد به‌طور خودکار دوباره متصل می‌شود.</string>
     <string name="msg_installed">مشکلی با %1$s دارید؟</string>
     <string name="msg_installed_description">اجازه دهید برنامه با شرکت‌ها تماس بگیرد</string>
     <!-- Keep as a string: call-site/API migration and multi-count grammar are intentionally separate. -->

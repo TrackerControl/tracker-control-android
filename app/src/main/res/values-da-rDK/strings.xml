@@ -294,7 +294,6 @@
     <string name="msg_started">Leder efter trackere…</string>
     <string name="msg_waiting">Venter på hændelse</string>
     <string name="msg_disabled">Brug knappen ovenfor for at aktivere TrackerControl.</string>
-    <string name="msg_revoked">TrackerControl blev afbrudt, sandsynligvis af en anden VPN-app eller systemet. Den opretter automatisk forbindelse igen, når det er muligt.</string>
     <string name="msg_installed">Problemer med %1$s?</string>
     <string name="msg_installed_description">Tillad appen at kontakte virksomheder</string>
     <!-- Keep as a string: call-site/API migration and multi-count grammar are intentionally separate. -->

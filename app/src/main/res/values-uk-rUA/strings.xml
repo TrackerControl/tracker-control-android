@@ -320,7 +320,6 @@
     <string name="msg_started">Шукаю трекери…</string>
     <string name="msg_waiting">Очікування події</string>
     <string name="msg_disabled">Використайте перемикач вище, щоб увімкнути TrackerControl.</string>
-    <string name="msg_revoked">TrackerControl було вимкнено, ймовірно, за допомогою іншого додатка на основі VPN</string>
     <string name="msg_installed">Проблеми з %1$s?</string>
     <string name="msg_installed_description">Дозволити застосунку звертатися до компаній</string>
     <!-- Keep as a string: call-site/API migration and multi-count grammar are intentionally separate. -->

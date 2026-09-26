@@ -296,7 +296,6 @@
     <string name="msg_started">Elementua rentzat jarraitzaileak…</string>
     <string name="msg_waiting">Gertaeraren zain</string>
     <string name="msg_disabled">Erabili goiko kontrola TrackerControl aktibatzeko.</string>
-    <string name="msg_revoked">TrackerControl desaktibatu egin da, ziur aski VPNan oinarritutako beste aplikazioren bat erabiltzeagatik</string>
     <string name="msg_installed">Arazoak %1$s(r)ekin?</string>
     <string name="msg_installed_description">Baimendu aplikazioa konpainiekin kontaktatzea</string>
     <!-- Keep as a string: call-site/API migration and multi-count grammar are intentionally separate. -->
