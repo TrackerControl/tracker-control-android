@@ -296,7 +296,6 @@
     <string name="msg_started">டிராக்கர்களைத் தேடுகிறது…</string>
     <string name="msg_waiting">நிகழ்வுக்காகக் காத்திருக்கிறது</string>
     <string name="msg_disabled">TrackerControl-ஐ இயக்க மேலுள்ள சுவிட்சைப் பயன்படுத்தவும்.</string>
-    <string name="msg_revoked">TrackerControl துண்டிக்கப்பட்டது; இது வேறொரு VPN பயன்பாடு அல்லது கணினியால் ஏற்பட்டிருக்கலாம். சாத்தியமானபோது தானாக மீண்டும் இணையும்.</string>
     <string name="msg_installed">%1$s-இல் சிக்கல்களா?</string>
     <string name="msg_installed_description">பயன்பாடு நிறுவனங்களைத் தொடர்புகொள்ள அனுமதி</string>
     <!-- Keep as a string: call-site/API migration and multi-count grammar are intentionally separate. -->

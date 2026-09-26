@@ -303,7 +303,6 @@
     <string name="msg_started">Se caută urmăritori…</string>
     <string name="msg_waiting">Se așteaptă un eveniment</string>
     <string name="msg_disabled">Folosește comutatorul de mai sus pentru a activa TrackerControl.</string>
-    <string name="msg_revoked">TrackerControl a fost deconectat, probabil de o altă aplicație VPN sau de sistem. Se va reconecta automat când este posibil.</string>
     <string name="msg_installed">Probleme cu %1$s?</string>
     <string name="msg_installed_description">Permite aplicației să contacteze companii</string>
     <!-- Keep as a string: call-site/API migration and multi-count grammar are intentionally separate. -->
