@@ -290,7 +290,6 @@
     <string name="msg_started">트래커 찾는 중…</string>
     <string name="msg_waiting">이벤트 대기 중</string>
     <string name="msg_disabled">위 스위치를 사용해 TrackerControl을 활성화하세요.</string>
-    <string name="msg_revoked">TrackerControl의 연결이 끊겼습니다. 다른 VPN 앱이나 시스템 때문일 가능성이 있습니다. 가능하면 자동으로 다시 연결됩니다.</string>
     <string name="msg_installed">%1$s에 문제가 있나요?</string>
     <string name="msg_installed_description">앱이 회사에 연결하도록 허용</string>
     <!-- Keep as a string: call-site/API migration and multi-count grammar are intentionally separate. -->

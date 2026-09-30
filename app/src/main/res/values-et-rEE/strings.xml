@@ -299,7 +299,6 @@
     <string name="msg_started">Otsin jälitajaid…</string>
     <string name="msg_waiting">Sündmuse ootamine</string>
     <string name="msg_disabled">TrackerControli sisselülitamiseks kasuta ülal asuvat liugurlülitit.</string>
-    <string name="msg_revoked">TrackerControl on lülitatud välja, ilmselt mõne teise VPN-põhise rakenduse tõttu</string>
     <string name="msg_installed">Probleemid rakendusega %1$s?</string>
     <string name="msg_installed_description">Luba rakendusel ettevõtetega ühendust võtta</string>
     <!-- Keep as a string: call-site/API migration and multi-count grammar are intentionally separate. -->

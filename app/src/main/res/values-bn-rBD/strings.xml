@@ -296,7 +296,6 @@
     <string name="msg_started">ট্র্যাকার খোঁজা হচ্ছে…</string>
     <string name="msg_waiting">পুনরায় চেষ্টার অপেক্ষায়</string>
     <string name="msg_disabled">TrackerControl চালু করতে উপরের সুইচটি ব্যবহার করুন।</string>
-    <string name="msg_revoked">TrackerControl সংযোগ বিচ্ছিন্ন হয়েছে, সম্ভবত অন্য কোনও VPN অ্যাপ বা সিস্টেমের কারণে। সম্ভব হলে এটি স্বয়ংক্রিয়ভাবে আবার সংযুক্ত হবে।</string>
     <string name="msg_installed">%1$s-এ সমস্যা হচ্ছে?</string>
     <string name="msg_installed_description">অ্যাপকে কোম্পানিগুলির সঙ্গে যোগাযোগ করতে অনুমতি দিন</string>
     <!-- Keep as a string: call-site/API migration and multi-count grammar are intentionally separate. -->
