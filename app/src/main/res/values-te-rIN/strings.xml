@@ -299,7 +299,6 @@
     <string name="msg_started">ట్రాకర్‌ల కోసం చూస్తోంది…</string>
     <string name="msg_waiting">ఈవెంట్ కోసం వేచి ఉంది</string>
     <string name="msg_disabled">TrackerControlను ప్రారంభించడానికి పై స్విచ్‌ను ఉపయోగించండి.</string>
-    <string name="msg_revoked">TrackerControl డిస్‌కనెక్ట్ చేయబడింది; బహుశా మరో VPN యాప్ లేదా సిస్టమ్ కారణంగా. వీలైనప్పుడు ఇది స్వయంచాలకంగా మళ్లీ కనెక్ట్ అవుతుంది.</string>
     <string name="msg_installed">%1$sతో సమస్యలున్నాయా?</string>
     <string name="msg_installed_description">యాప్‌ను కంపెనీలను సంప్రదించడానికి అనుమతించు</string>
     <!-- Keep as a string: call-site/API migration and multi-count grammar are intentionally separate. -->
