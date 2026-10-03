@@ -309,6 +309,7 @@
     <string name="msg_started">正在查找追踪器…</string>
     <string name="msg_waiting">等待事件</string>
     <string name="msg_disabled">使用上面的开关来启用TrackerControl</string>
+    <string name="msg_revoked">TrackerControl 被断开连接，可能是另一个VPN 应用程序或系统所为。点击重新连接。</string>
     <string name="msg_installed">遇到了 %1$s 的问题吗？</string>
     <string name="msg_installed_description">允许应用联系公司</string>
     <!-- Keep as a string: call-site/API migration and multi-count grammar are intentionally separate. -->
