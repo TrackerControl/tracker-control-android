@@ -210,8 +210,11 @@ hostnames, and re-resolves them on network changes via `updateEndpoint`).
 - **DNS upstream privacy**: app DNS packets to port 53 go through WireGuard
   whenever the tunnel is up — `ip.c` forces them into it regardless of
   destination, because an unprotected query would expose the user's physical
-  network to the resolver. The one exception is an app the user has routed
-  around the tunnel: its queries are redirected to the system resolver
+  network to the resolver. A split-tunnel profile (no default route in its
+  AllowedIPs) is the exception by configuration: gotatun would drop a query
+  to a resolver outside AllowedIPs, so it goes direct like the rest of that
+  profile's non-tunnelled traffic. The other exception is an app the user has
+  routed around the tunnel: its queries are redirected to the system resolver
   (see `RemoteRoutingLogic`), which is the cost of letting that app keep
   working when the tunnel drops. The remaining gap is that TrackerControl's
   own DoH proxy is not yet advertised as the sole resolver, which would let
