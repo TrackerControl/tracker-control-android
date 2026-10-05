@@ -21,6 +21,9 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
+import java.util.Arrays;
+import java.util.Collections;
+
 public class RemoteRoutingLogicTest {
 
     /**
@@ -151,5 +154,42 @@ public class RemoteRoutingLogicTest {
         // In the override set: inverts the default.
         assertTrue(RemoteRoutingLogic.routesDirect(true, true));
         assertFalse(RemoteRoutingLogic.routesDirect(true, false));
+    }
+
+    /**
+     * A profile routing only the home LAN (the FRITZ!Box shape) is a split
+     * tunnel: everything else must leave directly, not be dropped by WireGuard.
+     */
+    @Test
+    public void lanOnlyAllowedIpsIsSplitTunnel() {
+        assertTrue(RemoteRoutingLogic.isSplitTunnel(
+                Arrays.asList("192.168.178.0/24", "fd00::/64")));
+        assertTrue(RemoteRoutingLogic.isSplitTunnel(
+                Collections.singletonList("10.0.0.1")));
+    }
+
+    /**
+     * A default route in either family keeps the full, fail-closed tunnel —
+     * an IPv4-only full tunnel must not start leaking IPv6 around the VPN.
+     */
+    @Test
+    public void defaultRouteInEitherFamilyIsFullTunnel() {
+        assertFalse(RemoteRoutingLogic.isSplitTunnel(
+                Arrays.asList("0.0.0.0/0", "::/0")));
+        assertFalse(RemoteRoutingLogic.isSplitTunnel(
+                Collections.singletonList("0.0.0.0/0")));
+        assertFalse(RemoteRoutingLogic.isSplitTunnel(
+                Arrays.asList("192.168.178.0/24", "::/0")));
+        assertFalse(RemoteRoutingLogic.isSplitTunnel(
+                Arrays.asList(" 0::/0 ", "10.0.0.0/8")));
+    }
+
+    /** Nothing readable to route by: stay fail-closed rather than go direct. */
+    @Test
+    public void missingOrUnreadableAllowedIpsIsFullTunnel() {
+        assertFalse(RemoteRoutingLogic.isSplitTunnel(null));
+        assertFalse(RemoteRoutingLogic.isSplitTunnel(Collections.emptyList()));
+        assertFalse(RemoteRoutingLogic.isSplitTunnel(
+                Arrays.asList("192.168.178.0/24", "10.0.0.0/x")));
     }
 }

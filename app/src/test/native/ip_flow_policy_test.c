@@ -21,6 +21,8 @@ static int uid_calls;
 static int wireguard_writes;
 static int rst_writes;
 static int blocked_udp_calls;
+static int expect_direct;
+static int direct_calls;
 static int configured_uid = 10042;
 static int policy_allowed = 1;
 static int blocked_udp;
@@ -224,7 +226,10 @@ jboolean handle_udp(const struct arguments *unused, const uint8_t *packet,
     (void) uid;
     (void) redirect;
     (void) epoll_fd;
-    unexpected_handler_calls++;
+    if (expect_direct)
+        direct_calls++;
+    else
+        unexpected_handler_calls++;
     return 0;
 }
 
@@ -239,7 +244,10 @@ jboolean handle_tcp(const struct arguments *unused, const uint8_t *packet,
     (void) allowed;
     (void) redirect;
     (void) epoll_fd;
-    unexpected_handler_calls++;
+    if (expect_direct)
+        direct_calls++;
+    else
+        unexpected_handler_calls++;
     return 0;
 }
 
@@ -249,6 +257,8 @@ static void reset_fakes(void) {
     wireguard_writes = 0;
     rst_writes = 0;
     blocked_udp_calls = 0;
+    expect_direct = 0;
+    direct_calls = 0;
     unexpected_handler_calls = 0;
     last_policy_uid = -1;
     blocked_udp = 0;
@@ -552,6 +562,107 @@ static void test_selected_route_fast_path(void) {
     clear_route_uids();
 }
 
+static void set_destination(uint8_t *packet, const char *destination) {
+    inet_pton(AF_INET, destination, &((struct iphdr *) packet)->daddr);
+}
+
+static void set_destination_port(uint8_t *packet, uint16_t port) {
+    ((struct udphdr *) (packet + sizeof(struct iphdr)))->dest = htons(port);
+}
+
+static void set_allowed_ips(const char *const *cidrs, int count) {
+    struct route_prefix prefixes[4];
+    CHECK(count <= 4, "fixture supports four AllowedIPs");
+    for (int i = 0; i < count; i++)
+        CHECK(route_prefix_parse(cidrs[i], &prefixes[i]), "fixture AllowedIPs parse");
+    set_route_allowed_ips(prefixes, count);
+}
+
+// A FRITZ!Box-style profile routes only the home LAN. Everything else has to
+// take the filtered direct path instead of being handed to WireGuard, which
+// would drop it (the split tunnel the profile asks for).
+static void test_split_tunnel_routes_outside_allowed_ips_direct(void) {
+    _Alignas(struct iphdr) uint8_t packet[256];
+    const uint8_t opaque[] = {0x17, 0x03, 0x03, 0x00, 0x01, 0x7f};
+    const char *const lan[] = {"192.168.178.0/24", "fd00::/64"};
+
+    reset_fakes();
+    set_allowed_ips(lan, 2);
+    expect_direct = 1;
+
+    size_t length = make_udp(packet, 41100, opaque, sizeof(opaque));
+    set_destination(packet, "1.1.1.1");
+    run(packet, length);
+    CHECK(wireguard_writes == 0 && direct_calls == 1 && policy_calls == 1,
+          "UDP outside AllowedIPs is filtered and leaves directly");
+    run(packet, length);
+    CHECK(wireguard_writes == 0 && direct_calls == 2 && policy_calls == 2,
+          "a cached route never reuses a tunnel verdict for a direct flow");
+
+    length = make_udp(packet, 41101, opaque, sizeof(opaque));
+    set_destination(packet, "192.168.178.1");
+    run(packet, length);
+    CHECK(wireguard_writes == 1 && direct_calls == 2,
+          "UDP inside AllowedIPs still takes the tunnel");
+
+    length = make_udp(packet, 41102, opaque, sizeof(opaque));
+    set_destination(packet, "192.168.178.99");
+    set_destination_port(packet, 53);
+    run(packet, length);
+    CHECK(wireguard_writes == 2 && direct_calls == 2,
+          "DNS to a resolver inside AllowedIPs takes the tunnel");
+
+    length = make_udp(packet, 41103, opaque, sizeof(opaque));
+    set_destination(packet, "9.9.9.9");
+    set_destination_port(packet, 53);
+    run(packet, length);
+    CHECK(wireguard_writes == 2 && direct_calls == 3,
+          "DNS to a resolver outside AllowedIPs leaves directly");
+
+    length = make_tcp(packet, 42100, 1, 0, 0, NULL, 0);
+    run(packet, length);
+    CHECK(wireguard_writes == 2 && direct_calls == 4,
+          "a TCP SYN outside AllowedIPs leaves directly");
+
+    length = make_tcp(packet, 42101, 1, 0, 0, NULL, 0);
+    set_destination(packet, "192.168.178.1");
+    run(packet, length);
+    CHECK(wireguard_writes == 3 && direct_calls == 4,
+          "a TCP SYN inside AllowedIPs takes the tunnel");
+
+    length = make_tcp6(packet, 42102, 1, 0, 0, NULL, 0);
+    run(packet, length);
+    CHECK(wireguard_writes == 3 && direct_calls == 5,
+          "IPv6 outside AllowedIPs leaves directly");
+
+    // Back to a full tunnel: nothing may leave directly any more.
+    clear_route_allowed_ips();
+    expect_direct = 0;
+    length = make_udp(packet, 41104, opaque, sizeof(opaque));
+    set_destination(packet, "1.1.1.1");
+    run(packet, length);
+    CHECK(wireguard_writes == 4 && direct_calls == 5,
+          "full tunnel hands every destination to WireGuard again");
+}
+
+// A default route in either family is a full tunnel: the other family stays
+// fail-closed in WireGuard rather than leaking around the VPN.
+static void test_default_route_keeps_full_tunnel(void) {
+    _Alignas(struct iphdr) uint8_t packet[256];
+    const char *const v4_default[] = {"0.0.0.0/0"};
+
+    reset_fakes();
+    set_allowed_ips(v4_default, 1);
+    size_t length = make_tcp6(packet, 42200, 1, 0, 0, NULL, 0);
+    run(packet, length);
+    CHECK(wireguard_writes == 1, "IPv6 stays in an IPv4-only full tunnel");
+    struct in6_addr outside;
+    inet_pton(AF_INET6, "2001:db8::20", &outside);
+    CHECK(route_dest_tunnelled(6, &outside),
+          "a default route disables the split table");
+    clear_route_allowed_ips();
+}
+
 int main(void) {
     memset(&context, 0, sizeof(context));
     memset(&args, 0, sizeof(args));
@@ -569,6 +680,8 @@ int main(void) {
     test_root_and_fresh_syn_owner_rules();
     test_udp_policy_invalidation_and_negative_state();
     test_selected_route_fast_path();
+    test_split_tunnel_routes_outside_allowed_ips_direct();
+    test_default_route_keeps_full_tunnel();
     if (failures != 0)
         return 1;
     puts("ip_flow_policy_test: all tests passed");

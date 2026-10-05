@@ -76,9 +76,9 @@ public final class RemoteRoutingLogic {
      * Routes come from the tunnel's AllowedIPs, and they are a property of the
      * one tun every app shares — narrowing them to route some apps around the
      * tunnel would shrink them for the tunnelled apps too. v1 therefore only
-     * offers the control for a default-route tunnel. gotatun silently drops
-     * packets whose destination matches no peer's AllowedIPs, so a narrower
-     * tunnel would blackhole traffic rather than fail visibly.
+     * offers the control for a default-route tunnel. A narrower (split)
+     * tunnel already sends everything outside its AllowedIPs direct for every
+     * app (see {@link #isSplitTunnel}), so there is nothing per app to choose.
      *
      * @param wgEnabled     whether remote egress is configured and on
      * @param defaultRoutes whether AllowedIPs covers 0.0.0.0/0 (and ::/0 when
@@ -171,6 +171,39 @@ public final class RemoteRoutingLogic {
         }
 
         return v4 && (!ip6 || v6);
+    }
+
+    /**
+     * Whether the tunnel is a split tunnel: it carries only its AllowedIPs, and
+     * every other destination leaves directly (still filtered), as wg-quick
+     * and the WireGuard app route it.
+     * <p>
+     * A default route in either family ({@code 0.0.0.0/0} or {@code ::/0}, in
+     * any spelling) makes it a full tunnel instead, which keeps the other
+     * family fail-closed: an IPv4-only full-tunnel profile must not start
+     * sending IPv6 around the VPN. No AllowedIPs at all is treated the same
+     * way, so a broken profile drops traffic rather than leaking it.
+     *
+     * @param allowedIps the union of every peer's AllowedIPs
+     */
+    public static boolean isSplitTunnel(java.util.List<String> allowedIps) {
+        if (allowedIps == null || allowedIps.isEmpty())
+            return false;
+
+        for (String allowedIp : allowedIps) {
+            String trimmed = allowedIp == null ? "" : allowedIp.trim();
+            int slash = trimmed.indexOf('/');
+            if (slash < 0)
+                continue; // a bare address is a host route
+            try {
+                if (Integer.parseInt(trimmed.substring(slash + 1).trim()) == 0)
+                    return false;
+            } catch (NumberFormatException ex) {
+                return false; // unreadable: keep the fail-closed full tunnel
+            }
+        }
+
+        return true;
     }
 
     public enum Unavailable {

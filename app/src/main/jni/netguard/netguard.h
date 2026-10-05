@@ -574,6 +574,25 @@ int route_dns_direct();
 
 int route_wants_tunnel(int local_dest, int is_dns, int tunnel_uid, int dns_direct);
 
+// Split tunnel: the active profile's AllowedIPs, pushed down only when none of
+// them is a default route. An empty table means full tunnel. addr holds the
+// network address with its host bits cleared.
+struct route_prefix {
+    uint8_t version;
+    uint8_t prefix;
+    uint8_t addr[16];
+};
+
+int route_prefix_parse(const char *cidr, struct route_prefix *out);
+
+void set_route_allowed_ips(const struct route_prefix *prefixes, int count);
+
+void clear_route_allowed_ips();
+
+// Whether the remote VPN carries this destination: always in a full tunnel,
+// otherwise only when it falls inside the profile's AllowedIPs.
+int route_dest_tunnelled(int version, const void *daddr);
+
 // Per-flow verdict cache, so a flow that has already been routed keeps its
 // answer once its packets stop carrying a UID. Tunnel-thread only.
 int route_flow_lookup(int version, int protocol,
