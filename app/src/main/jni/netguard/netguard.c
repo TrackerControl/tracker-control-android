@@ -523,12 +523,16 @@ Java_eu_faircode_netguard_ServiceSinkhole_jni_1wireguard_1allowed_1ips(JNIEnv *e
     for (jsize i = 0; i < count && ok; i++) {
         jstring cidr_ = (jstring) (*env)->GetObjectArrayElement(env, cidrs_, i);
         const char *cidr = cidr_ == NULL ? NULL : (*env)->GetStringUTFChars(env, cidr_, NULL);
+        if (cidr != NULL)
+            ng_add_alloc(cidr, "cidr");
         ok = cidr != NULL && route_prefix_parse(cidr, &prefixes[i]);
         if (!ok)
             log_android(ANDROID_LOG_ERROR, "wg allowed ips: cannot parse '%s'",
                         cidr == NULL ? "(null)" : cidr);
-        if (cidr != NULL)
+        if (cidr != NULL) {
             (*env)->ReleaseStringUTFChars(env, cidr_, cidr);
+            ng_delete_alloc(cidr, __FILE__, __LINE__);
+        }
         if (cidr_ != NULL)
             (*env)->DeleteLocalRef(env, cidr_);
     }
