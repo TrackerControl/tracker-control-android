@@ -141,8 +141,8 @@ public class TrackerListMinimalTest {
         assertTrue(TrackerList.isMinimallyBlocked(ddgTracker));
         assertTrue(TrackerList.isMinimallyKnown(ddgTracker));
 
-        Tracker ddgContent = TrackerList.findTracker("ajax.googleapis.com");
-        ddgContent.addHost("ajax.googleapis.com");
+        Tracker ddgContent = TrackerList.findTracker("fonts.googleapis.com");
+        ddgContent.addHost("fonts.googleapis.com");
         assertFalse(TrackerList.isMinimallyBlocked(ddgContent));
         assertTrue(TrackerList.isMinimallyKnown(ddgContent));
     }
