@@ -26,7 +26,7 @@
 #include <stdlib.h>
 #include <stdatomic.h>
 
-#define POLICY_ABI_VERSION 1
+#define POLICY_ABI_VERSION 2
 
 static pthread_once_t policy_once = PTHREAD_ONCE_INIT;
 static int policy_ok = 0;
@@ -36,6 +36,7 @@ static void (*p_set_route_uids)(const jint *uids, int count, int default_tunnel)
 static void (*p_clear_route_uids)(void) = NULL;
 static int (*p_is_tunnel_uid)(jint uid) = NULL;
 static int (*p_wants_tunnel)(int local_dest, int is_dns, int tunnel_uid, int dns_direct) = NULL;
+static int (*p_dest_tunnelled)(int version, const void *daddr) = NULL;
 
 // Facts the packet path reads per packet. Mirrored here rather than queried
 // across the boundary: with no per-app override configured — the shipped
@@ -63,9 +64,10 @@ static void policy_load() {
     p_clear_route_uids = dlsym(handle, "tc_policy_clear_route_uids");
     p_is_tunnel_uid = dlsym(handle, "tc_policy_is_tunnel_uid");
     p_wants_tunnel = dlsym(handle, "tc_policy_wants_tunnel");
+    p_dest_tunnelled = dlsym(handle, "tc_policy_dest_tunnelled");
 
     if (p_abi_version == NULL || p_set_route_uids == NULL || p_clear_route_uids == NULL ||
-        p_is_tunnel_uid == NULL || p_wants_tunnel == NULL) {
+        p_is_tunnel_uid == NULL || p_wants_tunnel == NULL || p_dest_tunnelled == NULL) {
         log_android(ANDROID_LOG_ERROR, "policy: missing symbol: %s", dlerror());
         return;
     }
@@ -168,152 +170,15 @@ int route_wants_tunnel(int local_dest, int is_dns, int tunnel_uid, int dns_direc
     return tunnel_uid;
 }
 
-// --- Split tunnel: which destinations the remote VPN carries ---------------
-//
-// gotatun silently drops a packet whose destination matches no peer's
-// AllowedIPs. A profile with a default route (0.0.0.0/0 or ::/0) is a full
-// tunnel, and that drop is the fail-closed behaviour it wants. A profile
-// without one — say a FRITZ!Box config routing only the home LAN — is a split
-// tunnel: everything outside AllowedIPs has to leave directly, still filtered
-// here, exactly as wg-quick and the WireGuard app route it.
-//
-// Java pushes the prefixes down only for a split tunnel; an empty table means
-// full tunnel, which keeps that (shipped) path free of any lookup. Java writes
-// while the tunnel thread reads, hence the lock; the atomic flag lets the full
-// tunnel skip even that.
-
-static pthread_rwlock_t route_prefix_lock = PTHREAD_RWLOCK_INITIALIZER;
-static struct route_prefix *route_prefixes = NULL;
-static int route_prefix_count = 0;
-static _Atomic int route_split = 0;
-
-int route_prefix_parse(const char *cidr, struct route_prefix *out) {
-    if (cidr == NULL || out == NULL)
-        return 0;
-
-    char addr[INET6_ADDRSTRLEN];
-    const char *slash = strchr(cidr, '/');
-    size_t addr_len = slash == NULL ? strlen(cidr) : (size_t) (slash - cidr);
-    if (addr_len == 0 || addr_len >= sizeof(addr))
-        return 0;
-    memcpy(addr, cidr, addr_len);
-    addr[addr_len] = '\0';
-
-    memset(out, 0, sizeof(*out));
-    int max_prefix;
-    if (inet_pton(AF_INET, addr, out->addr) == 1) {
-        out->version = 4;
-        max_prefix = 32;
-    } else if (inet_pton(AF_INET6, addr, out->addr) == 1) {
-        out->version = 6;
-        max_prefix = 128;
-    } else
-        return 0;
-
-    // Digits only: no sign, whitespace or trailing junk. A bare address is a
-    // host route, as in wg-quick.
-    int prefix = max_prefix;
-    if (slash != NULL) {
-        const char *p = slash + 1;
-        if (*p == '\0')
-            return 0;
-        prefix = 0;
-        for (; *p != '\0'; p++) {
-            if (*p < '0' || *p > '9' || prefix > max_prefix)
-                return 0;
-            prefix = prefix * 10 + (*p - '0');
-        }
-        if (prefix > max_prefix)
-            return 0;
-    }
-    out->prefix = (uint8_t) prefix;
-
-    // AllowedIPs may carry host bits (192.168.178.5/24); compare networks.
-    int bytes = (max_prefix / 8);
-    for (int i = 0; i < bytes; i++) {
-        int bits = prefix - i * 8;
-        if (bits <= 0)
-            out->addr[i] = 0;
-        else if (bits < 8)
-            out->addr[i] &= (uint8_t) (0xff << (8 - bits));
-    }
-    return 1;
-}
-
-static int route_prefix_matches(const struct route_prefix *p, int version,
-                                const uint8_t *addr) {
-    if (p->version != version)
-        return 0;
-    int bits = p->prefix;
-    int i = 0;
-    for (; bits >= 8; i++, bits -= 8)
-        if (addr[i] != p->addr[i])
-            return 0;
-    if (bits == 0)
-        return 1;
-    return (addr[i] & (uint8_t) (0xff << (8 - bits))) == p->addr[i];
-}
-
-void set_route_allowed_ips(const struct route_prefix *prefixes, int count) {
-    struct route_prefix *copy = NULL;
-    if (prefixes != NULL && count > 0) {
-        for (int i = 0; i < count; i++)
-            if (prefixes[i].prefix == 0) {
-                // A default route in either family is a full tunnel, which
-                // also keeps the other family fail-closed instead of leaking
-                // it directly. Java decides this too; never trust one side.
-                count = 0;
-                break;
-            }
-        if (count > 0) {
-            copy = malloc(sizeof(*copy) * (size_t) count);
-            if (copy == NULL) {
-                log_android(ANDROID_LOG_ERROR,
-                            "wg allowed ips: out of memory, keeping full tunnel");
-                count = 0;
-            } else
-                memcpy(copy, prefixes, sizeof(*copy) * (size_t) count);
-        }
-    } else
-        count = 0;
-
-    if (pthread_rwlock_wrlock(&route_prefix_lock)) {
-        // Cannot swap safely: the previous table stays as it is.
-        log_android(ANDROID_LOG_ERROR, "wg allowed ips: lock failed");
-        free(copy);
-        return;
-    }
-    struct route_prefix *old = route_prefixes;
-    route_prefixes = copy;
-    route_prefix_count = count;
-    atomic_store_explicit(&route_split, count > 0 ? 1 : 0, memory_order_release);
-    pthread_rwlock_unlock(&route_prefix_lock);
-    free(old);
-
-    route_flow_invalidate();
-
-    log_android(ANDROID_LOG_WARN, "WireGuard routing: %s (%d AllowedIPs prefixes)",
-                count > 0 ? "split tunnel" : "full tunnel", count);
-}
-
-void clear_route_allowed_ips() {
-    set_route_allowed_ips(NULL, 0);
-}
-
+// Whether the running tunnel carries this destination: a split-tunnel profile
+// (no default route in AllowedIPs) only carries its AllowedIPs, and gotatun
+// would drop the rest. Rust owns the prefixes because it already parses them
+// for gotatun, so the two cannot disagree. Only asked once a packet would
+// otherwise take the tunnel; a full tunnel answers from one atomic load there.
 int route_dest_tunnelled(int version, const void *daddr) {
-    if (!atomic_load_explicit(&route_split, memory_order_acquire))
-        return 1;
-
-    // Fail towards the tunnel: that is the behaviour before split tunnelling
-    // existed, and it never leaks.
-    if (pthread_rwlock_rdlock(&route_prefix_lock))
-        return 1;
-    int tunnelled = route_prefixes == NULL ? 1 : 0;
-    for (int i = 0; i < route_prefix_count && !tunnelled; i++)
-        if (route_prefix_matches(&route_prefixes[i], version, (const uint8_t *) daddr))
-            tunnelled = 1;
-    pthread_rwlock_unlock(&route_prefix_lock);
-    return tunnelled;
+    policy_ensure();
+    // Without the bridge there is no tunnel to split.
+    return policy_ok ? p_dest_tunnelled(version, daddr) : 1;
 }
 
 // --- Per-flow verdict cache -------------------------------------------------

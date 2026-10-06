@@ -127,11 +127,12 @@ missing.
 
 | Symbol | Purpose |
 |---|---|
-| `tc_policy_abi_version()` | Guards the shim against a mismatched library; currently `1`. |
+| `tc_policy_abi_version()` | Guards the shim against a mismatched library; currently `2`. |
 | `tc_policy_set_route_uids(uids, count, default_tunnel)` | Replaces the override set. A null pointer or `count <= 0` means "no overrides". |
 | `tc_policy_clear_route_uids()` | Back to tunnel-everything. |
 | `tc_policy_is_tunnel_uid(uid)` | Whether one UID takes the tunnel. Absence from the set means "follow the default". |
 | `tc_policy_wants_tunnel(local_dest, is_dns, tunnel_uid, dns_direct)` | The packet-level decision. |
+| `tc_policy_dest_tunnelled(version, daddr)` | Whether the running tunnel carries a destination. Always for a full tunnel; for a split tunnel (no `/0` in AllowedIPs), only inside its AllowedIPs. `src/tunnel.rs` keeps the prefixes in step with gotatun's peers and clears them on stop. |
 
 These are exported from the `cdylib` and survive `strip = true`; CI asserts they
 are present in every ABI of the F-Droid APK.
@@ -213,7 +214,7 @@ hostnames, and re-resolves them on network changes via `updateEndpoint`).
   network to the resolver. A split-tunnel profile (no default route in its
   AllowedIPs) is the exception by configuration: gotatun would drop a query
   to a resolver outside AllowedIPs, so it goes direct like the rest of that
-  profile's non-tunnelled traffic. The other exception is an app the user has
+  profile's untunnelled traffic. The other exception is an app the user has
   routed around the tunnel: its queries are redirected to the system resolver
   (see `RemoteRoutingLogic`), which is the cost of letting that app keep
   working when the tunnel drops. The remaining gap is that TrackerControl's

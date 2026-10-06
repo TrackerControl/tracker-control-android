@@ -57,11 +57,10 @@ static int is_local_dest(int version, const void *daddr) {
     }
 }
 
-// Whether this packet is handed to WireGuard. The per-app and DNS decision
-// comes first; a split-tunnel profile then keeps everything outside its
-// AllowedIPs on the direct path, where gotatun would otherwise drop it. Every
-// tunnel decision goes through here: a gate that skipped the destination check
-// could reuse a tunnelled verdict for a flow that is actually routed direct.
+// Whether this packet is handed to WireGuard: the per-app and DNS decision,
+// then, for a split-tunnel profile, whether its AllowedIPs cover the
+// destination. Every tunnel decision goes through here, so a cached tunnel
+// verdict is never reused for a flow that is actually routed direct.
 static int packet_wants_tunnel(int version, const void *daddr, int is_dns, int tunnel_uid) {
     return route_wants_tunnel(is_local_dest(version, daddr), is_dns,
                               tunnel_uid, route_dns_direct()) &&
@@ -966,9 +965,8 @@ void handle_ip(const struct arguments *args,
         // Loopback/link-local/multicast are kept on the local path. DNS is
         // intentionally protected by WG too: in WG mode the VPN builder uses
         // WG DNS or public fallback DNS, and unprotected DNS would leak the
-        // user's physical network. A split-tunnel profile (no default route
-        // in AllowedIPs) only tunnels what its AllowedIPs cover, DNS included;
-        // the rest takes the direct path below.
+        // user's physical network. A split-tunnel profile only tunnels what
+        // its AllowedIPs cover, DNS included; the rest takes the direct path.
         int is_dns = (dport == 53 &&
                       (protocol == IPPROTO_UDP || protocol == IPPROTO_TCP));
 

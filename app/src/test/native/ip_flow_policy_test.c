@@ -49,7 +49,7 @@ static int bridge_route_calls;
 static jint bridge_override = -1;
 static int bridge_default = 1;
 
-static int bridge_abi(void) { return 1; }
+static int bridge_abi(void) { return 2; }
 static void bridge_set(const jint *uids, int count, int default_tunnel) {
     CHECK(count <= 1, "fixture supports one routing override");
     bridge_override = count > 0 ? uids[0] : -1;
@@ -66,6 +66,13 @@ static int bridge_is_tunnel(jint uid) {
 static int bridge_wants(int local, int dns, int tunnel, int direct_dns) {
     return local && !dns ? 0 : dns && !direct_dns ? 1 : tunnel;
 }
+// A split tunnel whose AllowedIPs are only 192.168.178.0/24. The prefix
+// matching itself is Rust's, and tested there.
+static int bridge_split;
+static int bridge_dest_tunnelled(int version, const void *daddr) {
+    const uint8_t *b = daddr;
+    return !bridge_split || (version == 4 && b[0] == 192 && b[1] == 168 && b[2] == 178);
+}
 void *__wrap_dlopen(const char *name, int flags) {
     (void) flags;
     CHECK(strcmp(name, "libwgbridge.so") == 0, "only the policy bridge is loaded");
@@ -78,6 +85,7 @@ void *__wrap_dlsym(void *handle, const char *name) {
     if (strcmp(name, "tc_policy_clear_route_uids") == 0) return (void *) bridge_clear;
     if (strcmp(name, "tc_policy_is_tunnel_uid") == 0) return (void *) bridge_is_tunnel;
     if (strcmp(name, "tc_policy_wants_tunnel") == 0) return (void *) bridge_wants;
+    if (strcmp(name, "tc_policy_dest_tunnelled") == 0) return (void *) bridge_dest_tunnelled;
     CHECK(0, "policy bridge requests a recognised symbol");
     return NULL;
 }
@@ -259,6 +267,7 @@ static void reset_fakes(void) {
     blocked_udp_calls = 0;
     expect_direct = 0;
     direct_calls = 0;
+    bridge_split = 0;
     unexpected_handler_calls = 0;
     last_policy_uid = -1;
     blocked_udp = 0;
@@ -570,24 +579,14 @@ static void set_destination_port(uint8_t *packet, uint16_t port) {
     ((struct udphdr *) (packet + sizeof(struct iphdr)))->dest = htons(port);
 }
 
-static void set_allowed_ips(const char *const *cidrs, int count) {
-    struct route_prefix prefixes[4];
-    CHECK(count <= 4, "fixture supports four AllowedIPs");
-    for (int i = 0; i < count; i++)
-        CHECK(route_prefix_parse(cidrs[i], &prefixes[i]), "fixture AllowedIPs parse");
-    set_route_allowed_ips(prefixes, count);
-}
-
-// A FRITZ!Box-style profile routes only the home LAN. Everything else has to
-// take the filtered direct path instead of being handed to WireGuard, which
-// would drop it (the split tunnel the profile asks for).
+// A profile that routes only the home LAN: everything else takes the filtered
+// direct path instead of being handed to WireGuard, which would drop it.
 static void test_split_tunnel_routes_outside_allowed_ips_direct(void) {
     _Alignas(struct iphdr) uint8_t packet[256];
     const uint8_t opaque[] = {0x17, 0x03, 0x03, 0x00, 0x01, 0x7f};
-    const char *const lan[] = {"192.168.178.0/24", "fd00::/64"};
 
     reset_fakes();
-    set_allowed_ips(lan, 2);
+    bridge_split = 1;
     expect_direct = 1;
 
     size_t length = make_udp(packet, 41100, opaque, sizeof(opaque));
@@ -636,31 +635,13 @@ static void test_split_tunnel_routes_outside_allowed_ips_direct(void) {
           "IPv6 outside AllowedIPs leaves directly");
 
     // Back to a full tunnel: nothing may leave directly any more.
-    clear_route_allowed_ips();
+    bridge_split = 0;
     expect_direct = 0;
     length = make_udp(packet, 41104, opaque, sizeof(opaque));
     set_destination(packet, "1.1.1.1");
     run(packet, length);
     CHECK(wireguard_writes == 4 && direct_calls == 5,
           "full tunnel hands every destination to WireGuard again");
-}
-
-// A default route in either family is a full tunnel: the other family stays
-// fail-closed in WireGuard rather than leaking around the VPN.
-static void test_default_route_keeps_full_tunnel(void) {
-    _Alignas(struct iphdr) uint8_t packet[256];
-    const char *const v4_default[] = {"0.0.0.0/0"};
-
-    reset_fakes();
-    set_allowed_ips(v4_default, 1);
-    size_t length = make_tcp6(packet, 42200, 1, 0, 0, NULL, 0);
-    run(packet, length);
-    CHECK(wireguard_writes == 1, "IPv6 stays in an IPv4-only full tunnel");
-    struct in6_addr outside;
-    inet_pton(AF_INET6, "2001:db8::20", &outside);
-    CHECK(route_dest_tunnelled(6, &outside),
-          "a default route disables the split table");
-    clear_route_allowed_ips();
 }
 
 int main(void) {
@@ -681,7 +662,6 @@ int main(void) {
     test_udp_policy_invalidation_and_negative_state();
     test_selected_route_fast_path();
     test_split_tunnel_routes_outside_allowed_ips_direct();
-    test_default_route_keeps_full_tunnel();
     if (failures != 0)
         return 1;
     puts("ip_flow_policy_test: all tests passed");

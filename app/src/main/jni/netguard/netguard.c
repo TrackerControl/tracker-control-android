@@ -503,50 +503,6 @@ Java_eu_faircode_netguard_ServiceSinkhole_jni_1wireguard_1route(JNIEnv *env, job
 }
 
 JNIEXPORT void JNICALL
-Java_eu_faircode_netguard_ServiceSinkhole_jni_1wireguard_1allowed_1ips(JNIEnv *env,
-                                                                      jobject instance,
-                                                                      jobjectArray cidrs_) {
-    jsize count = cidrs_ == NULL ? 0 : (*env)->GetArrayLength(env, cidrs_);
-    if (count <= 0) {
-        clear_route_allowed_ips();
-        return;
-    }
-
-    struct route_prefix *prefixes = ng_malloc(sizeof(*prefixes) * (size_t) count, "allowed ips");
-    if (prefixes == NULL) {
-        log_android(ANDROID_LOG_ERROR, "wg allowed ips: out of memory, keeping full tunnel");
-        clear_route_allowed_ips();
-        return;
-    }
-
-    int ok = 1;
-    for (jsize i = 0; i < count && ok; i++) {
-        jstring cidr_ = (jstring) (*env)->GetObjectArrayElement(env, cidrs_, i);
-        const char *cidr = cidr_ == NULL ? NULL : (*env)->GetStringUTFChars(env, cidr_, NULL);
-        if (cidr != NULL)
-            ng_add_alloc(cidr, "cidr");
-        ok = cidr != NULL && route_prefix_parse(cidr, &prefixes[i]);
-        if (!ok)
-            log_android(ANDROID_LOG_ERROR, "wg allowed ips: cannot parse '%s'",
-                        cidr == NULL ? "(null)" : cidr);
-        if (cidr != NULL) {
-            (*env)->ReleaseStringUTFChars(env, cidr_, cidr);
-            ng_delete_alloc(cidr, __FILE__, __LINE__);
-        }
-        if (cidr_ != NULL)
-            (*env)->DeleteLocalRef(env, cidr_);
-    }
-
-    // An entry this side cannot read must not silently route its destination
-    // direct: fall back to the full tunnel, which drops rather than leaks.
-    if (ok)
-        set_route_allowed_ips(prefixes, count);
-    else
-        clear_route_allowed_ips();
-    ng_free(prefixes, __FILE__, __LINE__);
-}
-
-JNIEXPORT void JNICALL
 Java_eu_faircode_netguard_ServiceSinkhole_jni_1wireguard_1stop(JNIEnv *env, jobject instance) {
     if (pthread_mutex_lock(&wg_outbound_lock)) {
         // Do not close without the lock: an in-flight writer may own the fd.
@@ -594,7 +550,6 @@ Java_eu_faircode_netguard_ServiceSinkhole_jni_1done(
     uid_cache = NULL;
 
     clear_route_uids();
-    clear_route_allowed_ips();
 
     ng_free(ctx, __FILE__, __LINE__);
 }

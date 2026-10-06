@@ -1,4 +1,3 @@
-#include <arpa/inet.h>
 #include <netinet/in.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -17,11 +16,6 @@ static int failures;
             failures++;                                                     \
         }                                                                   \
     } while (0)
-
-void log_android(int priority, const char *format, ...) {
-    (void) priority;
-    (void) format;
-}
 
 static const uint8_t source[4] = {192, 0, 2, 10};
 static const uint8_t destination[4] = {198, 51, 100, 10};
@@ -296,84 +290,6 @@ static void test_syn_clears_reused_tuple_verdict(void) {
           "a fresh SYN clears a stale same-tuple TCP verdict");
 }
 
-static int dest_tunnelled(int version, const char *address) {
-    uint8_t bytes[16] = {0};
-    CHECK(inet_pton(version == 4 ? AF_INET : AF_INET6, address, bytes) == 1,
-          "fixture address parses");
-    return route_dest_tunnelled(version, bytes);
-}
-
-static void set_allowed_ips(const char *const *cidrs, int count) {
-    struct route_prefix prefixes[8];
-    for (int i = 0; i < count; i++)
-        CHECK(route_prefix_parse(cidrs[i], &prefixes[i]), "fixture AllowedIPs parse");
-    set_route_allowed_ips(prefixes, count);
-}
-
-static void test_allowed_ip_parsing(void) {
-    struct route_prefix p;
-
-    CHECK(route_prefix_parse("192.168.178.5/24", &p) && p.version == 4 &&
-          p.prefix == 24 && p.addr[0] == 192 && p.addr[1] == 168 &&
-          p.addr[2] == 178 && p.addr[3] == 0,
-          "IPv4 AllowedIPs keep only the network bits");
-    CHECK(route_prefix_parse("10.1.2.3/13", &p) && p.addr[1] == 0 &&
-          p.addr[2] == 0 && p.addr[3] == 0,
-          "a prefix inside an octet masks that octet");
-    CHECK(route_prefix_parse("10.0.0.1", &p) && p.prefix == 32,
-          "a bare IPv4 address is a host route");
-    CHECK(route_prefix_parse("fd00::170/64", &p) && p.version == 6 &&
-          p.prefix == 64 && p.addr[0] == 0xfd && p.addr[15] == 0,
-          "IPv6 AllowedIPs keep only the network bits");
-    CHECK(route_prefix_parse("2001:db8::1", &p) && p.prefix == 128,
-          "a bare IPv6 address is a host route");
-    CHECK(route_prefix_parse("0.0.0.0/0", &p) && p.prefix == 0,
-          "an IPv4 default route parses");
-    CHECK(route_prefix_parse("::/0", &p) && p.prefix == 0,
-          "an IPv6 default route parses");
-
-    CHECK(!route_prefix_parse("10.0.0.0/33", &p), "IPv4 prefix out of range");
-    CHECK(!route_prefix_parse("fd00::/129", &p), "IPv6 prefix out of range");
-    CHECK(!route_prefix_parse("10.0.0.0/", &p), "empty prefix");
-    CHECK(!route_prefix_parse("10.0.0.0/-1", &p), "signed prefix");
-    CHECK(!route_prefix_parse("10.0.0.0/2x", &p), "trailing junk");
-    CHECK(!route_prefix_parse("fritz.box/32", &p), "hostnames are never routes");
-    CHECK(!route_prefix_parse("", &p), "empty entry");
-    CHECK(!route_prefix_parse(NULL, &p), "null entry");
-}
-
-static void test_split_tunnel_destinations(void) {
-    const char *const lan[] = {"192.168.178.0/24", "fd00::/64", "10.8.0.1"};
-
-    CHECK(dest_tunnelled(4, "1.1.1.1") && dest_tunnelled(6, "2001:db8::1"),
-          "with no table everything takes the (full) tunnel");
-
-    set_allowed_ips(lan, 3);
-    CHECK(dest_tunnelled(4, "192.168.178.1") && dest_tunnelled(4, "192.168.178.255"),
-          "destinations inside an IPv4 AllowedIPs prefix are tunnelled");
-    CHECK(!dest_tunnelled(4, "192.168.179.1") && !dest_tunnelled(4, "1.1.1.1"),
-          "destinations outside every IPv4 prefix go direct");
-    CHECK(dest_tunnelled(4, "10.8.0.1") && !dest_tunnelled(4, "10.8.0.2"),
-          "a host route matches exactly one address");
-    CHECK(dest_tunnelled(6, "fd00::3ea6:1") && !dest_tunnelled(6, "fd00:0:0:1::1"),
-          "IPv6 prefixes match on their network bits only");
-    CHECK(!dest_tunnelled(6, "2001:db8::1"), "IPv6 outside AllowedIPs goes direct");
-
-    const char *const odd[] = {"10.0.0.0/9"};
-    set_allowed_ips(odd, 1);
-    CHECK(dest_tunnelled(4, "10.127.255.255") && !dest_tunnelled(4, "10.128.0.0"),
-          "a prefix ending mid-octet splits that octet correctly");
-
-    const char *const v6_default[] = {"192.168.178.0/24", "::/0"};
-    set_allowed_ips(v6_default, 2);
-    CHECK(dest_tunnelled(4, "1.1.1.1") && dest_tunnelled(6, "2001:db8::1"),
-          "a default route in either family keeps the full tunnel");
-
-    set_allowed_ips(lan, 3);
-    clear_route_allowed_ips();
-    CHECK(dest_tunnelled(4, "1.1.1.1"), "clearing restores the full tunnel");
-}
-
 int main(void) {
     test_tcp_owner_cache();
     test_default_udp_route_is_reused();
@@ -382,8 +298,6 @@ int main(void) {
     test_verdict_preserves_resolved_route_metadata();
     test_stateless_reset_sequence_shape();
     test_syn_clears_reused_tuple_verdict();
-    test_allowed_ip_parsing();
-    test_split_tunnel_destinations();
 
     if (failures != 0)
         return 1;

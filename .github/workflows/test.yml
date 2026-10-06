@@ -164,7 +164,7 @@ jobs:
             SYMS=$(readelf --dyn-syms --wide "/tmp/libwgbridge-$ABI.so" | awk '{print $NF}')
             for SYM in tc_policy_abi_version tc_policy_set_route_uids \
                        tc_policy_clear_route_uids tc_policy_is_tunnel_uid \
-                       tc_policy_wants_tunnel; do
+                       tc_policy_wants_tunnel tc_policy_dest_tunnelled; do
               echo "$SYMS" | grep -qx "$SYM" \
                 || { echo "missing dynamic symbol $SYM in $ABI"; exit 1; }
             done

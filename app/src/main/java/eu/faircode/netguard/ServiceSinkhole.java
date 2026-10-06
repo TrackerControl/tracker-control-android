@@ -486,13 +486,6 @@ public class ServiceSinkhole extends VpnService {
      */
     private native void jni_wireguard_route(int[] overrideUids, boolean defaultTunnel, boolean dnsDirect);
 
-    /**
-     * Pushes a split-tunnel profile's AllowedIPs down to the packet path, so
-     * destinations outside them go direct instead of into WireGuard, which
-     * would drop them. {@code null} or empty restores full-tunnel routing.
-     */
-    private native void jni_wireguard_allowed_ips(String[] allowedIps);
-
     private native void jni_done(long context);
 
     public static void setPcap(boolean enabled, Context context) {
@@ -2166,9 +2159,6 @@ public class ServiceSinkhole extends VpnService {
 
         jni_sni(prefs.getBoolean("sni_enabled", false));
         pushRoutingToNative();
-        // Before WgEgress applies the config below: a stale split table under
-        // a new full-tunnel profile would send its traffic direct.
-        pushAllowedIpsToNative(prefs);
         updateUnderlyingNetworks();
 
         // WireGuard egress. startOrUpdate is idempotent: same config +
@@ -2452,32 +2442,6 @@ public class ServiceSinkhole extends VpnService {
         lock.readLock().unlock();
 
         jni_wireguard_route(uids, defaults, dnsDirect);
-    }
-
-    /**
-     * Hands the active profile's AllowedIPs to the packet path when they form a
-     * split tunnel, and restores full-tunnel routing otherwise — including
-     * when WireGuard is off or its config cannot be read.
-     */
-    private void pushAllowedIpsToNative(SharedPreferences prefs) {
-        String[] splitAllowedIps = null;
-        String wgConfigText = prefs.getString("wg_config", "");
-        if (prefs.getBoolean("wg_enabled", false) && !TextUtils.isEmpty(wgConfigText)) {
-            try {
-                net.kollnig.missioncontrol.wg.WgConfig wgParsed =
-                        net.kollnig.missioncontrol.wg.WgConfigParser.INSTANCE.parse(wgConfigText);
-                List<String> allowedIps = new ArrayList<>();
-                for (net.kollnig.missioncontrol.wg.WgPeer peer : wgParsed.getPeers())
-                    allowedIps.addAll(peer.getAllowedIPs());
-                if (RemoteRoutingLogic.isSplitTunnel(allowedIps))
-                    splitAllowedIps = allowedIps.toArray(new String[0]);
-            } catch (Throwable ex) {
-                Log.w(TAG, "WG AllowedIPs unavailable, keeping full-tunnel routing: " + ex);
-            }
-        }
-        Log.i(TAG, "WireGuard " + (splitAllowedIps == null ? "full tunnel"
-                : "split tunnel for " + TextUtils.join(", ", splitAllowedIps)));
-        jni_wireguard_allowed_ips(splitAllowedIps);
     }
 
     public static void prepareHostsBlocked(Context c) {
