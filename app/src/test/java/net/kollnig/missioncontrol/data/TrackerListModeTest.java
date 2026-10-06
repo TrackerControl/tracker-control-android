@@ -31,7 +31,7 @@ public class TrackerListModeTest {
     public void minimalModeRepresentativeDomainsComeFromDuckDuckGoAsset() throws Exception {
         String duckDuckGo = readAsset("duckduckgo-android-tds.json");
 
-        assertTrue(matchesDomainDefault(duckDuckGo, "ajax.googleapis.com", "ignore"));
+        assertTrue(matchesDomainDefault(duckDuckGo, "fonts.googleapis.com", "ignore"));
         assertTrue(matchesDomainDefault(duckDuckGo, "creativecdn.com", "block"));
     }
 
