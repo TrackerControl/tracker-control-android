@@ -113,16 +113,47 @@ static ROUTES: RwLock<RouteTable> = RwLock::new(RouteTable::tunnel_all());
 /// The prefixes a split tunnel carries, or none for a full tunnel.
 ///
 /// gotatun drops a packet whose destination matches no peer's AllowedIPs. For
-/// a profile with a default route (`0.0.0.0/0` or `::/0`) that drop is the
+/// a profile covering all addresses in either family that drop is the
 /// fail-closed behaviour it wants, including for the other address family. A
-/// profile without one (say, only the home LAN) is a split tunnel: everything
+/// profile without full coverage (say, only the home LAN) is a split tunnel: everything
 /// outside its AllowedIPs must leave directly, still filtered, as wg-quick and
 /// the WireGuard app route it.
 pub fn split_prefixes(allowed_ips: &[IpNetwork]) -> Vec<IpNetwork> {
     if allowed_ips.iter().any(|net| net.prefix() == 0) {
         return Vec::new();
     }
+    let mut v4 = Vec::new();
+    let mut v6 = Vec::new();
+    for net in allowed_ips {
+        match net {
+            IpNetwork::V4(net) => v4.push((
+                u32::from(net.network()) as u128,
+                u32::from(net.broadcast()) as u128,
+            )),
+            IpNetwork::V6(net) => v6.push((u128::from(net.network()), u128::from(net.broadcast()))),
+        }
+    }
+    if covers_family(v4, u32::MAX as u128) || covers_family(v6, u128::MAX) {
+        return Vec::new();
+    }
     allowed_ips.to_vec()
+}
+
+/// Merge inclusive address intervals at configuration time. Stop before
+/// incrementing the last address, which would overflow for IPv6.
+fn covers_family(mut ranges: Vec<(u128, u128)>, last: u128) -> bool {
+    ranges.sort_unstable();
+    let mut next = 0;
+    for (start, end) in ranges {
+        if start > next {
+            return false;
+        }
+        if end == last {
+            return true;
+        }
+        next = next.max(end + 1);
+    }
+    false
 }
 
 /// Whether the tunnel carries `dest`: always for a full tunnel (no prefixes),
@@ -291,6 +322,36 @@ mod tests {
         assert!(split_prefixes(&[]).is_empty());
     }
 
+    #[test]
+    fn combined_full_routes_keep_both_families_fail_closed() {
+        for cidrs in [
+            vec!["0.0.0.0/1", "128.0.0.0/1"],
+            vec!["128.0.0.0/1", "0.0.0.0/2", "64.0.0.0/2", "0.0.0.0/2"],
+            vec!["::/1", "8000::/1"],
+            vec!["8000::/1", "::/2", "4000::/2", "::/3"],
+        ] {
+            let prefixes = split_prefixes(&nets(&cidrs));
+            assert!(prefixes.is_empty(), "{cidrs:?}");
+            assert!(tunnelled(&prefixes, "1.1.1.1"));
+            assert!(tunnelled(&prefixes, "2606:4700:4700::1111"));
+        }
+    }
+
+    #[test]
+    fn gaps_and_mixed_families_remain_split() {
+        for cidrs in [
+            vec!["0.0.0.0/2", "128.0.0.0/1"],
+            vec!["::/2", "8000::/1"],
+            vec!["0.0.0.0/1", "8000::/1"],
+            vec!["128.0.0.0/1"],
+            vec!["0.0.0.0/1"],
+        ] {
+            assert!(!split_prefixes(&nets(&cidrs)).is_empty(), "{cidrs:?}");
+        }
+        assert!(!covers_family(vec![(0, 0), (2, 3)], 3));
+        assert!(covers_family(vec![(0, 0), (1, 3)], 3));
+    }
+
     // The one test that touches SPLIT_PREFIXES, as a single ordered sequence.
     #[test]
     fn ffi_dest_tunnelled_follows_the_running_config() {
@@ -313,6 +374,11 @@ mod tests {
 
         set_allowed_ips(&nets(&["192.168.178.0/24", "0.0.0.0/0"]));
         assert_eq!(query(6, v6_out.as_ptr()), 1);
+
+        set_allowed_ips(&nets(&["0.0.0.0/1", "128.0.0.0/1"]));
+        assert_eq!(query(6, v6_out.as_ptr()), 1);
+        set_allowed_ips(&nets(&["::/1", "8000::/1"]));
+        assert_eq!(query(4, v4_out.as_ptr()), 1);
 
         set_allowed_ips(&nets(&["192.168.178.0/24"]));
         set_allowed_ips(&[]);

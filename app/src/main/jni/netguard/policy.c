@@ -171,7 +171,7 @@ int route_wants_tunnel(int local_dest, int is_dns, int tunnel_uid, int dns_direc
 }
 
 // Whether the running tunnel carries this destination: a split-tunnel profile
-// (no default route in AllowedIPs) only carries its AllowedIPs, and gotatun
+// (neither address family fully covered) only carries its AllowedIPs, and gotatun
 // would drop the rest. Rust owns the prefixes because it already parses them
 // for gotatun, so the two cannot disagree. Only asked once a packet would
 // otherwise take the tunnel; a full tunnel answers from one atomic load there.

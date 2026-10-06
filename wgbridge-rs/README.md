@@ -132,7 +132,7 @@ missing.
 | `tc_policy_clear_route_uids()` | Back to tunnel-everything. |
 | `tc_policy_is_tunnel_uid(uid)` | Whether one UID takes the tunnel. Absence from the set means "follow the default". |
 | `tc_policy_wants_tunnel(local_dest, is_dns, tunnel_uid, dns_direct)` | The packet-level decision. |
-| `tc_policy_dest_tunnelled(version, daddr)` | Whether the running tunnel carries a destination. Always for a full tunnel; for a split tunnel (no `/0` in AllowedIPs), only inside its AllowedIPs. `src/tunnel.rs` keeps the prefixes in step with gotatun's peers and clears them on stop. |
+| `tc_policy_dest_tunnelled(version, daddr)` | Whether the running tunnel carries a destination. Always for a full tunnel (AllowedIPs collectively covers all IPv4 or all IPv6 addresses); for a split tunnel, only inside its AllowedIPs. `src/tunnel.rs` keeps the prefixes in step with gotatun's peers and clears them on stop. |
 
 These are exported from the `cdylib` and survive `strip = true`; CI asserts they
 are present in every ABI of the F-Droid APK.
@@ -211,8 +211,8 @@ hostnames, and re-resolves them on network changes via `updateEndpoint`).
 - **DNS upstream privacy**: app DNS packets to port 53 go through WireGuard
   whenever the tunnel is up — `ip.c` forces them into it regardless of
   destination, because an unprotected query would expose the user's physical
-  network to the resolver. A split-tunnel profile (no default route in its
-  AllowedIPs) is the exception by configuration: gotatun would drop a query
+  network to the resolver. A split-tunnel profile (its AllowedIPs does not
+  cover either address family in full) is the exception by configuration: gotatun would drop a query
   to a resolver outside AllowedIPs, so it goes direct like the rest of that
   profile's untunnelled traffic. The other exception is an app the user has
   routed around the tunnel: its queries are redirected to the system resolver
