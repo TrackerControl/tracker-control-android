@@ -574,6 +574,8 @@ int route_dns_direct();
 
 int route_wants_tunnel(int local_dest, int is_dns, int tunnel_uid, int dns_direct);
 
+int route_dest_tunnelled(int version, const void *daddr);
+
 // Per-flow verdict cache, so a flow that has already been routed keeps its
 // answer once its packets stop carrying a UID. Tunnel-thread only.
 int route_flow_lookup(int version, int protocol,

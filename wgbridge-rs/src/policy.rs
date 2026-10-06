@@ -8,7 +8,11 @@
 //! An app absent from the set follows the default, whatever it is — see
 //! [`RouteTable::is_tunnel_uid`].
 
+use std::net::IpAddr;
+use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::{PoisonError, RwLock};
+
+use ipnetwork::IpNetwork;
 
 /// Per-packet facts the tunnel decision is made from. Everything here is
 /// cheap to compute on the C side before crossing the FFI boundary.
@@ -106,9 +110,78 @@ impl RouteTable {
 /// no lazy initialisation.
 static ROUTES: RwLock<RouteTable> = RwLock::new(RouteTable::tunnel_all());
 
+/// The prefixes a split tunnel carries, or none for a full tunnel.
+///
+/// gotatun drops a packet whose destination matches no peer's AllowedIPs. For
+/// a profile covering all addresses in either family that drop is the
+/// fail-closed behaviour it wants, including for the other address family. A
+/// profile without full coverage (say, only the home LAN) is a split tunnel: everything
+/// outside its AllowedIPs must leave directly, still filtered, as wg-quick and
+/// the WireGuard app route it.
+pub fn split_prefixes(allowed_ips: &[IpNetwork]) -> Vec<IpNetwork> {
+    if allowed_ips.iter().any(|net| net.prefix() == 0) {
+        return Vec::new();
+    }
+    let mut v4 = Vec::new();
+    let mut v6 = Vec::new();
+    for net in allowed_ips {
+        match net {
+            IpNetwork::V4(net) => v4.push((
+                u32::from(net.network()) as u128,
+                u32::from(net.broadcast()) as u128,
+            )),
+            IpNetwork::V6(net) => v6.push((u128::from(net.network()), u128::from(net.broadcast()))),
+        }
+    }
+    if covers_family(v4, u32::MAX as u128) || covers_family(v6, u128::MAX) {
+        return Vec::new();
+    }
+    allowed_ips.to_vec()
+}
+
+/// Merge inclusive address intervals at configuration time. Stop before
+/// incrementing the last address, which would overflow for IPv6.
+fn covers_family(mut ranges: Vec<(u128, u128)>, last: u128) -> bool {
+    ranges.sort_unstable();
+    let mut next = 0;
+    for (start, end) in ranges {
+        if start > next {
+            return false;
+        }
+        if end == last {
+            return true;
+        }
+        next = next.max(end + 1);
+    }
+    false
+}
+
+/// Whether the tunnel carries `dest`: always for a full tunnel (no prefixes),
+/// otherwise only inside the split tunnel's prefixes.
+pub fn dest_tunnelled(prefixes: &[IpNetwork], dest: IpAddr) -> bool {
+    prefixes.is_empty() || prefixes.iter().any(|net| net.contains(dest))
+}
+
+/// The running tunnel's split prefixes. [`SPLIT`] lets a full tunnel, the
+/// shipped default, answer without taking the lock.
+static SPLIT_PREFIXES: RwLock<Vec<IpNetwork>> = RwLock::new(Vec::new());
+static SPLIT: AtomicBool = AtomicBool::new(false);
+
+/// Records the AllowedIPs of the tunnel gotatun is now running, so the packet
+/// path routes exactly what gotatun would accept. Called with none when the
+/// tunnel stops, which returns to the fail-closed full tunnel.
+pub fn set_allowed_ips(allowed_ips: &[IpNetwork]) {
+    let prefixes = split_prefixes(allowed_ips);
+    let mut guard = SPLIT_PREFIXES
+        .write()
+        .unwrap_or_else(PoisonError::into_inner);
+    SPLIT.store(!prefixes.is_empty(), Ordering::Release);
+    *guard = prefixes;
+}
+
 /// ABI version for the C shim to sanity-check against. Bump on any breaking
 /// change to the exported signatures below.
-const POLICY_ABI_VERSION: i32 = 1;
+const POLICY_ABI_VERSION: i32 = 2;
 
 #[no_mangle]
 pub extern "C" fn tc_policy_abi_version() -> core::ffi::c_int {
@@ -170,9 +243,151 @@ pub extern "C" fn tc_policy_wants_tunnel(
     wants_tunnel(facts) as core::ffi::c_int
 }
 
+/// Whether a packet to `daddr` (4 or 16 bytes for `version` 4 or 6) belongs
+/// in the tunnel, given the running tunnel's AllowedIPs. Anything unreadable
+/// answers 1: the tunnel never leaks.
+///
+/// # Safety
+/// If `daddr` is non-null, it must point to at least 4 (IPv4) or 16 (IPv6)
+/// readable bytes.
+#[no_mangle]
+pub unsafe extern "C" fn tc_policy_dest_tunnelled(
+    version: core::ffi::c_int,
+    daddr: *const u8,
+) -> core::ffi::c_int {
+    if !SPLIT.load(Ordering::Acquire) || daddr.is_null() {
+        return 1;
+    }
+    // SAFETY: caller guarantees the address length that `version` implies.
+    let dest = match version {
+        4 => IpAddr::from(unsafe { *(daddr as *const [u8; 4]) }),
+        6 => IpAddr::from(unsafe { *(daddr as *const [u8; 16]) }),
+        _ => return 1,
+    };
+    let guard = SPLIT_PREFIXES
+        .read()
+        .unwrap_or_else(PoisonError::into_inner);
+    dest_tunnelled(&guard, dest) as core::ffi::c_int
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    fn nets(cidrs: &[&str]) -> Vec<IpNetwork> {
+        cidrs.iter().map(|c| c.parse().unwrap()).collect()
+    }
+
+    fn tunnelled(prefixes: &[IpNetwork], dest: &str) -> bool {
+        dest_tunnelled(prefixes, dest.parse().unwrap())
+    }
+
+    #[test]
+    fn lan_only_allowed_ips_is_a_split_tunnel() {
+        let split = split_prefixes(&nets(&["192.168.178.0/24", "fd00::/64", "10.8.0.1/32"]));
+        assert!(tunnelled(&split, "192.168.178.1"));
+        assert!(tunnelled(&split, "192.168.178.255"));
+        assert!(tunnelled(&split, "10.8.0.1"));
+        assert!(tunnelled(&split, "fd00::3ea6:1"));
+        assert!(!tunnelled(&split, "192.168.179.1"));
+        assert!(!tunnelled(&split, "1.1.1.1"));
+        assert!(!tunnelled(&split, "10.8.0.2"));
+        assert!(!tunnelled(&split, "fd00:0:0:1::1"));
+        assert!(!tunnelled(&split, "2001:db8::1"));
+    }
+
+    #[test]
+    fn host_bits_and_mid_octet_prefixes_match_the_network() {
+        let split = split_prefixes(&nets(&["192.168.178.5/24", "10.0.0.0/9"]));
+        assert!(tunnelled(&split, "192.168.178.200"));
+        assert!(tunnelled(&split, "10.127.255.255"));
+        assert!(!tunnelled(&split, "10.128.0.0"));
+    }
+
+    #[test]
+    fn default_route_in_either_family_is_a_full_tunnel() {
+        // An IPv4-only full tunnel must keep IPv6 fail-closed, not send it
+        // around the VPN.
+        for cidrs in [
+            &["0.0.0.0/0", "::/0"][..],
+            &["0.0.0.0/0"],
+            &["192.168.178.0/24", "::/0"],
+            &["0::/0", "10.0.0.0/8"],
+        ] {
+            let full = split_prefixes(&nets(cidrs));
+            assert!(full.is_empty(), "{cidrs:?}");
+            assert!(tunnelled(&full, "1.1.1.1"));
+            assert!(tunnelled(&full, "2001:db8::1"));
+        }
+        assert!(split_prefixes(&[]).is_empty());
+    }
+
+    #[test]
+    fn combined_full_routes_keep_both_families_fail_closed() {
+        for cidrs in [
+            vec!["0.0.0.0/1", "128.0.0.0/1"],
+            vec!["128.0.0.0/1", "0.0.0.0/2", "64.0.0.0/2", "0.0.0.0/2"],
+            vec!["::/1", "8000::/1"],
+            vec!["8000::/1", "::/2", "4000::/2", "::/3"],
+        ] {
+            let prefixes = split_prefixes(&nets(&cidrs));
+            assert!(prefixes.is_empty(), "{cidrs:?}");
+            assert!(tunnelled(&prefixes, "1.1.1.1"));
+            assert!(tunnelled(&prefixes, "2606:4700:4700::1111"));
+        }
+    }
+
+    #[test]
+    fn gaps_and_mixed_families_remain_split() {
+        for cidrs in [
+            vec!["0.0.0.0/2", "128.0.0.0/1"],
+            vec!["::/2", "8000::/1"],
+            vec!["0.0.0.0/1", "8000::/1"],
+            vec!["128.0.0.0/1"],
+            vec!["0.0.0.0/1"],
+        ] {
+            assert!(!split_prefixes(&nets(&cidrs)).is_empty(), "{cidrs:?}");
+        }
+        assert!(!covers_family(vec![(0, 0), (2, 3)], 3));
+        assert!(covers_family(vec![(0, 0), (1, 3)], 3));
+    }
+
+    // The one test that touches SPLIT_PREFIXES, as a single ordered sequence.
+    #[test]
+    fn ffi_dest_tunnelled_follows_the_running_config() {
+        let v4_out = [1u8, 1, 1, 1];
+        let v4_in = [192u8, 168, 178, 1];
+        let v6_out: [u8; 16] = "2001:db8::1"
+            .parse::<std::net::Ipv6Addr>()
+            .unwrap()
+            .octets();
+        let query = |version, addr: *const u8| unsafe { tc_policy_dest_tunnelled(version, addr) };
+
+        assert_eq!(query(4, v4_out.as_ptr()), 1, "no tunnel: full");
+
+        set_allowed_ips(&nets(&["192.168.178.0/24"]));
+        assert_eq!(query(4, v4_in.as_ptr()), 1);
+        assert_eq!(query(4, v4_out.as_ptr()), 0);
+        assert_eq!(query(6, v6_out.as_ptr()), 0);
+        assert_eq!(query(4, std::ptr::null()), 1, "null fails closed");
+        assert_eq!(query(5, v4_out.as_ptr()), 1, "unknown family fails closed");
+
+        set_allowed_ips(&nets(&["192.168.178.0/24", "0.0.0.0/0"]));
+        assert_eq!(query(6, v6_out.as_ptr()), 1);
+
+        set_allowed_ips(&nets(&["0.0.0.0/1", "128.0.0.0/1"]));
+        assert_eq!(query(6, v6_out.as_ptr()), 1);
+        set_allowed_ips(&nets(&["::/1", "8000::/1"]));
+        assert_eq!(query(4, v4_out.as_ptr()), 1);
+
+        set_allowed_ips(&nets(&["192.168.178.0/24"]));
+        set_allowed_ips(&[]);
+        assert_eq!(
+            query(4, v4_out.as_ptr()),
+            1,
+            "stopping restores the full tunnel"
+        );
+    }
 
     fn facts(local_dest: bool, is_dns: bool, tunnel_uid: bool, dns_direct: bool) -> PacketFacts {
         PacketFacts {
@@ -356,7 +571,7 @@ mod tests {
     // to touch the global, and it does so as a single ordered sequence.
     #[test]
     fn ffi_sequence_matches_direct_route_table_use() {
-        assert_eq!(tc_policy_abi_version(), 1);
+        assert_eq!(tc_policy_abi_version(), 2);
 
         // Set an override set with default_tunnel = false and check it
         // against an equivalent RouteTable built directly.

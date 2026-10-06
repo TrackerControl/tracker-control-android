@@ -12,6 +12,7 @@ void route_flow_lookup(void) { abort(); }
 void route_flow_lookup_verdict(void) { abort(); }
 void route_dns_direct(void) { abort(); }
 void route_wants_tunnel(void) { abort(); }
+void route_dest_tunnelled(void) { abort(); }
 void get_uid_q(void) { abort(); }
 void route_uid_relevant(void) { abort(); }
 void block_udp(void) { abort(); }

@@ -57,6 +57,16 @@ static int is_local_dest(int version, const void *daddr) {
     }
 }
 
+// Whether this packet is handed to WireGuard: the per-app and DNS decision,
+// then, for a split-tunnel profile, whether its AllowedIPs cover the
+// destination. Every tunnel decision goes through here, so a cached tunnel
+// verdict is never reused for a flow that is actually routed direct.
+static int packet_wants_tunnel(int version, const void *daddr, int is_dns, int tunnel_uid) {
+    return route_wants_tunnel(is_local_dest(version, daddr), is_dns,
+                              tunnel_uid, route_dns_direct()) &&
+           route_dest_tunnelled(version, daddr);
+}
+
 // The UID of an established flow, for packets that arrive without one.
 //
 // Packet 2+ of a direct flow reaches the routing fork with uid == -1: the
@@ -720,8 +730,7 @@ void handle_ip(const struct arguments *args,
                                              &cached_udp_tunnel,
                                              &cached_udp_uid_known);
         int wants_tunnel = udp_route_cached &&
-                route_wants_tunnel(is_local_dest(version, daddr), dport == 53,
-                                   cached_udp_tunnel, route_dns_direct());
+                packet_wants_tunnel(version, daddr, dport == 53, cached_udp_tunnel);
         reuse_wg_udp_verdict = can_reuse_wg_udp_verdict(
                 wg_is_required, protocol, udp_route_cached,
                 cached_udp_uid_known, wants_tunnel);
@@ -777,8 +786,7 @@ void handle_ip(const struct arguments *args,
                                             source, dest, pkt, payload, syn, uid,
                                             &sni_resolved_uid);
         sni_tunnel_uid_known = 1;
-        if (route_wants_tunnel(is_local_dest(version, daddr), 0,
-                               sni_tunnel_uid, route_dns_direct()))
+        if (packet_wants_tunnel(version, daddr, 0, sni_tunnel_uid))
             sni_active = 0;
     }
 
@@ -957,7 +965,8 @@ void handle_ip(const struct arguments *args,
         // Loopback/link-local/multicast are kept on the local path. DNS is
         // intentionally protected by WG too: in WG mode the VPN builder uses
         // WG DNS or public fallback DNS, and unprotected DNS would leak the
-        // user's physical network.
+        // user's physical network. A split-tunnel profile only tunnels what
+        // its AllowedIPs cover, DNS included; the rest takes the direct path.
         int is_dns = (dport == 53 &&
                       (protocol == IPPROTO_UDP || protocol == IPPROTO_TCP));
 
@@ -979,8 +988,7 @@ void handle_ip(const struct arguments *args,
                                      saddr, sport, daddr, dport,
                                      source, dest, pkt, payload, syn, uid, NULL);
 
-        int wg_dest = route_wants_tunnel(is_local_dest(version, daddr), is_dns,
-                                         tunnel_uid, route_dns_direct());
+        int wg_dest = packet_wants_tunnel(version, daddr, is_dns, tunnel_uid);
 
         // A tunnelled TCP flow has no ng_session, so retain the Java decision
         // beside the route. This is generation-scoped and owner-scoped: an

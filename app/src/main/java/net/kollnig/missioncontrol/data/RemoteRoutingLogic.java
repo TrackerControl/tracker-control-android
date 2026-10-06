@@ -76,9 +76,10 @@ public final class RemoteRoutingLogic {
      * Routes come from the tunnel's AllowedIPs, and they are a property of the
      * one tun every app shares — narrowing them to route some apps around the
      * tunnel would shrink them for the tunnelled apps too. v1 therefore only
-     * offers the control for a default-route tunnel. gotatun silently drops
-     * packets whose destination matches no peer's AllowedIPs, so a narrower
-     * tunnel would blackhole traffic rather than fail visibly.
+     * offers the control for a default-route tunnel. A narrower (split) tunnel
+     * already sends everything outside its AllowedIPs direct for every app
+     * (see {@code tc_policy_dest_tunnelled}), so there is nothing per app to
+     * choose.
      *
      * @param wgEnabled     whether remote egress is configured and on
      * @param defaultRoutes whether AllowedIPs covers 0.0.0.0/0 (and ::/0 when

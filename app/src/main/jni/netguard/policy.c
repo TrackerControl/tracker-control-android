@@ -26,7 +26,7 @@
 #include <stdlib.h>
 #include <stdatomic.h>
 
-#define POLICY_ABI_VERSION 1
+#define POLICY_ABI_VERSION 2
 
 static pthread_once_t policy_once = PTHREAD_ONCE_INIT;
 static int policy_ok = 0;
@@ -36,6 +36,7 @@ static void (*p_set_route_uids)(const jint *uids, int count, int default_tunnel)
 static void (*p_clear_route_uids)(void) = NULL;
 static int (*p_is_tunnel_uid)(jint uid) = NULL;
 static int (*p_wants_tunnel)(int local_dest, int is_dns, int tunnel_uid, int dns_direct) = NULL;
+static int (*p_dest_tunnelled)(int version, const void *daddr) = NULL;
 
 // Facts the packet path reads per packet. Mirrored here rather than queried
 // across the boundary: with no per-app override configured — the shipped
@@ -63,9 +64,10 @@ static void policy_load() {
     p_clear_route_uids = dlsym(handle, "tc_policy_clear_route_uids");
     p_is_tunnel_uid = dlsym(handle, "tc_policy_is_tunnel_uid");
     p_wants_tunnel = dlsym(handle, "tc_policy_wants_tunnel");
+    p_dest_tunnelled = dlsym(handle, "tc_policy_dest_tunnelled");
 
     if (p_abi_version == NULL || p_set_route_uids == NULL || p_clear_route_uids == NULL ||
-        p_is_tunnel_uid == NULL || p_wants_tunnel == NULL) {
+        p_is_tunnel_uid == NULL || p_wants_tunnel == NULL || p_dest_tunnelled == NULL) {
         log_android(ANDROID_LOG_ERROR, "policy: missing symbol: %s", dlerror());
         return;
     }
@@ -166,6 +168,17 @@ int route_wants_tunnel(int local_dest, int is_dns, int tunnel_uid, int dns_direc
     if (is_dns && !dns_direct)
         return 1;
     return tunnel_uid;
+}
+
+// Whether the running tunnel carries this destination: a split-tunnel profile
+// (neither address family fully covered) only carries its AllowedIPs, and gotatun
+// would drop the rest. Rust owns the prefixes because it already parses them
+// for gotatun, so the two cannot disagree. Only asked once a packet would
+// otherwise take the tunnel; a full tunnel answers from one atomic load there.
+int route_dest_tunnelled(int version, const void *daddr) {
+    policy_ensure();
+    // Without the bridge there is no tunnel to split.
+    return policy_ok ? p_dest_tunnelled(version, daddr) : 1;
 }
 
 // --- Per-flow verdict cache -------------------------------------------------

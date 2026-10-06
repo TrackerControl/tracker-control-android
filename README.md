@@ -123,7 +123,7 @@ The VPN tab supports three options:
 | **IVPN** | Sets up a connection through [IVPN](https://www.ivpn.net) from your account ID, and lets you pick a country. |
 | **Custom (WireGuard)** | Imports a configuration file from another VPN provider, your own server, or a workplace endpoint. (WireGuard is the underlying connection type these providers use.) |
 
-When remote routing is on, TrackerControl still filters traffic locally first, then forwards what's allowed through the chosen provider. Secure DNS (DoH) automatically pauses if the provider supplies its own DNS, since DNS is then handled through the remote connection. Connection keys can be rotated from advanced settings.
+When remote routing is on, TrackerControl still filters traffic locally first, then forwards what's allowed through the chosen provider. A custom configuration whose `AllowedIPs` does not cover all addresses in either IPv4 or IPv6, such as one that only reaches a home network, is a split tunnel: only those addresses go through the remote connection, and everything else goes out directly over Wi-Fi or mobile data, still filtered. Full coverage can be a default route (`0.0.0.0/0` or `::/0`) or several prefixes combined. Secure DNS (DoH) automatically pauses if the provider supplies its own DNS, since DNS is then handled through the remote connection. Connection keys can be rotated from advanced settings.
 
 Note: Android only allows one VPN at a time, so TrackerControl cannot run alongside a separate VPN app, and Android's "Private DNS" is not supported alongside TrackerControl.
 
