@@ -31,6 +31,11 @@ updates:
       # updates; block the 5.0 major. Security updates are exempt from this.
       - dependency-name: "com.maxmind.geoip2:geoip2"
         versions: [">=5.0.0"]
+      # WorkManager 2.12.0 raised its minSdk to 24, and we still support
+      # API 23 (app/build.gradle `minSdk 23`), so the manifest merger
+      # rejects it. Stay on 2.11.x until we decide to drop Android 6.0.
+      - dependency-name: "androidx.work:work-runtime"
+        versions: [">=2.12.0"]
 
   # --- WireGuard bridge (Rust / Cargo) ---
   # Embeds gotatun (Mullvad's WireGuard). Updates here are sensitive; treat
