@@ -380,14 +380,21 @@ public class ServiceSinkhole extends VpnService {
     static final int PRIVATE_DNS_WARNING_NONE = 0;
     static final int PRIVATE_DNS_WARNING_HOSTNAME = 1;
     static final int PRIVATE_DNS_WARNING_ALLOWED_DOT = 2;
+    static final int PRIVATE_DNS_WARNING_ACTIVE = 3;
     private static final long PRIVATE_DNS_WARNING_WINDOW_MS = 60 * 60 * 1000L;
+    // Android validates DoT against the VPN's resolvers some seconds after the
+    // VPN comes up, so the state read at establish time is usually still off.
+    private static final long PRIVATE_DNS_VALIDATION_DELAY_MS = 30 * 1000L;
     private int privateDnsWarningState = PRIVATE_DNS_WARNING_NONE;
     private final Handler privateDnsWarningExpiryHandler = new Handler(Looper.getMainLooper());
     private final Runnable privateDnsWarningExpiryRunnable = this::requestPrivateDnsWarningUpdate;
+    private final Runnable privateDnsValidationRunnable = this::requestPrivateDnsWarningUpdate;
     private final SharedPreferences.OnSharedPreferenceChangeListener privateDnsPreferenceListener =
             (preferences, key) -> {
                 if ("block_dot".equals(key) || "log".equals(key))
                     requestPrivateDnsWarningUpdate();
+                if ("block_dot".equals(key))
+                    schedulePrivateDnsValidationCheck();
             };
 
     public static final String EXTRA_COMMAND = "Command";
@@ -1203,11 +1210,15 @@ public class ServiceSinkhole extends VpnService {
             if (prefs.getBoolean("sni_enabled", false)
                     && packet.data != null
                     && !packet.data.isEmpty()) {
-                uncertain = DatabaseHelper.ACCESS_UNCERTAIN_NONE;
+                uncertain = sniUncertainty(uncertain);
                 if (!packet.data.equals(originalDname)) {
                     Log.d(TAG, "Using SNI " + packet.data + " instead of originalDname " + originalDname);
-                    dname = packet.data;
-                    isTracker = getDecloakedTracker(dname, dh).first != null;
+                    Pair<Tracker, String> sniTracker = getDecloakedTracker(packet.data, dh);
+                    isTracker = sniTracker.first != null;
+                    // Record the name that matched, which is the CNAME target
+                    // for a cloaked tracker. The timeline and Protection screen
+                    // look the stored name up again and drop rows that miss.
+                    dname = isTracker ? sniTracker.second : packet.data;
                 }
             }
 
@@ -1247,20 +1258,7 @@ public class ServiceSinkhole extends VpnService {
         }
 
         private Pair<Tracker, String> getDecloakedTracker(String qname, String aname) {
-            String foundDname = null;
-            Tracker t = TrackerList.findTracker(qname);
-
-            if (t != null) {
-                foundDname = qname;
-            } else { // DNS uncloaking
-                if (aname != null) {
-                    t = TrackerList.findTracker(aname);
-                    if (t != null)
-                        foundDname = aname;
-                }
-            }
-
-            return new Pair<>(t, foundDname);
+            return decloakTracker(qname, aname);
         }
 
         private void usage(Usage usage) {
@@ -1756,6 +1754,7 @@ public class ServiceSinkhole extends VpnService {
             updateUnderlyingNetworks();
             vpnEstablished = true;
             markStoppedCleanly(false);
+            schedulePrivateDnsValidationCheck();
             return pfd;
         } catch (SecurityException ex) {
             throw ex;
@@ -1767,22 +1766,41 @@ public class ServiceSinkhole extends VpnService {
 
     static int getPrivateDnsWarningState(Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        if (prefs.getBoolean("block_dot", true))
+            return PRIVATE_DNS_WARNING_NONE;
+        return getPrivateDnsWarningState(context, Util.isPrivateDnsActiveOnVpn(context));
+    }
+
+    static int getPrivateDnsWarningState(Context context, boolean privateDnsActiveOnVpn) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         boolean blockDot = prefs.getBoolean("block_dot", true);
         if (blockDot)
             return PRIVATE_DNS_WARNING_NONE;
 
-        // Case A takes precedence and avoids querying the log. Case B is only
+        // Case A takes precedence and avoids querying the log. Case B covers
+        // "automatic" mode, where Android upgrades to DoT on its own once the
+        // resolvers the VPN advertises answer on port 853. Case C is only
         // meaningful when the full traffic log is enabled: insertLog runs only
         // on that path. log_app defaults to true but records recognized tracker
         // contacts in access, not all flows, so it cannot support this warning.
         if (Util.isPrivateDnsDetectionDefeated(context))
             return PRIVATE_DNS_WARNING_HOSTNAME;
+        if (privateDnsActiveOnVpn)
+            return PRIVATE_DNS_WARNING_ACTIVE;
         if (!prefs.getBoolean("log", false))
             return PRIVATE_DNS_WARNING_NONE;
 
         return DatabaseHelper.getInstance(context).hasRecentAllowedDot(
                 System.currentTimeMillis() - PRIVATE_DNS_WARNING_WINDOW_MS)
                 ? PRIVATE_DNS_WARNING_ALLOWED_DOT : PRIVATE_DNS_WARNING_NONE;
+    }
+
+    /**
+     * Whether the warning's fix is TrackerControl's own "Block Android's
+     * Private DNS" setting rather than Android's Private DNS setting.
+     */
+    static boolean opensTrackerControlSettings(int state) {
+        return state == PRIVATE_DNS_WARNING_ALLOWED_DOT || state == PRIVATE_DNS_WARNING_ACTIVE;
     }
 
     static boolean shouldShowPrivateDnsWarning(int previousState, int currentState) {
@@ -2752,6 +2770,35 @@ public class ServiceSinkhole extends VpnService {
             invalidateTrackerCacheAfterDnsInsert(outcome, rr.Resource,
                     Util.isNumericAddress(rr.Resource));
         }
+    }
+
+    static Pair<Tracker, String> decloakTracker(String qname, String aname) {
+        String foundDname = null;
+        Tracker t = TrackerList.findTracker(qname);
+
+        if (t != null) {
+            foundDname = qname;
+        } else { // DNS uncloaking
+            if (aname != null) {
+                t = TrackerList.findTracker(aname);
+                if (t != null)
+                    foundDname = aname;
+            }
+        }
+
+        return new Pair<>(t, foundDname);
+    }
+
+    /**
+     * Uncertainty of a contact attributed by its SNI. The SNI names the host,
+     * so it settles which of an IP's DNS questions the flow belongs to. The
+     * block decision is still made by IP, though, so an IP shared by a tracker
+     * and a non-tracker keeps its mark: it explains why standard mode let the
+     * contact through.
+     */
+    static int sniUncertainty(int dnsUncertainty) {
+        return dnsUncertainty == DatabaseHelper.ACCESS_UNCERTAIN_MIXED_TRACKER_AND_NON_TRACKER
+                ? dnsUncertainty : DatabaseHelper.ACCESS_UNCERTAIN_NONE;
     }
 
     static final class DnsEvidence {
@@ -4209,6 +4256,7 @@ public class ServiceSinkhole extends VpnService {
             // Cancel any debounced network-change reload so it doesn't fire post-teardown
             networkReloadDebounceHandler.removeCallbacksAndMessages(NETWORK_RELOAD_TOKEN);
             privateDnsWarningExpiryHandler.removeCallbacks(privateDnsWarningExpiryRunnable);
+            privateDnsWarningExpiryHandler.removeCallbacks(privateDnsValidationRunnable);
             PreferenceManager.getDefaultSharedPreferences(ServiceSinkhole.this)
                     .unregisterOnSharedPreferenceChangeListener(privateDnsPreferenceListener);
             cancelNativeRecovery(true);
@@ -4698,6 +4746,15 @@ public class ServiceSinkhole extends VpnService {
             privateDnsWarningExpiryHandler.postDelayed(privateDnsWarningExpiryRunnable, delay);
     }
 
+    // One-shot, and only while DoT is allowed: with DoT blocked Android's
+    // validation cannot succeed, so there is nothing to wait for.
+    private void schedulePrivateDnsValidationCheck() {
+        privateDnsWarningExpiryHandler.removeCallbacks(privateDnsValidationRunnable);
+        if (!destroying && !PreferenceManager.getDefaultSharedPreferences(this).getBoolean("block_dot", true))
+            privateDnsWarningExpiryHandler.postDelayed(privateDnsValidationRunnable,
+                    PRIVATE_DNS_VALIDATION_DELAY_MS);
+    }
+
     private synchronized void cancelPrivateDnsWarningExpiry() {
         privateDnsWarningExpiryHandler.removeCallbacks(privateDnsWarningExpiryRunnable);
     }
@@ -4739,6 +4796,7 @@ public class ServiceSinkhole extends VpnService {
 
     private synchronized void resetPrivateDnsBypassWarning() {
         cancelPrivateDnsWarningExpiry();
+        privateDnsWarningExpiryHandler.removeCallbacks(privateDnsValidationRunnable);
         clearPrivateDnsBypassNotification();
         privateDnsWarningState = PRIVATE_DNS_WARNING_NONE;
         publishPrivateDnsWarningState(privateDnsWarningState);
@@ -4746,7 +4804,7 @@ public class ServiceSinkhole extends VpnService {
 
     private void showPrivateDnsBypassNotification(int state) {
         Intent settings;
-        if (state == PRIVATE_DNS_WARNING_ALLOWED_DOT)
+        if (opensTrackerControlSettings(state))
             settings = new Intent(this, ActivitySettings.class);
         else {
             settings = new Intent(Settings.ACTION_WIRELESS_SETTINGS);
@@ -4762,7 +4820,9 @@ public class ServiceSinkhole extends VpnService {
             String resolver = TextUtils.isEmpty(specifier)
                     ? getString(R.string.msg_private_dns_unknown_resolver) : specifier;
             detail = getString(R.string.msg_private_dns_bypass_notify, resolver);
-        } else
+        } else if (state == PRIVATE_DNS_WARNING_ACTIVE)
+            detail = getString(R.string.msg_private_dns_bypass_active_notify);
+        else
             detail = getString(R.string.msg_private_dns_bypass_allowed_notify);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "notify");

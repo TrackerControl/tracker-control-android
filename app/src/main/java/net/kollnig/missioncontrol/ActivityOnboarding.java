@@ -621,7 +621,6 @@ public class ActivityOnboarding extends AppCompatActivity {
                     String mode = BlockingMode.MODE_STANDARD;
                     boolean enableSni = false;
                     boolean enableAdbLogging = false;
-                    boolean enableDotBlocking = true;
 
                     if (checkedId == R.id.rbMinimal)
                         mode = BlockingMode.MODE_MINIMAL;
@@ -631,7 +630,6 @@ public class ActivityOnboarding extends AppCompatActivity {
                         mode = BlockingMode.MODE_MINIMAL;
                         enableSni = true;
                         enableAdbLogging = true;
-                        enableDotBlocking = false;
                     }
 
                     PreferenceManager.getDefaultSharedPreferences(holder.itemView.getContext())
@@ -640,7 +638,11 @@ public class ActivityOnboarding extends AppCompatActivity {
                             .putBoolean("filter", true)
                             .putBoolean("sni_enabled", enableSni)
                             .putBoolean("log_logcat", enableAdbLogging)
-                            .putBoolean("block_dot", enableDotBlocking)
+                            // Every preset blocks DoT. Without it Android's
+                            // "Automatic" Private DNS encrypts DNS to the
+                            // advertised resolvers, which leaves nothing to
+                            // detect or block trackers by.
+                            .putBoolean("block_dot", true)
                             .apply();
 
                     BlockingMode.applyMode(holder.itemView.getContext());
