@@ -203,7 +203,7 @@ androidComponents {
 }
 
 dependencies {
-    implementation 'androidx.core:core-ktx:1.19.0'
+    implementation 'androidx.core:core-ktx:1.19.1'
     implementation platform('androidx.compose:compose-bom:2026.09.00')
     implementation 'androidx.compose.material3:material3'
     implementation 'androidx.compose.ui:ui'
@@ -234,8 +234,8 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.2.2'
     implementation 'com.google.android.material:material:1.14.0'
     implementation 'androidx.work:work-runtime:2.11.2'
-    implementation 'com.google.guava:guava:33.7.1-android'
-    annotationProcessor 'androidx.annotation:annotation:1.10.0'
+    implementation 'com.google.guava:guava:33.7.2-android'
+    annotationProcessor 'androidx.annotation:annotation:1.11.0'
 
     // fix errors with libraries
     def lifecycle_version = '2.11.0'
@@ -256,8 +256,8 @@ dependencies {
     implementation 'com.maxmind.geoip2:geoip2:4.4.0'
 
     // Crash reporting
-    implementation "ch.acra:acra-mail:5.13.1"
-    implementation "ch.acra:acra-dialog:5.13.1"
+    implementation "ch.acra:acra-mail:5.14.2"
+    implementation "ch.acra:acra-dialog:5.14.2"
     compileOnly "com.google.auto.service:auto-service-annotations:1.1.1"
     annotationProcessor "com.google.auto.service:auto-service:1.1.1"
 
