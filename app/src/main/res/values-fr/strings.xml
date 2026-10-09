@@ -537,6 +537,7 @@ Cordialement,\n\n]]></string>
     <string name="app_state_bypassed">Contourner TrackerControl</string>
     <string name="app_state_bypassed_explanation">L\'application se connecte directement, en dehors de TrackerControl. Rien n\'est surveillé ni bloqué pour elle. À utiliser en dernier recours si l\'application ne fonctionne toujours pas.\n\nRemarque : \"Bloquer les connexions sans VPN\" doit être DÉSACTIVÉ dans les paramètres VPN d\'Android pour que cela fonctionne.</string>
     <!-- Per-app protection screen -->
+    <string name="protection_title">Protection</string>
     <string name="protection_route_heading">VPN distant</string>
     <!-- Protection state and remote-VPN routing shown together on one row -->
     <string name="protection_app_not_working">L’application ne fonctionne pas ? Touchez ici</string>
