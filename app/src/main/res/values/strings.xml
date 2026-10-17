@@ -746,6 +746,7 @@ Sincerely,\n\n]]></string>
 
     <string name="msg_private_dns_bypass_title">Private DNS bypasses tracker detection</string>
     <string name="msg_private_dns_bypass_notify">Tracker detection is off: DNS is encrypted to %1$s, so app connections can\'t be analysed</string>
+    <string name="msg_private_dns_bypass_active_notify">Tracker detection is off: Android\'s Private DNS is encrypting DNS, so app connections can\'t be analysed. Tap to turn on \"Block Android\'s Private DNS\".</string>
     <string name="msg_private_dns_bypass_allowed_notify">Some apps are using encrypted DNS; their tracker contacts are invisible to TrackerControl.</string>
 
     <string name="setting_monitor_system">Monitor system apps</string>

@@ -58,6 +58,32 @@ public class PrivateDnsWarningTest {
     }
 
     @Test
+    public void activePrivateDnsOnVpnWarnsWithoutTrafficLog() {
+        setPrivateDns("opportunistic", null);
+        prefs.edit().putBoolean("block_dot", false).commit();
+
+        assertEquals(ServiceSinkhole.PRIVATE_DNS_WARNING_ACTIVE,
+                ServiceSinkhole.getPrivateDnsWarningState(context, true));
+        assertEquals(ServiceSinkhole.PRIVATE_DNS_WARNING_NONE,
+                ServiceSinkhole.getPrivateDnsWarningState(context, false));
+        assertTrue(ServiceSinkhole.opensTrackerControlSettings(
+                ServiceSinkhole.PRIVATE_DNS_WARNING_ACTIVE));
+
+        // Blocking DoT makes Android's validation fail, so nothing to warn about.
+        prefs.edit().putBoolean("block_dot", true).commit();
+        assertEquals(ServiceSinkhole.PRIVATE_DNS_WARNING_NONE,
+                ServiceSinkhole.getPrivateDnsWarningState(context, true));
+
+        // A pinned resolver keeps its more specific warning.
+        setPrivateDns("hostname", "dns.google");
+        prefs.edit().putBoolean("block_dot", false).commit();
+        assertEquals(ServiceSinkhole.PRIVATE_DNS_WARNING_HOSTNAME,
+                ServiceSinkhole.getPrivateDnsWarningState(context, true));
+        assertFalse(ServiceSinkhole.opensTrackerControlSettings(
+                ServiceSinkhole.PRIVATE_DNS_WARNING_HOSTNAME));
+    }
+
+    @Test
     public void hostnameWarningTakesPrecedenceOverAllowedDotFlow() {
         long now = System.currentTimeMillis();
         database.insertLog(packet(now, 6, 853, true, "A"), null, 0, false);

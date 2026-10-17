@@ -37,6 +37,7 @@ import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.net.LinkProperties;
 import android.net.Network;
+import android.net.NetworkCapabilities;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
 import android.os.Build;
@@ -598,6 +599,34 @@ public class Util {
     public static boolean isPrivateDnsHostnameMode(Context context) {
         String dns_mode = Settings.Global.getString(context.getContentResolver(), "private_dns_mode");
         return "hostname".equals(dns_mode);
+    }
+
+    /**
+     * Whether Android is resolving over DoT on a VPN network, which in
+     * "automatic" mode happens silently once a resolver the VPN advertises
+     * answers on port 853. TrackerControl then sees no plaintext DNS for the
+     * apps it routes, so it can neither detect nor block their trackers.
+     */
+    @SuppressWarnings("deprecation") // getAllNetworks: the only way to reach the VPN network, which TC excludes itself from
+    public static boolean isPrivateDnsActiveOnVpn(Context context) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P)
+            return false;
+        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (cm == null)
+            return false;
+        try {
+            for (Network network : cm.getAllNetworks()) {
+                NetworkCapabilities caps = cm.getNetworkCapabilities(network);
+                if (caps == null || !caps.hasTransport(NetworkCapabilities.TRANSPORT_VPN))
+                    continue;
+                LinkProperties lp = cm.getLinkProperties(network);
+                if (lp != null && lp.isPrivateDnsActive())
+                    return true;
+            }
+        } catch (SecurityException ex) {
+            Log.w(TAG, "Private DNS state unavailable: " + ex);
+        }
+        return false;
     }
 
     public static String getPrivateDnsSpecifier(Context context) {

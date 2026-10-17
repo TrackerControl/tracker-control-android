@@ -525,8 +525,7 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
             @Override
             public void onClick(View v) {
                 Intent settings;
-                if (privateDnsWarningState
-                        == ServiceSinkhole.PRIVATE_DNS_WARNING_ALLOWED_DOT)
+                if (ServiceSinkhole.opensTrackerControlSettings(privateDnsWarningState))
                     settings = new Intent(ActivityMain.this, ActivitySettings.class);
                 else {
                     settings = new Intent(Settings.ACTION_WIRELESS_SETTINGS);
@@ -704,7 +703,9 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
             String resolver = TextUtils.isEmpty(specifier)
                     ? getString(R.string.msg_private_dns_unknown_resolver) : specifier;
             tvPrivateDnsBypass.setText(getString(R.string.msg_private_dns_bypass_notify, resolver));
-        } else if (state == ServiceSinkhole.PRIVATE_DNS_WARNING_ALLOWED_DOT)
+        } else if (state == ServiceSinkhole.PRIVATE_DNS_WARNING_ACTIVE)
+            tvPrivateDnsBypass.setText(R.string.msg_private_dns_bypass_active_notify);
+        else if (state == ServiceSinkhole.PRIVATE_DNS_WARNING_ALLOWED_DOT)
             tvPrivateDnsBypass.setText(R.string.msg_private_dns_bypass_allowed_notify);
         tvPrivateDnsBypass.setVisibility(
                 state != ServiceSinkhole.PRIVATE_DNS_WARNING_NONE ? View.VISIBLE : View.GONE);
