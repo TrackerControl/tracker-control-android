@@ -145,10 +145,17 @@
                 android:hint="fd00:1:fd00:1:fd00:1:fd00:1"
                 android:inputType="text"
                 android:key="vpn6" />
+            <eu.faircode.netguard.SwitchPreference
+                android:defaultValue="true"
+                android:key="custom_dns_enabled"
+                android:summary="@string/summary_custom_dns_enabled"
+                android:title="@string/setting_custom_dns_enabled" />
             <EditTextPreference
+                android:dependency="custom_dns_enabled"
                 android:inputType="text"
                 android:key="dns" />
             <EditTextPreference
+                android:dependency="custom_dns_enabled"
                 android:inputType="text"
                 android:key="dns2" />
             <EditTextPreference

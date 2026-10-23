@@ -172,6 +172,17 @@ public class LocalNetworkAccessTest {
     }
 
     @Test
+    public void disabledCustomDnsDoesNotRequestAccessForSavedLocalServers() {
+        prefs.edit().putString("dns", "192.168.1.10").putString("dns2", "fd00::53")
+                .putBoolean("custom_dns_enabled", false).commit();
+        assertFalse(LocalNetworkAccess.isConfigured(prefs));
+        assertTrue(LocalNetworkAccess.isRelevantSetting("custom_dns_enabled"));
+
+        prefs.edit().putBoolean("custom_dns_enabled", true).commit();
+        assertTrue(LocalNetworkAccess.isConfigured(prefs));
+    }
+
+    @Test
     public void uniqueLocalIpv6DnsNeedsLocalNetworkAccess() {
         prefs.edit().putString("dns", "fd12:3456:789a::1").commit();
         assertTrue(LocalNetworkAccess.isConfigured(prefs));

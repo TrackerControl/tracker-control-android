@@ -94,7 +94,7 @@ public class LocalNetworkAccess {
 
     /** Preferences that can point TrackerControl at the local network. */
     private static final String[] SETTINGS = {
-            "dns", "dns2",                      // custom VPN DNS servers
+            "dns", "dns2", "custom_dns_enabled", // custom VPN DNS servers
             "doh_enabled", "doh_endpoint",      // Secure DNS
             "tcp_mss_clamp",                    // tethering compatibility mode
             "wg_enabled", "wg_config",          // WireGuard remote egress
@@ -220,8 +220,9 @@ public class LocalNetworkAccess {
     }
 
     static boolean isConfigured(SharedPreferences prefs) {
-        if (isLocalAddress(prefs.getString("dns", null)) ||
-                isLocalAddress(prefs.getString("dns2", null)))
+        if (prefs.getBoolean("custom_dns_enabled", true) &&
+                (isLocalAddress(prefs.getString("dns", null)) ||
+                        isLocalAddress(prefs.getString("dns2", null))))
             return true;
 
         if (prefs.getBoolean("doh_enabled", false) &&

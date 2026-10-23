@@ -803,6 +803,9 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
                     getString(R.string.setting_dns, prefs.getString(name, "-")));
             ServiceSinkhole.reload("changed " + name, this, false);
 
+        } else if ("custom_dns_enabled".equals(name)) {
+            ServiceSinkhole.reload("changed " + name, this, false);
+
         } else if ("doh_enabled".equals(name)) {
             // Reset DoH client when toggled
             net.kollnig.missioncontrol.dns.DnsOverHttpsClient.resetInstance();

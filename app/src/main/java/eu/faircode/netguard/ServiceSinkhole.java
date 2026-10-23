@@ -1584,8 +1584,11 @@ public class ServiceSinkhole extends VpnService {
         // Get custom DNS servers
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         boolean ip6 = prefs.getBoolean("ip6", true);
-        String vpnDns1 = prefs.getString("dns", null);
-        String vpnDns2 = prefs.getString("dns2", null);
+        // Preserve saved addresses when temporarily using the network's DNS.
+        // Default on so upgrades and older backups retain their DNS behaviour.
+        boolean customDns = prefs.getBoolean("custom_dns_enabled", true);
+        String vpnDns1 = customDns ? prefs.getString("dns", null) : null;
+        String vpnDns2 = customDns ? prefs.getString("dns2", null) : null;
         Log.i(TAG, "DNS system=" + TextUtils.join(",", sysDns) + " config=" + vpnDns1 + "," + vpnDns2);
 
         // First pass: IPv4 resolvers only. This reproduces the historical
