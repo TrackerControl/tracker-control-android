@@ -128,6 +128,7 @@ pub fn start_tunnel(
         "gotatun device up ({} peer(s), mtu {mtu})",
         config.peers.len()
     ));
+    crate::policy::set_allowed_ips(&allowed_ips(&config.peers));
 
     Ok(Tunnel {
         runtime,
@@ -175,6 +176,7 @@ impl Tunnel {
                 .await
                 .map_err(|e| e.to_string())?;
 
+            crate::policy::set_allowed_ips(&allowed_ips(&config.peers));
             *inner.peers.lock().unwrap() = config.peers;
             Ok(())
         })
@@ -387,6 +389,9 @@ impl Tunnel {
     /// Tears down gotatun and closes the duplicated fds. Idempotent.
     pub fn stop(&self) {
         let inner = Arc::clone(&self.inner);
+        // Back to the fail-closed full tunnel until the next config is up.
+        // WgEgress stops the old tunnel before starting its replacement.
+        crate::policy::set_allowed_ips(&[]);
         self.runtime.block_on(async move {
             let device = inner.device.lock().await.take();
             if let Some(device) = device {
@@ -401,6 +406,14 @@ impl Drop for Tunnel {
     fn drop(&mut self) {
         self.stop();
     }
+}
+
+/// The union of every peer's AllowedIPs.
+fn allowed_ips(peers: &[PeerConfig]) -> Vec<ipnetwork::IpNetwork> {
+    peers
+        .iter()
+        .flat_map(|p| p.allowed_ips.iter().copied())
+        .collect()
 }
 
 /// Maps the Java-side keepalive seconds (0 or negative disables) onto the
