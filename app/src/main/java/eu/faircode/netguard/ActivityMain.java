@@ -587,9 +587,7 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         // Handle intent
         checkExtras(getIntent());
 
-        // Warn about disabled blocking if ADB logging is on
-        if (!Util.isPlayStoreInstall() && prefs.getBoolean("log_logcat", false))
-            Toast.makeText(this, R.string.msg_log_logcat, Toast.LENGTH_SHORT).show();
+        updateResearchModeNotice();
     }
 
     @Override
@@ -656,6 +654,7 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
                     vpnEnabled && Util.isPrivateDnsBlocked(this) ? View.VISIBLE : View.GONE);
         }
         refreshPrivateDnsBypassBanner();
+        updateResearchModeNotice();
 
         super.onResume();
     }
@@ -686,7 +685,20 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         updateHorizontalPadding(findViewById(R.id.tvLocalNetwork), horizontalPadding);
         updateHorizontalPadding(findViewById(R.id.tvPrivateDns), horizontalPadding);
         updateHorizontalPadding(findViewById(R.id.tvPrivateDnsBypass), horizontalPadding);
+        updateResearchModeNotice();
         updatePrivateDnsBypassBanner();
+    }
+
+    private void updateResearchModeNotice() {
+        TextView notice = findViewById(R.id.tvResearchMode);
+        if (notice == null)
+            return;
+        updateHorizontalPadding(notice, Math.max(
+                getResources().getDimensionPixelSize(R.dimen.activity_horizontal_margin),
+                Math.round(16 * getResources().getDisplayMetrics().density)));
+        notice.setVisibility(PreferenceManager.getDefaultSharedPreferences(this)
+                .getBoolean("log_logcat", false) ? View.VISIBLE : View.GONE);
+        notice.setOnClickListener(view -> startActivity(new Intent(this, ActivitySettings.class)));
     }
 
     private void updatePrivateDnsBypassBanner() {
@@ -1001,6 +1013,9 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
                 swEnabled.setChecked(enabled);
 
             updatePrivateDnsBypassBanner();
+
+        } else if ("log_logcat".equals(name)) {
+            updateResearchModeNotice();
 
         } else if ("block_dot".equals(name) || "log".equals(name)) {
             refreshPrivateDnsBypassBanner();
