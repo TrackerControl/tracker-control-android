@@ -55,16 +55,16 @@ class BlocklistsScreenNoticeTest {
         capture("blocklists-minimal")
     }
 
-    @Test fun playNoticeDoesNotOfferUnavailableModesEvenWithNoLists() {
+    @Test fun minimalNoticeRemainsVisibleEvenWithNoLists() {
         compose.setContent {
             TrackerControlTheme {
                 BlocklistsScreenContent(BlocklistsScreenModel(emptyList(),
-                    context.getString(R.string.blocklist_play_notice)), callbacks)
+                    context.getString(R.string.blocklist_minimal_notice)), callbacks)
             }
         }
-        compose.onNodeWithText(context.getString(R.string.blocklist_play_notice)).assertIsDisplayed()
+        compose.onNodeWithText(context.getString(R.string.blocklist_minimal_notice)).assertIsDisplayed()
         compose.onNodeWithTag("blocklist-add").assertIsDisplayed()
-        capture("blocklists-play")
+        capture("blocklists-empty")
     }
 
     @Test fun runningDownloadDisablesRetryAndListMutation() {

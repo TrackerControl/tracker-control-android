@@ -408,6 +408,15 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
             });
         }
 
+        // Custom lists cannot affect the Play build's Minimal-only policy.
+        if (BlockingMode.isPlayStoreBuild() && cat_advanced != null) {
+            for (String key : new String[]{"manage_blocklists", "hosts_download", "hosts_auto_update"}) {
+                Preference preference = cat_advanced.findPreference(key);
+                if (preference != null)
+                    cat_advanced.removePreference(preference);
+            }
+        }
+
         // Hosts file settings
         if (cat_advanced != null) {
             Preference pref_use_hosts = screen.findPreference("use_hosts");

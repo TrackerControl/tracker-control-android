@@ -50,6 +50,10 @@ public class ActivityBlocklists extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         Util.setTheme(this);
         super.onCreate(savedInstanceState);
+        if (BlockingMode.isPlayStoreBuild()) {
+            finish();
+            return;
+        }
 
         ComposeView composeView = new ComposeView(this);
         // A stable ID gives Compose's saveable state registry a key to persist
@@ -140,9 +144,7 @@ public class ActivityBlocklists extends AppCompatActivity {
                     getString(R.string.blocklist_delete_description)));
         }
         String notice = null;
-        if (BlockingMode.isPlayStoreBuild())
-            notice = getString(R.string.blocklist_play_notice);
-        else if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean("log_logcat", false))
+        if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean("log_logcat", false))
             notice = getString(R.string.blocklist_research_notice);
         else if (BlockingMode.isMinimalMode(this))
             notice = getString(R.string.blocklist_minimal_notice);

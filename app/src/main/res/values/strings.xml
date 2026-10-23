@@ -834,7 +834,6 @@ Sincerely,\n\n]]></string>
 
     <string name="blocklist_format">Enter an HTTPS URL for a hosts-format blocklist (for example, 0.0.0.0 ads.example.com). Browser filter rules are not supported.</string>
     <string name="blocklist_minimal_notice">Custom blocklists are inactive in Minimal mode. Switch to Standard or Strict in Settings to use them.</string>
-    <string name="blocklist_play_notice">Custom blocklists are not used in the Google Play version of TrackerControl.</string>
     <string name="blocklist_research_notice">Custom blocklists are inactive while Research mode is on. Turn off Research in Settings to enable tracker blocking.</string>
     <string name="blocklist_browser_notice">Browser tracker protection is off by default. Enable it on the browser’s app page to use custom blocklists there.</string>
     <string name="blocklist_downloading">Downloading blocklists… Waiting for a connection if offline.</string>

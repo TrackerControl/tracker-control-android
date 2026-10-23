@@ -35,6 +35,7 @@ class ActivityBlocklistsTest {
     }
 
     @Test fun addingListQueuesConstrainedDownloadWithoutReplacingCachedHosts() {
+        org.junit.Assume.assumeFalse(BlockingMode.isPlayStoreBuild())
         val cached = java.io.File(context.filesDir, "hosts.txt")
         cached.writeText("0.0.0.0 old.example\n")
         val controller = Robolectric.buildActivity(ActivityBlocklists::class.java).setup()
@@ -58,18 +59,45 @@ class ActivityBlocklistsTest {
     @Test fun noticesRespectBuildAndResearchOverride() {
         val controller = Robolectric.buildActivity(ActivityBlocklists::class.java).setup()
         val activity = controller.get()
+        if (BlockingMode.isPlayStoreBuild()) {
+            assertTrue(activity.isFinishing)
+            assertTrue(WorkManager.getInstance(context)
+                .getWorkInfosForUniqueWork("CustomBlocklistsDownload").get().isEmpty())
+            controller.pause().stop().destroy()
+            return
+        }
         val prefs = PreferenceManager.getDefaultSharedPreferences(context)
         prefs.edit().putString("blocking_mode", "minimal").putBoolean("log_logcat", false).commit()
-        assertEquals(activity.getString(if (BlockingMode.isPlayStoreBuild())
-            R.string.blocklist_play_notice else R.string.blocklist_minimal_notice), model(activity).notice)
+        assertEquals(activity.getString(R.string.blocklist_minimal_notice), model(activity).notice)
         prefs.edit().putString("blocking_mode", "strict").putBoolean("log_logcat", true).commit()
-        assertEquals(activity.getString(if (BlockingMode.isPlayStoreBuild())
-            R.string.blocklist_play_notice else R.string.blocklist_research_notice), model(activity).notice)
+        assertEquals(activity.getString(R.string.blocklist_research_notice), model(activity).notice)
         prefs.edit().putBoolean("log_logcat", false).commit()
-        if (BlockingMode.isPlayStoreBuild())
-            assertEquals(activity.getString(R.string.blocklist_play_notice), model(activity).notice)
-        else
-            assertNull(model(activity).notice)
+        assertNull(model(activity).notice)
+        controller.pause().stop().destroy()
+    }
+
+    @Test fun settingsExposeBlocklistsOnlyOutsidePlayIncludingAdvancedSubscreen() {
+        val controller = Robolectric.buildActivity(eu.faircode.netguard.ActivitySettings::class.java).setup()
+        val activity = controller.get()
+        fun screen(): androidx.preference.PreferenceScreen {
+            activity.supportFragmentManager.executePendingTransactions()
+            return (activity.supportFragmentManager.findFragmentById(R.id.settings_container)
+                as androidx.preference.PreferenceFragmentCompat).preferenceScreen
+        }
+        fun checkControls() {
+            for (key in listOf("manage_blocklists", "hosts_download", "hosts_auto_update")) {
+                val preference = screen().findPreference<androidx.preference.Preference>(key)
+                if (BlockingMode.isPlayStoreBuild()) assertNull(key, preference)
+                else assertNotNull(key, preference)
+            }
+        }
+        checkControls()
+        val advanced = screen().findPreference<androidx.preference.PreferenceScreen>("screen_advanced_options")!!
+        val fragment = activity.supportFragmentManager.findFragmentById(R.id.settings_container)
+            as androidx.preference.PreferenceFragmentCompat
+        activity.onPreferenceStartScreen(fragment, advanced)
+        activity.supportFragmentManager.executePendingTransactions()
+        checkControls()
         controller.pause().stop().destroy()
     }
 
