@@ -101,6 +101,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.io.InputStreamReader;
 import java.net.Inet4Address;
 import java.net.Inet6Address;
@@ -3431,6 +3432,10 @@ public class ServiceSinkhole extends VpnService {
         }
 
         private void checkConnectivity(Network network, NetworkInfo ni, NetworkCapabilities capabilities) {
+            if (ProbeResourceGuard.INSTANCE.isBlocked(SystemClock.elapsedRealtime(),
+                    Util.isInteractive(ServiceSinkhole.this)))
+                return;
+
             if (isActiveNetwork(network) &&
                     ni != null && capabilities != null &&
                     ni.getDetailedState() != NetworkInfo.DetailedState.SUSPENDED &&
@@ -3474,6 +3479,10 @@ public class ServiceSinkhole extends VpnService {
                         @Override
                         public void run() {
                             try {
+                                // A queued probe must also honour exhaustion detected by another probe.
+                                if (ProbeResourceGuard.INSTANCE.isBlocked(SystemClock.elapsedRealtime(),
+                                        Util.isInteractive(ServiceSinkhole.this)))
+                                    return;
                                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ServiceSinkhole.this);
                                 String host = prefs.getString("validate", "www.f-droid.org");
                                 Log.i(TAG, "Validating " + network + " " + ni + " host=" + host);
@@ -3487,9 +3496,11 @@ public class ServiceSinkhole extends VpnService {
                                 }
 
                                 Socket socket = null;
+                                boolean captureResourceDiagnostics = false;
                                 try {
                                     socket = network.getSocketFactory().createSocket();
                                     socket.connect(new InetSocketAddress(host, 443), 10000);
+                                    ProbeResourceGuard.INSTANCE.onSuccess(SystemClock.elapsedRealtime());
                                     Log.i(TAG, "Validated " + network + " " + ni + " host=" + host);
                                     synchronized (mapValidated) {
                                         mapValidated.put(network, new Date().getTime());
@@ -3498,14 +3509,19 @@ public class ServiceSinkhole extends VpnService {
                                     ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
                                     cm.reportNetworkConnectivity(network, true);
                                     Log.i(TAG, "Reported " + network + " " + ni);
-                                } catch (IOException ex) {
-                                    Log.e(TAG, ex.toString());
-                                    Log.i(TAG, "No connectivity " + network + " " + ni);
-                                    long[] previousFailure = mapValidateFailure.get(network);
-                                    long previousBackoffMs = previousFailure == null ? 0L : previousFailure[1];
-                                    mapValidateFailure.put(network, new long[]{
-                                            SystemClock.elapsedRealtime(),
-                                            nextValidationBackoffMs(previousBackoffMs)});
+                                } catch (IOException | UncheckedIOException ex) {
+                                    if (ProbeResourceGuard.isDescriptorExhaustion(ex)) {
+                                        captureResourceDiagnostics = ProbeResourceGuard.INSTANCE.onExhaustion(
+                                                SystemClock.elapsedRealtime());
+                                    } else {
+                                        Log.e(TAG, ex.toString());
+                                        Log.i(TAG, "No connectivity " + network + " " + ni);
+                                        long[] previousFailure = mapValidateFailure.get(network);
+                                        long previousBackoffMs = previousFailure == null ? 0L : previousFailure[1];
+                                        mapValidateFailure.put(network, new long[]{
+                                                SystemClock.elapsedRealtime(),
+                                                nextValidationBackoffMs(previousBackoffMs)});
+                                    }
                                 } finally {
                                     if (socket != null)
                                         try {
@@ -3513,6 +3529,9 @@ public class ServiceSinkhole extends VpnService {
                                         } catch (IOException ex) {
                                             Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
                                         }
+                                    if (captureResourceDiagnostics)
+                                        Log.w(TAG, "Probe descriptor exhaustion (#932); probes paused for 10 minutes; "
+                                                + ProbeResourceGuard.descriptorSummary());
                                 }
                             } finally {
                                 validating.remove(network);
