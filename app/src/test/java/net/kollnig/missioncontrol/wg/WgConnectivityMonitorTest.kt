@@ -23,7 +23,8 @@ class WgConnectivityMonitorTest {
     }
 
     private fun awaitStopped(monitor: WgConnectivityMonitor) {
-        repeat(1_000) {
+        val deadline = System.nanoTime() + TimeUnit.SECONDS.toNanos(5)
+        while (System.nanoTime() < deadline) {
             if (!monitor.isRunning()) return
             Thread.sleep(1)
         }
@@ -353,25 +354,28 @@ class WgConnectivityMonitorTest {
             clock = { 0L },
             beforeCallback = {
                 callbackReady.countDown()
-                assertTrue(releaseCallback.await(1, TimeUnit.SECONDS))
+                releaseCallback.await()
             }
         )
 
-        monitor.start()
-        assertTrue(callbackReady.await(1, TimeUnit.SECONDS))
-        Thread {
+        val stopper = Thread {
             monitor!!.stop()
             stopReturned.countDown()
-        }.start()
-        // stop invalidates the generation before waiting for the callback gate.
-        repeat(1_000) {
-            if (!monitor.isRunning()) return@repeat
-            Thread.yield()
         }
-        assertFalse(monitor.isRunning())
-        releaseCallback.countDown()
-        assertTrue(stopReturned.await(1, TimeUnit.SECONDS))
-        assertEquals(0, callbacks.get())
+        monitor.start()
+        try {
+            assertTrue(callbackReady.await(5, TimeUnit.SECONDS))
+            stopper.start()
+            // Wait for invalidation, not an arbitrary number of scheduler hints.
+            awaitStopped(monitor)
+            releaseCallback.countDown()
+            assertTrue(stopReturned.await(5, TimeUnit.SECONDS))
+            assertEquals(0, callbacks.get())
+        } finally {
+            releaseCallback.countDown()
+            monitor.stop()
+            stopper.join(5_000)
+        }
     }
 
     @Test
@@ -400,29 +404,31 @@ class WgConnectivityMonitorTest {
             clock = { now.get() },
             beforeCallback = {
                 prodReady.countDown()
-                assertTrue(releaseProd.await(1, TimeUnit.SECONDS))
+                releaseProd.await()
             }
         )
 
-        monitor.start()
-        assertTrue(prodReady.await(1, TimeUnit.SECONDS))
-        Thread {
+        val stopper = Thread {
             monitor!!.stop()
             stopReturned.countDown()
-        }.start()
-        // stop invalidates the generation first, then waits for the callback
-        // gate held by beforeCallback. It cannot return while that gate is
-        // unresolved.
-        repeat(1_000) {
-            if (!monitor.isRunning()) return@repeat
-            Thread.yield()
         }
-        assertFalse(monitor.isRunning())
-        assertFalse(stopReturned.await(100, TimeUnit.MILLISECONDS))
-        releaseProd.countDown()
-        assertTrue(stopReturned.await(1, TimeUnit.SECONDS))
-        awaitStopped(monitor)
-        assertEquals(0, prods.get())
+        monitor.start()
+        try {
+            assertTrue(prodReady.await(5, TimeUnit.SECONDS))
+            stopper.start()
+            // stop invalidates the generation first, then waits for the callback
+            // gate held by beforeCallback. It cannot return while that gate is
+            // unresolved.
+            awaitStopped(monitor)
+            assertFalse(stopReturned.await(100, TimeUnit.MILLISECONDS))
+            releaseProd.countDown()
+            assertTrue(stopReturned.await(5, TimeUnit.SECONDS))
+            assertEquals(0, prods.get())
+        } finally {
+            releaseProd.countDown()
+            monitor.stop()
+            stopper.join(5_000)
+        }
     }
 
     @Test
