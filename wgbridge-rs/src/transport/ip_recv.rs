@@ -23,8 +23,10 @@ impl SocketpairRecv {
     /// for use with the tokio reactor.
     pub fn new(fd: OwnedFd, mtu: u16) -> io::Result<Self> {
         set_nonblocking(&fd)?;
+        // SAFETY: `fd` was set to non-blocking mode immediately above.
+        let afd = unsafe { AsyncFd::register_with_interest(fd, Interest::READABLE)? };
         Ok(Self {
-            afd: AsyncFd::with_interest(fd, Interest::READABLE)?,
+            afd,
             mtu: MtuWatcher::new(mtu),
         })
     }
