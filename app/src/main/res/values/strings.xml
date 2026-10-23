@@ -823,14 +823,24 @@ Sincerely,\n\n]]></string>
     <string name="onboarding_whatsnew_title" translatable="false">What\'s New</string>
     <string name="onboarding_whatsnew_desc" translatable="false">• Blocking Modes: Choose between Minimal, Standard, or Strict blocking to balance privacy and app compatibility.\n• Minimal Mode: DuckDuckGo-compatible blocking that avoids app breakage. Browsers stay routed through the VPN, but tracker protection is off by default; known incompatible apps are excluded.\n• Privacy Fix: SNI extraction is now off by default — it was leaking your IP address to tracker servers.\n• Improved Performance: Faster scrolling, reduced memory usage, and better battery life.\n• Troubleshooting: New troubleshooting screen in settings to diagnose common issues.\n• Better Tracker Detection: Improved handling of shared IPs and DNS-cloaked trackers.</string>
 
-    <string name="title_blocklists">Additional host files</string>
-    <string name="summary_manage_blocklists">These are only for fallback. TrackerControl includes its own host lists that give insights on the companies behind tracking.</string>
-    <string name="title_add_blocklist">Add host file</string>
-    <string name="title_delete_blocklist">Delete host file</string>
-    <string name="msg_delete_blocklist_confirm">Are you sure you want to delete this host file?</string>
+    <string name="title_blocklists">Custom blocklists</string>
+    <string name="summary_manage_blocklists">Add blocklists in hosts-file format. Used when the built-in tracker lists do not identify a domain.</string>
+    <string name="title_add_blocklist">Add blocklist</string>
+    <string name="title_delete_blocklist">Delete blocklist</string>
+    <string name="msg_delete_blocklist_confirm">Are you sure you want to delete this blocklist?</string>
     <string name="msg_invalid_url">Invalid URL</string>
-    <string name="msg_apply_blocklists_failed">Failed to apply host files</string>
+    <string name="msg_apply_blocklists_failed">Failed to apply blocklists</string>
     <string name="msg_last_update">Last update: %s</string>
+
+    <string name="blocklist_format">Enter an HTTPS URL for a hosts-format blocklist (for example, 0.0.0.0 ads.example.com). Browser filter rules are not supported.</string>
+    <string name="blocklist_minimal_notice">Custom blocklists are inactive in Minimal mode. Switch to Standard or Strict in Settings to use them.</string>
+    <string name="blocklist_play_notice">Custom blocklists are not used in the Google Play version of TrackerControl.</string>
+    <string name="blocklist_research_notice">Custom blocklists are inactive while Research mode is on. Turn off Research in Settings to enable tracker blocking.</string>
+    <string name="blocklist_browser_notice">Browser tracker protection is off by default. Enable it on the browser’s app page to use custom blocklists there.</string>
+    <string name="blocklist_downloading">Downloading blocklists… Waiting for a connection if offline.</string>
+    <string name="blocklist_not_downloaded">Not downloaded yet</string>
+    <string name="blocklist_download_failed">Could not download or apply blocklists. Check the list errors and try updating again.</string>
+    <string name="blocklist_update">Update blocklists</string>
 
     <!-- Accessibility labels -->
     <string name="switch_tracker_control_description">Tracker blocking</string>

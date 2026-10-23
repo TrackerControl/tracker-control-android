@@ -28,6 +28,7 @@ import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
@@ -41,6 +42,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.disabled
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -61,8 +63,11 @@ data class BlocklistRow(
 
 /** Immutable presentation model for the Blocklists screen. */
 @Immutable
-data class BlocklistsScreenModel(
-    val rows: List<BlocklistRow>
+data class BlocklistsScreenModel @JvmOverloads constructor(
+    val rows: List<BlocklistRow>,
+    val notice: String? = null,
+    val downloading: Boolean = false,
+    val downloadRunning: Boolean = false
 )
 
 /** Callback boundary for persistence and dialogs owned by ActivityBlocklists. */
@@ -71,6 +76,7 @@ interface BlocklistsScreenCallbacks {
     fun onEdit(uuid: String)
     fun onEnabledChanged(uuid: String, enabled: Boolean)
     fun onDelete(uuid: String)
+    fun onDownload()
 }
 
 /** Handle used by ActivityBlocklists to refresh the Compose model. */
@@ -115,10 +121,14 @@ internal fun BlocklistsScreenContent(
         contentWindowInsets = WindowInsets.safeDrawing,
         floatingActionButton = {
             FloatingActionButton(
-                onClick = callbacks::onAdd,
-                modifier = Modifier.testTag("blocklist-add"),
-                containerColor = MaterialTheme.colorScheme.primary,
-                contentColor = MaterialTheme.colorScheme.onPrimary
+                onClick = { if (!model.downloadRunning) callbacks.onAdd() },
+                modifier = Modifier.testTag("blocklist-add").semantics {
+                    if (model.downloadRunning) disabled()
+                },
+                containerColor = if (model.downloadRunning) MaterialTheme.colorScheme.surfaceVariant
+                    else MaterialTheme.colorScheme.primary,
+                contentColor = if (model.downloadRunning) MaterialTheme.colorScheme.onSurfaceVariant
+                    else MaterialTheme.colorScheme.onPrimary
             ) {
                 Icon(
                     painter = painterResource(android.R.drawable.ic_input_add),
@@ -127,10 +137,38 @@ internal fun BlocklistsScreenContent(
             }
         }
     ) { contentPadding ->
-        if (model.rows.isEmpty()) {
-            EmptyBlocklistsContent(contentPadding)
-        } else {
-            BlocklistsList(model.rows, contentPadding, callbacks)
+        Column(Modifier.fillMaxSize().padding(contentPadding)) {
+            model.notice?.let { notice ->
+                Text(
+                    text = notice,
+                    modifier = Modifier.fillMaxWidth().background(MaterialTheme.colorScheme.secondaryContainer)
+                        .padding(16.dp).testTag("blocklist-mode-notice"),
+                    color = MaterialTheme.colorScheme.onSecondaryContainer,
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            }
+            if (model.notice == null) {
+                Text(
+                    stringResource(R.string.blocklist_browser_notice),
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                    style = MaterialTheme.typography.bodySmall
+                )
+            }
+            if (model.downloading) {
+                Text(
+                    stringResource(R.string.blocklist_downloading),
+                    modifier = Modifier.padding(16.dp).testTag("blocklist-downloading"),
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            }
+            TextButton(onClick = callbacks::onDownload, enabled = !model.downloading && model.rows.any { it.enabled }) {
+                Text(stringResource(R.string.blocklist_update))
+            }
+            if (model.rows.isEmpty()) {
+                EmptyBlocklistsContent(PaddingValues())
+            } else {
+                BlocklistsList(model.rows, PaddingValues(), callbacks, !model.downloadRunning)
+            }
         }
     }
 }
@@ -167,7 +205,8 @@ private fun EmptyBlocklistsContent(contentPadding: PaddingValues) {
 private fun BlocklistsList(
     rows: List<BlocklistRow>,
     contentPadding: PaddingValues,
-    callbacks: BlocklistsScreenCallbacks
+    callbacks: BlocklistsScreenCallbacks,
+    enabled: Boolean
 ) {
     LazyColumn(
         modifier = Modifier
@@ -179,7 +218,7 @@ private fun BlocklistsList(
             items = rows,
             key = { _, row -> row.uuid }
         ) { index, row ->
-            BlocklistListItem(row, callbacks)
+            BlocklistListItem(row, callbacks, enabled)
             if (index < rows.lastIndex) {
                 HorizontalDivider(
                     modifier = Modifier.testTag("blocklist-divider"),
@@ -193,7 +232,8 @@ private fun BlocklistsList(
 @Composable
 private fun BlocklistListItem(
     row: BlocklistRow,
-    callbacks: BlocklistsScreenCallbacks
+    callbacks: BlocklistsScreenCallbacks,
+    enabled: Boolean
 ) {
     ListItem(
         headlineContent = {
@@ -232,6 +272,7 @@ private fun BlocklistListItem(
             ) {
                 Switch(
                     checked = row.enabled,
+                    enabled = enabled,
                     onCheckedChange = { enabled ->
                         callbacks.onEnabledChanged(row.uuid, enabled)
                     },
@@ -243,6 +284,7 @@ private fun BlocklistListItem(
                 )
                 IconButton(
                     onClick = { callbacks.onDelete(row.uuid) },
+                    enabled = enabled,
                     modifier = Modifier.testTag("blocklist-delete-${row.uuid}")
                 ) {
                     Icon(
@@ -254,7 +296,7 @@ private fun BlocklistListItem(
         },
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { callbacks.onEdit(row.uuid) }
+            .clickable(enabled = enabled) { callbacks.onEdit(row.uuid) }
             .testTag("blocklist-row-${row.uuid}")
     )
 }
@@ -291,6 +333,7 @@ private fun BlocklistsScreenPreview() {
                 override fun onEdit(uuid: String) = Unit
                 override fun onEnabledChanged(uuid: String, enabled: Boolean) = Unit
                 override fun onDelete(uuid: String) = Unit
+                override fun onDownload() = Unit
             }
         )
     }

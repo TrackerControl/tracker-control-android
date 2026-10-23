@@ -42,6 +42,8 @@ class BlocklistsScreenTest {
                 BlocklistsScreenContent(
                     model = BlocklistsScreenModel(listOf(first, second)),
                     callbacks = object : BlocklistsScreenCallbacks {
+                        override fun onDownload() = Unit
+
                         override fun onAdd() {
                             addClicks++
                         }
@@ -90,6 +92,8 @@ class BlocklistsScreenTest {
                 BlocklistsScreenContent(
                     model = BlocklistsScreenModel(emptyList()),
                     callbacks = object : BlocklistsScreenCallbacks {
+                        override fun onDownload() = Unit
+
                         override fun onAdd() {
                             addClicks++
                         }
