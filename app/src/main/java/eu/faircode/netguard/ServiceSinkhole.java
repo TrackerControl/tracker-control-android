@@ -382,19 +382,16 @@ public class ServiceSinkhole extends VpnService {
     static final int PRIVATE_DNS_WARNING_ALLOWED_DOT = 2;
     static final int PRIVATE_DNS_WARNING_ACTIVE = 3;
     private static final long PRIVATE_DNS_WARNING_WINDOW_MS = 60 * 60 * 1000L;
-    // Android validates DoT against the VPN's resolvers some seconds after the
-    // VPN comes up, so the state read at establish time is usually still off.
-    private static final long PRIVATE_DNS_VALIDATION_DELAY_MS = 30 * 1000L;
     private int privateDnsWarningState = PRIVATE_DNS_WARNING_NONE;
     private final Handler privateDnsWarningExpiryHandler = new Handler(Looper.getMainLooper());
     private final Runnable privateDnsWarningExpiryRunnable = this::requestPrivateDnsWarningUpdate;
-    private final Runnable privateDnsValidationRunnable = this::requestPrivateDnsWarningUpdate;
+    private PrivateDnsMonitor privateDnsMonitor;
     private final SharedPreferences.OnSharedPreferenceChangeListener privateDnsPreferenceListener =
             (preferences, key) -> {
                 if ("block_dot".equals(key) || "log".equals(key))
                     requestPrivateDnsWarningUpdate();
                 if ("block_dot".equals(key))
-                    schedulePrivateDnsValidationCheck();
+                    updatePrivateDnsMonitoring();
             };
 
     public static final String EXTRA_COMMAND = "Command";
@@ -911,6 +908,7 @@ public class ServiceSinkhole extends VpnService {
                 stopVPN(vpn);
                 vpn = null;
                 vpnEstablished = false;
+                updatePrivateDnsMonitoring();
                 // A teardown the service performs itself, so it is not one
                 // VpnRestartWorker should undo, whether it is a switch-off or
                 // the pause for a phone call.
@@ -1754,7 +1752,7 @@ public class ServiceSinkhole extends VpnService {
             updateUnderlyingNetworks();
             vpnEstablished = true;
             markStoppedCleanly(false);
-            schedulePrivateDnsValidationCheck();
+            updatePrivateDnsMonitoring();
             return pfd;
         } catch (SecurityException ex) {
             throw ex;
@@ -3844,6 +3842,9 @@ public class ServiceSinkhole extends VpnService {
         commandHandler = new CommandHandler(commandLooper);
         logHandler = new LogHandler(logLooper);
         statsHandler = new StatsHandler(statsLooper);
+        privateDnsMonitor = new PrivateDnsMonitor(
+                (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE),
+                this::requestPrivateDnsWarningUpdate);
         prefs.registerOnSharedPreferenceChangeListener(privateDnsPreferenceListener);
 
         net.kollnig.missioncontrol.wg.WgEgress.INSTANCE.addStateListener(wgStateListener);
@@ -4204,6 +4205,7 @@ public class ServiceSinkhole extends VpnService {
         // worker leaves it alone. Coming back from one is the OS's job, through
         // the always-on designation it either kept or cleared above.
         vpnEstablished = false;
+        updatePrivateDnsMonitoring();
         markStoppedCleanly(true);
 
         // Feedback: the tunnel really did drop, so inform the user (mirrors
@@ -4256,7 +4258,7 @@ public class ServiceSinkhole extends VpnService {
             // Cancel any debounced network-change reload so it doesn't fire post-teardown
             networkReloadDebounceHandler.removeCallbacksAndMessages(NETWORK_RELOAD_TOKEN);
             privateDnsWarningExpiryHandler.removeCallbacks(privateDnsWarningExpiryRunnable);
-            privateDnsWarningExpiryHandler.removeCallbacks(privateDnsValidationRunnable);
+            updatePrivateDnsMonitoring();
             PreferenceManager.getDefaultSharedPreferences(ServiceSinkhole.this)
                     .unregisterOnSharedPreferenceChangeListener(privateDnsPreferenceListener);
             cancelNativeRecovery(true);
@@ -4729,9 +4731,9 @@ public class ServiceSinkhole extends VpnService {
 
     private void requestPrivateDnsWarningUpdate() {
         Handler handler = logHandler;
-        if (handler != null && !destroying)
+        if (handler != null && !destroying && vpnEstablished)
             handler.post(() -> {
-                if (!destroying)
+                if (!destroying && vpnEstablished)
                     updatePrivateDnsBypassWarning();
             });
     }
@@ -4746,13 +4748,15 @@ public class ServiceSinkhole extends VpnService {
             privateDnsWarningExpiryHandler.postDelayed(privateDnsWarningExpiryRunnable, delay);
     }
 
-    // One-shot, and only while DoT is allowed: with DoT blocked Android's
-    // validation cannot succeed, so there is nothing to wait for.
-    private void schedulePrivateDnsValidationCheck() {
-        privateDnsWarningExpiryHandler.removeCallbacks(privateDnsValidationRunnable);
-        if (!destroying && !PreferenceManager.getDefaultSharedPreferences(this).getBoolean("block_dot", true))
-            privateDnsWarningExpiryHandler.postDelayed(privateDnsValidationRunnable,
-                    PRIVATE_DNS_VALIDATION_DELAY_MS);
+    private void updatePrivateDnsMonitoring() {
+        if (privateDnsMonitor == null)
+            return;
+        try {
+            privateDnsMonitor.setEnabled(!destroying && vpnEstablished
+                    && !PreferenceManager.getDefaultSharedPreferences(this).getBoolean("block_dot", true));
+        } catch (RuntimeException ex) {
+            Log.w(TAG, "Could not update Private DNS monitor", ex);
+        }
     }
 
     private synchronized void cancelPrivateDnsWarningExpiry() {
@@ -4796,7 +4800,6 @@ public class ServiceSinkhole extends VpnService {
 
     private synchronized void resetPrivateDnsBypassWarning() {
         cancelPrivateDnsWarningExpiry();
-        privateDnsWarningExpiryHandler.removeCallbacks(privateDnsValidationRunnable);
         clearPrivateDnsBypassNotification();
         privateDnsWarningState = PRIVATE_DNS_WARNING_NONE;
         publishPrivateDnsWarningState(privateDnsWarningState);
