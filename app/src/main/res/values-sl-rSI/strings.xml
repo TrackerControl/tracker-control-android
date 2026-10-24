@@ -322,7 +322,6 @@
     <string name="msg_wg_identity_renewed">%1$s ni več prepoznal te naprave, tako da je TrackerControl vpisal novo in na tej napravi posodobil profile %1$s.</string>
     <string name="msg_wg_provider_rejected">%1$s je zavrnil nastavitev na tej napravi: %2$s</string>
     <string name="msg_wg_recovery_failed">WireGuard se je prenehal odzivati.  TrackerControl se poizkuša ponovno povezati.  Dostop do interneta bo morda blokiran, dokler se WireGuard ne obnovi.</string>
-    <string name="summary_log_logcat">Raziskovani način: prepoznani sledilce se beležijo v ADB in izločitev SNI je omogočena zaradi boljšega zaznavanja gostiteljskih imen.  Dnevnike lahko pridobite z \'adb logcat\' z uporabo oznake \'TC-Log\'.</string>
     <string name="msg_sure">Ali ste prepričani?</string>
     <string name="msg_started">Iskanje sledilcev …</string>
     <string name="msg_waiting">Čakanje na dogodek</string>
@@ -706,13 +705,7 @@ S spoštovanjem,\n\n]]></string>
     <!-- Retained for Play Store copy; call-site/API migration and multi-count grammar are intentionally separate. -->
     <string name="insights_see_more">Več →</string>
     <!-- What's New onboarding slide (not translated) -->
-    <string name="title_blocklists">Dodatne datoteke gostiteljev</string>
-    <string name="summary_manage_blocklists">Ti so samo za izhod v sili.  TrackerControl vključuje svoje sezname gostiteljev, ki nudijo podatke o sledilnih podjetjih.</string>
-    <string name="title_add_blocklist">Dodaj datoteko gostiteljev</string>
-    <string name="title_delete_blocklist">Izbriši datoteko gostiteljev</string>
-    <string name="msg_delete_blocklist_confirm">Ali res želite izbrisati to datoteko gostiteljev?</string>
     <string name="msg_invalid_url">Neveljaven URL</string>
-    <string name="msg_apply_blocklists_failed">Uporaba datotek z gostitelji je spodletela.</string>
     <string name="msg_last_update">Zadnja posodobitev: %s</string>
     <!-- Accessibility labels -->
     <string name="switch_tracker_control_description">Blokiranje sledilcev</string>

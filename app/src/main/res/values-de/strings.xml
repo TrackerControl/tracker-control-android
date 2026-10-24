@@ -293,7 +293,6 @@
     <string name="msg_wg_identity_renewed">%1$s kannte dieses Gerät nicht mehr. Daher hat TrackerControl ein neues Gerät registriert und die %1$s-Profile auf diesem Gerät aktualisiert.</string>
     <string name="msg_wg_provider_rejected">%1$s hat die Einrichtung dieses Geräts abgelehnt: %2$s</string>
     <string name="msg_wg_recovery_failed">WireGuard reagiert nicht mehr. TrackerControl versucht, die Verbindung wiederherzustellen, und der Internetzugriff bleibt möglicherweise blockiert, bis WireGuard wieder funktioniert.</string>
-    <string name="summary_log_logcat">Forschungsmodus: Erkannte Tracker werden an ADB protokolliert und die SNI-Extraktion ist für eine bessere Hostnamen-Erkennung aktiviert. Rufen Sie die Protokolle mit adb logcat und dem Tag \'TC-Log\' ab.</string>
     <string name="msg_sure">Sind Sie sicher?</string>
     <string name="msg_started">Suche nach Trackern…</string>
     <string name="msg_waiting">Auf Ereignis warten</string>
@@ -658,13 +657,7 @@ Mit freundlichen Grüßen,\n\n]]></string>
     <!-- Retained for Play Store copy; call-site/API migration and multi-count grammar are intentionally separate. -->
     <string name="insights_see_more">Mehr anzeigen →</string>
     <!-- What's New onboarding slide (not translated) -->
-    <string name="title_blocklists">Zusätzliche Host-Dateien</string>
-    <string name="summary_manage_blocklists">Diese dienen nur als Fallback. TrackerControl enthält eigene Host-Listen, die Einblicke in die Unternehmen hinter dem Tracking geben.</string>
-    <string name="title_add_blocklist">Host-Datei hinzufügen</string>
-    <string name="title_delete_blocklist">Host-Datei löschen</string>
-    <string name="msg_delete_blocklist_confirm">Möchten Sie diese Host-Datei wirklich löschen?</string>
     <string name="msg_invalid_url">Ungültige URL</string>
-    <string name="msg_apply_blocklists_failed">Host-Dateien konnten nicht angewendet werden</string>
     <string name="msg_last_update">Letzte Aktualisierung: %s</string>
     <!-- Accessibility labels -->
     <string name="switch_tracker_control_description">Tracker-Blockierung</string>

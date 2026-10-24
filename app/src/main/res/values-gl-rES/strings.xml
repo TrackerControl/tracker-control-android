@@ -290,7 +290,6 @@
     <string name="msg_wg_identity_renewed">%1$sWireGuard elemento elemento.%1$s perfís en esta dispositivo.</string>
     <string name="msg_wg_provider_rejected">%1$s elemento a establecer elemento esta dispositivo: %2$s</string>
     <string name="msg_wg_recovery_failed">WireGuard recuperación fallou.</string>
-    <string name="summary_log_logcat">Máis información sobre Rexistro elemento.\'Elemento\'.</string>
     <string name="msg_sure">¿Está seguro?</string>
     <string name="msg_started">Elemento para rastreadores…</string>
     <string name="msg_waiting">Agardando por evento</string>
@@ -623,13 +622,7 @@ O seu tráfico de internet non será enviado a ningún servidor VPN remoto.</str
     <!-- Retained for Play Store copy; call-site/API migration and multi-count grammar are intentionally separate. -->
     <string name="insights_see_more">Ver Máis →</string>
     <!-- What's New onboarding slide (not translated) -->
-    <string name="title_blocklists">Adicionais elemento elemento</string>
-    <string name="summary_manage_blocklists">Máis información sobre Xestionar elemento.</string>
-    <string name="title_add_blocklist">Elemento elemento ficheiro</string>
-    <string name="title_delete_blocklist">Eliminar elemento ficheiro</string>
-    <string name="msg_delete_blocklist_confirm">Eliminar elemento confirmar.</string>
     <string name="msg_invalid_url">Non válida URL</string>
-    <string name="msg_apply_blocklists_failed">Fallou a elemento elemento elemento</string>
     <string name="msg_last_update">Última actualización: %s</string>
     <!-- Accessibility labels -->
     <string name="switch_tracker_control_description">Rastreador bloqueo</string>
