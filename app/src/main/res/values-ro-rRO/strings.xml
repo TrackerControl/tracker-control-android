@@ -298,7 +298,6 @@
     <string name="msg_wg_identity_renewed">%1$s nu mai recunoștea acest dispozitiv, așa că TrackerControl a înregistrat unul nou și a actualizat profilurile %1$s de pe dispozitiv.</string>
     <string name="msg_wg_provider_rejected">%1$s a refuzat configurarea acestui dispozitiv: %2$s</string>
     <string name="msg_wg_recovery_failed">WireGuard nu mai răspunde. TrackerControl încearcă să se reconecteze, iar accesul la internet poate rămâne blocat până când WireGuard își revine.</string>
-    <string name="summary_log_logcat">Mod cercetare: urmăritorii identificați sunt înregistrați în ADB, iar extragerea SNI este activată pentru o detectare mai bună a numelor de gazdă. Preia jurnalele cu adb logcat folosind eticheta „TC-Log”.</string>
     <string name="msg_sure">Ești sigur?</string>
     <string name="msg_started">Se caută urmăritori…</string>
     <string name="msg_waiting">Se așteaptă un eveniment</string>
@@ -664,13 +663,7 @@ Cu stimă,\n\n]]></string>
     <!-- Retained for Play Store copy; call-site/API migration and multi-count grammar are intentionally separate. -->
     <string name="insights_see_more">Vezi mai multe →</string>
     <!-- What's New onboarding slide (not translated) -->
-    <string name="title_blocklists">Fișiere hosts suplimentare</string>
-    <string name="summary_manage_blocklists">Acestea sunt doar pentru situații de rezervă. TrackerControl include propriile liste de gazde care oferă statistici despre companiile din spatele urmăririi.</string>
-    <string name="title_add_blocklist">Adaugă fișier hosts</string>
-    <string name="title_delete_blocklist">Șterge fișierul hosts</string>
-    <string name="msg_delete_blocklist_confirm">Sigur vrei să ștergi acest fișier hosts?</string>
     <string name="msg_invalid_url">URL nevalid</string>
-    <string name="msg_apply_blocklists_failed">Aplicarea fișierelor hosts a eșuat</string>
     <string name="msg_last_update">Ultima actualizare: %s</string>
     <!-- Accessibility labels -->
     <string name="switch_tracker_control_description">Blocarea urmăritorilor</string>

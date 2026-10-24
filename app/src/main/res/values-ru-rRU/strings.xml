@@ -304,7 +304,6 @@
     <string name="msg_wg_identity_renewed">%1$sWireGuard элемент элемент.%1$s профили элемент элемент элемент.</string>
     <string name="msg_wg_provider_rejected">%1$s элемент элемент элемент элемент элемент элемент: %2$s</string>
     <string name="msg_wg_recovery_failed">WireGuard элемент не удалось.</string>
-    <string name="summary_log_logcat">Режим исследования: идентифицированные трекеры записываются в ADB и SNI извлечение включено для лучшего определения имени хоста. Восстановите логи с adb logcat с помощью тега \'TC-Log\'.</string>
     <string name="msg_sure">Вы уверены?</string>
     <string name="msg_started">Поиск трекеров…</string>
     <string name="msg_waiting">Ожидание события</string>
@@ -653,13 +652,7 @@
     <!-- Retained for Play Store copy; call-site/API migration and multi-count grammar are intentionally separate. -->
     <string name="insights_see_more">Показать еще →</string>
     <!-- What's New onboarding slide (not translated) -->
-    <string name="title_blocklists">Дополнительные hosts файлы</string>
-    <string name="summary_manage_blocklists">Это только для резервного доступа. TrackerControl включает в себя свои собственные списки hosts, которые дают представление о компаниях, стоящих за отслеживанием.</string>
-    <string name="title_add_blocklist">Добавить hosts файл</string>
-    <string name="title_delete_blocklist">Удалить hosts файл</string>
-    <string name="msg_delete_blocklist_confirm">Вы уверены, что хотите удалить этот hosts файл?</string>
     <string name="msg_invalid_url">Недопустимый URL</string>
-    <string name="msg_apply_blocklists_failed">Не удалось применить hosts файлы</string>
     <string name="msg_last_update">Последнее обновление: %s</string>
     <!-- Accessibility labels -->
     <string name="switch_tracker_control_description">Трекер блокировка</string>

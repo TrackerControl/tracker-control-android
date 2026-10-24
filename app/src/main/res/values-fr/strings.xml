@@ -303,7 +303,6 @@
     <string name="msg_wg_identity_renewed">%1$s ne connaissait plus cet appareil ; TrackerControl en a enregistré un nouveau et a mis à jour les profils %1$s présents sur cet appareil.</string>
     <string name="msg_wg_provider_rejected">%1$s a refusé de configurer cet appareil : %2$s</string>
     <string name="msg_wg_recovery_failed">WireGuard ne répond plus. TrackerControl tente de se reconnecter et l’accès à Internet peut rester bloqué jusqu’à la récupération de WireGuard.</string>
-    <string name="summary_log_logcat">Mode recherche : les traqueurs identifiés sont enregistrés via ADB et l\'extraction SNI est activée pour une meilleure détection de nom d\'hôte. Récupérez les journaux avec la commande adb logcat en utilisant l\'étiquette \'TC-Log\'.</string>
     <string name="msg_sure">Êtes-vous sûr⋅e ?</string>
     <string name="msg_started">Recherche de traqueurs…</string>
     <string name="msg_waiting">En attente d\'évènement</string>
@@ -674,13 +673,7 @@ Cordialement,\n\n]]></string>
     <!-- Retained for Play Store copy; call-site/API migration and multi-count grammar are intentionally separate. -->
     <string name="insights_see_more">Voir plus →</string>
     <!-- What's New onboarding slide (not translated) -->
-    <string name="title_blocklists">Fichiers d\'hôtes supplémentaires</string>
-    <string name="summary_manage_blocklists">Ils sont uniquement pour un usage de secours. TrackerControl contient ses propres listes d\'hôtes, qui donnent un aperçu des entreprises derrière ces traqueurs.</string>
-    <string name="title_add_blocklist">Ajouter un fichier d\'hôtes</string>
-    <string name="title_delete_blocklist">Supprimer le fichier d\'hôtes</string>
-    <string name="msg_delete_blocklist_confirm">Êtes-vous sûr de vouloir supprimer ce fichier d\'hôtes ?</string>
     <string name="msg_invalid_url">URL invalide</string>
-    <string name="msg_apply_blocklists_failed">Échec de l\'application des fichiers hôtes</string>
     <string name="msg_last_update">Dernière mise à jour : %s</string>
     <!-- Accessibility labels -->
     <string name="switch_tracker_control_description">Blocage des trackers</string>

@@ -294,7 +294,6 @@
     <string name="msg_wg_identity_renewed">%1$sకు ఈ పరికరం ఇక గుర్తు లేదు; అందుకే TrackerControl కొత్తదాన్ని నమోదు చేసి ఈ పరికరంలోని %1$s ప్రొఫైల్‌లను నవీకరించింది.</string>
     <string name="msg_wg_provider_rejected">ఈ పరికరాన్ని సెటప్ చేయడానికి %1$s నిరాకరించింది: %2$s</string>
     <string name="msg_wg_recovery_failed">WireGuard స్పందించడం ఆపింది. TrackerControl మళ్లీ కనెక్ట్ చేయడానికి ప్రయత్నిస్తోంది; WireGuard కోలుకునే వరకు ఇంటర్నెట్ యాక్సెస్ నిరోధించబడవచ్చు.</string>
-    <string name="summary_log_logcat">పరిశోధన మోడ్: గుర్తించిన ట్రాకర్‌లు ADBకి లాగ్ చేయబడతాయి; మెరుగైన హోస్ట్‌నేమ్ గుర్తింపు కోసం SNI వెలికితీత ప్రారంభించబడుతుంది. \'TC-Log\' ట్యాగ్‌తో adb logcat ఉపయోగించి లాగ్‌లను పొందండి.</string>
     <string name="msg_sure">మీకు ఖచ్చితంగా తెలుసా?</string>
     <string name="msg_started">ట్రాకర్‌ల కోసం చూస్తోంది…</string>
     <string name="msg_waiting">ఈవెంట్ కోసం వేచి ఉంది</string>
@@ -658,13 +657,7 @@ EU General Data Protection Regulation (GDPR)లోని ఆర్టికల�
     <!-- Retained for Play Store copy; call-site/API migration and multi-count grammar are intentionally separate. -->
     <string name="insights_see_more">మరిన్ని చూడండి →</string>
     <!-- What's New onboarding slide (not translated) -->
-    <string name="title_blocklists">అదనపు హోస్ట్స్ ఫైళ్లు</string>
-    <string name="summary_manage_blocklists">ఇవి ఫాల్‌బ్యాక్ కోసం మాత్రమే. ట్రాకింగ్ వెనుక ఉన్న కంపెనీల గురించి అంతర్దృష్టులు ఇచ్చే స్వంత హోస్ట్ జాబితాలను TrackerControl కలిగి ఉంది.</string>
-    <string name="title_add_blocklist">హోస్ట్స్ ఫైల్‌ను జోడించు</string>
-    <string name="title_delete_blocklist">హోస్ట్స్ ఫైల్‌ను తొలగించు</string>
-    <string name="msg_delete_blocklist_confirm">ఈ హోస్ట్స్ ఫైల్‌ను తొలగించాలనుకుంటున్నారా?</string>
     <string name="msg_invalid_url">చెల్లని URL</string>
-    <string name="msg_apply_blocklists_failed">హోస్ట్స్ ఫైళ్లను వర్తింపజేయడం విఫలమైంది</string>
     <string name="msg_last_update">చివరి నవీకరణ: %s</string>
     <!-- Accessibility labels -->
     <string name="switch_tracker_control_description">ట్రాకర్ నిరోధం</string>

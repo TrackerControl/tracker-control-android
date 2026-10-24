@@ -291,7 +291,6 @@
     <string name="msg_wg_identity_renewed">%1$sWireGuard elementua elementua.%1$s profilak gainean hau gailua.</string>
     <string name="msg_wg_provider_rejected">%1$s elementua ra ezarri elementua hau gailua: %2$s</string>
     <string name="msg_wg_recovery_failed">WireGuard berreskuratzea hutsegin du.</string>
-    <string name="summary_log_logcat">Erregistroa elementuari buruzko informazio gehiago.\'Elementua\'.</string>
     <string name="msg_sure">Ziur zaude?</string>
     <string name="msg_started">Elementua rentzat jarraitzaileak…</string>
     <string name="msg_waiting">Gertaeraren zain</string>
@@ -669,13 +668,7 @@ Sareko trafikoan antzematen diren aztarnariak TrackerControl-ekin blokeatu daite
     <!-- Retained for Play Store copy; call-site/API migration and multi-count grammar are intentionally separate. -->
     <string name="insights_see_more">Ikusi Gehiago →</string>
     <!-- What's New onboarding slide (not translated) -->
-    <string name="title_blocklists">Gehigarria elementua elementua</string>
-    <string name="summary_manage_blocklists">Kudeatu elementuari buruzko informazio gehiago.</string>
-    <string name="title_add_blocklist">Elementua elementua fitxategia</string>
-    <string name="title_delete_blocklist">Ezabatu elementua fitxategia</string>
-    <string name="msg_delete_blocklist_confirm">Ezabatu elementua berretsi.</string>
     <string name="msg_invalid_url">Baliogabea URL</string>
-    <string name="msg_apply_blocklists_failed">Hutsegin du ra elementua elementua elementua</string>
     <string name="msg_last_update">Azken eguneratu: %s</string>
     <!-- Accessibility labels -->
     <string name="switch_tracker_control_description">Jarraitzailea blokeatzea</string>

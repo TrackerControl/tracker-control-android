@@ -55,7 +55,10 @@
     <string name="timeline_more_trackers" tools:ignore="PluralsCandidate">+ ще %d</string>
     <string name="timeline_tracker_blocked">Заблоковано</string>
     <string name="timeline_tracker_allowed">Дозволено</string>
+    <string name="insights_overview_status">%1$s %2$s · %3$s %4$s</string>
     <!-- A blocked/allowed label followed by its share of all tracking attempts. -->
+    <string name="insights_overview_status_share">%1$s (%2$s)</string>
+    <string name="timeline_insights_status">%1$s %2$s · %3$s %4$s</string>
     <string name="feed_section_last_contact">останній контакт %s</string>
     <plurals name="feed_show_more_companies">
         <item quantity="one">Показати ще %d компанію</item>
@@ -182,7 +185,10 @@
     <string name="warning_beta">Бета-функція. Може працювати не так, як очікується.</string>
     <string name="setting_doh_endpoint">URL-адреса кінцевої точки DoH</string>
     <string name="summary_doh_endpoint">URL-адреса HTTPS для запитів DNS через HTTPS</string>
+    <string name="dialog_doh_endpoint">Введіть повну URL-адресу HTTPS, надану вашим провайдером DNS, включаючи шлях, характерний для цього провайдера (наприклад, https://dns.quad9.net/dns-query). Додатки, виключені з TrackerControl або такі, що використовують власний зашифрований DNS, ігнорують це налаштування.</string>
     <string name="setting_doh_dns_fallback">Резервний DNS</string>
+    <string name="summary_doh_dns_fallback">Використовувати стандартний (незашифрований) DNS у разі збою DoH. Резервний варіант може використовувати іншого постачальника DNS. Вимкнення може призвести до помилки програм, якщо сервер DoH не працює.</string>
+    <string name="msg_invalid_doh_endpoint">Введіть повну URL-адресу HTTPS для DNS-over-HTTPS, включаючи шлях до провайдера (наприклад, https://dns.quad9.net/dns-query).</string>
     <!-- Block DNS-over-TLS (DoT) -->
     <string name="setting_block_dot">Блокування приватного DNS Android</string>
     <string name="summary_block_dot">Якщо увімкнено приватний DNS Android, TC не може виявити жодного відстеження і не працює належним чином.</string>
@@ -266,6 +272,7 @@
     <string name="vpn_intro_mullvad_body">VPN-провайдер, орієнтований на конфіденційність. Він коштує 5 євро на місяць і використовує номери облікових записів замість адрес електронної пошти. Введіть номер облікового запису, а потім виберіть країну в TrackerControl.</string>
     <string name="vpn_intro_ivpn_title">IVPN</string>
     <string name="vpn_intro_ivpn_body">VPN-провайдер, орієнтований на конфіденційність, з підтримкою WireGuard. Введіть ідентифікатор облікового запису IVPN, а потім виберіть країну в TrackerControl.</string>
+    <string name="vpn_intro_proton_title">Proton VPN</string>
     <string name="vpn_intro_proton_body">Завантажте конфігурацію WireGuard зі свого облікового запису Proton VPN і вставте її в TrackerControl. Ваші облікові дані Proton ніколи не вводяться тут.</string>
     <string name="vpn_intro_wireguard_title">WireGuard</string>
     <string name="vpn_intro_wireguard_body">Використовуйте цю опцію, якщо у вас вже є конфігураційний файл WireGuard від іншого постачальника VPN, власного сервера або вашого робочого місця.</string>
@@ -315,11 +322,13 @@
     <string name="msg_wg_identity_renewed">%1$s більше не впізнавав цей пристрій, тому TrackerControl зареєстрував новий і оновив профілі %1$s на цьому пристрої.</string>
     <string name="msg_wg_provider_rejected">%1$s відмовився налаштувати цей пристрій: %2$s</string>
     <string name="msg_wg_recovery_failed">WireGuard перестав відповідати. TrackerControl намагається підключитися знову, а доступ до інтернету може залишатися заблокованим, доки WireGuard не відновиться.</string>
-    <string name="summary_log_logcat">Режим дослідження: виявлені трекери записуються в ADB, а для кращого виявлення імен хостів увімкнено вилучення SNI. Отримайте журнали за допомогою adb logcat, використовуючи тег «TC-Log».</string>
+    <string name="summary_log_logcat">У режимі дослідження блокування трекерів вимкнено. Виявлені трекери записуються в ADB, а для кращого виявлення імен хостів увімкнено вилучення SNI. Отримати журнали можна за допомогою команди adb logcat із тегом «TC-Log».</string>
+    <string name="msg_research_mode_notice">Режим дослідження увімкнено. Блокування трекера вимкнено. Натисніть, щоб змінити налаштування.</string>
     <string name="msg_sure">Ви впевнені?</string>
     <string name="msg_started">Шукаю трекери…</string>
     <string name="msg_waiting">Очікування події</string>
     <string name="msg_disabled">Використайте перемикач вище, щоб увімкнути TrackerControl.</string>
+    <string name="msg_revoked">TrackerControl було відключено, ймовірно, іншим додатком VPN або системою. Натисніть, щоб відновити з’єднання.</string>
     <string name="msg_installed">Проблеми з %1$s?</string>
     <string name="msg_installed_description">Дозволити застосунку звертатися до компаній</string>
     <!-- Keep as a string: call-site/API migration and multi-count grammar are intentionally separate. -->
@@ -397,6 +406,7 @@
     <!-- Dynamic content description for the home-screen widget toggle (accessibility follow-up, issue #636) -->
     <string name="widget_toggle_enable_description">Увімкнути блокування трекерів</string>
     <string name="widget_toggle_disable_description">Вимкнути блокування трекерів</string>
+    <string name="accessibility_stat_description">%1$s, %2$s</string>
     <string name="accessibility_tracker_blocking_enabled">Блокування трекерів увімкнено</string>
     <string name="accessibility_tracker_blocking_disabled">Блокування трекерів вимкнено</string>
     <plurals name="n_companies_found_week">
@@ -695,20 +705,30 @@
     <!-- Retained for Play Store copy; call-site/API migration and multi-count grammar are intentionally separate. -->
     <string name="insights_see_more">Дивитися більше →</string>
     <!-- What's New onboarding slide (not translated) -->
-    <string name="title_blocklists">Додаткові файли хоста</string>
-    <string name="summary_manage_blocklists">Вони призначені лише для резервного використання. TrackerControl містить власні списки хостів, які дають уявлення про компанії, що стоять за відстеженням.</string>
-    <string name="title_add_blocklist">Додати файл хоста</string>
-    <string name="title_delete_blocklist">Видалити файл хоста</string>
-    <string name="msg_delete_blocklist_confirm">Ви впевнені, що хочете видалити цей файл хосту?</string>
+    <string name="title_blocklists">Користувацькі списки блокування</string>
+    <string name="summary_manage_blocklists">Додати списки блокування у форматі hosts-file. Використовується, коли вбудовані списки трекера не ідентифікують домен.</string>
+    <string name="title_add_blocklist">Додати список блокування</string>
+    <string name="title_delete_blocklist">Видалити список блокування</string>
+    <string name="msg_delete_blocklist_confirm">Ви впевнені, що хочете видалити цей список блокування?</string>
     <string name="msg_invalid_url">Недійсна URL-адреса</string>
-    <string name="msg_apply_blocklists_failed">Не вдалося застосувати файли хосту</string>
+    <string name="msg_apply_blocklists_failed">Не вдалося застосувати списки блокування</string>
     <string name="msg_last_update">Останнє оновлення: %s</string>
+    <string name="blocklist_format">Введіть URL-адресу у форматі HTTPS для списку заблокованих ресурсів у форматі «hosts» (наприклад, 0.0.0.0 ads.example.com). Правила фільтрації браузера не підтримуються.</string>
+    <string name="blocklist_minimal_notice">Користувацькі списки блокування неактивні в мінімальному режимі. Щоб використовувати їх, перемкніться на стандартний або суворий режим у налаштуваннях.</string>
+    <string name="blocklist_research_notice">Користувацькі списки блокування неактивні, коли ввімкнено режим дослідження. Вимкніть режим дослідження в налаштуваннях, щоб увімкнути блокування відстеження.</string>
+    <string name="blocklist_browser_notice">Захист від трекерів у браузері за замовчуванням вимкнений. Увімкніть його на сторінці додатка браузера, щоб використовувати там власні списки блокування.</string>
+    <string name="blocklist_downloading">Завантаження списків блокування… Очікування з’єднання, якщо ви офлайн.</string>
+    <string name="blocklist_not_downloaded">Ще не завантажено</string>
+    <string name="blocklist_download_failed">Не вдалося завантажити або застосувати списки блокування. Перевірте помилки списку та спробуйте оновити ще раз.</string>
+    <string name="blocklist_update">Оновити списки блокування</string>
     <!-- Accessibility labels -->
     <string name="switch_tracker_control_description">Блокування трекерів</string>
+    <string name="vpn_enabled_switch_description">VPN</string>
     <string name="blocklist_delete_description">Видалити список блокування</string>
     <string name="blocklist_enable_description">Увімкнути список блокування %s</string>
     <string name="log_connection_allowed">Дозволено</string>
     <string name="log_connection_blocked">Заблоковано</string>
+    <string name="log_connection_wifi">Wi-Fi</string>
     <string name="log_connection_other">Інша мережа</string>
     <string name="log_screen_on">Екран увімкнено</string>
 </resources>

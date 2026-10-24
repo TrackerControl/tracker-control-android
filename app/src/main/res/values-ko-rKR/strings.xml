@@ -285,7 +285,6 @@
     <string name="msg_wg_identity_renewed">%1$s에서 더 이상 이 기기를 인식하지 않아 TrackerControl이 새 기기를 등록하고 이 기기의 %1$s 프로필을 업데이트했습니다.</string>
     <string name="msg_wg_provider_rejected">%1$s에서 이 기기 설정을 거부했습니다: %2$s</string>
     <string name="msg_wg_recovery_failed">WireGuard가 응답하지 않습니다. TrackerControl이 다시 연결을 시도 중이며, WireGuard가 복구될 때까지 인터넷 접근이 차단될 수 있습니다.</string>
-    <string name="summary_log_logcat">연구 모드: 식별된 트래커가 ADB에 기록되고 호스트 이름을 더 정확히 감지하기 위해 SNI 추출이 활성화됩니다. \'TC-Log\' 태그를 사용해 adb logcat으로 로그를 가져오세요.</string>
     <string name="msg_sure">확실한가요?</string>
     <string name="msg_started">트래커 찾는 중…</string>
     <string name="msg_waiting">이벤트 대기 중</string>
@@ -644,13 +643,7 @@ EU 일반 데이터 보호 규정(GDPR) 제17조에 명시된 삭제 권리를 �
     <!-- Retained for Play Store copy; call-site/API migration and multi-count grammar are intentionally separate. -->
     <string name="insights_see_more">더 보기 →</string>
     <!-- What's New onboarding slide (not translated) -->
-    <string name="title_blocklists">추가 호스트 파일</string>
-    <string name="summary_manage_blocklists">이 파일은 대체용으로만 사용됩니다. TrackerControl에는 추적 배후의 회사에 대한 인사이트를 제공하는 자체 호스트 목록이 포함되어 있습니다.</string>
-    <string name="title_add_blocklist">호스트 파일 추가</string>
-    <string name="title_delete_blocklist">호스트 파일 삭제</string>
-    <string name="msg_delete_blocklist_confirm">이 호스트 파일을 삭제하시겠습니까?</string>
     <string name="msg_invalid_url">잘못된 URL</string>
-    <string name="msg_apply_blocklists_failed">호스트 파일을 적용하지 못했습니다</string>
     <string name="msg_last_update">마지막 업데이트: %s</string>
     <!-- Accessibility labels -->
     <string name="switch_tracker_control_description">트래커 차단</string>
