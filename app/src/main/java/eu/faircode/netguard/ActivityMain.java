@@ -578,6 +578,13 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         intentFilter.addDataScheme("package");
         ContextCompat.registerReceiver(this, packageChangedReceiver, intentFilter, ContextCompat.RECEIVER_NOT_EXPORTED);
 
+        // Apps on external or adopted storage being mounted or unmounted; these
+        // broadcasts carry no data URI, so they need a filter without a scheme
+        IntentFilter ifExternal = new IntentFilter();
+        ifExternal.addAction(Intent.ACTION_EXTERNAL_APPLICATIONS_AVAILABLE);
+        ifExternal.addAction(Intent.ACTION_EXTERNAL_APPLICATIONS_UNAVAILABLE);
+        ContextCompat.registerReceiver(this, packageChangedReceiver, ifExternal, ContextCompat.RECEIVER_NOT_EXPORTED);
+
         // Note first use
         if (!initialized)
             prefs.edit().putBoolean("initialized", true).apply();
