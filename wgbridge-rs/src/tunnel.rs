@@ -299,13 +299,17 @@ impl Tunnel {
             let device = guard.as_ref().ok_or("tunnel stopped")?;
             device
                 .write(async |d| {
-                    // Toggling the port marks the connection dirty so the
+                    // Changing the port marks the connection dirty so the
                     // write commit re-runs Connection::set_up, which re-binds
-                    // through ProtectedUdpFactory. The final value is the
-                    // original port again.
-                    let port = d.listen_port();
-                    d.set_listen_port(if port == 0 { 1 } else { 0 });
-                    d.set_listen_port(port);
+                    // through ProtectedUdpFactory. Since gotatun 0.10 the
+                    // device remembers the port it actually bound, so restoring
+                    // it would re-bind that exact port while the old socket may
+                    // still be closing (EADDRINUSE). End on 0 instead to get a
+                    // fresh ephemeral port; peers roam to it on the next packet.
+                    if d.listen_port() == 0 {
+                        d.set_listen_port(1);
+                    }
+                    d.set_listen_port(0);
                 })
                 .await
                 .map_err(|e| e.to_string())?;
