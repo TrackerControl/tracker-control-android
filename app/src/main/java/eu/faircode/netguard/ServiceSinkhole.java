@@ -3654,6 +3654,39 @@ public class ServiceSinkhole extends VpnService {
             }
 
             reload("package deleted", context, false);
+
+        } else if (Intent.ACTION_EXTERNAL_APPLICATIONS_AVAILABLE.equals(intent.getAction())) {
+            // Apps on external or adopted storage become visible only once the
+            // volume mounts, which on boot is after this service has built its
+            // rules. Without a reload they stay unknown to the VPN, and so
+            // without network access, until the app list is refreshed.
+            Rule.clearCache(context);
+
+            // Settings saved for these apps could not be resolved to a UID
+            // while the volume was missing, so resolve them now.
+            String[] packages = intent.getStringArrayExtra(Intent.EXTRA_CHANGED_PACKAGE_LIST);
+            if (packages != null) {
+                InternetBlocklist internetBlocklist = InternetBlocklist.getInstance(context);
+                TrackerBlocklist b = TrackerBlocklist.getInstance(context);
+                boolean internetChanged = false;
+                boolean trackerChanged = false;
+                for (String packageName : packages) {
+                    internetChanged |= internetBlocklist.resolvePendingPackage(context, packageName);
+                    trackerChanged |= b.resolvePendingPackage(context, packageName);
+                }
+                if (trackerChanged)
+                    b.saveSettings(context);
+                if (internetChanged)
+                    internetBlocklist.saveSettings(context);
+            }
+
+            reload("external applications available", context, false);
+
+        } else if (Intent.ACTION_EXTERNAL_APPLICATIONS_UNAVAILABLE.equals(intent.getAction())) {
+            // The volume went away, but the apps are still installed: keep
+            // their settings and only rebuild the rules.
+            Rule.clearCache(context);
+            reload("external applications unavailable", context, false);
         }
     }
 
@@ -3825,6 +3858,13 @@ public class ServiceSinkhole extends VpnService {
         ifPackage.addAction(Intent.ACTION_PACKAGE_REMOVED);
         ifPackage.addDataScheme("package");
         ContextCompat.registerReceiver(this, packageChangedReceiver, ifPackage, ContextCompat.RECEIVER_NOT_EXPORTED);
+
+        // Apps on external or adopted storage being mounted or unmounted. These
+        // broadcasts carry no data URI, so they need a filter without a scheme.
+        IntentFilter ifExternal = new IntentFilter();
+        ifExternal.addAction(Intent.ACTION_EXTERNAL_APPLICATIONS_AVAILABLE);
+        ifExternal.addAction(Intent.ACTION_EXTERNAL_APPLICATIONS_UNAVAILABLE);
+        ContextCompat.registerReceiver(this, packageChangedReceiver, ifExternal, ContextCompat.RECEIVER_NOT_EXPORTED);
         registeredPackageChanged = true;
 
         try {
