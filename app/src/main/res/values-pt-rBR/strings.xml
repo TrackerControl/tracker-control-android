@@ -289,7 +289,6 @@
     <string name="msg_wg_identity_renewed">O %1$s não reconhecia mais este dispositivo, então o TrackerControl registrou um novo e atualizou os perfis do %1$s neste dispositivo.</string>
     <string name="msg_wg_provider_rejected">%1$s recusou configurar este dispositivo: %2$s</string>
     <string name="msg_wg_recovery_failed">O WireGuard parou de responder. O TrackerControl está tentando se reconectar, e o acesso à internet pode continuar bloqueado até o WireGuard se recuperar.</string>
-    <string name="summary_log_logcat">Modo de pesquisa: rastreadores identificados estão conectados ao ADB e a extração SNI está ativada para melhor detecção de nome de hosts. Recuperar logs com adb logcat usando a tag \'TC-Log\'.</string>
     <string name="msg_sure">Você tem certeza?</string>
     <string name="msg_started">Procurando por rastreadores…</string>
     <string name="msg_waiting">Aguardando evento</string>
@@ -629,13 +628,7 @@ O seu tráfego de internet não está sendo enviado para um servidor VPN remoto.
     <!-- Retained for Play Store copy; call-site/API migration and multi-count grammar are intentionally separate. -->
     <string name="insights_see_more">Ver Mais →</string>
     <!-- What's New onboarding slide (not translated) -->
-    <string name="title_blocklists">Arquivos de host adicionais</string>
-    <string name="summary_manage_blocklists">Essas são apenas para fallback. O TrackerControl inclui suas próprias listas de host que dão informações sobre as empresas por trás do rastreador.</string>
-    <string name="title_add_blocklist">Adicionar arquivo host</string>
-    <string name="title_delete_blocklist">Excluir arquivo host</string>
-    <string name="msg_delete_blocklist_confirm">Tem certeza que deseja excluir este arquivo host?</string>
     <string name="msg_invalid_url">URL inválida</string>
-    <string name="msg_apply_blocklists_failed">Falha ao aplicar arquivos host</string>
     <string name="msg_last_update">Última atualização: %s</string>
     <!-- Accessibility labels -->
     <string name="switch_tracker_control_description">Bloqueio de rastreadores</string>

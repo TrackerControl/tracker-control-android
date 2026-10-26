@@ -295,7 +295,6 @@
     <string name="msg_wg_identity_renewed">‏%1$s دیگر این دستگاه را نمی‌شناخت؛ بنابراین TrackerControl دستگاه جدیدی ثبت کرد و نمایه‌های %1$s را در این دستگاه به‌روزرسانی کرد.</string>
     <string name="msg_wg_provider_rejected">‏%1$s از راه‌اندازی این دستگاه خودداری کرد: %2$s</string>
     <string name="msg_wg_recovery_failed">WireGuard دیگر پاسخ نمی‌دهد. TrackerControl در حال تلاش برای اتصال دوباره است و ممکن است تا بازیابی WireGuard دسترسی اینترنت همچنان مسدود بماند.</string>
-    <string name="summary_log_logcat">حالت پژوهش: ردیاب‌های شناسایی‌شده در ADB ثبت می‌شوند و استخراج SNI برای شناسایی بهتر نام میزبان فعال است. گزارش‌ها را با adb logcat و برچسب «TC-Log» دریافت کنید.</string>
     <string name="msg_sure">مطمئن هستید؟</string>
     <string name="msg_started">در حال جست‌وجوی ردیاب‌ها…</string>
     <string name="msg_waiting">در انتظار رویداد</string>
@@ -660,13 +659,7 @@
     <!-- Retained for Play Store copy; call-site/API migration and multi-count grammar are intentionally separate. -->
     <string name="insights_see_more">بیشتر ببینید ←</string>
     <!-- What's New onboarding slide (not translated) -->
-    <string name="title_blocklists">فایل‌های میزبان اضافی</string>
-    <string name="summary_manage_blocklists">این‌ها فقط برای جایگزینی هستند. TrackerControl فهرست‌های میزبان خودش را دارد که دربارهٔ شرکت‌های پشت ردیابی بینش ارائه می‌کنند.</string>
-    <string name="title_add_blocklist">افزودن فایل میزبان</string>
-    <string name="title_delete_blocklist">حذف فایل میزبان</string>
-    <string name="msg_delete_blocklist_confirm">مطمئنید می‌خواهید این فایل میزبان را حذف کنید؟</string>
     <string name="msg_invalid_url">نشانی اینترنتی نامعتبر</string>
-    <string name="msg_apply_blocklists_failed">اعمال فایل‌های میزبان ناموفق بود</string>
     <string name="msg_last_update">آخرین به‌روزرسانی: %s</string>
     <!-- Accessibility labels -->
     <string name="switch_tracker_control_description">مسدودسازی ردیاب‌ها</string>
