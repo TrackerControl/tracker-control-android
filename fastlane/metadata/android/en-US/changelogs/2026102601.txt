@@ -1,9 +1,6 @@
-- Refreshed Timeline, Insights, and app details
-- Per-app protection pause and Minimal blocking only
+- Refreshed UI of Timeline, Insights, and app details
 - Choose which apps use the remote VPN
 - Import WireGuard profiles by QR code, file, or ZIP
-- Guided Proton VPN setup
-- Clearer encrypted DNS warnings and easier Secure DNS setup
 - More reliable VPN, DNS, tethering, and tracker detection
 - Reduced screen-off battery use
 - Updated tracker lists, translations, and dependencies
