@@ -291,7 +291,6 @@
     <string name="msg_wg_identity_renewed">%1$s-க்கு இந்தச் சாதனம் இனி தெரியாததால், TrackerControl புதிய சாதனத்தைப் பதிவு செய்து இந்தச் சாதனத்தில் உள்ள %1$s சுயவிவரங்களைப் புதுப்பித்தது.</string>
     <string name="msg_wg_provider_rejected">இந்தச் சாதனத்தை %1$s அமைக்க மறுத்தது: %2$s</string>
     <string name="msg_wg_recovery_failed">WireGuard பதிலளிப்பதை நிறுத்தியது. TrackerControl மீண்டும் இணைக்க முயல்கிறது; WireGuard மீளும் வரை இணைய அணுகல் தடுக்கப்பட்டிருக்கலாம்.</string>
-    <string name="summary_log_logcat">ஆய்வு முறை: அடையாளம் காணப்பட்ட டிராக்கர்கள் ADB-யில் பதிவு செய்யப்படுகின்றன; சிறந்த ஹோஸ்ட்பெயர் கண்டறிதலுக்காக SNI பிரித்தெடுப்பு இயக்கப்பட்டுள்ளது. \'TC-Log\' குறிச்சொல்லைப் பயன்படுத்தி adb logcat மூலம் பதிவுகளைப் பெறவும்.</string>
     <string name="msg_sure">நிச்சயமாகவா?</string>
     <string name="msg_started">டிராக்கர்களைத் தேடுகிறது…</string>
     <string name="msg_waiting">நிகழ்வுக்காகக் காத்திருக்கிறது</string>
@@ -653,13 +652,7 @@ Android பயன்பாடு %1$s (ID: %2$s)-ன் தரவுக் க�
     <!-- Retained for Play Store copy; call-site/API migration and multi-count grammar are intentionally separate. -->
     <string name="insights_see_more">மேலும் காண்க →</string>
     <!-- What's New onboarding slide (not translated) -->
-    <string name="title_blocklists">கூடுதல் hosts கோப்புகள்</string>
-    <string name="summary_manage_blocklists">இவை மாற்றுவழிக்காக மட்டுமே. கண்காணிப்பின் பின்னாலுள்ள நிறுவனங்களைப் பற்றிய நுண்ணறிவுகளை வழங்கும் சொந்த hosts பட்டியல்கள் TrackerControl-ல் உள்ளன.</string>
-    <string name="title_add_blocklist">hosts கோப்பைச் சேர்</string>
-    <string name="title_delete_blocklist">hosts கோப்பை நீக்கு</string>
-    <string name="msg_delete_blocklist_confirm">இந்த hosts கோப்பை நீக்க விரும்புகிறீர்களா?</string>
     <string name="msg_invalid_url">தவறான URL</string>
-    <string name="msg_apply_blocklists_failed">hosts கோப்புகளைப் பயன்படுத்த முடியவில்லை</string>
     <string name="msg_last_update">கடைசிப் புதுப்பிப்பு: %s</string>
     <!-- Accessibility labels -->
     <string name="switch_tracker_control_description">டிராக்கர் தடுப்பு</string>

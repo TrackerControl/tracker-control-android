@@ -310,7 +310,6 @@
     <string name="msg_wg_identity_renewed">O %1$s já não reconhecia este dispositivo, por isso o TrackerControl registou-o novamente e atualizou os perfis %1$s neste dispositivo.</string>
     <string name="msg_wg_provider_rejected">%1$s recusou configurar este dispositivo: %2$s</string>
     <string name="msg_wg_recovery_failed">O WireGuard deixou de responder. O TrackerControl está a tentar voltar a ligar-se e o acesso à Internet pode continuar bloqueado até o WireGuard recuperar.</string>
-    <string name="summary_log_logcat">Modo de investigação: os rastreadores identificados são registados no ADB e a extração de SNI está ativada para melhorar a deteção de nomes de anfitrião. Obtenha os registos com adb logcat utilizando a etiqueta \'TC-Log\'.</string>
     <string name="msg_sure">Você tem certeza?</string>
     <string name="msg_started">A procurar rastreadores…</string>
     <string name="msg_waiting">À espera do evento</string>
@@ -684,13 +683,7 @@ disso,\n\n]]></string>
     <!-- Retained for Play Store copy; call-site/API migration and multi-count grammar are intentionally separate. -->
     <string name="insights_see_more">Ver mais →</string>
     <!-- What's New onboarding slide (not translated) -->
-    <string name="title_blocklists">Ficheiros hosts adicionais</string>
-    <string name="summary_manage_blocklists">Estes ficheiros servem apenas como alternativa. O TrackerControl inclui as suas próprias listas hosts, que fornecem informações sobre as empresas por trás do rastreamento.</string>
-    <string name="title_add_blocklist">Adicionar ficheiro hosts</string>
-    <string name="title_delete_blocklist">Eliminar ficheiro hosts</string>
-    <string name="msg_delete_blocklist_confirm">Tem a certeza de que pretende eliminar este ficheiro hosts?</string>
     <string name="msg_invalid_url">URL inválido</string>
-    <string name="msg_apply_blocklists_failed">Falha ao aplicar os ficheiros hosts</string>
     <string name="msg_last_update">Última atualização: %s</string>
     <!-- Accessibility labels -->
     <string name="switch_tracker_control_description">Bloqueio de rastreadores</string>
