@@ -116,3 +116,6 @@ lint/tmp/
 
 # Rust build artifacts (wgbridge-rs)
 wgbridge-rs/target/
+
+# repowise owner-digest key (local)
+.repowise/events.key
