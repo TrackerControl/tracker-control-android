@@ -17,6 +17,17 @@ updates:
     commit-message:
       prefix: "deps"
     groups:
+      # AndroidX libraries raise their minSdk in minor releases, which breaks
+      # the build while we support API 23. Keep them in their own PR so one
+      # of them failing doesn't hold back unrelated (e.g. security) bumps.
+      # Dependabot puts a dependency in the first group that matches, so this
+      # must stay above gradle-minor-patch.
+      androidx-minor-patch:
+        patterns:
+          - "androidx.*"
+        update-types:
+          - "minor"
+          - "patch"
       # Collapse the routine, low-risk churn into a single weekly PR.
       # Major bumps still come as individual PRs so they get real review.
       gradle-minor-patch:
@@ -34,7 +45,8 @@ updates:
       # WorkManager 2.12.0 raised its minSdk to 24, and we still support
       # API 23 (app/build.gradle `minSdk 23`), so the manifest merger
       # rejects it. Stay on 2.11.x until we decide to drop Android 6.0.
-      - dependency-name: "androidx.work:work-runtime"
+      # The wildcard also covers work-testing, which pulls in work-runtime.
+      - dependency-name: "androidx.work:*"
         versions: [">=2.12.0"]
 
   # --- WireGuard bridge (Rust / Cargo) ---
