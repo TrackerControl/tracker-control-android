@@ -45,6 +45,12 @@ public class WgRelayFailover {
 
         /** The provider refused the request, e.g. an exhausted device limit. */
         void onProviderRejected(String providerLabel, String message);
+
+        /**
+         * The account has no time left, so no relay will accept the tunnel.
+         * Switching servers cannot fix this; only the user can.
+         */
+        void onAccountExpired(String providerLabel);
     }
 
     private WgRelayFailover() {
@@ -151,6 +157,15 @@ public class WgRelayFailover {
             }
             Log.w(TAG, "Switched " + active.provider + " profile to a different relay after repeated failures");
             return true;
+        } catch (MullvadProfileGenerator.AccountExpiredException ex) {
+            // Must precede the ApiRejectedException catch below: this is a
+            // subclass, and a lapsed subscription needs its own message
+            // because no amount of retrying or relay switching will help.
+            Log.w(TAG, "Relay failover for " + active.provider
+                    + " stopped: the account has no time left");
+            if (listener != null)
+                listener.onAccountExpired(providerLabel(active.provider));
+            return false;
         } catch (MullvadProfileGenerator.ApiRejectedException | IvpnProfileGenerator.ApiRejectedException ex) {
             Log.w(TAG, "Relay failover for " + active.provider + " was rejected by the provider API: "
                     + ex.getMessage());

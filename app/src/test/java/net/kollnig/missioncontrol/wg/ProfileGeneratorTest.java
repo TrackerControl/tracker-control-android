@@ -222,6 +222,85 @@ public class ProfileGeneratorTest {
         assertTrue(config.contains("Address = fc00:bbbb:bbbb:bb01::2/128"));
     }
 
+    @Test
+    public void mullvadExpiredAccountIsReportedInsteadOfRenewingIdentity() throws Exception {
+        TestMullvadGenerator generator = new TestMullvadGenerator(null);
+        // The account has run out of time but still lists the saved device —
+        // exactly what Mullvad returns for a lapsed subscription. Without the
+        // expiry check this generates a healthy-looking profile whose
+        // handshakes no relay will ever answer.
+        generator.registerDevice(PUBLIC_KEY, IPV4, IPV6);
+        generator.expiry = System.currentTimeMillis() - 1;
+
+        try {
+            generator.generate(ACCOUNT, "de", reusableConfig(IPV4), null, true);
+            fail("Expected the lapsed subscription to be reported");
+        } catch (MullvadProfileGenerator.AccountExpiredException expected) {
+            // The point of the exception is that it reaches the user, so it
+            // must not be mistaken for a transient API failure.
+            assertTrue(expected.getMessage().contains("no time left"));
+        }
+
+        // Asking about the identity, or minting a new one, would both be
+        // wasted work and would overwrite a key that is still perfectly good.
+        assertEquals(0, generator.createDeviceCalls);
+    }
+
+    @Test
+    public void mullvadAccountWithTimeLeftReusesSavedIdentity() throws Exception {
+        TestMullvadGenerator generator = new TestMullvadGenerator(null);
+        generator.registerDevice(PUBLIC_KEY, IPV4, IPV6);
+        generator.expiry = System.currentTimeMillis() + 86_400_000L;
+
+        MullvadProfileGenerator.GeneratedProfile generated =
+                generator.generate(ACCOUNT, "de", reusableConfig(IPV4), null, true);
+
+        assertFalse(generated.identityReplaced);
+        assertEquals(0, generator.createDeviceCalls);
+        assertEquals(PRIVATE_KEY, generated.privateKey);
+    }
+
+    @Test
+    public void mullvadUnknownExpiryDoesNotClaimLapsedSubscription() throws Exception {
+        TestMullvadGenerator generator = new TestMullvadGenerator(null);
+        generator.registerDevice(PUBLIC_KEY, IPV4, IPV6);
+        // Mullvad said nothing useful about the expiry. Guessing "lapsed"
+        // here would accuse a paying user, so the check has to fall open and
+        // leave the generic unresponsive-tunnel message in place.
+        generator.expiry = Long.MAX_VALUE;
+
+        MullvadProfileGenerator.GeneratedProfile generated =
+                generator.generate(ACCOUNT, "de", reusableConfig(IPV4), null, true);
+
+        assertEquals(PRIVATE_KEY, generated.privateKey);
+    }
+
+    @Test
+    public void mullvadExpiryIsNotCheckedWhenIdentityIsNotVerified() throws Exception {
+        TestMullvadGenerator generator = new TestMullvadGenerator(null);
+        generator.expiry = System.currentTimeMillis() - 1;
+
+        // The unverified path must stay offline (see
+        // mullvadReuseDoesNotAskProviderByDefault): a profile that would have
+        // worked must not fail to generate because the API was unreachable.
+        MullvadProfileGenerator.GeneratedProfile generated =
+                generator.generate(ACCOUNT, "de", reusableConfig(IPV4), null, false);
+
+        assertEquals(PRIVATE_KEY, generated.privateKey);
+        assertEquals(0, generator.expiryCalls);
+    }
+
+    @Test
+    public void parseExpiryReadsRfc3339AndFallsOpenOtherwise() {
+        assertEquals(0L, MullvadProfileGenerator.parseExpiry("1970-01-01T00:00:00+00:00"));
+        assertEquals(0L, MullvadProfileGenerator.parseExpiry("1970-01-01T00:00:00Z"));
+        assertEquals(3_600_000L, MullvadProfileGenerator.parseExpiry("1970-01-01T00:00:00-01:00"));
+        // Anything unreadable means "unknown", never "expired".
+        assertEquals(Long.MAX_VALUE, MullvadProfileGenerator.parseExpiry(""));
+        assertEquals(Long.MAX_VALUE, MullvadProfileGenerator.parseExpiry("not-a-date"));
+        assertEquals(Long.MAX_VALUE, MullvadProfileGenerator.parseExpiry("2026-10-28"));
+    }
+
     private static String reusableConfig(String address) {
         return "[Interface]\n" +
                 "PrivateKey = " + PRIVATE_KEY + "\n" +
@@ -265,8 +344,10 @@ public class ProfileGeneratorTest {
         private final List<JSONObject> devices = new java.util.ArrayList<>();
         IOException deviceListFailure;
         String newPrivateKey = PRIVATE_KEY;
+        long expiry = Long.MAX_VALUE;
         int fetchWebTokenCalls;
         int createDeviceCalls;
+        int expiryCalls;
 
         TestMullvadGenerator(IOException relayFailure) {
             this.relayFailure = relayFailure;
@@ -299,6 +380,12 @@ public class ProfileGeneratorTest {
         String fetchWebToken(String accountNumber) {
             fetchWebTokenCalls++;
             return "token";
+        }
+
+        @Override
+        long fetchAccountExpiry(String token) {
+            expiryCalls++;
+            return expiry;
         }
 
         @Override

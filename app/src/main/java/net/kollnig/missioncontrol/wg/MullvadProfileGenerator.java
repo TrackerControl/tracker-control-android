@@ -9,6 +9,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.security.SecureRandom;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -93,6 +94,18 @@ public class MullvadProfileGenerator {
         }
     }
 
+    /**
+     * The account has no time left. Mullvad still authenticates such an
+     * account and still lists its devices, but no relay will complete a
+     * handshake for it — so every other identity check passes while the
+     * tunnel stays down until the user adds time.
+     */
+    public static class AccountExpiredException extends ApiRejectedException {
+        AccountExpiredException(String message) {
+            super(message);
+        }
+    }
+
     // Package-private so tests can supply relay data without making HTTP calls.
     static class Relay {
         String hostname;
@@ -169,6 +182,11 @@ public class MullvadProfileGenerator {
             // completes a handshake — so ask, and register a fresh device
             // rather than inheriting the dead identity.
             String token = fetchWebToken(account);
+            // Ask about the subscription before the identity. An account with
+            // no time left authenticates and keeps its devices registered, so
+            // every check below would pass and the caller would keep cycling
+            // relays forever against servers that will never answer.
+            requireAccountTime(token);
             JSONObject registered = findDevice(token, publicKeyOf(reusable.getPrivateKey()));
             if (registered == null) {
                 privateKey = newPrivateKey();
@@ -312,6 +330,44 @@ public class MullvadProfileGenerator {
         body.put("pubkey", publicKey);
         body.put("hijack_dns", false);
         return postJson(API + "/accounts/v1/devices", token, body);
+    }
+
+    /**
+     * The account's expiry in epoch milliseconds, or {@link Long#MAX_VALUE}
+     * when Mullvad did not say. Unknown counts as "has time": telling a paying
+     * user their subscription has lapsed because a field moved is worse than
+     * falling back to the generic unresponsive-tunnel message.
+     */
+    // Package-private so tests can supply an expiry without making HTTP calls.
+    long fetchAccountExpiry(String token) throws Exception {
+        Request.Builder builder = new Request.Builder()
+                .url(API + "/accounts/v1/accounts/me");
+        if (!TextUtils.isEmpty(token))
+            builder.header("Authorization", "Bearer " + token);
+
+        try (Response response = client.newCall(builder.build()).execute()) {
+            String text = responseText(response);
+            if (!response.isSuccessful())
+                throw new IOException("Mullvad account request failed: " + response.code()
+                        + " " + text);
+            return parseExpiry(new JSONObject(text).optString("expiry", ""));
+        }
+    }
+
+    /** Parses Mullvad's RFC 3339 {@code expiry}; unparseable means unknown. */
+    static long parseExpiry(String expiry) {
+        if (TextUtils.isEmpty(expiry))
+            return Long.MAX_VALUE;
+        try {
+            return OffsetDateTime.parse(expiry).toInstant().toEpochMilli();
+        } catch (RuntimeException ex) {
+            return Long.MAX_VALUE;
+        }
+    }
+
+    private void requireAccountTime(String token) throws Exception {
+        if (fetchAccountExpiry(token) <= System.currentTimeMillis())
+            throw new AccountExpiredException("Mullvad account has no time left");
     }
 
     // Package-private so tests can supply device data without making HTTP calls.

@@ -21,9 +21,13 @@ public final class Tunnel {
 
     /**
      * Snapshot of the device's transfer counters and newest handshake, summed
-     * across all peers. rx bytes count decrypted transport payload, so they
-     * only advance when the tunnel actually carries return traffic — that is
-     * the liveness signal the connectivity monitor is biased toward.
+     * across all peers.
+     *
+     * <p>rx bytes are not payload-only: gotatun also counts received handshake
+     * initiations and responses, so they advance on a path that passes
+     * handshakes while dropping transport packets. Treat them as proof that
+     * something came back from the peer, not as proof that apps are getting
+     * their traffic; the TUN-write failure counters cover that case.
      */
     public synchronized TunnelStats stats() {
         long[] values = nativeStats(handle);
