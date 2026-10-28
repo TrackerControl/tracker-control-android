@@ -2190,6 +2190,17 @@ public class ServiceSinkhole extends VpnService {
                                                 R.string.msg_wg_provider_rejected, providerLabel,
                                                 message == null ? "" : message));
                             }
+
+                            @Override
+                            public void onAccountExpired(String providerLabel) {
+                                // Published the same way as a rejection, for
+                                // the same reason — but with its own message,
+                                // since retrying cannot fix an account that
+                                // has run out of time.
+                                net.kollnig.missioncontrol.wg.WgEgress.INSTANCE
+                                        .reportProviderFailure(getString(
+                                                R.string.msg_wg_account_expired, providerLabel));
+                            }
                         }));
         jni_wireguard_required(prefs.getBoolean("wg_enabled", false)
                 && !TextUtils.isEmpty(prefs.getString("wg_config", "")));

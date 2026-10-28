@@ -183,9 +183,15 @@ impl Tunnel {
     }
 
     /// Transfer counters and newest handshake, summed across all peers.
-    /// rx_bytes counts decrypted transport payload, so it only advances when
-    /// the tunnel actually carries return traffic — that is the liveness
-    /// signal the connectivity monitor is biased toward.
+    ///
+    /// rx_bytes is NOT payload-only: gotatun also adds received handshake
+    /// initiations and responses to it (`noise/mod.rs`), so it advances on a
+    /// path that passes handshakes while dropping transport packets. It is
+    /// therefore a weaker liveness signal than it looks — strong enough to
+    /// prove something came back from the peer, too weak to prove apps are
+    /// getting their traffic. The connectivity monitor treats a tunnel whose
+    /// rx never moves at all as dead, and leans on the TUN-write counters
+    /// below for the "handshakes fine, data lost" case.
     pub fn stats(&self) -> Result<TunnelStats, String> {
         let inner = Arc::clone(&self.inner);
         self.runtime.block_on(async move {
