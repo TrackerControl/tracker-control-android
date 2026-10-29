@@ -283,12 +283,14 @@
     <string name="vpn_generation_failed">Falha na configuração da VPN: %s</string>
     <string name="vpn_retry">Tentar novamente</string>
     <string name="msg_wg_blocked_title">Túnel WireGuard indisponível</string>
-    <string name="msg_wg_blocked">O acesso à internet está bloqueado até o WireGuard iniciar ou a configuração do WireGuard ser desativada.</string>
-    <string name="msg_wg_blocked_detail">O acesso à internet está bloqueado até o WireGuard iniciar ou a configuração do WireGuard ser desativada. %s</string>
+    <!-- The cause comes first so it does not read as a tunnel that never
+         started when the detail says it stopped responding. The tail stays
+         neutral about recovery: some causes, such as a lapsed subscription,
+         never resolve on their own. Each %s already names its own remedy
+         where it has one, so this must not repeat it. -->
     <string name="msg_wg_identity_renewed_title">Dispositivo da VPN registrado novamente</string>
     <string name="msg_wg_identity_renewed">O %1$s não reconhecia mais este dispositivo, então o TrackerControl registrou um novo e atualizou os perfis do %1$s neste dispositivo.</string>
-    <string name="msg_wg_provider_rejected">%1$s recusou configurar este dispositivo: %2$s</string>
-    <string name="msg_wg_recovery_failed">O WireGuard parou de responder. O TrackerControl está tentando se reconectar, e o acesso à internet pode continuar bloqueado até o WireGuard se recuperar.</string>
+    <!-- Ends in a full stop: msg_wg_blocked_detail appends a sentence after it. -->
     <string name="msg_sure">Você tem certeza?</string>
     <string name="msg_started">Procurando por rastreadores…</string>
     <string name="msg_waiting">Aguardando evento</string>

@@ -286,12 +286,14 @@
     <string name="vpn_generation_failed">VPN-oppsett mislyktes: %s</string>
     <string name="vpn_retry">Prøv igjen</string>
     <string name="msg_wg_blocked_title">WireGuard-tunnel utilgjengelig</string>
-    <string name="msg_wg_blocked">Internett-tilgang er blokkert til WireGuard starter eller WireGuard-innstillingen deaktiveres.</string>
-    <string name="msg_wg_blocked_detail">Internett-tilgang er blokkert til WireGuard starter eller WireGuard-innstillingen deaktiveres. %s</string>
+    <!-- The cause comes first so it does not read as a tunnel that never
+         started when the detail says it stopped responding. The tail stays
+         neutral about recovery: some causes, such as a lapsed subscription,
+         never resolve on their own. Each %s already names its own remedy
+         where it has one, so this must not repeat it. -->
     <string name="msg_wg_identity_renewed_title">VPN-enhet registrert på nytt</string>
     <string name="msg_wg_identity_renewed">%1$s kjente ikke lenger denne enheten, så TrackerControl registrerte en ny enhet og oppdaterte %1$s-profilene på denne enheten.</string>
-    <string name="msg_wg_provider_rejected">%1$s nektet å sette opp denne enheten: %2$s</string>
-    <string name="msg_wg_recovery_failed">WireGuard sluttet å svare. TrackerControl prøver å koble til på nytt, og internettilgang kan forbli blokkert til WireGuard er gjenopprettet.</string>
+    <!-- Ends in a full stop: msg_wg_blocked_detail appends a sentence after it. -->
     <string name="msg_sure">Er du sikker?</string>
     <string name="msg_started">Ser etter sporere …</string>
     <string name="msg_waiting">Venter på hendelse</string>

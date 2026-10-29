@@ -287,12 +287,14 @@
     <string name="vpn_retry">Yritä uudelleen</string>
     <string name="vpn_country_selected">Asia</string>
     <string name="msg_wg_blocked_title">WireGuard asia ei saatavilla</string>
-    <string name="msg_wg_blocked">WireGuard estetty.</string>
-    <string name="msg_wg_blocked_detail">WireGuard estetty asia.%s</string>
+    <!-- The cause comes first so it does not read as a tunnel that never
+         started when the detail says it stopped responding. The tail stays
+         neutral about recovery: some causes, such as a lapsed subscription,
+         never resolve on their own. Each %s already names its own remedy
+         where it has one, so this must not repeat it. -->
     <string name="msg_wg_identity_renewed_title">VPN asia asia</string>
     <string name="msg_wg_identity_renewed">%1$sWireGuard asia asia.%1$s profiilit asia asia asia.</string>
-    <string name="msg_wg_provider_rejected">%1$s asia asia asia asia asia asia: %2$s</string>
-    <string name="msg_wg_recovery_failed">WireGuard asia epäonnistui.</string>
+    <!-- Ends in a full stop: msg_wg_blocked_detail appends a sentence after it. -->
     <string name="msg_sure">Oletko varma?</string>
     <string name="msg_started">Etsitään seuraimia…</string>
     <string name="msg_waiting">Odottaa tapahtumaa</string>

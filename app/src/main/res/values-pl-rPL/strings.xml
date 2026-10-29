@@ -299,12 +299,14 @@
     <string name="vpn_generation_failed">Konfiguracja VPN nie powiodła się: %s</string>
     <string name="vpn_retry">Spróbuj ponownie</string>
     <string name="msg_wg_blocked_title">Tunel WireGuard niedostępny</string>
-    <string name="msg_wg_blocked">Dostęp do Internetu jest zablokowany do czasu uruchomienia WireGuard lub wyłączenia ustawienia WireGuard.</string>
-    <string name="msg_wg_blocked_detail">Dostęp do Internetu jest zablokowany do czasu uruchomienia WireGuard lub wyłączenia ustawienia WireGuard. %s</string>
+    <!-- The cause comes first so it does not read as a tunnel that never
+         started when the detail says it stopped responding. The tail stays
+         neutral about recovery: some causes, such as a lapsed subscription,
+         never resolve on their own. Each %s already names its own remedy
+         where it has one, so this must not repeat it. -->
     <string name="msg_wg_identity_renewed_title">Ponownie zarejestrowano urządzenie VPN</string>
     <string name="msg_wg_identity_renewed">Usługa %1$s nie rozpoznawała już tego urządzenia, więc TrackerControl zarejestrował nowe i zaktualizował profile %1$s na tym urządzeniu.</string>
-    <string name="msg_wg_provider_rejected">Usługa %1$s odmówiła skonfigurowania tego urządzenia: %2$s</string>
-    <string name="msg_wg_recovery_failed">WireGuard przestał odpowiadać. TrackerControl próbuje ponownie nawiązać połączenie, a dostęp do Internetu może pozostać zablokowany do czasu przywrócenia WireGuard.</string>
+    <!-- Ends in a full stop: msg_wg_blocked_detail appends a sentence after it. -->
     <string name="msg_sure">Jesteś pewien?</string>
     <string name="msg_started">Wyszukiwanie trackerów…</string>
     <string name="msg_waiting">Oczekiwanie na zdarzenie</string>

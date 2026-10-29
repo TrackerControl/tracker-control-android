@@ -309,12 +309,14 @@
     <string name="vpn_retry">إعادة المحاولة</string>
     <string name="vpn_country_selected">عنصر</string>
     <string name="msg_wg_blocked_title">WireGuard عنصر غير متاح</string>
-    <string name="msg_wg_blocked">WireGuard محظور.</string>
-    <string name="msg_wg_blocked_detail">WireGuard محظور عنصر.%s</string>
+    <!-- The cause comes first so it does not read as a tunnel that never
+         started when the detail says it stopped responding. The tail stays
+         neutral about recovery: some causes, such as a lapsed subscription,
+         never resolve on their own. Each %s already names its own remedy
+         where it has one, so this must not repeat it. -->
     <string name="msg_wg_identity_renewed_title">VPN عنصر عنصر</string>
     <string name="msg_wg_identity_renewed">%1$sWireGuard عنصر عنصر.%1$s ملفات تعريف عنصر عنصر عنصر.</string>
-    <string name="msg_wg_provider_rejected">%1$s عنصر عنصر عنصر عنصر عنصر عنصر: %2$s</string>
-    <string name="msg_wg_recovery_failed">WireGuard عنصر فشل.</string>
+    <!-- Ends in a full stop: msg_wg_blocked_detail appends a sentence after it. -->
     <string name="msg_sure">هل أنت متأكد؟</string>
     <string name="msg_started">البحث عن أدوات التتبع…</string>
     <string name="msg_waiting">انتظار الحدث</string>

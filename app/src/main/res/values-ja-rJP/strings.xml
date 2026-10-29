@@ -282,12 +282,14 @@
     <string name="vpn_generation_failed">VPN の設定に失敗しました: %s</string>
     <string name="vpn_retry">再試行</string>
     <string name="msg_wg_blocked_title">WireGuard トンネルを利用できません</string>
-    <string name="msg_wg_blocked">WireGuard が開始されるか、WireGuard 設定を無効にするまで、インターネットアクセスはブロックされます。</string>
-    <string name="msg_wg_blocked_detail">WireGuard が開始されるか、WireGuard 設定を無効にするまで、インターネットアクセスはブロックされます。%s</string>
+    <!-- The cause comes first so it does not read as a tunnel that never
+         started when the detail says it stopped responding. The tail stays
+         neutral about recovery: some causes, such as a lapsed subscription,
+         never resolve on their own. Each %s already names its own remedy
+         where it has one, so this must not repeat it. -->
     <string name="msg_wg_identity_renewed_title">VPN 端末を再登録しました</string>
     <string name="msg_wg_identity_renewed">%1$s はこの端末を認識しなくなったため、TrackerControl は新しい端末として登録し、この端末の %1$s プロファイルを更新しました。</string>
-    <string name="msg_wg_provider_rejected">%1$s はこの端末の設定を拒否しました: %2$s</string>
-    <string name="msg_wg_recovery_failed">WireGuard が応答しなくなりました。TrackerControl は再接続を試みています。WireGuard が復旧するまで、インターネットアクセスはブロックされたままになる可能性があります。</string>
+    <!-- Ends in a full stop: msg_wg_blocked_detail appends a sentence after it. -->
     <string name="msg_sure">よろしいですか？</string>
     <string name="msg_started">トラッカーを検索中…</string>
     <string name="msg_waiting">イベントの待機中</string>
