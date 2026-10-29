@@ -288,12 +288,14 @@
     <string name="vpn_retry">మళ్లీ ప్రయత్నించు</string>
     <string name="vpn_country_selected">సరే</string>
     <string name="msg_wg_blocked_title">WireGuard టన్నెల్ అందుబాటులో లేదు</string>
-    <string name="msg_wg_blocked">WireGuard ప్రారంభమయ్యే వరకు లేదా WireGuard సెట్టింగ్ నిలిపివేయబడే వరకు ఇంటర్నెట్ యాక్సెస్ నిరోధించబడుతుంది.</string>
-    <string name="msg_wg_blocked_detail">WireGuard ప్రారంభమయ్యే వరకు లేదా WireGuard సెట్టింగ్ నిలిపివేయబడే వరకు ఇంటర్నెట్ యాక్సెస్ నిరోధించబడుతుంది. %s</string>
+    <!-- The cause comes first so it does not read as a tunnel that never
+         started when the detail says it stopped responding. The tail stays
+         neutral about recovery: some causes, such as a lapsed subscription,
+         never resolve on their own. Each %s already names its own remedy
+         where it has one, so this must not repeat it. -->
     <string name="msg_wg_identity_renewed_title">VPN పరికరం మళ్లీ నమోదు చేయబడింది</string>
     <string name="msg_wg_identity_renewed">%1$sకు ఈ పరికరం ఇక గుర్తు లేదు; అందుకే TrackerControl కొత్తదాన్ని నమోదు చేసి ఈ పరికరంలోని %1$s ప్రొఫైల్‌లను నవీకరించింది.</string>
-    <string name="msg_wg_provider_rejected">ఈ పరికరాన్ని సెటప్ చేయడానికి %1$s నిరాకరించింది: %2$s</string>
-    <string name="msg_wg_recovery_failed">WireGuard స్పందించడం ఆపింది. TrackerControl మళ్లీ కనెక్ట్ చేయడానికి ప్రయత్నిస్తోంది; WireGuard కోలుకునే వరకు ఇంటర్నెట్ యాక్సెస్ నిరోధించబడవచ్చు.</string>
+    <!-- Ends in a full stop: msg_wg_blocked_detail appends a sentence after it. -->
     <string name="msg_sure">మీకు ఖచ్చితంగా తెలుసా?</string>
     <string name="msg_started">ట్రాకర్‌ల కోసం చూస్తోంది…</string>
     <string name="msg_waiting">ఈవెంట్ కోసం వేచి ఉంది</string>

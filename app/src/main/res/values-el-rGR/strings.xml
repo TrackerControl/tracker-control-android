@@ -287,12 +287,14 @@
     <string name="vpn_generation_failed">Η ρύθμιση VPN απέτυχε: %s</string>
     <string name="vpn_retry">Επανάληψη</string>
     <string name="msg_wg_blocked_title">Η σήραγγα WireGuard δεν είναι διαθέσιμη</string>
-    <string name="msg_wg_blocked">Η πρόσβαση στο διαδίκτυο αποκλείεται μέχρι να ξεκινήσει το WireGuard ή να απενεργοποιηθεί η ρύθμιση WireGuard.</string>
-    <string name="msg_wg_blocked_detail">Η πρόσβαση στο διαδίκτυο αποκλείεται μέχρι να ξεκινήσει το WireGuard ή να απενεργοποιηθεί η ρύθμιση WireGuard. %s</string>
+    <!-- The cause comes first so it does not read as a tunnel that never
+         started when the detail says it stopped responding. The tail stays
+         neutral about recovery: some causes, such as a lapsed subscription,
+         never resolve on their own. Each %s already names its own remedy
+         where it has one, so this must not repeat it. -->
     <string name="msg_wg_identity_renewed_title">Η συσκευή VPN καταχωρίστηκε ξανά</string>
     <string name="msg_wg_identity_renewed">Το %1$s δεν αναγνώριζε πλέον αυτή τη συσκευή, επομένως το TrackerControl την καταχώρισε ξανά και ενημέρωσε τα προφίλ %1$s σε αυτή τη συσκευή.</string>
-    <string name="msg_wg_provider_rejected">Το %1$s αρνήθηκε να ρυθμίσει αυτή τη συσκευή: %2$s</string>
-    <string name="msg_wg_recovery_failed">Το WireGuard σταμάτησε να ανταποκρίνεται. Το TrackerControl προσπαθεί να επανασυνδεθεί και η πρόσβαση στο διαδίκτυο μπορεί να παραμείνει αποκλεισμένη μέχρι να αποκατασταθεί το WireGuard.</string>
+    <!-- Ends in a full stop: msg_wg_blocked_detail appends a sentence after it. -->
     <string name="msg_sure">Είστε σίγουρος;</string>
     <string name="msg_started">Αναζήτηση ιχνηλατών…</string>
     <string name="msg_waiting">Αναμονή για συμβάν</string>

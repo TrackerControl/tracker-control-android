@@ -285,12 +285,14 @@
     <string name="vpn_retry">আবার চেষ্টা করুন</string>
     <string name="vpn_country_selected">ঠিক আছে</string>
     <string name="msg_wg_blocked_title">WireGuard টানেল উপলব্ধ নয়</string>
-    <string name="msg_wg_blocked">WireGuard শুরু না হওয়া বা WireGuard সেটিংস বন্ধ না করা পর্যন্ত ইন্টারনেট অ্যাক্সেস ব্লক থাকবে।</string>
-    <string name="msg_wg_blocked_detail">WireGuard শুরু না হওয়া বা WireGuard সেটিংস বন্ধ না করা পর্যন্ত ইন্টারনেট অ্যাক্সেস ব্লক থাকবে। %s</string>
+    <!-- The cause comes first so it does not read as a tunnel that never
+         started when the detail says it stopped responding. The tail stays
+         neutral about recovery: some causes, such as a lapsed subscription,
+         never resolve on their own. Each %s already names its own remedy
+         where it has one, so this must not repeat it. -->
     <string name="msg_wg_identity_renewed_title">VPN ডিভাইস আবার নিবন্ধিত হয়েছে</string>
     <string name="msg_wg_identity_renewed">%1$s আর এই ডিভাইসটিকে চিনতে পারেনি, তাই TrackerControl একটি নতুন ডিভাইস নিবন্ধন করে এই ডিভাইসে থাকা %1$s প্রোফাইলগুলি আপডেট করেছে।</string>
-    <string name="msg_wg_provider_rejected">%1$s এই ডিভাইস সেট আপ করতে অস্বীকার করেছে: %2$s</string>
-    <string name="msg_wg_recovery_failed">WireGuard সাড়া দেওয়া বন্ধ করেছে। TrackerControl পুনরায় সংযোগের চেষ্টা করছে, এবং WireGuard ঠিক না হওয়া পর্যন্ত ইন্টারনেট অ্যাক্সেস ব্লক থাকতে পারে।</string>
+    <!-- Ends in a full stop: msg_wg_blocked_detail appends a sentence after it. -->
     <string name="msg_sure">আপনি কি নিশ্চিত?</string>
     <string name="msg_started">ট্র্যাকার খোঁজা হচ্ছে…</string>
     <string name="msg_waiting">পুনরায় চেষ্টার অপেক্ষায়</string>

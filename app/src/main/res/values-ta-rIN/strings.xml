@@ -285,12 +285,14 @@
     <string name="vpn_retry">மீண்டும் முயற்சி</string>
     <string name="vpn_country_selected">சரி</string>
     <string name="msg_wg_blocked_title">WireGuard சுரங்கம் கிடைக்கவில்லை</string>
-    <string name="msg_wg_blocked">WireGuard தொடங்கும் வரை அல்லது WireGuard அமைப்பு முடக்கப்படும் வரை இணைய அணுகல் தடுக்கப்பட்டுள்ளது.</string>
-    <string name="msg_wg_blocked_detail">WireGuard தொடங்கும் வரை அல்லது WireGuard அமைப்பு முடக்கப்படும் வரை இணைய அணுகல் தடுக்கப்பட்டுள்ளது. %s</string>
+    <!-- The cause comes first so it does not read as a tunnel that never
+         started when the detail says it stopped responding. The tail stays
+         neutral about recovery: some causes, such as a lapsed subscription,
+         never resolve on their own. Each %s already names its own remedy
+         where it has one, so this must not repeat it. -->
     <string name="msg_wg_identity_renewed_title">VPN சாதனம் மீண்டும் பதிவு செய்யப்பட்டது</string>
     <string name="msg_wg_identity_renewed">%1$s-க்கு இந்தச் சாதனம் இனி தெரியாததால், TrackerControl புதிய சாதனத்தைப் பதிவு செய்து இந்தச் சாதனத்தில் உள்ள %1$s சுயவிவரங்களைப் புதுப்பித்தது.</string>
-    <string name="msg_wg_provider_rejected">இந்தச் சாதனத்தை %1$s அமைக்க மறுத்தது: %2$s</string>
-    <string name="msg_wg_recovery_failed">WireGuard பதிலளிப்பதை நிறுத்தியது. TrackerControl மீண்டும் இணைக்க முயல்கிறது; WireGuard மீளும் வரை இணைய அணுகல் தடுக்கப்பட்டிருக்கலாம்.</string>
+    <!-- Ends in a full stop: msg_wg_blocked_detail appends a sentence after it. -->
     <string name="msg_sure">நிச்சயமாகவா?</string>
     <string name="msg_started">டிராக்கர்களைத் தேடுகிறது…</string>
     <string name="msg_waiting">நிகழ்வுக்காகக் காத்திருக்கிறது</string>
