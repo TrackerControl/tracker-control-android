@@ -2,18 +2,21 @@
 
 TrackerControl builds release APK payloads on Linux so that external rebuilders
 can reproduce the native Rust libraries. The long-lived Android signing key
-stays on the release maintainer's Mac and is never uploaded to GitHub Actions.
+stays on the release maintainer's computer and is never uploaded to GitHub Actions.
 
 The release has two stages:
 
 1. A numeric tag triggers `.github/workflows/release-build.yml`. It performs a
    clean, unsigned `githubRelease` build on Ubuntu 22.04 with pinned Android,
    Rust, cargo-ndk, and Java toolchains.
-2. `scripts/build_and_sign.sh` downloads that exact workflow artifact, checks
+2. `scripts/build_and_sign.sh` (macOS) or `scripts/build_and_sign.ps1` (Windows)
+   downloads that exact workflow artifact, checks
    that its commit matches the tag, signs it locally, verifies the certificate,
    and creates a draft GitHub release.
 
 ## One-time local setup
+
+### macOS
 
 Install and authenticate the GitHub CLI, and ensure Android SDK Build Tools are
 installed:
@@ -45,6 +48,48 @@ Keep an offline backup of the keystore and its passwords. The expected public
 certificate SHA-256 is hard-coded in the script so that the wrong keystore
 cannot accidentally sign a release.
 
+### Windows
+
+Install a JDK 21 (for example, [Temurin](https://adoptium.net/temurin/releases/?version=21))
+and the [GitHub CLI](https://cli.github.com/). Set `JAVA_HOME` to the JDK directory
+or ensure `java.exe` is on `PATH`. Authenticate with `gh auth login`.
+
+Download the Windows **Command line tools only** ZIP from the
+[Android Studio download page](https://developer.android.com/studio#command-tools).
+Extract it so that the SDK layout is:
+
+```text
+%LOCALAPPDATA%\Android\Sdk\cmdline-tools\latest\bin\sdkmanager.bat
+%LOCALAPPDATA%\Android\Sdk\cmdline-tools\latest\lib\...
+```
+
+Install the signing tools and add them to your user environment in PowerShell:
+
+```powershell
+$env:ANDROID_HOME = "$env:LOCALAPPDATA\Android\Sdk"
+& "$env:ANDROID_HOME\cmdline-tools\latest\bin\sdkmanager.bat" 'build-tools;36.1.0'
+if ($LASTEXITCODE -ne 0) { throw 'Build Tools installation failed' }
+
+[Environment]::SetEnvironmentVariable('ANDROID_HOME', $env:ANDROID_HOME, 'User')
+$userPath = [Environment]::GetEnvironmentVariable('Path', 'User')
+$entries = @($userPath -split ';' | Where-Object { $_ })
+foreach ($entry in @("$env:ANDROID_HOME\cmdline-tools\latest\bin",
+                     "$env:ANDROID_HOME\build-tools\36.1.0")) {
+    if ($entries -notcontains $entry) { $entries += $entry }
+}
+[Environment]::SetEnvironmentVariable('Path', ($entries -join ';'), 'User')
+```
+
+Accept the SDK license when prompted. Restart your terminal application to use
+the updated environment. An existing `adb` installation can remain unchanged;
+signing does not require platform tools, Android Studio, an NDK, or a local rebuild.
+
+The PowerShell script defaults to `trackercontrol.jks` in the repository root
+and alias `trackercontrol`, like the macOS script. For a different keystore, set
+`$env:RELEASE_STORE_FILE` to its absolute path. Passwords are prompted locally by
+`apksigner`; macOS Keychain is not needed. The same certificate check applies.
+Keep an offline backup of the keystore and its passwords.
+
 ## Publish a release
 
 First update and commit `versionCode` and `versionName` in `app/build.gradle`.
@@ -60,6 +105,18 @@ Wait for **Build unsigned GitHub release APK** to finish successfully. Then run:
 ```bash
 ./scripts/build_and_sign.sh 2026071301
 ```
+
+On Windows, run from the repository root:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\build_and_sign.ps1 2026071301
+# Optional: select an exact workflow run.
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\build_and_sign.ps1 2026071301 1234567890
+```
+
+Both scripts require an existing tag and refuse to overwrite an existing release
+or signed output. For a manual workflow run, the artifact's `BUILD-INFO.txt` must
+identify the tag's commit even if the workflow itself ran from another branch.
 
 The script writes the signed APK and verification metadata to
 `output/release-2026071301/` and creates a draft GitHub release containing:
