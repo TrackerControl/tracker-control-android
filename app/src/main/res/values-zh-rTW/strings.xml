@@ -94,7 +94,7 @@
     <string name="troubleshooting_categories_title">阻擋特定的追蹤器類別</string>
     <string name="troubleshooting_categories_desc">您可以微調每個應用程式的封鎖，方法時點選應用程式並在追蹤器分頁中開啟/關閉單個追蹤器類別（如分析、廣告）。</string>
     <string name="troubleshooting_alwayson_title">始終開啟的 VPN</string>
-    <string name="troubleshooting_alwayson_desc">如果在 Android VPN 設定中啟用了\"封鎖不使用VPN的連線\"(鎖定)，TrackerControl 無法正常運作。 停用此選項。偵測到此設定將顯示通知。</string>
+    <string name="troubleshooting_alwayson_desc">如果在 Android VPN 設定中啟用了\"封鎖不使用VPN的連線\"(鎖定)，TrackerControl 無法正常運作。請停用此選項。</string>
     <string name="troubleshooting_alwayson_action">開啟 VPN 設定</string>
     <string name="menu_apps">其他應用程式</string>
     <string name="menu_protocol_other">其他</string>
@@ -326,7 +326,7 @@
     <string name="msg_unavailable">此功能無法在這個版本的 Android 上執行</string>
     <string name="msg_always_on">另一個 VPN 連線被設定成 「永遠連線的 VPN」</string>
     <string name="msg_always_on_lockdown">在 Android VPN 設定中關閉\"封鎖不使用VPN的所有連線\"以使用 TrackerControl</string>
-    <string name="msg_start_forward">停止從%1$s埠%2$d轉發流量到\'%5$s\'的%3$s:%4$d？</string>
+    <string name="msg_start_forward">開始從%1$s埠%2$d轉發流量到\'%5$s\'的%3$s:%4$d？</string>
     <string name="msg_stop_forward">停止%1$s埠%2$d的流量轉發？</string>
     <string name="msg_log_logcat">警告：因 ADB 日誌記錄功能，阻擋機制已停用。</string>
     <string-array name="protocolNames">
@@ -473,8 +473,8 @@
     <string name="tracker_consent">同意管理</string>
     <string name="tracker_uncategorised">未分類</string>
     <string name="setting_blocking_mode">封鎖模式</string>
-    <string name="summary_blocking_mode_minimal">最小：只封鎖DuckGo清單中可以安全封鎖的追蹤器。 瀏覽器流量仍然透過 VPN 路由，但是追蹤器保護預設關閉。已知的不相容應用程式被排除。有限度的應用程式功能不正常。</string>
-    <string name="summary_blocking_mode_standard">標準：封鎖來自多個清單 (X-Ray, Disconnect, DuckDuckGo) 的所有一直追蹤器。允許基本服務。 如果應用程式停止運作，請調整其保護設定(見應用程式選單中的故障排除)。</string>
+    <string name="summary_blocking_mode_minimal">最小：只封鎖 DuckDuckGo 清單中可以安全封鎖的追蹤器。瀏覽器流量仍然透過 VPN 路由，但是追蹤器保護預設關閉。已知的不相容應用程式被排除。應用程式功能受影響有限。</string>
+    <string name="summary_blocking_mode_standard">標準：封鎖來自多個清單 (X-Ray, Disconnect, DuckDuckGo) 的所有已知追蹤器。允許基本服務。如果應用程式停止運作，請調整其保護設定(見應用程式選單中的故障排除)。</string>
     <string name="summary_blocking_mode_strict">嚴格：阻擋所有已知的追蹤器，包括基本服務和模糊的共用IP網域。 許多應用程式將需要限制性較小的保護設定(見應用程式選單中的故障排除)。</string>
     <string name="summary_sni_wg_note">注：SNI提取不適用於透過遠端VPN路由的流量。</string>
     <string name="blocking_mode_minimal">最小</string>
@@ -634,7 +634,7 @@
     <string name="insights_tracker_companies">追蹤公司</string>
     <string name="insights_apps_with_trackers">帶追蹤器的應用程式</string>
     <string name="insights_pervasive_trackers">最常見的追蹤器</string>
-    <string name="insights_top_domains">封鎖最多的追蹤網網域名稱</string>
+    <string name="insights_top_domains">熱門追蹤器網域</string>
     <!-- Joins the alternative domain names of one tracker, e.g. "example.com or example.net". Keep the surrounding spaces. -->
     <string name="insights_domain_alias_separator">" 或 "</string>
     <!-- Keep as a string: call-site/API migration and multi-count grammar are intentionally separate. -->

@@ -378,7 +378,7 @@
         <item quantity="other">先週 %d の会社に連絡しました</item>
     </plurals>
     <plurals name="n_companies_found">
-        <item quantity="other">％d の会社に連絡しました</item>
+        <item quantity="other">累計 %d 社に連絡しました</item>
     </plurals>
     <string name="confirm_ipinfo_title">組織情報を取得しますか？</string>
     <string name="confirm_ipinfo">これにより、外部サービス ipinfo.io に問い合わせを行い、問い合わせた IP アドレスに関するデータを共有することになります。</string>

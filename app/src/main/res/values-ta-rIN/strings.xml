@@ -329,7 +329,7 @@
     <string name="msg_always_on_lockdown">TrackerControl-ஐப் பயன்படுத்த Android VPN அமைப்புகளில் “VPN இல்லாத இணைப்புகளைத் தடு” என்பதை முடக்கவும்</string>
     <string name="msg_start_forward">%1$s போர்ட் %2$d-இலிருந்து \'%5$s\'-இன் %3$s:%4$d-க்கு முன்னனுப்பலைத் தொடங்கவா?</string>
     <string name="msg_stop_forward">%1$s போர்ட் %2$d-இன் முன்னனுப்பலை நிறுத்தவா?</string>
-    <string name="msg_log_logcat">எச்சரிக்கை: ADB பதிவேற்றம் காரணமாகத் தடுப்பு முடக்கப்பட்டுள்ளது.</string>
+    <string name="msg_log_logcat">எச்சரிக்கை: ADB பதிவு காரணமாகத் தடுப்பு முடக்கப்பட்டுள்ளது.</string>
     <string name="menu_add">சேர்</string>
     <string name="menu_delete">நீக்கு</string>
     <string name="setting_forwarding">போர்ட் முன்னனுப்பல்</string>

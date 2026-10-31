@@ -173,7 +173,7 @@
     <string name="setting_doh_endpoint">URL del punto final DoH</string>
     <string name="summary_doh_endpoint">URL HTTPS para consultas DNS sobre HTTPS</string>
     <string name="setting_doh_dns_fallback">DNS alternativo</string>
-    <string name="summary_doh_dns_fallback">Usar DNS estándar (sin cifrar) cuando DoH no esté disponible. Desactivarlo puede impedir que funcionen las aplicaciones si el servidor DoH no responde.</string>
+    <string name="summary_doh_dns_fallback">Usar DNS estándar (sin cifrar) cuando DoH no esté disponible. El DNS alternativo puede usar un proveedor de DNS distinto. Desactivarlo puede impedir que funcionen las aplicaciones si el servidor DoH no responde.</string>
     <!-- Block DNS-over-TLS (DoT) -->
     <string name="setting_block_dot">Bloquear el DNS privado de Android</string>
     <string name="summary_block_dot">Con el DNS privado de Android activado, TC no puede detectar ningún seguimiento y no funciona correctamente.</string>
@@ -423,7 +423,7 @@ El tráfico de internet no será envíado a un servidor VPN ajeno.</string>
     <string name="contact_officials">Oficiales de la UE</string>
     <string name="google_dpo_mail">data-protection-office@google.com</string>
     <string name="dpas_overview_url">https://edpb.europa.eu/about-edpb/board/members</string>
-    <string name="subject_request_data">Solicitud de acceso al tema del PIBR</string>
+    <string name="subject_request_data">Solicitud de acceso del interesado (RGPD)</string>
     <string name="body_request_data"><![CDATA[A quien corresponda:\n
 \n
 \n
@@ -646,7 +646,7 @@ Atentamente,\n\n]]></string>
     <string name="insights_pervasive_trackers">Rastreadores más extendidos</string>
     <string name="insights_top_domains">Principales dominios de rastreadores</string>
     <!-- Joins the alternative domain names of one tracker, e.g. "example.com or example.net". Keep the surrounding spaces. -->
-    <string name="insights_domain_alias_separator">"« o »"</string>
+    <string name="insights_domain_alias_separator">" o "</string>
     <!-- Keep as a string: call-site/API migration and multi-count grammar are intentionally separate. -->
     <string name="insights_in_apps" tools:ignore="PluralsCandidate">en %d aplicaciones</string>
     <plurals name="insights_apps_count">

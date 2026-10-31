@@ -24,9 +24,9 @@
     <string name="menu_sort_companies">কোম্পানি অনুযায়ী সাজান</string>
     <string name="menu_sort_by_latest_detected_tracker">সর্বশেষ শনাক্ত ট্র্যাকার অনুযায়ী সাজান</string>
     <string name="menu_log">ট্র্যাফিক লগ</string>
-    <string name="menu_settings">সুরসংযোজন</string>
+    <string name="menu_settings">সেটিংস</string>
     <string name="menu_invite">আমন্ত্রণ</string>
-    <string name="menu_legend">কিংবদন্তি</string>
+    <string name="menu_legend">চিহ্নসূচি</string>
     <string name="menu_support">এই এপপ্ কে সাহায্য করুন</string>
     <string name="menu_log_support">ব্যাখ্যা</string>
     <string name="menu_troubleshooting">সমস্যা সমাধান</string>
@@ -108,7 +108,7 @@
     <string name="menu_resolve">নাম সমূহ দেখান</string>
     <string name="menu_organization">সংগঠন দেখান</string>
     <string name="menu_pcap_enabled">PCAP সক্রিয়</string>
-    <string name="menu_pcap_export">PCAP আনয়ন করা</string>
+    <string name="menu_pcap_export">PCAP এক্সপোর্ট</string>
     <string name="menu_clear">সাফ</string>
     <string name="menu_clear_activity">রেকর্ড করা কার্যকলাপ মুছুন</string>
     <string name="menu_export">রপ্তানি</string>
@@ -119,8 +119,8 @@
     <string name="setting_pause">%1$s মিনিট পরে স্বয়ংক্রিয়ভাবে চালু করুন</string>
     <string name="setting_update">হালনাগাদের জন্য পরীক্ষা করুন</string>
     <plurals name="pause">
-        <item quantity="one">%d মিনিট পরে মনে করান</item>
-        <item quantity="other">%d মিনিট পরে মনে করান</item>
+        <item quantity="one">%d মিনিটের জন্য বিরতি</item>
+        <item quantity="other">%d মিনিটের জন্য বিরতি</item>
     </plurals>
     <string name="setting_ip6">IPv6 ট্র্যাফিক চালু করুন</string>
     <string name="setting_call">কলের সময় বন্ধ করুন</string>
@@ -184,11 +184,11 @@
     <string name="setting_hosts_auto_update">hosts স্বয়ংক্রিয়ভাবে আপডেট করুন</string>
     <string name="summary_hosts_auto_update">ব্যাকগ্রাউন্ডে hosts ফাইল স্বয়ংক্রিয়ভাবে আপডেট করুন</string>
     <string name="summary_pause">বিজ্ঞপ্তি থেকে বিরতি দেওয়ার পর, নির্বাচিত সংখ্যক মিনিট পরে TrackerControl স্বয়ংক্রিয়ভাবে আবার চালু করুন (এই বিকল্প বন্ধ করতে ০ লিখুন)।</string>
-    <string name="summary_update">প্রতিদিন ২ বার নতুন এপপ্স এর update চেক করুন</string>
+    <string name="summary_update">GitHub-এ প্রতিদিন দুইবার নতুন রিলিজ আছে কি না পরীক্ষা করুন</string>
     <string name="summary_ip6">IP সংস্করণ ৬-এর ট্র্যাফিক TrackerControl-এ পাঠান, যাতে তা বেছে বেছে অনুমোদন বা ব্লক করা যায়</string>
     <string name="summary_call">ইনকামিং বা আউটগোয়িং ফোন কলের সময় TrackerControl বন্ধ করুন। IP/Wi-Fi কলিংয়ের সমস্যা এড়াতে এটি ব্যবহার করা যায়।</string>
     <string name="summary_log_app">ব্যাটারি ব্যবহার কমাতে বন্ধ করুন। নতুন ট্র্যাকার এখনও ব্লক হবে, কিন্তু দেখানো হবে না।</string>
-    <string name="summary_block_domains">সতর্কতা : Blocked hosts UI এ দেখানো হবেনা </string>
+    <string name="summary_block_domains">সতর্কতা: ব্লক করা hosts UI-তে দেখানো হয় না।</string>
     <string name="summary_rcode">ডিফল্ট মান ৩ (NXDOMAIN), যার অর্থ ‘অস্তিত্বহীন ডোমেন’।</string>
     <string name="summary_validate">পোর্ট ৪৪৩ (https)-এ ইন্টারনেট সংযোগ যাচাই করতে ব্যবহৃত ডোমেন নাম।</string>
     <string name="summary_socks5_enabled">শুধু TCP ট্র্যাফিক প্রক্সি সার্ভারে পাঠানো হবে</string>
@@ -295,7 +295,7 @@
     <!-- Ends in a full stop: msg_wg_blocked_detail appends a sentence after it. -->
     <string name="msg_sure">আপনি কি নিশ্চিত?</string>
     <string name="msg_started">ট্র্যাকার খোঁজা হচ্ছে…</string>
-    <string name="msg_waiting">পুনরায় চেষ্টার অপেক্ষায়</string>
+    <string name="msg_waiting">ইভেন্টের অপেক্ষায়</string>
     <string name="msg_disabled">TrackerControl চালু করতে উপরের সুইচটি ব্যবহার করুন।</string>
     <string name="msg_installed">%1$s-এ সমস্যা হচ্ছে?</string>
     <string name="msg_installed_description">অ্যাপকে কোম্পানিগুলির সঙ্গে যোগাযোগ করতে অনুমতি দিন</string>
@@ -510,7 +510,7 @@ EU General Data Protection Regulation (GDPR)-এর ১৭ অনুচ্ছে
     <string name="app_state_title_minimal">ন্যূনতম ব্লকিং</string>
     <string name="app_state_title_standard">মানক ব্লকিং</string>
     <string name="app_state_title_strict">কঠোর ব্লকিং</string>
-    <string name="app_state_subtitle_misbehaving">অ্যাপ ঠিকমতো কাজ করছে না? এখানে ন্যূনতম ব্লিংয়ে বদলান।</string>
+    <string name="app_state_subtitle_misbehaving">অ্যাপ ঠিকমতো কাজ করছে না? এখানে ন্যূনতম ব্লকিংয়ে বদলান।</string>
     <string name="app_state_protected">সুরক্ষিত</string>
     <string name="app_state_protected_explanation">এই অ্যাপের জন্য ট্র্যাকার ব্লক ও রেকর্ড করা হয়।</string>
     <string name="app_state_essential_only">শুধু ন্যূনতম ব্লকিং</string>

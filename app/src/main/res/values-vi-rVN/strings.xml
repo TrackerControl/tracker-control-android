@@ -180,7 +180,7 @@
     <string name="setting_backup">Sao lưu</string>
     <string name="setting_export">Xuất cài đặt</string>
     <string name="setting_import">Nhập cài đặt</string>
-    <string name="setting_hosts_update">Câp nhật tệp máy chủ</string>
+    <string name="setting_hosts_update">Cập nhật tệp máy chủ</string>
     <string name="setting_hosts_auto_update">Tự động cập nhật hosts</string>
     <string name="summary_hosts_auto_update">Tự động cập nhật tệp hosts trong nền</string>
     <string name="summary_pause">Sau khi tạm dừng từ thông báo, tự động bật lại TrackerControl sau số phút được chọn (nhập 0 để tắt tùy chọn này).</string>
@@ -263,7 +263,7 @@
     <string name="vpn_account_cancel">Hủy</string>
     <string name="vpn_mullvad_intro">Nhập số tài khoản Mullvad của bạn. Nó được lưu trên thiết bị này.</string>
     <string name="vpn_mullvad_account_note">Tài khoản này được dùng cho các kết nối Mullvad đến quốc gia.</string>
-    <string name="vpn_get_mullvad_account">Lất tài khoản Mullvad</string>
+    <string name="vpn_get_mullvad_account">Lấy tài khoản Mullvad</string>
     <string name="vpn_get_ivpn_account">Lấy tài khoản IVPN</string>
     <string name="vpn_account_hint">Số tài khoản Mullvad</string>
     <string name="vpn_ivpn_intro">Nhập số tài khoản IVPN của bạn. Nó được lưu trên thiết bị này.</string>
@@ -272,8 +272,8 @@
     <string name="vpn_ivpn_captcha_hint">Chữ CAPTCHA</string>
     <string name="vpn_account_save">Lưu</string>
     <string name="vpn_account_saved">Tài khoản đã được lưu</string>
-    <string name="vpn_no_wireguard_profiles">Chưa có hồ số WireGuard tùy chỉnh</string>
-    <string name="vpn_import_wireguard_profile">Nhập hồ số WireGuard</string>
+    <string name="vpn_no_wireguard_profiles">Chưa có hồ sơ WireGuard tùy chỉnh</string>
+    <string name="vpn_import_wireguard_profile">Nhập hồ sơ WireGuard</string>
     <string name="vpn_manage_wireguard_profiles">Quản lý các hồ sơ WireGuard</string>
     <string name="vpn_country_load_failed">Không thể tải %1$s quốc gia: %2$s</string>
     <string name="vpn_country_load_failed_short">Không thể tải quốc gia</string>
@@ -281,7 +281,7 @@
     <string name="vpn_choose_profile_first">Chọn một hồ sơ WireGuard trước</string>
     <string name="vpn_setup_required">Thiết lập hồ sơ Mullvad hoặc nhập một hồ sơ WireGuard trước</string>
     <string name="vpn_loading_countries">Đang tải các quốc gia…</string>
-    <string name="vpn_generating">Đang tạo hồ số WireGuard…</string>
+    <string name="vpn_generating">Đang tạo hồ sơ WireGuard…</string>
     <string name="vpn_generation_failed">Thiết lập VPN đã thất bại: %s</string>
     <string name="vpn_retry">Thử lại</string>
     <string name="vpn_country_selected">OK</string>
@@ -312,7 +312,7 @@
     <string name="msg_native_fd_error">VPN đã hết bộ mô tả tệp. Hãy đóng các ứng dụng không dùng hoặc khởi động lại thiết bị, rồi khởi động lại tính năng bảo vệ.</string>
     <string name="msg_vpn_replacement_recovery_exhausted">TrackerControl không thể thiết lập lại VPN. Lưu lượng đang bị chặn.</string>
     <string name="msg_doh_unreachable">Không thể truy cập DNS bảo mật (DoH) dù bạn đang có kết nối Internet. Nếu việc này lặp lại, hãy cân nhắc tắt tính năng này trong cài đặt Mạng.</string>
-    <string name="msg_start_failed">Android đã từ chối khởi động dịch vụ VPN tại lúc này. Điều này có khá năng là do một lỗi trong phiên bản Android của bạn.</string>
+    <string name="msg_start_failed">Android đã từ chối khởi động dịch vụ VPN tại lúc này. Điều này có khả năng là do một lỗi trong phiên bản Android của bạn.</string>
     <string name="msg_try">Thử TrackerControl</string>
     <string name="msg_log_disabled">Ghi nhật ký lưu lượng đang tắt, hãy sử dụng công tắc ở trên để bật ghi nhật ký. Việc ghi nhật ký lưu lượng có thể dẫn đến sử dụng thêm pin.</string>
     <string name="msg_clear_activity">Thao tác này xoá hoạt động đã ghi của ứng dụng này. Các cài đặt chặn/cho phép theo từng trình theo dõi của ứng dụng này vẫn được giữ lại.</string>

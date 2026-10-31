@@ -85,7 +85,7 @@
     <string name="troubleshooting_battery_desc">Si TrackerControl cesse de fonctionner en arrière-plan, désactivez l\'optimisation de la batterie d\'Android pour TrackerControl. Sélectionnez « Toutes les applications », appuyez sur TrackerControl, puis sélectionnez « Ne pas optimiser ».</string>
     <string name="troubleshooting_battery_action">Désactiver l\'optimisation de la batterie</string>
     <string name="troubleshooting_battery_ok">L\'optimisation de la batterie est déjà désactivée.</string>
-    <string name="troubleshooting_datasaver_title">Sauvegarde des données</string>
+    <string name="troubleshooting_datasaver_title">Économiseur de données</string>
     <string name="troubleshooting_datasaver_desc">Si TrackerControl ne peut pas se connecter lorsque l\'économiseur de données est activé, autoriser l\'utilisation sans restriction des données pour TrackerControl. Activez \"Données en arrière-plan\" et \"Utilisation illimitée des données\".</string>
     <string name="troubleshooting_datasaver_action">Autoriser les données illimitées</string>
     <string name="troubleshooting_datasaver_ok">L\'économiseur de données ne limite pas TrackerControl.</string>
@@ -98,7 +98,7 @@
     <string name="troubleshooting_categories_title">Bloquer des catégories de traqueurs spécifiques</string>
     <string name="troubleshooting_categories_desc">Vous pouvez affiner le blocage pour chaque application en la touchant et en basculant les catégories individuelles de traqueurs (par exemple Analytics, Pubs) sur l\'onglet Traqueurs.</string>
     <string name="troubleshooting_alwayson_title">VPN permanent</string>
-    <string name="troubleshooting_alwayson_desc">Si \"Bloquer les connexions sans VPN\" (verrouillage) est activé dans les paramètres VPN d\'Android, TrackerControl ne peut pas fonctionner correctement. Désactiver cette option. Une notification apparaîtra si elle est détectée.</string>
+    <string name="troubleshooting_alwayson_desc">Si \"Bloquer les connexions sans VPN\" (verrouillage) est activé dans les paramètres VPN d\'Android, TrackerControl ne peut pas fonctionner correctement. Désactivez cette option.</string>
     <string name="troubleshooting_alwayson_action">Ouvrir les paramètres VPN</string>
     <string name="menu_apps">Autres applications</string>
     <string name="menu_protocol_other">Autres</string>
@@ -139,7 +139,7 @@
     <string name="setting_include_all_tracking">Inclure toutes les applications dans le suivi</string>
     <string name="summary_include_all_tracking">Réactive la surveillance des trackers pour toutes les applications.</string>
     <string name="setting_block_domains">Activer le fichier hosts</string>
-    <string name="setting_rcode">Ces hôtes bloquent la réponse: %s</string>
+    <string name="setting_rcode">Réponse de blocage des hôtes : %s</string>
     <string name="setting_vpn4">VPN IPv4: %s</string>
     <string name="setting_vpn6">VPN IPv6 : %s</string>
     <string name="setting_dns">VPN DNS : %s</string>
@@ -172,7 +172,7 @@
     <string name="setting_doh_enabled">DNS sécurisé (DoH)</string>
     <string name="summary_doh_enabled">Chiffre les requêtes DNS avec DNS-over-HTTPS. Se met automatiquement en pause lorsque WireGuard est actif, car ces requêtes utilisent alors le tunnel WireGuard.</string>
     <string name="warning_beta">Fonctionnalité bêta. Peut ne pas fonctionner comme attendu.</string>
-    <string name="setting_doh_endpoint">DoH Endpoint URL</string>
+    <string name="setting_doh_endpoint">URL du point de terminaison DoH</string>
     <string name="summary_doh_endpoint">URL HTTPS pour les requêtes DNS-sur-HTTPS</string>
     <string name="setting_doh_dns_fallback">DNS de secours</string>
     <!-- Block DNS-over-TLS (DoT) -->
@@ -217,7 +217,7 @@
     <string name="msg_wg_profile_empty">Aucun profil</string>
     <string name="msg_wg_profile_active">Actif</string>
     <string name="msg_wg_profile_set_active">Définir comme actif</string>
-    <string name="msg_wg_profile_config_hint" tools:ignore="TypographyEllipsis">[Interface]\nClé Privée = ...\nAdresse = ...\n\n[Pair]\nClé publique = ...\nIP autorisées = 0.0.0.0/0, ::/0\nPoint de terminaison = ...</string>
+    <string name="msg_wg_profile_config_hint" tools:ignore="TypographyEllipsis">[Interface]\nPrivateKey = ...\nAddress = ...\n\n[Peer]\nPublicKey = ...\nAllowedIPs = 0.0.0.0/0, ::/0\nEndpoint = ...</string>
     <string name="msg_wg_profile_delete_confirm">Supprimer ce profil WireGuard ?</string>
     <string name="msg_wg_profile_scan_hint">Pointez la caméra vers le code QR WireGuard affiché par votre fournisseur VPN. Le scan s’effectue sur votre appareil.</string>
     <string name="msg_wg_profile_scan_no_camera">Cet appareil ne possède pas de caméra pour effectuer un scan</string>
@@ -277,7 +277,7 @@
     <string name="vpn_get_mullvad_account">Obtenez un compte Mullvad</string>
     <string name="vpn_get_ivpn_account">Obtenez un compte IVPN</string>
     <string name="vpn_account_hint">Numéro de compte Mullvad</string>
-    <string name="vpn_ivpn_intro">Saisir votre ID de compte IVPN Il est enregistré sur cet appareil.</string>
+    <string name="vpn_ivpn_intro">Saisissez votre ID de compte IVPN. Il est enregistré sur cet appareil.</string>
     <string name="vpn_ivpn_captcha_intro">IVPN a besoin d\'une vérification CAPTCHA avant de créer une session WireGuard.</string>
     <string name="vpn_ivpn_account_hint">ID du compte IVPN</string>
     <string name="vpn_ivpn_captcha_hint">Texte de CAPTCHA</string>
@@ -325,7 +325,7 @@ Votre trafic internet n\'est pas envoyé vers un serveur VPN distant.</string>
     <string name="msg_native_fd_error">Le VPN n’a plus de descripteurs de fichiers. Fermez les applications inutilisées ou redémarrez votre appareil, puis redémarrez la protection.</string>
     <string name="msg_vpn_replacement_recovery_exhausted">TrackerControl n’a pas pu rétablir le VPN. Le trafic est bloqué.</string>
     <string name="msg_doh_unreachable">Le DNS sécurisé (DoH) ne peut pas être atteint alors que vous avez une connexion internet active. Si cela se produit à plusieurs reprises, envisagez de le désactiver dans les paramètres du réseau.</string>
-    <string name="msg_start_failed">Android vient refuser de démarrer le VPN. Ceci est probablement dû à un bogue dans votre version d\'Android.</string>
+    <string name="msg_start_failed">Android a refusé de démarrer le service VPN pour le moment. Ceci est probablement dû à un bogue dans votre version d\'Android.</string>
     <string name="msg_try">Essayez TrackerControl</string>
     <string name="msg_log_disabled">La journalisation du trafic est désactivée, utilisez l\'interrupteur ci-dessus pour activer la journalisation. La journalisation du trafic peut entraîner une surconsommation de la batterie.</string>
     <string name="msg_clear_activity">Supprime l’activité enregistrée pour cette application. Les paramètres de blocage ou d’autorisation par tracker sont conservés.</string>
@@ -360,7 +360,7 @@ Votre trafic internet n\'est pas envoyé vers un serveur VPN distant.</string>
     <string name="title_unmetered_blocked">Le trafic illimité est bloqué</string>
     <string name="title_unmetered_disabled">Les règles illimitées ne sont pas appliquées</string>
     <string name="title_metered_allowed">Le trafic limité est autorisé</string>
-    <string name="title_metered_blocked">Le trafic est bloqué</string>
+    <string name="title_metered_blocked">Le trafic limité est bloqué</string>
     <string name="title_metered_disabled">Les règles limitées ne sont pas appliquées</string>
     <string name="title_host_allowed">L\'adresse est autorisée</string>
     <string name="title_host_blocked">L\'adresse est bloquée</string>
@@ -394,8 +394,8 @@ Votre trafic internet n\'est pas envoyé vers un serveur VPN distant.</string>
         <item quantity="other">a contacté %d sociétés la semaine dernière</item>
     </plurals>
     <plurals name="n_companies_found">
-        <item quantity="one">a contacté %d entreprise</item>
-        <item quantity="other">a contacté %d entreprises</item>
+        <item quantity="one">a contacté %d entreprise depuis le début</item>
+        <item quantity="other">a contacté %d entreprises depuis le début</item>
     </plurals>
     <string name="confirm_ipinfo_title">Récupérer les informations sur l\'organisation?</string>
     <string name="confirm_ipinfo">Ceci contactera le service externe ipinfo.io, et partagera des données sur les adresses IP avec eux.</string>
@@ -433,12 +433,12 @@ Votre trafic internet n\'est pas envoyé vers un serveur VPN distant.</string>
     <string name="contact_officials">Représentants de l\'UE</string>
     <string name="google_dpo_mail">data-protection-office@google.com</string>
     <string name="dpas_overview_url">https://edpb.europa.eu/about-edpb/board/members</string>
-    <string name="subject_request_data">Demande d\'accès au données RGPD</string>
+    <string name="subject_request_data">Demande d\'accès aux données RGPD</string>
     <string name="body_request_data"><![CDATA[À la personne responsable :\n
 \n
 \n
 Je vous demande, en tant que responsable du traitement des données de l\'application Android %1$s (ID : %2$s), de confirmer le traitement des données personnelles me concernant.\n
-Si tel est le cas, veuillez me fournir toutes les informations requises stipulées dans l\'article 15 du règlement général de l\'UE sur la protection des données (RPDG), y compris :\n
+Si tel est le cas, veuillez me fournir toutes les informations requises stipulées dans l\'article 15 du règlement général de l\'UE sur la protection des données (RGPD), y compris :\n
 \n
 - une copie de mes données personnelles ;\n
 - les finalités du traitement ;\n
@@ -460,7 +460,7 @@ Cordialement,\n\n]]></string>
     <string name="body_delete_data"><![CDATA[À la personne responsable :\n
 \n
 \n
-J\'invoque mon droit à l\'effacement tel que spécifié à l\'article 17 du règlement général de l\'UE sur la protection des données (RPDG). Je vous demande, en tant que responsable du traitement des données de l\'application Android %1$s (ID : %2$s), d\'effacer sans délai les données personnelles me concernant :\n
+J\'invoque mon droit à l\'effacement tel que spécifié à l\'article 17 du règlement général de l\'UE sur la protection des données (RGPD). Je vous demande, en tant que responsable du traitement des données de l\'application Android %1$s (ID : %2$s), d\'effacer sans délai les données personnelles me concernant :\n
 - Toutes les données :\n
 \n
 La raison de ma demande de retrait est que je retire ou ai retiré mon consentement au traitement des données à caractère personnel. Cette demande concerne tout traitement de mes données à caractère personnel par vous, y compris par tout responsable du traitement des données à caractère personnel en votre nom.\n
@@ -568,7 +568,7 @@ Cordialement,\n\n]]></string>
     <string name="tracker_hostlist">Hôtes définis par l\'utilisateur</string>
     <string name="internet_blocked">Accès à Internet bloqué</string>
     <string name="internet_unblocked">Accès à Internet débloqué</string>
-    <string name="category_unblocked">Traceurs dans la catégorie bloqués</string>
+    <string name="category_unblocked">Traqueurs de la catégorie autorisés</string>
     <string name="category_unblocked_warning">Autorisé avec cette catégorie — bloquez la catégorie pour modifier les entreprises individuelles.</string>
     <string name="tracking_detection_failed">La détection de la librairie de traceur a échoué.</string>
     <string name="tracking_detection_failed_ram">La détection de la librairie de traceur a échoué. Pas assez de RAM.</string>
@@ -656,7 +656,7 @@ Cordialement,\n\n]]></string>
     <string name="insights_pervasive_trackers">Trackers les plus répandus</string>
     <string name="insights_top_domains">Principaux domaines de trackers</string>
     <!-- Joins the alternative domain names of one tracker, e.g. "example.com or example.net". Keep the surrounding spaces. -->
-    <string name="insights_domain_alias_separator">"« ou »"</string>
+    <string name="insights_domain_alias_separator">" ou "</string>
     <!-- Keep as a string: call-site/API migration and multi-count grammar are intentionally separate. -->
     <string name="insights_in_apps" tools:ignore="PluralsCandidate">dans %d applications</string>
     <plurals name="insights_apps_count">

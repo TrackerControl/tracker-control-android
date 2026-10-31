@@ -437,7 +437,7 @@ Váš internetový provoz není odesílán žádnému vzdálenému VPN serveru.<
     <string name="request_deletion">Žádost o odstranění</string>
     <string name="contact_developer">Vývojář</string>
     <string name="contact_playstore">Google</string>
-    <string name="contact_officials">EU Officials</string>
+    <string name="contact_officials">Úředníci EU</string>
     <string name="google_dpo_mail">data-protection-office@google.com</string>
     <string name="dpas_overview_url">https://edpb.europa.eu/about-edpb/board/members</string>
     <string name="subject_request_data">GDPR Subject Access Request</string>
@@ -470,7 +470,7 @@ S pozdravem,\n\n]]></string>
 Uplatňuji své právo na výmaz podle článku 17 obecného nařízení EU o ochraně osobních údajů (GDPR). Žádám vás jako správce údajů aplikace pro Android %1$s (ID: %2$s), abyste bez zbytečného odkladu vymazali následující osobní údaje, které o mně zpracovává:\n
 • Všechny údaje.\n
 \n
-Důvodem mé žádosti o odstranění je odvolání nebo odvolání mého souhlasu se zpracováním osobních údajů. Tato žádost se týká jakéhokoli zpracování mých osobních údajů vámi, včetně zpracovatelů, kteří zpracovávají osobní údaje vaším jménem.\n
+Důvodem mé žádosti o odstranění je, že odvolávám nebo jsem odvolal svůj souhlas se zpracováním osobních údajů. Tato žádost se týká jakéhokoli zpracování mých osobních údajů vámi, včetně zpracovatelů, kteří zpracovávají osobní údaje vaším jménem.\n
 \n
 Svou odpověď prosím zašlete zabezpečeným způsobem e-mailem. Těším se na odpověď do jednoho měsíce od obdržení mé žádosti.\n
 \n
@@ -569,13 +569,13 @@ Privátní DNS musí být vypnutá.</string>
     <string name="no_trackers_found_message_disabled">Zapni switch v hlavním okně, pak zapni aplikaci pro nalezení trackerů</string>
     <string name="no_trackers_found_message">Spustit aplikaci a najít trackery</string>
     <string name="no_trackers_found_action">Spustit</string>
-    <string name="no_internet_message">"Bez přístupu k síti. Může jen trackovat sdílením dat s jinými aplikacemi."</string>
+    <string name="no_internet_message">"Tato aplikace nemá přístup k internetu. Stále vás může sledovat výměnou dat s jinými aplikacemi."</string>
     <string name="no_internet">Není připojení k Internetu</string>
     <string name="bypass_vpn_error">"\"Internet nelze blokovat, pokud aplikace obchází TrackerControl.\""</string>
     <string name="back">Zpět</string>
     <string name="forever_free">Navždy zdarma</string>
     <string name="your_privacy">Vaše soukromí</string>
-    <string name="tracker_hostlist">User-Defined Hosts</string>
+    <string name="tracker_hostlist">Hostitelé definovaní uživatelem</string>
     <string name="internet_blocked">Přístup k síti zablokován</string>
     <string name="internet_unblocked">Přístup k síti povolen</string>
     <string name="category_unblocked">Trackery v kategorii povoleny</string>

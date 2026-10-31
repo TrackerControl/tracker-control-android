@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <string name="app_description">TrackerControl మొబైల్ యాప్‌లలో వినియోగదారుల ప్రవర్తనపై విస్తృతంగా, నిరంతరం, రహస్యంగా జరిగే డేటా సేకరణను (\'ట్రాకింగ్\') పర్యవేక్షించാനും నియంత్రించാനും వినియోగదారులకు సహాయపడుతుంది.</string>
+    <string name="app_description">TrackerControl మొబైల్ యాప్‌లలో వినియోగదారుల ప్రవర్తనపై విస్తృతంగా, నిరంతరం, రహస్యంగా జరిగే డేటా సేకరణను (\'ట్రాకింగ్\') పర్యవేక్షించడానికి, నియంత్రించడానికి వినియోగదారులకు సహాయపడుతుంది.</string>
     <string name="app_copyright">కాపీరైట్ \u00A9 2019–2022 Konrad Kollnig\n\nTrackerControl, Marcel Bokhorst (M66B) అభివృద్ధి చేసిన NetGuard ఆధారంగా రూపొందించబడింది.</string>
     <string name="app_android">TrackerControlకు Android 5.1 లేదా ఆ తర్వాతి వెర్షన్ అవసరం</string>
     <string name="app_xposed">Xposed వల్ల చాలా క్రాష్‌లు సంభవిస్తాయి; దాంతో TrackerControl Google Play Store నుంచి తొలగించబడే అవకాశం ఉంది. అందువల్ల Xposed ఇన్‌స్టాల్ చేసి ఉన్నప్పుడు TrackerControlకు మద్దతు లేదు</string>
@@ -240,7 +240,7 @@
     <string name="msg_wg_mullvad_generating">WireGuard ప్రొఫైల్‌ను సృష్టిస్తోంది…</string>
     <string name="msg_wg_mullvad_failed">Mullvad సెటప్ విఫలమైంది: %s</string>
     <string name="msg_wg_mullvad_countries_failed">Mullvad దేశాలను లోడ్ చేయలేకపోయాం: %s</string>
-    <string name="msg_wg_proton_note">Proton సూచించిన మూడవ పక్ష సెటప్‌లో డౌన్‌లోడ్ చేయగల WireGuard కాన్ఫిగరేషన్‌లు ఉపయోగిస్తారు. TrackerControlకు మీ Proton ఆధారాలు అవసరం లేదు; కాన్ఫిగరేషన్‌ను స్వయంచాలకంగా రిఫ్రెష్ చేయలదు.\n\naccount.protonvpn.comలో సైన్ ఇన్ చేసి, Downloads → WireGuard configurationకు వెళ్లి, కాన్ఫిగరేషన్‌ను డౌన్‌లోడ్ చేయండి. దాన్ని టెక్స్ట్ ఎడిటర్‌లో తెరిచి, దాని విషయాలను ఇక్కడ కాపీ చేసి పేస్ట్ చేయండి.</string>
+    <string name="msg_wg_proton_note">Proton సూచించిన మూడవ పక్ష సెటప్‌లో డౌన్‌లోడ్ చేయగల WireGuard కాన్ఫిగరేషన్‌లు ఉపయోగిస్తారు. TrackerControlకు మీ Proton ఆధారాలు అవసరం లేదు; కాన్ఫిగరేషన్‌ను స్వయంచాలకంగా రిఫ్రెష్ చేయలేదు.\n\naccount.protonvpn.comలో సైన్ ఇన్ చేసి, Downloads → WireGuard configurationకు వెళ్లి, కాన్ఫిగరేషన్‌ను డౌన్‌లోడ్ చేయండి. దాన్ని టెక్స్ట్ ఎడిటర్‌లో తెరిచి, దాని విషయాలను ఇక్కడ కాపీ చేసి పేస్ట్ చేయండి.</string>
     <string name="msg_wg_proton_open_dashboard">Proton VPN డ్యాష్‌బోర్డ్‌ను తెరువు</string>
     <string name="vpn_status_relay">రిలే: %s</string>
     <string name="vpn_status_wireguard_connected">WireGuard కనెక్ట్ అయింది</string>

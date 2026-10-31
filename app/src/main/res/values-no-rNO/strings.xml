@@ -4,12 +4,12 @@
     <string name="app_copyright">Copyright \u00A9 2019–2022 Konrad Kollnig\n\nTrackerControl er basert på NetGuard, utviklet av Marcel Bokhorst (M66B).</string>
     <string name="app_android">TrackerControl krever Android 5.1 eller nyere</string>
     <string name="app_xposed">Xposed forårsaker for mange krasjer, noe som kan føre til at TrackerControl blir fjernet fra Google Play. TrackerControl støttes derfor ikke mens Xposed er installert</string>
-    <string name="app_eula">Bruken av denne appen er på eget ansvar. Ingen app kan tilby 100%% beskyttelse mot sporing.</string>
+    <string name="app_eula">Bruken av denne appen er på eget ansvar. Ingen app kan tilby 100% beskyttelse mot sporing.</string>
     <string name="app_privacy"><a href="https://github.com/TrackerControl/tracker-control-android#privacy-notice">Personvernerklæring</a> <a href="https://github.com/TrackerControl/tracker-control-android#cookie-policy">Om informasjonskapsler</a></string>
     <string name="app_ios"><a href="https://ios.trackercontrol.org">TrackerControl er også tilgjengelig for iOS</a></string>
     <string name="channel_foreground">Kjørende tjenester</string>
     <string name="channel_notify">Generelle varsler</string>
-    <string name="channel_access">Få tilgang til varsler</string>
+    <string name="channel_access">Tilgangsvarsler</string>
     <string name="menu_search">Søk etter app</string>
     <string name="menu_filter">Filtrer apper</string>
     <string name="menu_app_user">Vis brukerapper</string>
@@ -173,7 +173,7 @@
     <string name="setting_doh_endpoint">DoH-endepunkt-URL</string>
     <string name="summary_doh_endpoint">HTTPS-URL for DNS-over-HTTPS-forespørsler</string>
     <string name="setting_doh_dns_fallback">DNS-reserve</string>
-    <string name="summary_doh_dns_fallback">Bruk standard (ukryptert) DNS når DoH er utilgjengelig. Deaktivering kan føre til at apper slutter å virke hvis DoH-serveren er nede.</string>
+    <string name="summary_doh_dns_fallback">Bruk standard (ukryptert) DNS når DoH er utilgjengelig. Reserven kan bruke en annen DNS-leverandør. Deaktivering kan føre til at apper slutter å virke hvis DoH-serveren er nede.</string>
     <!-- Block DNS-over-TLS (DoT) -->
     <string name="setting_block_dot">Blokker Androids private DNS</string>
     <string name="summary_block_dot">Når Androids private DNS er aktivert, kan ikke TC oppdage sporing og fungerer ikke riktig.</string>
@@ -405,7 +405,7 @@ Internett-trafikken din blir ikke sendt til en ekstern VPN-server.</string>
     <string name="tab_actions">Datatilgangsrettigheter</string>
     <string name="app_info">Behandle app</string>
     <!-- Actions -->
-    <string name="block_tracking">Block sporere</string>
+    <string name="block_tracking">Blokker sporere</string>
     <string name="block_tracking_description">Mange apper sender data til tredjeparter, såkalte sporere. TrackerControl lar deg selektivt blokkere disse nettverksoverføringene. Men bruk dette klokt. Apputviklerne er avhengige av disse tjenestene, særlig for annonsering.</string>
     <string name="personalised_ads">Begrens personalisering</string>
     <string name="personalised_ads_description">Android lar deg begrense appenes tilgang til Google Advertising ID-en til enheten din. Apper kan imidlertid potensielt ignorere denne innstillingen, og fortsatt bruke denne IDen. De kan også fortsette å bruke denne ID-en for analytiske formål, i følge retningslinjene til Google. Du må kunne stole på Google og det datainnsamlende selskapet.</string>
@@ -432,14 +432,14 @@ Dersom dette er tilfelle, vennligst oppgi alle påkrevde opplysninger angitt i a
 \n
 • En kopi av mine personopplysninger;\n
 • Formålene med behandlingen;\n
-• Kategoriene av personlige opplysninger.\n
-• Hvilke mottakerne du deler mine personopplysninger med og sikkerhetsanordningene du bruker.\n
+• kategoriene av personopplysninger som er berørt;\n
+• mottakerne du utleverer mine personopplysninger til, og sikkerhetstiltakene du har på plass;\n
 • Oppbevaringsperioden du lagrer mine personlige data eller kriteriene som brukes for å bestemme denne perioden.\n
 • informasjon om kilden til min personlige data; og\n
 • Om det finnes automatiserte beslutninger (inkludert profilering), og hvis det:\n
     - logikken som er involvert i beslutningsprosessen;\n
     - betydningen og den planlagte konsekvensen for meg;\n
-    - trinnene du har iverksatt for å forhindre feil, fornemmelse og diskriminering. og\n
+    - trinnene du har iverksatt for å forhindre feil, skjevhet og diskriminering; og\n
     - forklare hvordan jeg kan uttrykke mitt syn på og utfordre en avgjørelse.\n
 \n
 Denne forespørselen er knyttet til enhver behandling av mine personlige data fra deg, inkludert alle behandlere som behandler personopplysninger på vegne av deg.\n

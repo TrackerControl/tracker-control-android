@@ -11,7 +11,7 @@
     <string name="channel_notify">Notificações gerais</string>
     <string name="channel_access">Notificações de acesso</string>
     <string name="menu_search">Busca por app</string>
-    <string name="menu_filter">Aplicativos de filtro</string>
+    <string name="menu_filter">Filtrar aplicações</string>
     <string name="menu_app_user">Mostrar aplicativos do usuário</string>
     <string name="menu_app_system">Mostrar aplicações de sistema</string>
     <string name="menu_app_nointernet">Mostrar aplicativos sem internet</string>
@@ -26,7 +26,7 @@
     <string name="menu_log">Diário de tráfego</string>
     <string name="menu_settings">Configurações</string>
     <string name="menu_invite">Convide</string>
-    <string name="menu_legend">Lenda</string>
+    <string name="menu_legend">Legenda</string>
     <string name="menu_support">Apoiar a aplicação</string>
     <string name="menu_log_support">Explicação</string>
     <string name="menu_troubleshooting">Resolução de Problemas</string>
@@ -110,7 +110,7 @@
     <string name="menu_live">Atualizações ao vivo</string>
     <string name="menu_refresh">Atualização</string>
     <string name="menu_resolve">Mostrar nomes</string>
-    <string name="menu_organization">Organização do espetáculo</string>
+    <string name="menu_organization">Mostrar organização</string>
     <string name="menu_pcap_enabled">PCAP habilitado</string>
     <string name="menu_pcap_export">Exportação PCAP</string>
     <string name="menu_clear">Limpar</string>
@@ -127,7 +127,7 @@
         <item quantity="other">Pausar para %d min</item>
     </plurals>
     <string name="setting_ip6">Habilitar o tráfego IPv6</string>
-    <string name="setting_call">Desativar em plantão</string>
+    <string name="setting_call">Desativar durante chamadas</string>
     <string name="setting_reload_onconnectivity">Recarregar em cada mudança de conectividade</string>
     <string name="setting_tcp_mss_clamp">Modo de compatibilidade com tethering</string>
     <string name="summary_tcp_mss_clamp">Encaminha todo o tráfego através do TrackerControl e limita o tamanho dos segmentos TCP para corrigir ligações partilhadas que bloqueiam ou ficam sem acesso à Internet. O acesso à rede local deixa de ignorar o TrackerControl e o desempenho pode ser reduzido.</string>
@@ -142,7 +142,7 @@
     <string name="setting_include_all_tracking">Incluir todas as aplicações na monitorização</string>
     <string name="summary_include_all_tracking">Volta a ativar a monitorização de rastreadores para todas as aplicações.</string>
     <string name="setting_block_domains">Habilitar arquivo de anfitriões</string>
-    <string name="setting_rcode">Anfitriões que bloqueiam a resposta: %s</string>
+    <string name="setting_rcode">Resposta de bloqueio de anfitriões: %s</string>
     <string name="setting_vpn4">VPN IPv4: %s</string>
     <string name="setting_vpn6">VPN IPv6: %s</string>
     <string name="setting_dns">VPN DNS: %s</string>
@@ -150,7 +150,7 @@
     <string name="setting_ttl">Mínimo DNS TTL: %s s</string>
     <string name="setting_socks5_enabled">Use o proxy SOCKS5</string>
     <string name="setting_socks5_addr">Endereço SOCKS5: %s</string>
-    <string name="setting_socks5_port">Porto SOCKS5: %s</string>
+    <string name="setting_socks5_port">Porta SOCKS5: %s</string>
     <string name="setting_socks5_username">SOCKS5 nome de usuário: %s</string>
     <string name="setting_socks5_password">SOCKS5 senha: %s</string>
     <string name="setting_wg_enabled">Tunelar o tráfego através do WireGuard</string>
@@ -179,7 +179,7 @@
     <string name="summary_doh_endpoint">URL HTTPS para consultas DNS por HTTPS</string>
     <string name="dialog_doh_endpoint">Digite o URL completo HTTPS fornecido pelo seu provedor de DNS, incluindo o caminho específico do provedor (por exemplo, https://dns.quad9.net/dns-query). Apps excluídos do TrackerControl, ou que utilizam os seus próprios DNS criptografados, ignoram esta configuração.</string>
     <string name="setting_doh_dns_fallback">DNS alternativo</string>
-    <string name="summary_doh_dns_fallback">Utilizar DNS normal (não encriptado) quando o DoH não estiver disponível. Desativar esta opção pode impedir aplicações de funcionar se o servidor DoH estiver indisponível.</string>
+    <string name="summary_doh_dns_fallback">Utilizar DNS normal (não encriptado) quando o DoH falhar. O DNS alternativo pode usar um fornecedor de DNS diferente. Desativar esta opção pode impedir aplicações de funcionar se o servidor DoH estiver indisponível.</string>
     <string name="msg_invalid_doh_endpoint">Digite um URL HTTPS completo para DNS-over-HTTPS, incluindo o caminho do provedor (por exemplo, https://dns.quad9.net/dns-query).</string>
     <!-- Block DNS-over-TLS (DoT) -->
     <string name="setting_block_dot">Bloquear DNS privado do Android</string>
@@ -188,16 +188,16 @@
     <string name="setting_stats_samples">Número de amostras: %s s</string>
     <string name="setting_backup">Cópia de segurança</string>
     <string name="setting_export">Exportar definições</string>
-    <string name="setting_import">Configurações de importação</string>
+    <string name="setting_import">Importar definições</string>
     <string name="setting_hosts_update">Atualizar arquivo de hosts</string>
     <string name="setting_hosts_auto_update">Auto-atualizar hosts</string>
     <string name="summary_hosts_auto_update">Atualizar automaticamente o ficheiro hosts em segundo plano</string>
     <string name="summary_pause">Após a pausa da notificação, ative automaticamente o TrackerControl novamente após o número de minutos selecionado (digite 0 para desativar esta opção).</string>
     <string name="summary_update">Verifique duas vezes por dia se há novos lançamentos no GitHub</string>
-    <string name="summary_ip6">Rota IP versão 6 tráfego para TrackerControl para que possa ser seletivamente permitido ou bloqueado</string>
+    <string name="summary_ip6">Encaminhar o tráfego IP versão 6 para o TrackerControl, para que possa ser permitido ou bloqueado seletivamente</string>
     <string name="summary_call">Desativar o TrackerControl na entrada ou saída de chamadas telefônicas. Isto pode ser usado para contornar problemas de chamadas IP/Wi-Fi.</string>
     <string name="summary_log_app">Desativar para diminuir o uso da bateria. Novos rastreadores ainda serão bloqueados, mas não mostrados.</string>
-    <string name="summary_block_domains">AVISO: Hospedeiros bloqueados não são mostrados na UI.</string>
+    <string name="summary_block_domains">AVISO: os anfitriões bloqueados não são mostrados na interface.</string>
     <string name="summary_rcode">O valor padrão é 3 (NXDOMAIN), o que significa \"domínio inexistente\".</string>
     <string name="summary_validate">Nome de domínio utilizado para validar a conexão de Internet na porta 443 (https).</string>
     <string name="summary_socks5_enabled">Somente o tráfego TCP será enviado para o servidor proxy</string>
@@ -249,7 +249,7 @@
     <string name="msg_wg_proton_note">A configuração de terceiros documentada pela Proton utiliza ficheiros de configuração WireGuard transferíveis. O TrackerControl não precisa das suas credenciais Proton e não pode atualizar a configuração automaticamente.\n\nInicie sessão em account.protonvpn.com, aceda a Downloads → Configuração WireGuard, transfira uma configuração, abra-a num editor de texto e copie e cole aqui o respetivo conteúdo.</string>
     <string name="msg_wg_proton_open_dashboard">Abrir o painel da Proton VPN</string>
     <string name="vpn_status_mullvad">Mullvad</string>
-    <string name="vpn_status_relay">Retransmitir: %s</string>
+    <string name="vpn_status_relay">Retransmissor: %s</string>
     <string name="vpn_status_wireguard_connected">WireGuard ligado</string>
     <string name="vpn_status_disconnected">Não ligado</string>
     <string name="vpn_provider_mullvad">Mullvad VPN</string>
@@ -338,7 +338,7 @@ Seu tráfego de Internet não está sendo enviado para um servidor VPN remoto.</
     <string name="msg_log_disabled">O registro de tráfego está desativado, use a chave acima para habilitar o registro. O registro de tráfego pode resultar no uso de bateria extra.</string>
     <string name="msg_clear_activity">Isto remove a atividade registada para esta aplicação. As definições de bloqueio/permissão de cada rastreador desta aplicação são mantidas.</string>
     <string name="msg_update_last">Última atualização: %s</string>
-    <string name="msg_metered">A rede é medida</string>
+    <string name="msg_metered">A rede tem tráfego limitado</string>
     <string name="msg_inactive">Sem conexão ativa com a Internet</string>
     <string name="msg_queue">TrackerControl está ocupado</string>
     <string name="msg_update">Atualização disponível, toque para baixar</string>
@@ -364,10 +364,10 @@ Seu tráfego de Internet não está sendo enviado para um servidor VPN remoto.</
     <string name="title_raddr">Endereço de destino</string>
     <string name="title_rport">Porta de destino</string>
     <string name="title_ruid">Aplicação de destino</string>
-    <string name="title_external">Para um servidor externo, selecione \'nobody\'</string>
+    <string name="title_external">Para um servidor externo, selecione \'ninguém\'</string>
     <string name="title_unmetered_allowed">Tráfego ilimitado é permitido</string>
-    <string name="title_unmetered_blocked">Tráfego desimpedido é bloqueado</string>
-    <string name="title_unmetered_disabled">Regras não cumpridas não são aplicadas</string>
+    <string name="title_unmetered_blocked">O tráfego ilimitado está bloqueado</string>
+    <string name="title_unmetered_disabled">As regras de tráfego ilimitado não são aplicadas</string>
     <string name="title_metered_allowed">Tráfego medido é permitido</string>
     <string name="title_metered_blocked">Tráfego medido é bloqueado</string>
     <string name="title_metered_disabled">Não são aplicadas regras de medição</string>
@@ -375,13 +375,13 @@ Seu tráfego de Internet não está sendo enviado para um servidor VPN remoto.</
     <string name="title_host_blocked">Endereço é bloqueado</string>
     <string name="title_interactive_allowed">Permitir quando a tela estiver ligada</string>
     <string name="title_roaming_blocked">Bloqueio em roaming</string>
-    <string name="title_metered">Por padrão, uma conexão Wi-Fi é considerada como não-configurada e uma conexão móvel a ser medida</string>
-    <string name="title_rate">Tarifa</string>
+    <string name="title_metered">Por predefinição, uma ligação Wi-Fi é considerada ilimitada e uma ligação móvel é considerada limitada</string>
+    <string name="title_rate">Avaliar</string>
     <string name="title_allow">Permitir</string>
-    <string name="title_block">Bloco</string>
+    <string name="title_block">Bloquear</string>
     <string name="title_nobody">ninguém</string>
     <string name="title_log_whois">Whois %1$s</string>
-    <string name="title_log_port">Porto %1$d</string>
+    <string name="title_log_port">Porta %1$d</string>
     <string name="title_log_copy">Cópia</string>
     <!-- App Overview -->
     <string name="tracked_app_icon">Desativar acesso à internet para esta aplicação</string>
@@ -425,9 +425,9 @@ Seu tráfego de Internet não está sendo enviado para um servidor VPN remoto.</
     <string name="tab_actions">Direitos relativos aos dados</string>
     <string name="app_info">Gerenciar o aplicativo</string>
     <!-- Actions -->
-    <string name="block_tracking">Rastreadores de bloqueio</string>
+    <string name="block_tracking">Bloquear rastreadores</string>
     <string name="block_tracking_description">Muitos aplicativos enviam dados para terceiros, os chamados rastreadores. O TrackerControl permite bloquear estas transmissões de rede de forma seletiva. No entanto, use isto sabiamente, já que os desenvolvedores de aplicativos contam com estes serviços, notadamente a publicidade.</string>
-    <string name="personalised_ads">Personalização do limite</string>
+    <string name="personalised_ads">Limitar a personalização</string>
     <string name="personalised_ads_description">O Android oferece para limitar o acesso dos aplicativos ao ID de publicidade do Google de seu dispositivo. Entretanto, os aplicativos podem potencialmente ignorar esta configuração e ainda assim usar esta identificação. Eles também podem continuar coletando esta identificação para fins de análise, de acordo com as políticas do Google. Você precisa confiar no Google e na empresa coletora de dados.</string>
     <string name="data_managment">Gerenciar dados</string>
     <string name="data_management_description">A Regulamentação Geral de Proteção de Dados da UE (GDPR) permite aos usuários da UE gerenciar quaisquer dados relacionados a eles. Este aplicativo fornece modelos de e-mail para chegar até o desenvolvedor. O desenvolvedor tem que responder dentro de um mês.</string>
@@ -443,48 +443,48 @@ Seu tráfego de Internet não está sendo enviado para um servidor VPN remoto.</
     <string name="contact_officials">Oficiais da UE</string>
     <string name="google_dpo_mail">data-protection-office@google.com</string>
     <string name="dpas_overview_url">https://edpb.europa.eu/about-edpb/board/members</string>
-    <string name="subject_request_data">Pedido de Acesso ao Assunto GDPR</string>
-    <string name="body_request_data"><![CDATA[Para quem isso pode preocupar:\n
+    <string name="subject_request_data">Pedido de acesso do titular dos dados (RGPD)</string>
+    <string name="body_request_data"><![CDATA[Exmos. Senhores:\n
 \n
 \n
-estou te solicitando, como controlador de dados do app Android %1$s (ID: %2$s), para confirmar se está processando dados pessoais a meu respeito.\n
-caso positivo, por favor me forneça todas as informações necessárias estipuladas no Artigo 15 do Regulamento Geral de Proteção de Dados da UE (RGPD), incluindo:\n
+Venho solicitar-vos, enquanto responsáveis pelo tratamento dos dados da aplicação Android %1$s (ID: %2$s), que confirmem se estão a tratar quaisquer dados pessoais que me digam respeito.\n
+Em caso afirmativo, peço-vos que me forneçam todas as informações previstas no artigo 15.º do Regulamento Geral sobre a Proteção de Dados (RGPD) da UE, incluindo:\n
 \n
 • uma cópia dos meus dados pessoais;\n
-• as finalidades do processamento;\n
-• Categorias de dados pessoais em causa;\n
-• os destinatários que você divulga meus dados pessoais e as salvaguardas que você fornece;\n
-• o período de retenção para armazenar os meus dados pessoais ou os critérios utilizados para determinar este período;\n
-• Informações sobre a origem dos meus dados pessoais; e\n
-• a existência de tomadas de decisão automatizadas (incluindo a característica), e se fora:\n
-    - a lógica envolvida no processo de tomada de decisão;\n
-    - A importância e as consequências previstas para mim;\n
-    - as medidas que você tomou para prevenir erros, viés e discriminação; e\n
-    - explique como posso expressar meu ponto de vista e desafiar uma decisão.\n
+• as finalidades do tratamento;\n
+• as categorias de dados pessoais em causa;\n
+• os destinatários a quem divulgam os meus dados pessoais e as garantias que oferecem;\n
+• o prazo de conservação dos meus dados pessoais ou os critérios usados para determinar esse prazo;\n
+• informações sobre a origem dos meus dados pessoais; e\n
+• a existência de decisões automatizadas (incluindo a definição de perfis) e, em caso afirmativo:\n
+    - a lógica subjacente ao processo de decisão;\n
+    - a importância e as consequências previstas para mim;\n
+    - as medidas que tomaram para evitar erros, enviesamentos e discriminação; e\n
+    - a explicação de como posso expressar o meu ponto de vista e contestar uma decisão.\n
 \n
-Esta solicitação se refere a qualquer processamento de meus dados pessoais por você, incluindo qualquer processador que processe dados pessoais em seu nome.\n
+Este pedido diz respeito a qualquer tratamento dos meus dados pessoais por vós, incluindo os subcontratantes que tratem dados pessoais em vosso nome.\n
 \n
-Por favor, forneça sua resposta por meio de e-mail seguro. Aguardo com expectativa uma resposta no prazo de um mês a contar do recebimento do meu pedido.\n
+Peço que enviem a vossa resposta por meios seguros, por e-mail. Aguardo uma resposta no prazo de um mês a contar da receção do meu pedido.\n
 \n
-Atenciosamente,\n\n]]></string>
-    <string name="body_delete_data"><![CDATA[Para quem pode preocupar:\n
+Com os melhores cumprimentos,\n\n]]></string>
+    <string name="body_delete_data"><![CDATA[Exmos. Senhores:\n
 \n
 \n
-Estou invocando meu direito de eliminar conforme especificado no artigo 17 do Regulamento Geral de Proteção de Dados da UE (RGPD). Estou solicitando você, como controlador de dados do app Android %1$s (ID: %2$s), para apagar os seguintes dados pessoais processados sobre mim sem atraso indevido:\n
+Venho exercer o meu direito ao apagamento, previsto no artigo 17.º do Regulamento Geral sobre a Proteção de Dados (RGPD) da UE. Solicito-vos, enquanto responsáveis pelo tratamento dos dados da aplicação Android %1$s (ID: %2$s), que apaguem, sem demora injustificada, os seguintes dados pessoais que tratam a meu respeito:\n
 • Todos os dados.\n
 \n
-A razão da minha solicitação de remoção é que eu retiro ou retirei minha autorização para processar os dados pessoais. Esse pedido diz respeito a qualquer processamento dos meus dados pessoais por você, incluindo quaisquer processadores que processam dados pessoais em seu nome.\n
+O motivo do meu pedido de eliminação é que retiro, ou retirei, o meu consentimento para o tratamento dos dados pessoais. Este pedido diz respeito a qualquer tratamento dos meus dados pessoais por vós, incluindo os subcontratantes que tratem dados pessoais em vosso nome.\n
 \n
-Por favor, forneça sua resposta por meio de e-mail com segurança. Aguardo com expectativa uma resposta dentro de um mês a contar da recepção do meu pedido.\n
+Peço que enviem a vossa resposta por meios seguros, por e-mail. Aguardo uma resposta no prazo de um mês a contar da receção do meu pedido.\n
 \n
-disso,\n\n]]></string>
+Com os melhores cumprimentos,\n\n]]></string>
     <string name="crash_dialog_text">Desculpe. O TrackerControl acabou de cair… Você se importaria de nos enviar um e-mail com detalhes?</string>
     <string name="crash_dialog_comment">Algum comentário?</string>
     <string name="instructions_monitoring_private_dns">Alternar o interruptor e interagir com algumas aplicações. O DNS privado deve ser desativado.</string>
     <string name="instructions_monitoring">Alternar o interruptor e interagir com algumas aplicações.</string>
     <string name="device_not_supported_title">Dispositivo não suportado</string>
     <string name="device_not_supported_msg">O sistema operacional de seu dispositivo não permite o monitoramento e a filtragem das comunicações em rede. Isto é necessário para o TrackerControl.</string>
-    <string name="launch_app">Lançamento &amp; Localizar rastreadores</string>
+    <string name="launch_app">Iniciar &amp; Localizar rastreadores</string>
     <string name="launch_app_failed">Não foi possível iniciar esta aplicação</string>
     <string name="countries">Países de destino</string>
     <string name="countries_explanation">Descubra onde seu telefone envia dados de rastreamento.\n\nA informação é baseada nas pesquisas de DNS e nas informações de IP, e pode ser impreciso.</string>
@@ -568,12 +568,12 @@ disso,\n\n]]></string>
     <string name="settings_uninstall">Definições da aplicação e desinstalação</string>
     <string name="no_trackers_found_message_disabled">Habilitar interruptor na tela principal, depois lançar aplicativo para encontrar rastreadores</string>
     <string name="no_trackers_found_message">Lançar aplicativo para encontrar rastreadores</string>
-    <string name="no_trackers_found_action">Lançamento</string>
+    <string name="no_trackers_found_action">Iniciar</string>
     <string name="no_internet_message">"Este aplicativo não tem acesso à Internet. Ele ainda pode rastreá-lo através da troca de dados com outros aplicativos."</string>
     <string name="no_internet">Não há acesso à Internet</string>
     <string name="bypass_vpn_error">"\"Não é possível bloquear a Internet enquanto a aplicação ignora o TrackerControl.\""</string>
     <string name="back">Voltar</string>
-    <string name="forever_free">Para sempre livre</string>
+    <string name="forever_free">Gratuito para sempre</string>
     <string name="your_privacy">Sua privacidade</string>
     <string name="tracker_hostlist">Anfitriões definidos pelo usuário</string>
     <string name="internet_blocked">Acesso à Internet bloqueado</string>

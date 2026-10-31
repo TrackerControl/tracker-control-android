@@ -56,7 +56,7 @@
     <string name="timeline_tracker_blocked">Blokkolva</string>
     <string name="timeline_tracker_allowed">Engedélyezve</string>
     <!-- A blocked/allowed label followed by its share of all tracking attempts. -->
-    <string name="timeline_insights_status"></string>
+    <string name="timeline_insights_status">%1$s %2$s · %3$s %4$s</string>
     <string name="feed_section_last_contact">utolsó kapcsolatfelvétel: %s</string>
     <plurals name="feed_show_more_companies">
         <item quantity="one">Még %d vállalat megjelenítése</item>
@@ -175,7 +175,7 @@
     <string name="warning_beta">Bétafunkció. Előfordulhat, hogy nem a várt módon működik.</string>
     <string name="setting_doh_endpoint">DoH-végpont URL-je</string>
     <string name="summary_doh_endpoint">HTTPS-URL a DNS-over-HTTPS-lekérdezésekhez</string>
-    <string name="dialog_doh_endpoint"></string>
+    <string name="dialog_doh_endpoint">Adja meg a DNS-szolgáltatója által megadott teljes HTTPS URL-t, a szolgáltatóra jellemző útvonallal együtt (például https://dns.quad9.net/dns-query). A TrackerControlból kizárt vagy saját titkosított DNS-t használó alkalmazások megkerülik ezt a beállítást.</string>
     <string name="setting_doh_dns_fallback">DNS-tartalék</string>
     <string name="summary_doh_dns_fallback">Szabványos (titkosítatlan) DNS használata, ha a DoH nem érhető el. A kikapcsolás megakadályozhatja az alkalmazások működését, ha a DoH-kiszolgáló nem elérhető.</string>
     <!-- Block DNS-over-TLS (DoT) -->
@@ -302,7 +302,7 @@
     <string name="msg_started">Nyomkövetők keresése…</string>
     <string name="msg_waiting">Várakozás eseményre</string>
     <string name="msg_disabled">Használja a fenti kapcsolót a TrackerControl engedélyezéséhez.</string>
-    <string name="msg_installed">%1$s gondot okozó alkalmazás?</string>
+    <string name="msg_installed">Problémák a(z) %1$s alkalmazással?</string>
     <string name="msg_installed_description">Engedélyezi az alkalmazás kapcsolatát a társaságokkal</string>
     <!-- Keep as a string: call-site/API migration and multi-count grammar are intentionally separate. -->
     <string name="msg_installed_tracker_libraries_found" tools:ignore="PluralsCandidate">%d nyomkövető könyvtárat tartalmaz</string>
@@ -332,10 +332,10 @@ Az Ön internetes forgalmát nem küldi el egy távoli VPN-kiszolgálóra.</stri
     <string name="msg_system">Az összes (rendszer) alkalmazás kezelése a beállításokban engedélyezhető</string>
     <string name="msg_vpn_cancelled">A VPN kapcsolat meg lett szüntetve.\nBeállít másik VPN kapcsolatot, hogy a VPN csatlakozás állandó legyen?</string>
     <string name="msg_unavailable">Ez a funkció nem érhető el ezen az android verzión</string>
-    <string name="msg_always_on">Másik VPN beállítása állandó VPN-nek</string>
+    <string name="msg_always_on">Egy másik VPN van mindig bekapcsolt VPN-ként beállítva</string>
     <string name="msg_always_on_lockdown">A TrackerControl használatához kapcsolja ki a „Kapcsolatok blokkolása VPN nélkül” lehetőséget az Android VPN-beállításaiban</string>
-    <string name="msg_start_forward">Port forwarding indítás %1$s port %2$d to %3$s:%4$d of \'%5$s\'?</string>
-    <string name="msg_stop_forward">Port forwarding leállítás %1$s port %2$d?</string>
+    <string name="msg_start_forward">Elindítja a továbbítást innen: %1$s, %2$d. port, ide: %3$s:%4$d (\'%5$s\')?</string>
+    <string name="msg_stop_forward">Leállítja a továbbítást: %1$s, %2$d. port?</string>
     <string name="msg_log_logcat">Figyelem: A blokkolás letiltva az ADB naplózás miatt.</string>
     <string-array name="protocolNames">
         <item>UDP</item>
@@ -343,7 +343,7 @@ Az Ön internetes forgalmát nem küldi el egy távoli VPN-kiszolgálóra.</stri
     </string-array>
     <string name="menu_add">Hozzáad</string>
     <string name="menu_delete">Töröl</string>
-    <string name="setting_forwarding">Port forwarding</string>
+    <string name="setting_forwarding">Portátirányítás</string>
     <string name="title_protocol">Protokoll</string>
     <string name="title_dport">Forrás portja</string>
     <string name="title_raddr">Cél címe</string>
@@ -663,7 +663,7 @@ Tisztelettel,\n\n]]></string>
     <!-- Retained for Play Store copy; call-site/API migration and multi-count grammar are intentionally separate. -->
     <string name="insights_share">Megosztás barátokkal</string>
     <string name="insights_share_trackers_blocked">Blokkolt nyomkövető-hosztok</string>
-    <string name="insights_share_url"></string>
+    <string name="insights_share_url">TrackerControl.org</string>
     <!-- Keep as a string: call-site/API migration and multi-count grammar are intentionally separate. -->
     <string name="insights_share_message" tools:ignore="PluralsCandidate">Ezen a héten %1$d nyomkövető-hosztot blokkoltam %2$d vállalattól a TrackerControllal! Vegye vissza az adatvédelmét: https://trackercontrol.org</string>
     <!-- Retained for Play Store copy; call-site/API migration and multi-count grammar are intentionally separate. -->

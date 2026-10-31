@@ -174,7 +174,7 @@
     <string name="setting_doh_endpoint">URL τελικού σημείου DoH</string>
     <string name="summary_doh_endpoint">URL HTTPS για ερωτήματα DNS-over-HTTPS</string>
     <string name="setting_doh_dns_fallback">Εναλλακτική λύση DNS</string>
-    <string name="summary_doh_dns_fallback">Χρήση τυπικού (μη κρυπτογραφημένου) DNS όταν το DoH δεν είναι διαθέσιμο. Η απενεργοποίηση μπορεί να προκαλέσει δυσλειτουργία στις εφαρμογές αν ο διακομιστής DoH δεν λειτουργεί.</string>
+    <string name="summary_doh_dns_fallback">Χρήση τυπικού (μη κρυπτογραφημένου) DNS όταν το DoH δεν είναι διαθέσιμο. Η εναλλακτική λύση μπορεί να χρησιμοποιεί διαφορετικό πάροχο DNS. Η απενεργοποίηση μπορεί να προκαλέσει δυσλειτουργία στις εφαρμογές αν ο διακομιστής DoH δεν λειτουργεί.</string>
     <!-- Block DNS-over-TLS (DoT) -->
     <string name="setting_block_dot">Αποκλεισμός του Ιδιωτικού DNS του Android</string>
     <string name="summary_block_dot">Όταν είναι ενεργό το Ιδιωτικό DNS του Android, το TC δεν μπορεί να εντοπίσει καμία παρακολούθηση και δεν λειτουργεί σωστά.</string>
@@ -303,11 +303,11 @@
     <string name="msg_installed_description">Επιτρέψτε στην εφαρμογή να επικοινωνεί με εταιρείες</string>
     <!-- Keep as a string: call-site/API migration and multi-count grammar are intentionally separate. -->
     <string name="msg_installed_tracker_libraries_found" tools:ignore="PluralsCandidate">Περιέχει %d βιβλιοθήκες ιχνηλατών</string>
-    <string name="msg_completed">Η ενεργεία ολοκληρώθηκε</string>
+    <string name="msg_completed">Η ενέργεια ολοκληρώθηκε</string>
     <string name="msg_no_file_manager">Δεν βρέθηκε διαχειριστής αρχείων για την επιλογή αρχείου.</string>
     <string name="msg_no_browser">Δεν βρέθηκε εφαρμογή περιήγησης για το άνοιγμα του συνδέσμου.</string>
     <string name="msg_vpn">Το TrackerControl χρησιμοποιεί ένα τοπικό VPN για να φιλτράρει την κίνηση στο διαδίκτυο.
-Για αυτόν τον λόγο, πρέπει να επιτρέψτε μια σύνδεση VPN στο επόμενο παράθυρο.
+Για αυτόν τον λόγο, πρέπει να επιτρέψετε μια σύνδεση VPN στο επόμενο παράθυρο.
 Η διαδικτυακή σας κίνηση δεν αποστέλλεται σε απομακρυσμένο διακομιστή VPN.</string>
     <string name="msg_autostart">Δεν ήταν δυνατή η αυτόματη εκκίνηση του TrackerControl. Αυτό πιθανότατα οφείλεται σε σφάλμα στην έκδοση Android σας.</string>
     <string name="msg_error">Παρουσιάστηκε ένα μη αναμενόμενο σφάλμα: «%s»</string>
@@ -331,7 +331,7 @@
     <string name="msg_unavailable">Αυτή η δυνατότητα δεν είναι διαθέσιμη σε αυτήν την έκδοση του Android</string>
     <string name="msg_always_on">Ένα άλλο VPN έχει οριστεί ως μόνιμα ενεργοποιημένο VPN</string>
     <string name="msg_always_on_lockdown">Απενεργοποιήστε την επιλογή «Αποκλεισμός συνδέσεων χωρίς VPN» στις ρυθμίσεις VPN του Android για να χρησιμοποιήσετε το TrackerControl</string>
-    <string name="msg_start_forward">Ξεκίνησε προώθηση από %1$s θύρα %2$d εως %3$s:%4$d απο %5$s\';</string>
+    <string name="msg_start_forward">Έναρξη προώθησης από %1$s θύρα %2$d προς %3$s:%4$d της \'%5$s\';</string>
     <string name="msg_stop_forward">Σταμάτημα προώθησης της %1$s θύρας %2$d;</string>
     <string name="msg_log_logcat">Προειδοποίηση: Το μπλοκάρισμα απενεργοποιήθηκε λόγω καταγραφής ADB.</string>
     <string-array name="protocolNames">
@@ -347,17 +347,17 @@
     <string name="title_rport">Θύρα προορισμού</string>
     <string name="title_ruid">Εφαρμογή προορισμού</string>
     <string name="title_external">Για έναν εξωτερικό διακομιστή, επιλέξτε \'nobody\'</string>
-    <string name="title_unmetered_allowed">Επιτρέπεται η χρονικά απεριόριστη κίνηση</string>
-    <string name="title_unmetered_blocked">Αποκλείεται η χρονικά απεριόριστη κυκλοφορία</string>
-    <string name="title_unmetered_disabled">Οι κανόνες της χρονικά απεριόριστης κυκλοφορίας δεν εφαρμόζονται</string>
+    <string name="title_unmetered_allowed">Επιτρέπεται η μη μετρημένη κίνηση</string>
+    <string name="title_unmetered_blocked">Η μη μετρημένη κίνηση έχει αποκλειστεί</string>
+    <string name="title_unmetered_disabled">Οι κανόνες μη μετρημένης κίνησης δεν εφαρμόζονται</string>
     <string name="title_metered_allowed">Επιτρέπεται η μετρημένη κίνηση</string>
     <string name="title_metered_blocked">Η μετρημένη κίνηση έχει αποκλειστεί</string>
-    <string name="title_metered_disabled">Οι μετρημένοι κανόνες δεν εφαρμόζονται</string>
+    <string name="title_metered_disabled">Οι κανόνες μετρημένης κίνησης δεν εφαρμόζονται</string>
     <string name="title_host_allowed">Η διεύθυνση επιτρέπεται</string>
     <string name="title_host_blocked">Η διεύθυνση είναι αποκλεισμένη</string>
     <string name="title_interactive_allowed">Επιτρέπεται όταν η οθόνη είναι ενεργοποιημένη</string>
     <string name="title_roaming_blocked">Φραγή κατά την περιαγωγή</string>
-    <string name="title_metered">Από προεπιλογή, μια σύνδεση Wi-Fi θεωρείται να είναι χρονικά απεριόριστη και μια σύνδεση κινητού χρονοχρέωση</string>
+    <string name="title_metered">Από προεπιλογή, μια σύνδεση Wi-Fi θεωρείται μη μετρημένη και μια σύνδεση κινητού δικτύου μετρημένη</string>
     <string name="title_rate">Αξιολόγηση</string>
     <string name="title_allow">Επιτρέψτε</string>
     <string name="title_block">Αποκλεισμός</string>
@@ -385,8 +385,8 @@
         <item quantity="other">επικοινώνησε με %d εταιρείες την προηγούμενη εβδομάδα</item>
     </plurals>
     <plurals name="n_companies_found">
-        <item quantity="one">επικοινωνεί με %d εταιρεία όλη την ώρα</item>
-        <item quantity="other">επικοινωνεί με %d εταιρείες όλη την ώρα</item>
+        <item quantity="one">επικοινωνεί με %d εταιρεία συνολικά</item>
+        <item quantity="other">επικοινωνεί με %d εταιρείες συνολικά</item>
     </plurals>
     <string name="confirm_ipinfo_title">Ανάκτηση πληροφοριών οργανισμού;</string>
     <string name="confirm_ipinfo">Αυτό θα επικοινωνήσει με την εξωτερική υπηρεσία ipinfo.io, και θα μοιραστεί τα δεδομένα σχετικά με τις διευθύνσεις IP που επικοινωνούν μαζί τους.</string>
@@ -475,7 +475,7 @@
     <string name="tracker_advertising">Διαφημιστικά</string>
     <string name="tracker_analytics">Αναλύσεις</string>
     <string name="tracker_content">Απαραίτητα</string>
-    <string name="tracker_cryptomining">Συλλογή Κρυπτονομισμάτων</string>
+    <string name="tracker_cryptomining">Εξόρυξη κρυπτονομισμάτων</string>
     <string name="tracker_fingerprinting">Ταυτοποίηση (Fingerprinting)</string>
     <string name="tracker_social">Κοινωνικά Δίκτυα</string>
     <string name="tracker_email">Email</string>
@@ -552,7 +552,7 @@
     <string name="no_trackers_found_action">Έναρξη</string>
     <string name="no_internet_message">"Αυτή η εφαρμογή δεν έχει πρόσβαση στο Διαδίκτυο. Μπορεί ακόμα να σας παρακολουθεί ανταλλάσσοντας δεδομένα με άλλες εφαρμογές."</string>
     <string name="no_internet">Χωρίς πρόσβαση στο διαδίκτυο</string>
-    <string name="bypass_vpn_error">"«Δεν είναι δυνατός ο αποκλεισμός του Διαδικτύου όσο η εφαρμογή παρακάμπτει το TrackerControl.»"</string>
+    <string name="bypass_vpn_error">"Δεν είναι δυνατός ο αποκλεισμός του Διαδικτύου όσο η εφαρμογή παρακάμπτει το TrackerControl."</string>
     <string name="back">Πίσω</string>
     <string name="forever_free">Για Πάντα Δωρεάν</string>
     <string name="your_privacy">Η Ιδιωτικότητα σας</string>
@@ -594,7 +594,7 @@
     <string name="allowed_shared_ip">Επιτρέπεται — κοινόχρηστη IP· ενεργοποιήστε την Αυστηρή λειτουργία για αποκλεισμό</string>
     <string name="tracker_monitored_minimal">Παρακολουθείται — δεν αποκλείεται στην Ελάχιστη λειτουργία</string>
     <string name="setting_domain_based_blocked">Μπλοκάρισμα μέσω domain</string>
-    <string name="summary_domain_based_blocking">Επιτρέπει περισσότερο \"κοκκώδη\" μπλοκάρισμα. Ακόμα υπο ανάπτυξη.</string>
+    <string name="summary_domain_based_blocking">Επιτρέπει πιο λεπτομερή αποκλεισμό. Ακόμη υπό ανάπτυξη.</string>
     <string name="uncertain_entry">Οι καταχωρήσεις που σημειώνονται με \'*\' μπορεί να είναι ανακριβείς, λόγω των περιορισμών του Android. Αυτό συνήθως σημαίνει ότι η ίδια εταιρεία χρησιμοποιεί την ίδια διεύθυνση IP σε διαφορετικά domain, αλλά μπορεί επίσης να σημαίνει ότι διαφορετικές εταιρείες βρίσκονται πίσω από την ίδια διεύθυνση IP (π. χ.. αν χρησιμοποιούν ένα Δίκτυο Παράδοσης Περιεχομένου).</string>
     <string name="browsers_not_supported">Εντοπίστηκε πρόγραμμα περιήγησης ⚠️</string>
     <string name="browsers_not_supported_explanation">Αυτό φαίνεται να είναι εφαρμογή προγράμματος περιήγησης.\n\nΗ προστασία από παρακολούθηση προγραμμάτων περιήγησης λειτουργεί καλύτερα μέσα στο πρόγραμμα περιήγησης, όπου οι ιχνηλάτες μπορούν να αποκλείονται σε επίπεδο σελίδας και αιτήματος. Το TrackerControl διατηρεί την κυκλοφορία του προγράμματος περιήγησης δρομολογημένη μέσω της σήραγγας VPN/WireGuard, αλλά ο αποκλεισμός ιχνηλατών σε επίπεδο εφαρμογής είναι απενεργοποιημένος από προεπιλογή και μπορεί να προκαλέσει δυσλειτουργίες ιστοτόπων αν ενεργοποιηθεί.</string>
@@ -647,7 +647,7 @@
     <string name="insights_pervasive_trackers">Οι πιο διαδεδομένοι ιχνηλάτες</string>
     <string name="insights_top_domains">Κορυφαίοι τομείς ιχνηλατών</string>
     <!-- Joins the alternative domain names of one tracker, e.g. "example.com or example.net". Keep the surrounding spaces. -->
-    <string name="insights_domain_alias_separator">"« ή »"</string>
+    <string name="insights_domain_alias_separator">" ή "</string>
     <!-- Keep as a string: call-site/API migration and multi-count grammar are intentionally separate. -->
     <string name="insights_in_apps" tools:ignore="PluralsCandidate">σε %d εφαρμογές</string>
     <plurals name="insights_apps_count">

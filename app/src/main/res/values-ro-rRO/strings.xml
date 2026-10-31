@@ -177,7 +177,7 @@
     <string name="setting_doh_endpoint">URL endpoint DoH</string>
     <string name="summary_doh_endpoint">URL HTTPS pentru interogări DNS-over-HTTPS</string>
     <string name="setting_doh_dns_fallback">DNS alternativ</string>
-    <string name="summary_doh_dns_fallback">Folosește DNS standard (necriptat) când DoH nu este disponibil. Dezactivarea poate împiedica aplicațiile să funcționeze dacă serverul DoH nu răspunde.</string>
+    <string name="summary_doh_dns_fallback">Folosește DNS standard (necriptat) când DoH nu este disponibil. Alternativa poate folosi un alt furnizor DNS. Dezactivarea poate împiedica aplicațiile să funcționeze dacă serverul DoH nu răspunde.</string>
     <!-- Block DNS-over-TLS (DoT) -->
     <string name="setting_block_dot">Blochează DNS-ul privat al Android</string>
     <string name="summary_block_dot">Cu DNS-ul privat Android activat, TC nu poate detecta urmărirea și nu funcționează corect.</string>
@@ -524,7 +524,7 @@ Cu stimă,\n\n]]></string>
     <string name="app_state_no_internet_explanation">Toate conexiunile acestei aplicații sunt blocate. Puteți atinge și pictograma aplicației din ecranul principal.</string>
     <string name="app_state_no_internet_shared_uid">Se aplică și pentru %1$s, care împarte un ID de utilizator Android cu această aplicație.</string>
     <string name="app_state_bypassed">Ocolește TrackerControl</string>
-    <string name="app_state_bypassed_explanation">Aplicația se conectează direct, în afara TrackerControl. Nimic nu este monitorizat sau blocat pentru ea. Folosiți această opțiune ca ultimă soluție dacă aplicația tot nu funcționează.\n\nNotă: \"Blochează conexiunile fără VPN\" din setările VPN Android trebuie să fie DEZACTIVAT pentru ca aceasta să funcționeze.</string>
+    <string name="app_state_bypassed_explanation">Aplicația se conectează direct, în afara TrackerControl. Nimic nu este monitorizat sau blocat pentru ea. Folosiți această opțiune ca ultimă soluție dacă aplicația tot nu funcționează.\n\nNotă: „Blochează conexiunile fără VPN” din setările VPN Android trebuie să fie DEZACTIVAT pentru ca aceasta să funcționeze.</string>
     <!-- Per-app protection screen -->
     <string name="protection_title">Protecție</string>
     <string name="protection_route_heading">VPN la distanță</string>
@@ -646,7 +646,7 @@ Cu stimă,\n\n]]></string>
     <string name="insights_pervasive_trackers">Cei mai răspândiți urmăritori</string>
     <string name="insights_top_domains">Domeniile de top ale urmăritorilor</string>
     <!-- Joins the alternative domain names of one tracker, e.g. "example.com or example.net". Keep the surrounding spaces. -->
-    <string name="insights_domain_alias_separator">"„ sau ”"</string>
+    <string name="insights_domain_alias_separator">" sau "</string>
     <!-- Keep as a string: call-site/API migration and multi-count grammar are intentionally separate. -->
     <string name="insights_in_apps" tools:ignore="PluralsCandidate">în %d aplicații</string>
     <plurals name="insights_apps_count">

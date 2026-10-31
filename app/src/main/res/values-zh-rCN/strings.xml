@@ -86,7 +86,7 @@
     <string name="troubleshooting_battery_action">禁用电池优化</string>
     <string name="troubleshooting_battery_ok">电池优化已禁用。</string>
     <string name="troubleshooting_datasaver_title">流量节省程序</string>
-    <string name="troubleshooting_datasaver_desc">如果在流量节省器开启时TrackControl无法连接，请允许TrackerControl不受限制地使用数据。启用“后台数据”和“不受限制的数据使用”。</string>
+    <string name="troubleshooting_datasaver_desc">如果在流量节省器开启时TrackerControl无法连接，请允许TrackerControl不受限制地使用数据。启用“后台数据”和“不受限制的数据使用”。</string>
     <string name="troubleshooting_datasaver_action">允许不受限制的数据</string>
     <string name="troubleshooting_datasaver_ok">流量节省程序没有在限制TrackerControl。</string>
     <string name="troubleshooting_local_network_title">本地网络访问权限</string>
@@ -96,7 +96,7 @@
     <string name="troubleshooting_app_breakage_title">一个应用停止工作</string>
     <string name="troubleshooting_app_breakage_desc">在主列表中点击应用，然后点击保护。请先尝试\"最小屏蔽\"。 如果应用程序仍然有问题，请选择 \"允许跟踪器\"。将“绕过 TrackerControl\"作为最后手段。</string>
     <string name="troubleshooting_categories_title">阻止特定的跟踪器类别</string>
-    <string name="troubleshooting_categories_desc">您可以微调每个应用的拦截，方法时点击应用并在跟踪器选项卡中开启/关闭单个跟踪器类别（如分析、广告）。</string>
+    <string name="troubleshooting_categories_desc">您可以微调每个应用的拦截，方法是点击应用并在跟踪器选项卡中开启/关闭单个跟踪器类别（如分析、广告）。</string>
     <string name="troubleshooting_alwayson_title">始终开启的 VPN</string>
     <string name="troubleshooting_alwayson_desc">如果在 Android VPN 设置中启用了\"拦截不使用VPN的连接\"(锁定)，TrackerControl 无法正常工作。 禁用此选项。检测到此设置将显示通知。</string>
     <string name="troubleshooting_alwayson_action">打开 VPN 设置</string>
@@ -169,7 +169,7 @@
     <string name="setting_pcap_file_size">PCAP 最大文件大小: %s MB</string>
     <!-- Secure DNS (DoH) -->
     <string name="setting_doh_enabled">安全DNS (DoH)</string>
-    <string name="summary_doh_enabled">使用 DNS-overall HTTPS 加密 DNS 查询。当WireGuard 提供 DNS 时自动暂停，因为这些查询使用WireGuard 隧道。</string>
+    <string name="summary_doh_enabled">使用 DNS-over-HTTPS 加密 DNS 查询。当WireGuard 提供 DNS 时自动暂停，因为这些查询使用WireGuard 隧道。</string>
     <string name="warning_beta">测试版功能。可能无法按预期工作。</string>
     <string name="setting_doh_endpoint">DoH 端点 URL</string>
     <string name="summary_doh_endpoint">DNS-over-HTTPS 查询的 HTTPS URL</string>
@@ -191,7 +191,7 @@
     <string name="summary_pause">从通知栏暂停软件运作后，在选定的分钟数后重新自动启用TrackerControl(输入0禁用此选项)。</string>
     <string name="summary_update">每日两次检查 GitHub 上的新版本</string>
     <string name="summary_ip6">将 IPv6 流量导至TrackerControl，进行选择性地允许或屏蔽</string>
-    <string name="summary_call">在来电或来电时禁用TrackerControl 。这可以用来解决IP/Wi-Fi 通话问题。</string>
+    <string name="summary_call">在来电或去电时禁用TrackerControl 。这可以用来解决IP/Wi-Fi 通话问题。</string>
     <string name="summary_log_app">禁用以减少电池使用量。新的跟踪器仍将被屏蔽，但不会显示。</string>
     <string name="summary_block_domains">警告: 被屏蔽的主机未在用户界面中显示。</string>
     <string name="summary_rcode">默认值是3 (NXDOMAIN)，这意味着“不存在的域名”。</string>
@@ -343,7 +343,7 @@
     <string name="msg_unavailable">该特性在这个Android版本中不可用</string>
     <string name="msg_always_on">已将另一个 VPN 设置为始终启用</string>
     <string name="msg_always_on_lockdown">在 Android VPN 设置中关闭\"屏蔽不使用VPN的所有连接\"以使用 TrackerControl</string>
-    <string name="msg_start_forward">停止从%1$s端口%2$d转发流量到\'%5$s\'的%3$s:%4$d？</string>
+    <string name="msg_start_forward">开始从%1$s端口%2$d转发流量到\'%5$s\'的%3$s:%4$d？</string>
     <string name="msg_stop_forward">停止%1$s端口%2$d的流量转发？</string>
     <string name="msg_log_logcat">警告：因 ADB 日志记录，已禁用拦截。</string>
     <string-array name="protocolNames">
@@ -492,8 +492,8 @@
     <string name="tracker_consent">同意管理</string>
     <string name="tracker_uncategorised">未分类</string>
     <string name="setting_blocking_mode">屏蔽模式</string>
-    <string name="summary_blocking_mode_minimal">最小：只屏蔽DuckGo列表中可以安全拦截的跟踪器。 浏览器流量仍然通过 VPN 路由，但是跟踪器保护默认关闭。已知的不兼容应用被排除。有限度的应用功能不正常。</string>
-    <string name="summary_blocking_mode_standard">标准：拦截来自多个列表 (X-Ray, Disconnect, DuckDuckGo) 的所有一直跟踪器。允许基本服务。 如果应用停止工作，请调整其保护设置(见应用菜单中的故障排除)。</string>
+    <string name="summary_blocking_mode_minimal">最小：只屏蔽DuckDuckGo列表中可以安全拦截的跟踪器。 浏览器流量仍然通过 VPN 路由，但是跟踪器保护默认关闭。已知的不兼容应用被排除。有限度的应用功能不正常。</string>
+    <string name="summary_blocking_mode_standard">标准：拦截来自多个列表 (X-Ray, Disconnect, DuckDuckGo) 的所有已知跟踪器。允许基本服务。 如果应用停止工作，请调整其保护设置(见应用菜单中的故障排除)。</string>
     <string name="summary_blocking_mode_strict">严格：阻止所有已知的追踪器，包括基本服务和模糊的共享IP域。 许多应用将需要限制性较小的保护设置(见应用菜单中的故障排除)。</string>
     <string name="summary_sni_wg_note">注：SNI提取不适用于通过远程VPN路由的流量。</string>
     <string name="blocking_mode_minimal">最小</string>
@@ -502,7 +502,7 @@
     <string name="onboarding_blockingmode_title">选择屏蔽模式</string>
     <string name="onboarding_blockingmode_desc">选择 Tracker Control 如何处理跟踪器。 拦截模式以不同激进程度阻止追踪器； 研究模式不拦截，仅启用SNI提取用于测量。 您可以稍后在设置中修改此项。</string>
     <string name="onboarding_blockingmode_minimal_label">最小(推荐给新用户)</string>
-    <string name="onboarding_blockingmode_minimal_desc">只屏蔽可安全屏蔽的已确认跟踪器。有限的应用不正常。适多数用户。</string>
+    <string name="onboarding_blockingmode_minimal_desc">只屏蔽可安全屏蔽的已确认跟踪器。对应用的影响有限。适合大多数用户。</string>
     <string name="onboarding_blockingmode_standard_label">标准</string>
     <string name="onboarding_blockingmode_standard_desc">拦截来自多个列表的所有已知跟踪器。一些应用可能需要限制性较小的保护设置。</string>
     <string name="onboarding_blockingmode_strict_label">严格</string>

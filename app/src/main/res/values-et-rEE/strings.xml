@@ -174,7 +174,7 @@
     <string name="setting_doh_endpoint">DoH lõpp-punkti URL</string>
     <string name="summary_doh_endpoint">HTTPS-i URL DNS-i üle HTTPS-i päringute jaoks</string>
     <string name="setting_doh_dns_fallback">DNS-i tagavara</string>
-    <string name="summary_doh_dns_fallback">Kasuta DoH-i puudumisel tavalist (krüptimata) DNS-i. Väljalülitamine võib rakendused rikkuda, kui DoH-server ei tööta.</string>
+    <string name="summary_doh_dns_fallback">Kasuta DoH-i tõrke korral tavalist (krüptimata) DNS-i. Varu-DNS võib kasutada teist DNS-i teenusepakkujat. Väljalülitamine võib rakendused rikkuda, kui DoH-server ei tööta.</string>
     <!-- Block DNS-over-TLS (DoT) -->
     <string name="setting_block_dot">Blokeeri Androidi privaatne nimelahendus</string>
     <string name="summary_block_dot">Kui Androidi privaatne nimelahendus on kasutusel, siis TrackerControl ei suuda ühtegi jälitamist tuvastada ega seega tööta korralikult.</string>
@@ -264,7 +264,7 @@
     <string name="vpn_account_change">Muuda</string>
     <string name="vpn_account_cancel">Katkesta</string>
     <string name="vpn_mullvad_intro">Sisesta oma Mullvadi kasutajakonto number. Ta on salvestatud selles seadmes.</string>
-    <string name="vpn_mullvad_account_note">See konto on kasutusel Mullvadi maakohaste ühenduste jaoks.</string>
+    <string name="vpn_mullvad_account_note">See konto on kasutusel Mullvadi riigipõhiste ühenduste jaoks.</string>
     <string name="vpn_get_mullvad_account">Tee endale Mullvadi kasutajakonto</string>
     <string name="vpn_get_ivpn_account">Tee endale IVPN-i kasutajakonto</string>
     <string name="vpn_account_hint">Mullvadi kasutajakonto number</string>
@@ -358,7 +358,7 @@ Sinu internetiliiklust ei saadeta kaug-VPN-i serverisse.</string>
     <string name="title_host_blocked">Aadress on blokeeritud</string>
     <string name="title_interactive_allowed">Luba, kui ekraan on sisse lülitatud</string>
     <string name="title_roaming_blocked">Blokeeri andmerändluse ajal</string>
-    <string name="title_metered">Vaikimisi eelab rakendus, et WiFi ühendus pole mahupõhine ja mobiilne andmeside on mahupõhine</string>
+    <string name="title_metered">Vaikimisi loetakse WiFi ühendus mittemahupõhiseks ja mobiilne andmeside mahupõhiseks</string>
     <string name="title_rate">Määra hinnang</string>
     <string name="title_allow">Luba</string>
     <string name="title_block">Keela</string>
@@ -396,7 +396,7 @@ Sinu internetiliiklust ei saadeta kaug-VPN-i serverisse.</string>
     <string name="no">Ei</string>
     <string name="menu_csv">Ekspordi CSV-failina</string>
     <string name="exporting">Ekspordin…</string>
-    <string name="export_failed">Eksportimine ei õnenstunud</string>
+    <string name="export_failed">Eksportimine ei õnnestunud</string>
     <string name="exported">Eksportimine andmeruumi õnnestus!</string>
     <!-- App Details -->
     <string name="title_activity_detail">Üksikasjad</string>
@@ -406,7 +406,7 @@ Sinu internetiliiklust ei saadeta kaug-VPN-i serverisse.</string>
     <string name="app_info">Halda rakendust</string>
     <!-- Actions -->
     <string name="block_tracking">Blokeeri jälitajaid</string>
-    <string name="block_tracking_description">Väga paljud rakendused saadavad andmeid kolmandatele osapooltele ehk jälitajatele. TrackerControl võimaldab sul neid võrguühendusi valikuliselt blokeerida. Kasuta sellist võimalust siiski mõistlikult, sest rakenduste arendajad sõltuvad sellistest teenustest nagu reklaamimine või vigade otsing.</string>
+    <string name="block_tracking_description">Väga paljud rakendused saadavad andmeid kolmandatele osapooltele ehk jälitajatele. TrackerControl võimaldab sul neid võrguühendusi valikuliselt blokeerida. Kasuta sellist võimalust siiski mõistlikult, sest rakenduste arendajad sõltuvad sellistest teenustest, eriti reklaamist.</string>
     <string name="personalised_ads">Piira isikupärastamist</string>
     <string name="personalised_ads_description">Android pakub võimalust piirata rakenduste juurdepääsu sinu seadme Google Advertising ID-le. Rakendused võivad seda seadet siiski eirata ja sama ID-d kasutada. Google\'i eeskirjade kohaselt võivad nad jätkata selle ID kogumist ka analüütika eesmärgil. Pead usaldama Google\'it ja andmeid koguvat ettevõtet.</string>
     <string name="data_managment">Halda andmeid</string>
@@ -473,7 +473,7 @@ Lugupidamisega,\n\n]]></string>
     <string name="countries_map_none">Ühtegi jälgimise sihtkohta pole esile tõstetud.</string>
     <string name="tracker_advertising">Reklaam</string>
     <string name="tracker_analytics">Analüütika</string>
-    <string name="tracker_content">Põhitarvikud</string>
+    <string name="tracker_content">Olulised</string>
     <string name="tracker_cryptomining">Krüptokaevandamine</string>
     <string name="tracker_fingerprinting">Sõrmejäljestamine</string>
     <string name="tracker_social">Sotsiaalmeedia</string>
@@ -646,7 +646,7 @@ Lugupidamisega,\n\n]]></string>
     <string name="insights_pervasive_trackers">Kõige levinumad jälitajad</string>
     <string name="insights_top_domains">Peamised jälitajate domeenid</string>
     <!-- Joins the alternative domain names of one tracker, e.g. "example.com or example.net". Keep the surrounding spaces. -->
-    <string name="insights_domain_alias_separator">"„ või „"</string>
+    <string name="insights_domain_alias_separator">" või "</string>
     <!-- Keep as a string: call-site/API migration and multi-count grammar are intentionally separate. -->
     <string name="insights_in_apps" tools:ignore="PluralsCandidate">%d rakenduses</string>
     <plurals name="insights_apps_count">

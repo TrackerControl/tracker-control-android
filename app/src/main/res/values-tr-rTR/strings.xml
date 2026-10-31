@@ -26,7 +26,7 @@
     <string name="menu_log">Trafik günlüğü</string>
     <string name="menu_settings">Ayarlar</string>
     <string name="menu_invite">Davet et</string>
-    <string name="menu_legend">Efsane</string>
+    <string name="menu_legend">Gösterge</string>
     <string name="menu_support">Bu uygulamayı destekleyin</string>
     <string name="menu_log_support">Açıklama</string>
     <string name="menu_troubleshooting">Sorun giderme</string>
@@ -174,7 +174,7 @@
     <string name="setting_doh_endpoint">DoH uç noktası URL’si</string>
     <string name="summary_doh_endpoint">DNS-over-HTTPS sorguları için HTTPS URL’si</string>
     <string name="setting_doh_dns_fallback">DNS geri dönüşü</string>
-    <string name="summary_doh_dns_fallback">DoH kullanılamadığında standart (şifrelenmemiş) DNS kullanın. Devre dışı bırakmak, DoH sunucusu çalışmıyorsa uygulamaları bozabilir.</string>
+    <string name="summary_doh_dns_fallback">DoH kullanılamadığında standart (şifrelenmemiş) DNS kullanın. Yedek DNS farklı bir DNS sağlayıcısı kullanabilir. Devre dışı bırakmak, DoH sunucusu çalışmıyorsa uygulamaları bozabilir.</string>
     <!-- Block DNS-over-TLS (DoT) -->
     <string name="setting_block_dot">Android’in Özel DNS’ini engelle</string>
     <string name="summary_block_dot">Android’in Özel DNS’i etkin olduğunda TC hiçbir izleyiciyi algılayamaz ve düzgün çalışmaz.</string>
@@ -344,7 +344,7 @@ Bu nedenle, lütfen bir sonraki iletişim kutusunda bir VPN bağlantısına izin
     <string name="setting_forwarding">Bağlantı noktası yönlendirme</string>
     <string name="title_protocol">Protokol</string>
     <string name="title_dport">Kaynak bağlantı noktası</string>
-    <string name="title_raddr">Alıcının adı</string>
+    <string name="title_raddr">Hedef adres</string>
     <string name="title_rport">Hedef bağlantı noktası</string>
     <string name="title_ruid">Hedef uygulama</string>
     <string name="title_external">Harici bir sunucu için \'hiçkimse\' seçin</string>
@@ -422,7 +422,7 @@ Bu nedenle, lütfen bir sonraki iletişim kutusunda bir VPN bağlantısına izin
     <string name="request_deletion">Silme iste</string>
     <string name="contact_developer">Geliştirici</string>
     <string name="contact_playstore">Google</string>
-    <string name="contact_officials">ABD Yetkilileri</string>
+    <string name="contact_officials">AB Yetkilileri</string>
     <string name="google_dpo_mail">data-protection-office@google.com</string>
     <string name="dpas_overview_url">https://edpb.europa.eu/about-edpb/board/members</string>
     <string name="subject_request_data">GDPR Konu Erişim Talebi</string>
@@ -466,7 +466,7 @@ Saygılarımla,\n\n]]></string>
     <string name="instructions_monitoring">Anahtarı değiştirin ve bazı uygulamalarla etkileşim kurun.</string>
     <string name="device_not_supported_title">Cihazınız desteklenmiyor</string>
     <string name="device_not_supported_msg">Cihazınızın işletim sistemi, ağ iletişimlerinin izlenmesine ve filtrelenmesine izin vermiyor. Bu, TrackerControl için gereklidir.</string>
-    <string name="launch_app">&amp; başlatın; İzleyici bulun</string>
+    <string name="launch_app">Başlat &amp; İzleyicileri bul</string>
     <string name="launch_app_failed">Bu uygulama başlatılamıyor</string>
     <string name="countries">Hedef Ülkeler</string>
     <string name="countries_explanation">Telefonunuzun izleme verilerini nereye gönderdiğini öğrenin.\n\nBilgiler, DNS aramalarına ve IP bilgilerine dayanır ve yanlış olabilir.</string>
@@ -568,7 +568,7 @@ Saygılarımla,\n\n]]></string>
     <string name="analyzing_classes_progress">Sınıflar analiz ediliyor… %d%%</string>
     <string name="none">Hiç</string>
     <string name="trackers_static_explanation">TrackerControl, koddaki (\'kütüphaneler\') izlemeyi ve uygulamaların ağ trafiğini algılar.\n\nAğ trafiğinde tespit edilen izleme TrackerControl ile engellenebilir.</string>
-    <string name="trackers_static_explanation_playstore">İzciKontrolü, koddaki (\'kütüphaneler\') izlemeyi ve uygulamaların ağ trafiğini algılar.</string>
+    <string name="trackers_static_explanation_playstore">TrackerControl, koddaki (\'kütüphaneler\') izlemeyi ve uygulamaların ağ trafiğini algılar.</string>
     <string name="trackers_static_disclaimer">Not: İzleyici kitaplığı kodunun algılanması, aktif olarak kullanıldığı anlamına gelmez. Bazı uygulamalar bu kitaplıkları kaldırmış veya devre dışı bırakmış olabilir, ancak izleri hâlâ algılanabilir.</string>
     <string name="analyze_tracker_libraries">İzleyici kitaplıklarını analiz et</string>
     <string name="update_analysis">Analizi güncelle</string>

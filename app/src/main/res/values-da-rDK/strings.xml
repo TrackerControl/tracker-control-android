@@ -4,7 +4,7 @@
     <string name="app_copyright">Copyright \u00A9 2019–2022 Konrad Kollnig\n\nTrackerControl er baseret på NetGuard, udviklet af Marcel Bokhorst (M66B).</string>
     <string name="app_android">TrackerControl kræver Android 5.1 eller nyere</string>
     <string name="app_xposed">Xposed forårsager for mange nedbrud, hvilket kan medføre, at TrackerControl fjernes fra Google Play Butik. Derfor understøttes TrackerControl ikke, mens Xposed er installeret</string>
-    <string name="app_eula">Brugen af denne app er på eget ansvar. Ingen app kan tilbyde 100%% beskyttelse mod sporing.</string>
+    <string name="app_eula">Brugen af denne app er på eget ansvar. Ingen app kan tilbyde 100% beskyttelse mod sporing.</string>
     <string name="app_privacy"><a href="https://github.com/TrackerControl/tracker-control-android#privacy-notice">Privatlivspolitik</a> <a href="https://github.com/TrackerControl/tracker-control-android#cookie-policy">Cookie-politik</a></string>
     <string name="app_ios"><a href="https://ios.trackercontrol.org">TrackerControl fås også til iOS</a></string>
     <string name="channel_foreground">Kørende tjenester</string>
@@ -349,7 +349,7 @@ Din internettrafik sendes ikke til en ekstern VPN-server.</string>
     <string name="title_interactive_allowed">Tillad, når skærmen er tændt</string>
     <string name="title_roaming_blocked">Bloker ved roaming</string>
     <string name="title_metered">Som standard regnes en Wi-Fi-forbindelse som uden forbrugsgrænse og en mobilforbindelse som med forbrugsgrænse</string>
-    <string name="title_rate">Hastighed</string>
+    <string name="title_rate">Bedøm</string>
     <string name="title_allow">Tillad</string>
     <string name="title_block">Bloker</string>
     <string name="title_nobody">ingen</string>

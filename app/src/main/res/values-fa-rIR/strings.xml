@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <string name="app_description">.</string>
+    <string name="app_description">TrackerControl به کاربران امکان می‌دهد گردآوری گستردهٔ، مداوم و پنهان داده دربارهٔ رفتار کاربر در برنامه‌های موبایل («ردیابی») را پایش و کنترل کنند.</string>
     <string name="app_copyright">حق نشر \u00A9 ۲۰۱۹–۲۰۲۲ Konrad Kollnig\n\nTrackerControl بر پایهٔ NetGuard ساخته شده است که Marcel Bokhorst (M66B) آن را توسعه داده است.</string>
-    <string name="app_android">TrackerControl requires Android 5.1 or later</string>
+    <string name="app_android">TrackerControl به اندروید ۵٫۱ یا بالاتر نیاز دارد</string>
     <string name="app_xposed">Xposed باعث خرابی‌های زیادی می‌شود و ممکن است باعث حذف TrackerControl از فروشگاه Google Play شود؛ بنابراین تا وقتی Xposed نصب باشد TrackerControl پشتیبانی نمی‌شود.</string>
-    <string name="app_eula">https://github.com/TrackerControl/tracker-control-android#privacy-notice</string>
-    <string name="app_privacy">&lt;a href=\"https://github.com/TrackerControl/tracker-control-android#privacy-notice\"&gt;</string>
+    <string name="app_eula">استفاده از این برنامه بر عهدهٔ خودتان است. هیچ برنامه‌ای نمی‌تواند ۱۰۰٪ محافظت در برابر ردیابی ارائه دهد.</string>
+    <string name="app_privacy"><a href="https://github.com/TrackerControl/tracker-control-android#privacy-notice">سیاست حریم خصوصی</a> <a href="https://github.com/TrackerControl/tracker-control-android#cookie-policy">سیاست کوکی‌ها</a></string>
     <string name="app_ios"><a href="https://ios.trackercontrol.org">TrackerControl برای iOS نیز در دسترس است</a></string>
     <string name="channel_foreground">سرویس‌های در حال اجرا</string>
     <string name="channel_notify">اعلان‌های عمومی</string>
@@ -47,7 +47,7 @@
     <string name="tab_timeline">خط زمانی</string>
     <string name="tab_apps">برنامه‌ها</string>
     <string name="tab_vpn">فیلترشکن</string>
-    <string name="timeline_section_last_hour">١ساعت پیش</string>
+    <string name="timeline_section_last_hour">ساعت گذشته</string>
     <string name="timeline_section_today">امروز</string>
     <string name="timeline_section_yesterday">دیروز</string>
     <string name="timeline_section_this_week">این هفته</string>
@@ -643,7 +643,7 @@
     <string name="insights_pervasive_trackers">فراگیرترین ردیاب‌ها</string>
     <string name="insights_top_domains">برترین دامنه‌های ردیاب</string>
     <!-- Joins the alternative domain names of one tracker, e.g. "example.com or example.net". Keep the surrounding spaces. -->
-    <string name="insights_domain_alias_separator">"« یا »"</string>
+    <string name="insights_domain_alias_separator">" یا "</string>
     <!-- Keep as a string: call-site/API migration and multi-count grammar are intentionally separate. -->
     <string name="insights_in_apps" tools:ignore="PluralsCandidate">در %d برنامه</string>
     <plurals name="insights_apps_count">

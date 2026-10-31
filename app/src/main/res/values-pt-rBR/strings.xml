@@ -96,7 +96,7 @@
     <string name="troubleshooting_categories_title">Bloqueando categorias específicas de rastreamento</string>
     <string name="troubleshooting_categories_desc">Você pode ajustar o bloqueio para cada app tocando nele e ativando ou desativando categorias individuais de rastreadores (por exemplo, Análises e Anúncios) na aba Rastreadores.</string>
     <string name="troubleshooting_alwayson_title">VPN sempre ativa</string>
-    <string name="troubleshooting_alwayson_desc">Se \"Bloquear conexões sem VPN\" (lockdown) estiver ativado nas configurações de VPN do Android, o TrackerControl não pode funcionar corretamente. Desativar esta opção. Uma notificação aparecerá se for detectada.</string>
+    <string name="troubleshooting_alwayson_desc">Se \"Bloquear conexões sem VPN\" (lockdown) estiver ativado nas configurações de VPN do Android, o TrackerControl não pode funcionar corretamente. Desative esta opção.</string>
     <string name="troubleshooting_alwayson_action">Abrir configurações de VPN</string>
     <string name="menu_apps">Outros apps</string>
     <string name="menu_protocol_other">Outros</string>
@@ -189,9 +189,9 @@
     <string name="summary_call">Desabilite o TrackerControl ao receber ou realizar chamadas. Isso pode ser usado para contornar problemas em chamadas IP/Wi-Fi.</string>
     <string name="summary_log_app">Desative para diminuir o consumo da bateria. Novos rastreadores ainda serão bloqueados, mas não serão exibidos.</string>
     <string name="summary_block_domains">AVISO: Hosts bloqueados não são exibidos na UI.</string>
-    <string name="summary_rcode">O valor padrão é 3 (NXDDOMAIN), que significa \'domínio não existente\'.</string>
+    <string name="summary_rcode">O valor padrão é 3 (NXDOMAIN), que significa \'domínio não existente\'.</string>
     <string name="summary_validate">Nome de domínio utilizado para validar a conexão de internet na porta 443 (https).</string>
-    <string name="summary_socks5_enabled">Somente tráfico TCP será enviado ao servidor proxy</string>
+    <string name="summary_socks5_enabled">Somente tráfego TCP será enviado ao servidor proxy</string>
     <string name="summary_wg_enabled">Oculta o IP do dispositivo. Encaminha as saídas TCP e UDP pelo túnel. Os apps verão erros de rede durante interrupções — com falha fechada e sem retorno ao acesso direto. Conexões iniciadas pelo servidor ao telefone podem não funcionar enquanto o túnel estiver ocioso (o keepalive fica desativado para economizar bateria).</string>
     <string name="summary_wg_config">Cole uma configuração [Interface] / [Peer] do seu provedor</string>
     <string name="summary_wg_profile">Escolha uma configuração salva do WireGuard</string>
@@ -420,7 +420,7 @@ O seu tráfego de internet não está sendo enviado para um servidor VPN remoto.
     <string name="contact_officials">Oficiais da UE</string>
     <string name="google_dpo_mail">data-protection-office@google.com</string>
     <string name="dpas_overview_url">https://edpb.europa.eu/about-edpb/board/members</string>
-    <string name="subject_request_data">Solicitação de acesso ao assunto GDPR</string>
+    <string name="subject_request_data">Solicitação de acesso do titular dos dados (RGPD)</string>
     <string name="body_request_data"><![CDATA[A quem possa interessar:\n\n\nSolicito a você, como responsável pelo tratamento de dados do app Android %1$s (ID: %2$s), que confirme se está tratando algum dado pessoal meu.\nSe estiver, forneça todas as informações exigidas pelo Artigo 15 do Regulamento Geral sobre a Proteção de Dados (RGPD) da União Europeia, incluindo:\n\n• uma cópia dos meus dados pessoais;\n• as finalidades do tratamento;\n• as categorias de dados pessoais envolvidos;\n• os destinatários a quem você divulga meus dados pessoais e as salvaguardas que oferece;\n• o período de retenção dos meus dados pessoais ou os critérios usados para determiná-lo;\n• informações sobre a origem dos meus dados pessoais; e\n• a existência de tomada de decisão automatizada (incluindo criação de perfis) e, em caso afirmativo:\n    - a lógica envolvida no processo de tomada de decisão;\n    - a importância e as consequências previstas para mim;\n    - as medidas tomadas para evitar erros, vieses e discriminação; e\n    - explique como posso expressar meu ponto de vista e contestar uma decisão.\n\nEsta solicitação diz respeito a qualquer tratamento dos meus dados pessoais feito por você, incluindo qualquer operador que trate dados pessoais em seu nome.\n\nForneça sua resposta por meios seguros, por e-mail. Aguardo uma resposta no prazo de um mês a partir do recebimento da minha solicitação.\n\nAtenciosamente,\n\n]]></string>
     <string name="body_delete_data"><![CDATA[A quem possa interessar:\n\n\nInvoco meu direito ao apagamento, conforme especificado no Artigo 17 do Regulamento Geral sobre a Proteção de Dados (RGPD) da União Europeia. Solicito a você, como responsável pelo tratamento de dados do app Android %1$s (ID: %2$s), que apague sem demora indevida os seguintes dados pessoais meus que são tratados por ele:\n• Todos os dados.\n\nO motivo da minha solicitação de remoção é que retiro ou retirei meu consentimento para o tratamento dos dados pessoais. Esta solicitação diz respeito a qualquer tratamento dos meus dados pessoais feito por você, incluindo qualquer operador que trate dados pessoais em seu nome.\n\nForneça sua resposta por meios seguros, por e-mail. Aguardo uma resposta no prazo de um mês a partir do recebimento da minha solicitação.\n\nAtenciosamente,\n\n]]></string>
     <string name="crash_dialog_text">Desculpe. O TrackerControl acabou de parar. Você se importaria em nos enviar um email com detalhes?</string>
@@ -439,7 +439,7 @@ O seu tráfego de internet não está sendo enviado para um servidor VPN remoto.
     <string name="tracker_advertising">Anúncios</string>
     <string name="tracker_analytics">Analítico</string>
     <string name="tracker_content">Essencial</string>
-    <string name="tracker_cryptomining">Criptomagem</string>
+    <string name="tracker_cryptomining">Mineração de criptomoedas</string>
     <string name="tracker_fingerprinting">Impressão digital</string>
     <string name="tracker_social">Mídias sociais</string>
     <string name="tracker_email">E-mail</string>
@@ -454,7 +454,7 @@ O seu tráfego de internet não está sendo enviado para um servidor VPN remoto.
     <string name="blocking_mode_standard">Padrão</string>
     <string name="blocking_mode_strict">Rigoroso</string>
     <string name="onboarding_blockingmode_title">Escolher Modo de Bloqueio</string>
-    <string name="onboarding_blockingmode_desc">Escolha como o TrackerControl deve lidar com rastreadores. Bloqueio dos modos de bloqueio dos rastreadores a diferentes níveis de agressividade; O modo de pesquisa continua bloqueando e ativa a extração SNI somente para medição. Você pode alterar esta opção mais tarde em Configurações.</string>
+    <string name="onboarding_blockingmode_desc">Escolha como o TrackerControl deve lidar com rastreadores. Os modos de bloqueio interrompem os rastreadores com diferentes níveis de agressividade; o modo de pesquisa mantém o bloqueio desativado e ativa a extração de SNI somente para medição. Você pode alterar isso mais tarde em Configurações.</string>
     <string name="onboarding_blockingmode_minimal_label">Mínimo (recomendado para novos usuários)</string>
     <string name="onboarding_blockingmode_minimal_desc">Bloqueia apenas rastreadores que são seguros para bloquear. Quebra de apps limitada. Bom para a maioria dos usuários.</string>
     <string name="onboarding_blockingmode_standard_label">Padrão</string>
@@ -462,7 +462,7 @@ O seu tráfego de internet não está sendo enviado para um servidor VPN remoto.
     <string name="onboarding_blockingmode_strict_label">Rigoroso</string>
     <string name="onboarding_blockingmode_strict_desc">Bloqueia tudo, incluindo serviços essenciais e domínios ambíguos. Haverá problemas significativos nos apps — muitos precisarão de uma configuração de Proteção menos restritiva.</string>
     <string name="onboarding_blockingmode_research_label">Pesquisa</string>
-    <string name="onboarding_blockingmode_research_desc">Sem bloqueio do rastreador. Transmissões de logs para ADB e permite a extração SNI para melhor detecção de nome de host. Apenas pesquisa: isso vaza seu endereço IP para servidores de rastreadores.</string>
+    <string name="onboarding_blockingmode_research_desc">Sem bloqueio de rastreadores. Registra as transmissões no ADB e ativa a extração de SNI para melhorar a detecção de nomes de host. Somente para pesquisa: isso vaza seu endereço IP para servidores de rastreadores.</string>
     <!-- Per-app remote VPN routing -->
     <string name="setting_wg_route_mode">Rotear pela VPN remota</string>
     <string name="summary_wg_route_mode">Quais aplicativos são encaminhados pela VPN remota. Os que não são continuam totalmente monitorados e filtrados — apenas se conectam pela rede deste dispositivo.</string>
@@ -591,7 +591,7 @@ O seu tráfego de internet não está sendo enviado para um servidor VPN remoto.
     <string name="onboarding_notify_title">Mantenha-se informado</string>
     <string name="onboarding_notify_desc">Permite notificações para ver atualizações em tempo real e controlar a proteção diretamente na barra de status.</string>
     <string name="onboarding_notify_action">Permitir notificações</string>
-    <string name="onboarding_notify_sure">Sem permissões de notificação, você não poderá ver atualizações ou proteção de controle em tempo real na barra de status. Tem certeza?</string>
+    <string name="onboarding_notify_sure">Sem permissão de notificação, você não poderá ver atualizações em tempo real nem controlar a proteção pela barra de status. Tem certeza?</string>
     <string name="onboarding_timeline_title">Veja a linha do tempo ser preenchida</string>
     <string name="onboarding_timeline_desc">O TrackerControl começa na linha do tempo. No início, ela pode estar vazia: os apps geralmente entram em contato com rastreadores apenas enquanto você os usa.\n\nDepois de concluir a configuração, abra alguns apps e volte ao TrackerControl para ver a atividade de rastreamento detectada e bloqueada.</string>
     <string name="onboarding_lockdown_title">Configuração de lockdown da VPN</string>
