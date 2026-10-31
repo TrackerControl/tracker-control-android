@@ -89,7 +89,7 @@
         <item quantity="few">Dovoljenih sledilcev: %d</item>
         <item quantity="other">Dovoljenih sledilcev: %d</item>
     </plurals>
-    <string name="troubleshooting_title">Odpravljaje težav</string>
+    <string name="troubleshooting_title">Odpravljanje težav</string>
     <string name="troubleshooting_battery_title">Optimizacija baterije</string>
     <string name="troubleshooting_battery_desc">Če TrackerControl v ozadju preneha delovati, za njega onemogočite optimizacijo baterije v Androidu.  Izberite \"Vsi programi\", dotaknite se TrackerControl in izberite \"Brez optimizacije\".</string>
     <string name="troubleshooting_battery_action">Onemogoči optimizacijo baterije</string>
@@ -107,7 +107,7 @@
     <string name="troubleshooting_categories_title">Blokiranje določenih kategorij sledenja</string>
     <string name="troubleshooting_categories_desc">Blokiranje za posamezne programe lahko podrobneje nastavite tako, da ga izberete in na zavihku Sledilci preklopite posamezne kategorije sledenja (npr. analitika, oglasi).</string>
     <string name="troubleshooting_alwayson_title">Vedno vklopljen VPN</string>
-    <string name="troubleshooting_alwayson_desc">Če je v nastavitvah Androida za VPN vklopljeno \"Blokiraj povezave brez VPN-a\", TrackerControl ne bo pravilno deloval.  Onemogočite to možnost.  Če je ta možnost vklopljena, se bo prikazalo obvestilo.</string>
+    <string name="troubleshooting_alwayson_desc">Če je v nastavitvah Androida za VPN vklopljeno \"Blokiraj povezave brez VPN-a\" (zaklep), TrackerControl ne bo pravilno deloval.  Onemogočite to možnost.</string>
     <string name="troubleshooting_alwayson_action">Odpri nastavitve VPN</string>
     <string name="menu_apps">Drugi programi</string>
     <string name="menu_protocol_other">Drugo</string>
@@ -209,7 +209,7 @@
     <string name="summary_rcode">Privzeta vrednost je 3 (NXDOMAIN), kar pomeni \'neobstoječa domena\'.</string>
     <string name="summary_validate">Ime domene, ki se uporablja za preverjanje veljavnosti internetne povezave na vratih 443 (https).</string>
     <string name="summary_socks5_enabled">Posredniškemu strežniku bo poslan samo promet TCP.</string>
-    <string name="summary_wg_enabled">Skrije IP naprave.  Preusmeri izhoda TCP in UDP.  Programi bodo med izpadi omrežja videli napake — ob napakah se lahko WireGuard zaustavi.  Povezave, ki jih s telefonom začne strežnik, morda ne bodo delovale, ko je povezava nedejavna (WireGuard zaradi prihranka energije morda ne bo več dejaven, ko je zaslon izklopljen).</string>
+    <string name="summary_wg_enabled">Skrije IP naprave.  Preusmeri izhodni promet TCP in UDP.  Programi bodo med izpadi videli omrežne napake — brez povratka na neposredno povezavo (fail-closed).  Povezave, ki jih s telefonom začne strežnik, morda ne bodo delovale, ko je predor nedejaven (keepalive je zaradi prihranka energije izklopljen).</string>
     <string name="summary_wg_config">Prilepi nastavitve [Interface]/[Peer] od ponudnika</string>
     <string name="summary_wg_profile">Izberi shranjene nastavitve WireGuard</string>
     <string name="summary_wg_profile_none">Ni shranjenih profilov</string>
@@ -221,7 +221,7 @@
     <string name="summary_wg_status_handshaking">Rokovanje …</string>
     <string name="summary_wg_status_blocked">Blokirano — %s</string>
     <string name="summary_wg_status_starting">Začenjanje</string>
-    <string name="summary_vpn_key_rotate_now">Vsili menjavo ključev Mullvada in WireGuarda zaradi razhroščevanja</string>
+    <string name="summary_vpn_key_rotate_now">Vsili menjavo ključev WireGuard za Mullvad in IVPN zaradi razhroščevanja</string>
     <string name="msg_vpn_key_rotation_started">Menjava ključev VPN se je začela.</string>
     <string name="msg_wg_config_invalid">Neveljavne nastavitve WireGuard: %s</string>
     <string name="msg_wg_profile_name">Ime profila</string>
@@ -231,8 +231,8 @@
     <string name="msg_wg_profile_empty">Noben profil še ni bil ustvarjen.</string>
     <string name="msg_wg_profile_active">Dejaven</string>
     <string name="msg_wg_profile_set_active">Nastavi kot dejaven</string>
-    <string name="msg_wg_profile_config_hint" tools:ignore="TypographyEllipsis">[Interface]\nZasebni ključ = …\nNaslov = …\n\n[Peer]\nJavni ključ = …\nDovoljeni IP-ji = 0.0.0.0/0, ::/0\nKončna točka = …</string>
-    <string name="msg_wg_profile_delete_confirm">Izbriši za profil WireGuard?</string>
+    <string name="msg_wg_profile_config_hint" tools:ignore="TypographyEllipsis">[Interface]\nPrivateKey = ...\nAddress = ...\n\n[Peer]\nPublicKey = ...\nAllowedIPs = 0.0.0.0/0, ::/0\nEndpoint = ...</string>
+    <string name="msg_wg_profile_delete_confirm">Ali želite izbrisati ta profil WireGuard?</string>
     <string name="msg_wg_profile_scan_hint">Usmerite fotoaparat v kodo WireGuard, ki jo prikazuje vaš ponudnik VPN-a.  Branje se izvede na vaši napravi.</string>
     <string name="msg_wg_profile_scan_no_camera">Ta naprava nima fotoaparata, s katerim bi bilo mogoče brati.</string>
     <string name="msg_wg_profile_scan_no_camera_permission">Za branje kode QR je potrebno dovoljenje za fotoaparat.</string>
@@ -243,7 +243,7 @@
     <plurals name="msg_wg_profile_imported">
         <item quantity="one">Uvožen je bil %1$d profil WireGuard.</item>
         <item quantity="two">Uvožena sta bila %1$d profila WireGuard.</item>
-        <item quantity="few">Uvoženi so bili %1$d-je profili WireGuard.</item>
+        <item quantity="few">Uvoženi so bili %1$d profili WireGuard.</item>
         <item quantity="other">Uvoženih je bilo %1$d profilov WireGuard.</item>
     </plurals>
     <plurals name="msg_wg_profile_import_skipped">
@@ -254,7 +254,7 @@
     </plurals>
     <string name="msg_wg_mullvad_account">Številka računa Mullvad</string>
     <string name="msg_wg_mullvad_recommended">Priporočljivo mesto</string>
-    <string name="msg_wg_mullvad_note">TrackerControl ustvari WireGuardov profil Mulvad.  Številka računa se shrani krajevno za bodoče profile Mulvad.  Žetoni se ne shranjujejo in in izbrisa tukajšnjega profila ne odstrani naprave iz Mullvada.</string>
+    <string name="msg_wg_mullvad_note">TrackerControl ustvari profil WireGuard za Mullvad.  Številka računa se shrani krajevno za bodoče profile Mullvad.  Žetoni se ne shranjujejo in izbris tukajšnjega profila ne odstrani naprave iz Mullvada.</string>
     <string name="msg_wg_mullvad_generating">Ustvarjanje profila WireGuard …</string>
     <string name="msg_wg_mullvad_failed">Nastavitev Mullvada je spodletela: %s</string>
     <string name="msg_wg_mullvad_countries_failed">Nalaganje držav Mullvada ni uspelo: %s</string>
@@ -298,7 +298,7 @@
     <string name="vpn_account_hint">Št. računa Mullvad</string>
     <string name="vpn_ivpn_intro">Vnesite ID računa IVPN.  Shrani se na to napravo.</string>
     <string name="vpn_ivpn_captcha_intro">Pred ustvarjanjem seje WireGuard IVPN zahteva preverjanje CAPTCHA.</string>
-    <string name="vpn_ivpn_account_hint">ID račun IVPN</string>
+    <string name="vpn_ivpn_account_hint">ID računa IVPN</string>
     <string name="vpn_ivpn_captcha_hint">Besedilo CAPTCHA</string>
     <string name="vpn_account_save">Shrani</string>
     <string name="vpn_account_saved">Račun je bil shranjen.</string>
@@ -306,7 +306,7 @@
     <string name="vpn_import_wireguard_profile">Uvozi profil WireGuard</string>
     <string name="vpn_manage_wireguard_profiles">Upravljaj s profilom WireGuard</string>
     <string name="vpn_country_load_failed">%1$s-ih držav ni bilo mogoče naložiti: %2$s</string>
-    <string name="vpn_country_load_failed_short">Držav ni bilo mogoč naložiti.</string>
+    <string name="vpn_country_load_failed_short">Držav ni bilo mogoče naložiti.</string>
     <string name="vpn_choose_country_first">Najprej izberite državo.</string>
     <string name="vpn_choose_profile_first">Najprej izberite profil WireGuard.</string>
     <string name="vpn_setup_required">Najprej nastavite Mullvad ali uvozite profil WireGuard.</string>
@@ -498,7 +498,7 @@ Prosimo, odgovor posredujte po varni poti po elektronski pošti. Odgovor pričak
 S spoštovanjem,\n\n]]></string>
     <string name="crash_dialog_text">Žal se je TrackerControl sesul.  Ali bi nam hoteli poslati e-pošto s podrobnostmi?</string>
     <string name="crash_dialog_comment">Opombe?</string>
-    <string name="instructions_monitoring_private_dns">Preklopite stikalo in uporabljajte programe.  Zasebni DNS mora biti omogočen.</string>
+    <string name="instructions_monitoring_private_dns">Preklopite stikalo in uporabljajte programe.  Zasebni DNS mora biti onemogočen.</string>
     <string name="instructions_monitoring">Preklopite stikalo in uporabljajte programe.</string>
     <string name="device_not_supported_title">Naprava ni podprta</string>
     <string name="device_not_supported_msg">Operacijski sistem vaše naprave ne dovoli nadzora in filtriranja omrežnih komunikacij.  TrackerControl to zahteva.</string>
@@ -511,7 +511,7 @@ S spoštovanjem,\n\n]]></string>
     <string name="countries_map_none">Noben cilj sledenja ni poudarjen.</string>
     <string name="tracker_advertising">Oglaševanje</string>
     <string name="tracker_analytics">Analitika</string>
-    <string name="tracker_content">Bistv. pomena</string>
+    <string name="tracker_content">Bistveno</string>
     <string name="tracker_cryptomining">Kriptorudarjenje</string>
     <string name="tracker_fingerprinting">Ustvarjanje oseb. odtisa</string>
     <string name="tracker_social">Družabno</string>
@@ -527,9 +527,9 @@ S spoštovanjem,\n\n]]></string>
     <string name="blocking_mode_standard">Običajno</string>
     <string name="blocking_mode_strict">Strogo</string>
     <string name="onboarding_blockingmode_title">Izberite način blokiranja</string>
-    <string name="onboarding_blockingmode_desc">Izberite, kako naj TrackerControl obravnava sledilce.  Različni načini sledilce blokirajo na različnih stopnjah agresivnosti.  Raziskovalni način izkopi blokiranje in omogoči izločitev SNI za namene meritev.  To lahko spremenite v nastavitvah.</string>
-    <string name="onboarding_blockingmode_minimal_label">Minimalno (priporočljivo za novem uporabnike)</string>
-    <string name="onboarding_blockingmode_minimal_desc">Blokira samo potrjene sledilce, k jih je varno blokirati.  Nekateri programi bodo morda prizadeti.  Dobro deluje za večino uporabnikov.</string>
+    <string name="onboarding_blockingmode_desc">Izberite, kako naj TrackerControl obravnava sledilce.  Različni načini sledilce blokirajo na različnih stopnjah agresivnosti.  Raziskovalni način izklopi blokiranje in omogoči izločitev SNI samo za namene meritev.  To lahko spremenite v nastavitvah.</string>
+    <string name="onboarding_blockingmode_minimal_label">Minimalno (priporočljivo za nove uporabnike)</string>
+    <string name="onboarding_blockingmode_minimal_desc">Blokira samo potrjene sledilce, ki jih je varno blokirati.  Omejena prizadetost programov.  Dobro deluje za večino uporabnikov.</string>
     <string name="onboarding_blockingmode_standard_label">Običajno</string>
     <string name="onboarding_blockingmode_standard_desc">Blokira vse znane sledilce z več seznamov.  Nekateri programi bodo morda potrebovali manj omejujoče nastavitve zaščite.</string>
     <string name="onboarding_blockingmode_strict_label">Strogo</string>
@@ -567,7 +567,7 @@ S spoštovanjem,\n\n]]></string>
     <string name="app_state_bypassed_explanation">Aplikacija se poveže neposredno, mimo TrackerControla. Zanjo se nič ne spremlja in nič ne blokira. Uporabite to kot zadnjo možnost, če aplikacija še vedno ne deluje.\n\nOpomba: možnost \"Blokiraj povezave brez VPN\" v Androidovih nastavitvah VPN mora biti IZKLOPLJENA, da to deluje.</string>
     <!-- Per-app protection screen -->
     <string name="protection_title">Zaščita</string>
-    <string name="protection_route_heading">Oddaljenoi VPN</string>
+    <string name="protection_route_heading">Oddaljeni VPN</string>
     <!-- Protection state and remote-VPN routing shown together on one row -->
     <string name="protection_app_not_working">Program ne deluje?  Dotaknite se tukaj.</string>
     <plurals name="protection_paused_resumes">
@@ -699,9 +699,9 @@ S spoštovanjem,\n\n]]></string>
     </plurals>
     <string name="insights_no_data">Podatki o sledenju še niso na voljo.  Uporabljajte svoje programe in zopet preverite!</string>
     <!-- Keep as a string: call-site/API migration and multi-count grammar are intentionally separate. -->
-    <string name="insights_shocking_fact" tools:ignore="PluralsCandidate">Ta teden so vaši programi navezali stiki s/z %1$d-imi sledilnimi podjetji preko %2$d gostiteljev sledenja!</string>
+    <string name="insights_shocking_fact" tools:ignore="PluralsCandidate">Ta teden so vaši programi navezali stik s sledilnimi podjetji (%1$d) prek %2$d gostiteljev sledenja!</string>
     <!-- Retained for Play Store copy; call-site/API migration and multi-count grammar are intentionally separate. -->
-    <string name="insights_share">Deli s priijatelji</string>
+    <string name="insights_share">Deli s prijatelji</string>
     <string name="insights_share_trackers_blocked">Blokiranih sledilnih gostiteljev</string>
     <string name="insights_share_url">TrackerControl.org</string>
     <!-- Keep as a string: call-site/API migration and multi-count grammar are intentionally separate. -->
@@ -735,4 +735,9 @@ S spoštovanjem,\n\n]]></string>
     <string name="log_connection_wifi">Wi-Fi</string>
     <string name="log_connection_other">Drugo omrežje</string>
     <string name="log_screen_on">Zaslon je vkl.</string>
+    <string name="msg_wg_blocked">Dostop do interneta je blokiran, dokler predor WireGuard ni na voljo. Izklopite nastavitev WireGuard, da ga obnovite.</string>
+    <string name="msg_wg_blocked_detail">%s Dostop do interneta ostane blokiran, dokler težava ni odpravljena ali dokler nastavitev WireGuard ni izklopljena.</string>
+    <string name="msg_wg_provider_rejected">%1$s je zavrnil nastavitev te naprave: %2$s.</string>
+    <string name="msg_wg_account_expired">%1$s sporoča, da v tem računu ni več preostalega časa, zato noben strežnik ne bo sprejel predora, dokler ne dodate časa.</string>
+    <string name="msg_wg_recovery_failed">WireGuard se je prenehal odzivati, TrackerControl pa se poskuša znova povezati.</string>
 </resources>

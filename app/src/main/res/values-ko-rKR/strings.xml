@@ -5,7 +5,7 @@
     <string name="app_android">TrackerControl은 Android 5.1 이상을 요구합니다</string>
     <string name="app_xposed">Xposed는 충돌을 너무 많이 일으켜 TrackerControl이 Google Play 스토어에서 삭제될 수 있으므로, Xposed가 설치된 동안에는 TrackerControl을 지원하지 않습니다.</string>
     <string name="app_eula">이 앱의 사용으로 인한 문제는 당신에게 달려있습니다. 어떤 앱도 추적에 대해 100% 보호를 제공할 수 없습니다.</string>
-    <string name="app_privacy"><a href="https://github.com/TrackerControl/tracker-control-android#privacy-notice">Privacy Policy</a> <a href="https://github.com/TrackerControl/tracker-control-android#cookie-policy">쿠키 정책</a></string>
+    <string name="app_privacy"><a href="https://github.com/TrackerControl/tracker-control-android#privacy-notice">개인정보 처리방침</a> <a href="https://github.com/TrackerControl/tracker-control-android#cookie-policy">쿠키 정책</a></string>
     <string name="app_ios"><a href="https://ios.trackercontrol.org">TrackerControl은 iOS에서도 사용할 수 있습니다</a></string>
     <string name="channel_foreground">실행중인 서비스</string>
     <string name="channel_notify">일반 알림</string>
@@ -116,7 +116,7 @@
     <string name="setting_pause">%1$s분 후 다시 활성화</string>
     <string name="setting_update">업데이트 확인</string>
     <plurals name="pause">
-        <item quantity="other">%d분동안 중지</item>
+        <item quantity="other">%d분 동안 중지</item>
     </plurals>
     <string name="setting_ip6">IPv6 트래픽 사용</string>
     <string name="setting_call">통화 중 비활성화</string>
@@ -167,7 +167,7 @@
     <string name="setting_doh_endpoint">DoH 엔드포인트 URL</string>
     <string name="summary_doh_endpoint">DNS-over-HTTPS 질의에 사용할 HTTPS URL</string>
     <string name="setting_doh_dns_fallback">DNS 대체</string>
-    <string name="summary_doh_dns_fallback">DoH를 사용할 수 없을 때 표준(암호화되지 않은) DNS를 사용합니다. DoH 서버가 중단되면 앱이 작동하지 않을 수 있으므로 비활성화할 때 주의하세요.</string>
+    <string name="summary_doh_dns_fallback">DoH가 실패하면 표준(암호화되지 않은) DNS를 사용합니다. 대체 DNS는 다른 DNS 제공업체를 사용할 수 있습니다. DoH 서버가 중단되었을 때 비활성화하면 앱이 작동하지 않을 수 있습니다.</string>
     <!-- Block DNS-over-TLS (DoT) -->
     <string name="setting_block_dot">Android의 비공개 DNS 차단</string>
     <string name="summary_block_dot">Android의 비공개 DNS가 활성화되어 있으면 TC가 추적을 감지할 수 없고 제대로 작동하지 않습니다.</string>
@@ -181,14 +181,14 @@
     <string name="summary_hosts_auto_update">백그라운드에서 hosts 파일을 자동으로 업데이트합니다</string>
     <string name="summary_pause">알림으로부터 일시 정지 이후, 자동으로 TrackerControl을 선택된 분 이후에 다시 활성화 (0을 입력하면 비활성화)</string>
     <string name="summary_update">하루에 두 번씩 GitHub에서 새로운 릴리스 확인</string>
-    <string name="summary_ip6">IPv6을 NetGuard로 라우팅하여 선택적으로 허용 및 차단할 수 있도록 합니다.</string>
+    <string name="summary_ip6">IPv6 트래픽을 TrackerControl로 라우팅하여 선택적으로 허용 및 차단할 수 있도록 합니다.</string>
     <string name="summary_call">전화를 수발신할 때 TrackerControl을 비활성화합니다. IP/Wi-Fi 전화 이용 시 발생하는 문제를 해결할 때 사용할 수 있습니다.</string>
     <string name="summary_log_app">배터리 사용량을 줄이기 위해 비활성화하세요. 새로운 트래커는 차단되지만, 보여지지 않습니다.</string>
     <string name="summary_block_domains">경고: 차단된 호스트는 UI에 표시되지 않습니다.</string>
     <string name="summary_rcode">기본값은 3(NXDOMAIN)이며, 이는 \"존재하지 않는 도메인\"을 의미합니다.</string>
     <string name="summary_validate">포트 443(https)에서 인터넷 연결을 검증하는 데 사용할 도메인 이름입니다.</string>
     <string name="summary_socks5_enabled">TCP 트래픽만 프록시 서버로 전송됩니다</string>
-    <string name="summary_wg_enabled">기기 IP를 숨깁니다. TCP 및 UDP 송신 트래픽을 터널링합니다. 중단 중에는 앱에 네트워크 오류가 표시되며 직접 연결로 전환되지 않습니다. 터널이 유휴 상태일 때(배터리 절약을 위해 연결 유지가 비활성화됨) 서버에서 시작한 전화 연결은 작동하지 않을 수 있습니다.</string>
+    <string name="summary_wg_enabled">기기 IP를 숨깁니다. TCP 및 UDP 송신 트래픽을 터널링합니다. 중단 중에는 앱에 네트워크 오류가 표시되며 직접 연결로 전환되지 않습니다. 터널이 유휴 상태인 동안에는 서버가 휴대전화로 시작하는 연결이 작동하지 않을 수 있습니다(배터리 절약을 위해 연결 유지가 비활성화됨).</string>
     <string name="summary_wg_config">제공업체의 [Interface] / [Peer] 구성을 붙여 넣으세요</string>
     <string name="summary_wg_profile">저장된 WireGuard 구성을 선택하세요</string>
     <string name="summary_wg_profile_none">저장된 프로필 없음</string>
@@ -655,4 +655,56 @@ EU 일반 데이터 보호 규정(GDPR) 제17조에 명시된 삭제 권리를 �
     <string name="log_connection_blocked">차단됨</string>
     <string name="log_connection_other">기타 네트워크</string>
     <string name="log_screen_on">화면 켜짐</string>
+    <string name="tab_vpn">VPN</string>
+    <string name="insights_overview_status">%1$s %2$s · %3$s %4$s</string>
+    <string name="insights_overview_status_share">%1$s (%2$s)</string>
+    <string name="timeline_insights_status">%1$s %2$s · %3$s %4$s</string>
+    <string name="setting_vpn4">VPN IPv4: %s</string>
+    <string name="setting_vpn6">VPN IPv6: %s</string>
+    <string name="setting_dns">VPN DNS: %s</string>
+    <string name="dialog_doh_endpoint">DNS 제공업체가 제공한 전체 HTTPS URL을 제공업체별 경로를 포함하여 입력하세요(예: https://dns.quad9.net/dns-query). TrackerControl에서 제외된 앱이나 자체 암호화 DNS를 사용하는 앱은 이 설정을 우회합니다.</string>
+    <string name="msg_invalid_doh_endpoint">DNS-over-HTTPS용 전체 HTTPS URL을 제공업체 경로를 포함하여 입력하세요(예: https://dns.quad9.net/dns-query).</string>
+    <string name="vpn_status_mullvad">Mullvad</string>
+    <string name="vpn_provider_mullvad">Mullvad VPN</string>
+    <string name="vpn_provider_ivpn">IVPN</string>
+    <string name="vpn_intro_mullvad_title">Mullvad</string>
+    <string name="vpn_intro_ivpn_title">IVPN</string>
+    <string name="vpn_intro_proton_title">Proton VPN</string>
+    <string name="vpn_intro_wireguard_title">WireGuard</string>
+    <string name="vpn_mode_mullvad">Mullvad</string>
+    <string name="vpn_mode_ivpn">IVPN</string>
+    <string name="vpn_mode_wireguard">WireGuard</string>
+    <string name="msg_wg_blocked">WireGuard 터널을 사용할 수 없는 동안에는 인터넷 접속이 차단됩니다. 복구하려면 WireGuard 설정을 끄세요.</string>
+    <string name="msg_wg_blocked_detail">%s 이 문제가 해결되거나 WireGuard 설정이 꺼질 때까지 인터넷 접속은 계속 차단됩니다.</string>
+    <string name="msg_wg_provider_rejected">%1$s에서 이 기기의 설정을 거부했습니다: %2$s.</string>
+    <string name="msg_wg_account_expired">%1$s에서 이 계정의 남은 이용 기간이 없다고 알려 왔으므로, 기간이 추가될 때까지 어떤 서버도 터널을 수락하지 않습니다.</string>
+    <string name="msg_wg_recovery_failed">WireGuard가 응답하지 않아 TrackerControl이 다시 연결을 시도하고 있습니다.</string>
+    <string name="summary_log_logcat">연구 모드에서는 트래커 차단이 비활성화됩니다. 식별된 트래커는 ADB에 기록되며, 호스트 이름을 더 잘 감지하도록 SNI 추출이 활성화됩니다. adb logcat에서 \'TC-Log\' 태그로 로그를 가져올 수 있습니다.</string>
+    <string name="msg_research_mode_notice">연구 모드가 켜져 있습니다. 트래커 차단이 비활성화되었습니다. 눌러서 설정을 변경하세요.</string>
+    <string name="msg_revoked">TrackerControl 연결이 끊어졌습니다. 다른 VPN 앱 또는 시스템 때문일 수 있습니다. 눌러서 다시 연결하세요.</string>
+    <string name="accessibility_stat_description">%1$s, %2$s</string>
+    <string name="contact_playstore">Google</string>
+    <string name="google_dpo_mail">data-protection-office@google.com</string>
+    <string name="dpas_overview_url">https://edpb.europa.eu/about-edpb/board/members</string>
+    <string name="insights_share_url">TrackerControl.org</string>
+    <string name="title_blocklists">사용자 지정 차단 목록</string>
+    <string name="summary_manage_blocklists">hosts 파일 형식의 차단 목록을 추가합니다. 기본 제공 트래커 목록으로 도메인을 식별할 수 없을 때 사용됩니다.</string>
+    <string name="title_add_blocklist">차단 목록 추가</string>
+    <string name="title_delete_blocklist">차단 목록 삭제</string>
+    <string name="msg_delete_blocklist_confirm">이 차단 목록을 삭제하시겠습니까?</string>
+    <string name="msg_apply_blocklists_failed">차단 목록을 적용하지 못했습니다</string>
+    <string name="blocklist_format">hosts 형식 차단 목록의 HTTPS URL을 입력하세요(예: 0.0.0.0 ads.example.com). 브라우저 필터 규칙은 지원되지 않습니다.</string>
+    <string name="blocklist_minimal_notice">사용자 지정 차단 목록은 최소 모드에서 비활성 상태입니다. 사용하려면 설정에서 표준 또는 엄격으로 전환하세요.</string>
+    <string name="blocklist_research_notice">연구 모드가 켜져 있는 동안 사용자 지정 차단 목록은 비활성 상태입니다. 트래커 차단을 사용하려면 설정에서 연구를 끄세요.</string>
+    <string name="blocklist_browser_notice">브라우저 트래커 보호는 기본적으로 꺼져 있습니다. 사용자 지정 차단 목록을 사용하려면 브라우저의 앱 페이지에서 켜세요.</string>
+    <string name="blocklist_downloading">차단 목록 다운로드 중… 오프라인이면 연결을 기다립니다.</string>
+    <string name="blocklist_not_downloaded">아직 다운로드되지 않음</string>
+    <string name="blocklist_download_failed">차단 목록을 다운로드하거나 적용하지 못했습니다. 목록 오류를 확인하고 다시 업데이트해 보세요.</string>
+    <string name="blocklist_update">차단 목록 업데이트</string>
+    <string name="vpn_enabled_switch_description">VPN</string>
+    <string name="log_connection_wifi">Wi-Fi</string>
+    <string-array name="protocolNames">
+        <item>UDP</item>
+        <item>TCP</item>
+    </string-array>
 </resources>

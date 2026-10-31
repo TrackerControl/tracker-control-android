@@ -174,7 +174,7 @@
     <string name="setting_doh_endpoint">DoH lõpp-punkti URL</string>
     <string name="summary_doh_endpoint">HTTPS-i URL DNS-i üle HTTPS-i päringute jaoks</string>
     <string name="setting_doh_dns_fallback">DNS-i tagavara</string>
-    <string name="summary_doh_dns_fallback">Kasuta DoH-i puudumisel tavalist (krüptimata) DNS-i. Väljalülitamine võib rakendused rikkuda, kui DoH-server ei tööta.</string>
+    <string name="summary_doh_dns_fallback">Kasuta DoH-i tõrke korral tavalist (krüptimata) DNS-i. Varu-DNS võib kasutada teist DNS-i teenusepakkujat. Väljalülitamine võib rakendused rikkuda, kui DoH-server ei tööta.</string>
     <!-- Block DNS-over-TLS (DoT) -->
     <string name="setting_block_dot">Blokeeri Androidi privaatne nimelahendus</string>
     <string name="summary_block_dot">Kui Androidi privaatne nimelahendus on kasutusel, siis TrackerControl ei suuda ühtegi jälitamist tuvastada ega seega tööta korralikult.</string>
@@ -264,7 +264,7 @@
     <string name="vpn_account_change">Muuda</string>
     <string name="vpn_account_cancel">Katkesta</string>
     <string name="vpn_mullvad_intro">Sisesta oma Mullvadi kasutajakonto number. Ta on salvestatud selles seadmes.</string>
-    <string name="vpn_mullvad_account_note">See konto on kasutusel Mullvadi maakohaste ühenduste jaoks.</string>
+    <string name="vpn_mullvad_account_note">See konto on kasutusel Mullvadi riigipõhiste ühenduste jaoks.</string>
     <string name="vpn_get_mullvad_account">Tee endale Mullvadi kasutajakonto</string>
     <string name="vpn_get_ivpn_account">Tee endale IVPN-i kasutajakonto</string>
     <string name="vpn_account_hint">Mullvadi kasutajakonto number</string>
@@ -358,7 +358,7 @@ Sinu internetiliiklust ei saadeta kaug-VPN-i serverisse.</string>
     <string name="title_host_blocked">Aadress on blokeeritud</string>
     <string name="title_interactive_allowed">Luba, kui ekraan on sisse lülitatud</string>
     <string name="title_roaming_blocked">Blokeeri andmerändluse ajal</string>
-    <string name="title_metered">Vaikimisi eelab rakendus, et WiFi ühendus pole mahupõhine ja mobiilne andmeside on mahupõhine</string>
+    <string name="title_metered">Vaikimisi loetakse WiFi ühendus mittemahupõhiseks ja mobiilne andmeside mahupõhiseks</string>
     <string name="title_rate">Määra hinnang</string>
     <string name="title_allow">Luba</string>
     <string name="title_block">Keela</string>
@@ -396,7 +396,7 @@ Sinu internetiliiklust ei saadeta kaug-VPN-i serverisse.</string>
     <string name="no">Ei</string>
     <string name="menu_csv">Ekspordi CSV-failina</string>
     <string name="exporting">Ekspordin…</string>
-    <string name="export_failed">Eksportimine ei õnenstunud</string>
+    <string name="export_failed">Eksportimine ei õnnestunud</string>
     <string name="exported">Eksportimine andmeruumi õnnestus!</string>
     <!-- App Details -->
     <string name="title_activity_detail">Üksikasjad</string>
@@ -406,7 +406,7 @@ Sinu internetiliiklust ei saadeta kaug-VPN-i serverisse.</string>
     <string name="app_info">Halda rakendust</string>
     <!-- Actions -->
     <string name="block_tracking">Blokeeri jälitajaid</string>
-    <string name="block_tracking_description">Väga paljud rakendused saadavad andmeid kolmandatele osapooltele ehk jälitajatele. TrackerControl võimaldab sul neid võrguühendusi valikuliselt blokeerida. Kasuta sellist võimalust siiski mõistlikult, sest rakenduste arendajad sõltuvad sellistest teenustest nagu reklaamimine või vigade otsing.</string>
+    <string name="block_tracking_description">Väga paljud rakendused saadavad andmeid kolmandatele osapooltele ehk jälitajatele. TrackerControl võimaldab sul neid võrguühendusi valikuliselt blokeerida. Kasuta sellist võimalust siiski mõistlikult, sest rakenduste arendajad sõltuvad sellistest teenustest, eriti reklaamist.</string>
     <string name="personalised_ads">Piira isikupärastamist</string>
     <string name="personalised_ads_description">Android pakub võimalust piirata rakenduste juurdepääsu sinu seadme Google Advertising ID-le. Rakendused võivad seda seadet siiski eirata ja sama ID-d kasutada. Google\'i eeskirjade kohaselt võivad nad jätkata selle ID kogumist ka analüütika eesmärgil. Pead usaldama Google\'it ja andmeid koguvat ettevõtet.</string>
     <string name="data_managment">Halda andmeid</string>
@@ -473,7 +473,7 @@ Lugupidamisega,\n\n]]></string>
     <string name="countries_map_none">Ühtegi jälgimise sihtkohta pole esile tõstetud.</string>
     <string name="tracker_advertising">Reklaam</string>
     <string name="tracker_analytics">Analüütika</string>
-    <string name="tracker_content">Põhitarvikud</string>
+    <string name="tracker_content">Olulised</string>
     <string name="tracker_cryptomining">Krüptokaevandamine</string>
     <string name="tracker_fingerprinting">Sõrmejäljestamine</string>
     <string name="tracker_social">Sotsiaalmeedia</string>
@@ -646,7 +646,7 @@ Lugupidamisega,\n\n]]></string>
     <string name="insights_pervasive_trackers">Kõige levinumad jälitajad</string>
     <string name="insights_top_domains">Peamised jälitajate domeenid</string>
     <!-- Joins the alternative domain names of one tracker, e.g. "example.com or example.net". Keep the surrounding spaces. -->
-    <string name="insights_domain_alias_separator">"„ või „"</string>
+    <string name="insights_domain_alias_separator">" või "</string>
     <!-- Keep as a string: call-site/API migration and multi-count grammar are intentionally separate. -->
     <string name="insights_in_apps" tools:ignore="PluralsCandidate">%d rakenduses</string>
     <plurals name="insights_apps_count">
@@ -676,4 +676,46 @@ Lugupidamisega,\n\n]]></string>
     <string name="log_connection_wifi">WiFi</string>
     <string name="log_connection_other">Muu võrk</string>
     <string name="log_screen_on">Ekraan sisse lülitatud</string>
+    <string name="menu_legend">Legend</string>
+    <string name="insights_overview_status">%1$s %2$s · %3$s %4$s</string>
+    <string name="insights_overview_status_share">%1$s (%2$s)</string>
+    <string name="timeline_insights_status">%1$s %2$s · %3$s %4$s</string>
+    <string name="dialog_doh_endpoint">Sisesta oma DNS-teenusepakkuja antud täielik HTTPS-i URL koos pakkujaspetsiifilise teega (näiteks https://dns.quad9.net/dns-query). TrackerControlist välja jäetud rakendused ja rakendused, mis kasutavad oma krüpteeritud DNS-i, ignoreerivad seda seadet.</string>
+    <string name="msg_invalid_doh_endpoint">Sisesta DNS-i üle HTTPS-i jaoks täielik HTTPS-i URL koos pakkuja teega (näiteks https://dns.quad9.net/dns-query).</string>
+    <string name="vpn_status_mullvad">Mullvad</string>
+    <string name="vpn_provider_mullvad">Mullvad VPN</string>
+    <string name="vpn_provider_ivpn">IVPN</string>
+    <string name="vpn_intro_mullvad_title">Mullvad</string>
+    <string name="vpn_intro_ivpn_title">IVPN</string>
+    <string name="vpn_intro_proton_title">Proton VPN</string>
+    <string name="vpn_intro_wireguard_title">WireGuard</string>
+    <string name="vpn_mode_mullvad">Mullvad</string>
+    <string name="vpn_mode_ivpn">IVPN</string>
+    <string name="vpn_mode_wireguard">WireGuard</string>
+    <string name="msg_wg_blocked">Juurdepääs internetile on blokeeritud seni, kuni WireGuardi tunnel pole saadaval. Selle taastamiseks lülita WireGuardi seade välja.</string>
+    <string name="msg_wg_blocked_detail">%s Juurdepääs internetile jääb blokeerituks, kuni probleem on lahendatud või WireGuardi seade välja lülitatud.</string>
+    <string name="msg_wg_provider_rejected">%1$s keeldus selle seadme seadistamisest: %2$s.</string>
+    <string name="msg_wg_account_expired">%1$s teatab, et sellel kontol pole aega järel, mistõttu ükski server ei võta tunnelit vastu, kuni aega juurde lisatakse.</string>
+    <string name="msg_wg_recovery_failed">WireGuard lõpetas vastamise ja TrackerControl proovib uuesti ühendust luua.</string>
+    <string name="summary_log_logcat">Uurimisrežiim keelab jälitajate blokeerimise. Tuvastatud jälitajad logitakse ADB-sse ja SNI väljavõtmine lülitatakse sisse, et hostinimesid paremini tuvastada. Logid saad kätte käsuga adb logcat sildi \'TC-Log\' abil.</string>
+    <string name="msg_research_mode_notice">Uurimisrežiim on sees. Jälitajate blokeerimine on keelatud. Puuduta seadete muutmiseks.</string>
+    <string name="msg_revoked">TrackerControli ühendus katkestati, tõenäoliselt mõne teise VPN-rakenduse või süsteemi poolt. Puuduta uuesti ühendamiseks.</string>
+    <string name="title_log_whois">Whois %1$s</string>
+    <string name="title_log_port">Port %1$d</string>
+    <string name="accessibility_stat_description">%1$s, %2$s</string>
+    <string name="insights_share_url">TrackerControl.org</string>
+    <string name="title_blocklists">Kohandatud blokeerimisloendid</string>
+    <string name="summary_manage_blocklists">Lisa blokeerimisloendeid hosts-faili vormingus. Neid kasutatakse siis, kui sisseehitatud jälitajaloendid domeeni ei tuvasta.</string>
+    <string name="title_add_blocklist">Lisa blokeerimisloend</string>
+    <string name="title_delete_blocklist">Kustuta blokeerimisloend</string>
+    <string name="msg_delete_blocklist_confirm">Kas oled kindel, et soovid selle blokeerimisloendi kustutada?</string>
+    <string name="msg_apply_blocklists_failed">Blokeerimisloendite rakendamine ebaõnnestus</string>
+    <string name="blocklist_format">Sisesta hosts-vormingus blokeerimisloendi HTTPS-i URL (näiteks 0.0.0.0 ads.example.com). Brauseri filtrireegleid ei toetata.</string>
+    <string name="blocklist_minimal_notice">Kohandatud blokeerimisloendid pole minimaalrežiimis aktiivsed. Nende kasutamiseks lülitu seadetes režiimile Tavaline või Range.</string>
+    <string name="blocklist_research_notice">Kohandatud blokeerimisloendid pole aktiivsed, kui uurimisrežiim on sees. Jälitajate blokeerimise lubamiseks lülita seadetes uurimisrežiim välja.</string>
+    <string name="blocklist_browser_notice">Brauseri jälitajakaitse on vaikimisi välja lülitatud. Kohandatud blokeerimisloendite kasutamiseks lülita see sisse brauseri rakenduse lehel.</string>
+    <string name="blocklist_downloading">Blokeerimisloendite allalaadimine… Ootan ühendust, kui oled võrguühenduseta.</string>
+    <string name="blocklist_not_downloaded">Pole veel alla laaditud</string>
+    <string name="blocklist_download_failed">Blokeerimisloendeid ei õnnestunud alla laadida ega rakendada. Kontrolli loendite vigu ja proovi uuesti värskendada.</string>
+    <string name="blocklist_update">Värskenda blokeerimisloendeid</string>
 </resources>

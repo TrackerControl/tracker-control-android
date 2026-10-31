@@ -60,7 +60,7 @@
         <item quantity="one">Pokaż jeszcze %d firmę</item>
         <item quantity="few">Pokaż jeszcze %d firmy</item>
         <item quantity="many">Pokaż jeszcze %d firm</item>
-        <item quantity="other">Pokaż jeszcze %d firm</item>
+        <item quantity="other">Pokaż jeszcze %d firmy</item>
     </plurals>
     <string name="feed_allow_company_in_app">Zezwól na %1$s w aplikacji %2$s</string>
     <string name="feed_block_company_in_app">Zablokuj %1$s w aplikacji %2$s</string>
@@ -77,13 +77,13 @@
         <item quantity="one">%d zablokowany tracker</item>
         <item quantity="few">%d zablokowane trackery</item>
         <item quantity="many">%d zablokowanych trackerów</item>
-        <item quantity="other">%d zablokowanych trackerów</item>
+        <item quantity="other">%d zablokowanego trackera</item>
     </plurals>
     <plurals name="timeline_trackers_allowed">
         <item quantity="one">%d dozwolony tracker</item>
         <item quantity="few">%d dozwolone trackery</item>
         <item quantity="many">%d dozwolonych trackerów</item>
-        <item quantity="other">%d dozwolonych trackerów</item>
+        <item quantity="other">%d dozwolonego trackera</item>
     </plurals>
     <string name="troubleshooting_title">Rozwiązywanie problemów</string>
     <string name="troubleshooting_battery_title">Optymalizacja baterii</string>
@@ -128,10 +128,10 @@
         <item quantity="one">Wstrzymaj na %d minutę</item>
         <item quantity="few">Wstrzymaj na %d minuty</item>
         <item quantity="many">Wstrzymaj na %d minut</item>
-        <item quantity="other">Pauza dla %d min</item>
+        <item quantity="other">Wstrzymaj na %d minuty</item>
     </plurals>
     <string name="setting_ip6">Włącz ruch IPv6</string>
-    <string name="setting_call">Wyłączanie na wezwanie</string>
+    <string name="setting_call">Wyłącz podczas połączenia</string>
     <string name="setting_reload_onconnectivity">Przeładowanie przy każdej zmianie łączności</string>
     <string name="setting_tcp_mss_clamp">Tryb zgodności z tetheringiem</string>
     <string name="summary_tcp_mss_clamp">Kieruj cały ruch przez TrackerControl i ogranicz rozmiar segmentów TCP, aby naprawić połączenia tetheringowe, które się zatrzymują lub nie mają dostępu do Internetu. Dostęp do sieci lokalnej nie omija już TrackerControl, a wydajność może się zmniejszyć.</string>
@@ -146,11 +146,11 @@
     <string name="setting_include_all_tracking">Uwzględnij wszystkie aplikacje w śledzeniu</string>
     <string name="summary_include_all_tracking">Ponownie włącz monitorowanie trackerów dla wszystkich aplikacji.</string>
     <string name="setting_block_domains">Włącz plik hostów</string>
-    <string name="setting_rcode">Gospodarze blokujący reakcję: %s</string>
+    <string name="setting_rcode">Odpowiedź blokowania hostów: %s</string>
     <string name="setting_vpn4">VPN IPv4: %s</string>
     <string name="setting_vpn6">VPN IPv6: %s</string>
     <string name="setting_dns">VPN DNS: %s</string>
-    <string name="setting_validate">Validate at: %s</string>
+    <string name="setting_validate">Waliduj w: %s</string>
     <string name="setting_ttl">Minimalne DNS TTL: %s s</string>
     <string name="setting_socks5_enabled">Użyj proxy SOCKS5</string>
     <string name="setting_socks5_addr">Adres SOCKS5: %s</string>
@@ -182,7 +182,7 @@
     <string name="setting_doh_endpoint">Adres URL punktu końcowego DoH</string>
     <string name="summary_doh_endpoint">Adres URL HTTPS dla zapytań DNS-over-HTTPS</string>
     <string name="setting_doh_dns_fallback">Awaryjny DNS</string>
-    <string name="summary_doh_dns_fallback">Używaj standardowego (nieszyfrowanego) DNS, gdy DoH jest niedostępny. Wyłączenie może spowodować awarie aplikacji, jeśli serwer DoH nie działa.</string>
+    <string name="summary_doh_dns_fallback">Używaj standardowego (nieszyfrowanego) DNS, gdy DoH jest niedostępny. Zapasowy DNS może korzystać z innego dostawcy DNS. Wyłączenie może spowodować awarie aplikacji, jeśli serwer DoH nie działa.</string>
     <!-- Block DNS-over-TLS (DoT) -->
     <string name="setting_block_dot">Blokuj prywatny DNS Androida</string>
     <string name="summary_block_dot">Przy włączonym prywatnym DNS Androida TC nie może wykrywać śledzenia i nie działa prawidłowo.</string>
@@ -238,13 +238,13 @@
         <item quantity="one">Zaimportowano %1$d profil WireGuard</item>
         <item quantity="few">Zaimportowano %1$d profile WireGuard</item>
         <item quantity="many">Zaimportowano %1$d profili WireGuard</item>
-        <item quantity="other">Zaimportowano %1$d profili WireGuard</item>
+        <item quantity="other">Zaimportowano %1$d profilu WireGuard</item>
     </plurals>
     <plurals name="msg_wg_profile_import_skipped">
         <item quantity="one">Pominięto %1$d plik: nieprawidłowa konfiguracja WireGuard</item>
         <item quantity="few">Pominięto %1$d pliki: nieprawidłowe konfiguracje WireGuard</item>
         <item quantity="many">Pominięto %1$d plików: nieprawidłowe konfiguracje WireGuard</item>
-        <item quantity="other">Pominięto %1$d plików: nieprawidłowe konfiguracje WireGuard</item>
+        <item quantity="other">Pominięto %1$d pliku: nieprawidłowe konfiguracje WireGuard</item>
     </plurals>
     <string name="msg_wg_mullvad_account">Numer konta Mullvad</string>
     <string name="msg_wg_mullvad_recommended">Zalecana lokalizacja</string>
@@ -329,10 +329,10 @@ Twój ruch internetowy nie jest wysyłany do zdalnego serwera VPN.</string>
     <string name="msg_doh_unreachable">Nie można połączyć się z bezpiecznym DNS (DoH), mimo że masz aktywne połączenie z Internetem. Jeśli powtarza się to często, rozważ wyłączenie tej funkcji w ustawieniach sieci.</string>
     <string name="msg_start_failed">Android odmówił uruchomienia usługi VPN w tym momencie. Jest to prawdopodobnie spowodowane błędem w twojej wersji Androida.</string>
     <string name="msg_try">Spróbuj TrackerControl</string>
-    <string name="msg_log_disabled">Rejestracja ruchu jest wyłączona, użyj powyższego przełącznika, aby włączyć rejestrowanie. Rejestrowanie ruchu drogowego może spowodować dodatkowe zużycie baterii.</string>
+    <string name="msg_log_disabled">Rejestracja ruchu jest wyłączona, użyj powyższego przełącznika, aby włączyć rejestrowanie. Rejestrowanie ruchu sieciowego może spowodować dodatkowe zużycie baterii.</string>
     <string name="msg_clear_activity">Usuwa zarejestrowaną aktywność tej aplikacji. Ustawienia blokowania/zezwalania poszczególnych trackerów dla tej aplikacji zostają zachowane.</string>
     <string name="msg_update_last">Ostatnia aktualizacja: %s</string>
-    <string name="msg_metered">Sieć jest mierzona</string>
+    <string name="msg_metered">Sieć z limitem danych</string>
     <string name="msg_inactive">Brak aktywnego połączenia z Internetem</string>
     <string name="msg_queue">TrackerControl jest zajęty</string>
     <string name="msg_update">Aktualizacja dostępna, dotknij, aby pobrać</string>
@@ -359,27 +359,27 @@ Twój ruch internetowy nie jest wysyłany do zdalnego serwera VPN.</string>
     <string name="title_rport">Port docelowy</string>
     <string name="title_ruid">Aplikacja docelowa</string>
     <string name="title_external">Dla serwera zewnętrznego wybierz \'nikt\'</string>
-    <string name="title_unmetered_allowed">Nieograniczony ruch jest dozwolony</string>
-    <string name="title_unmetered_blocked">Nieograniczony ruch jest zablokowany</string>
-    <string name="title_unmetered_disabled">Nie stosuje się przepisów niemających zastosowania</string>
-    <string name="title_metered_allowed">Dozwolony jest ruch pomiarowy</string>
-    <string name="title_metered_blocked">Zablokowany jest ruch pomiarowy</string>
-    <string name="title_metered_disabled">Zasady pomiaru nie są stosowane</string>
+    <string name="title_unmetered_allowed">Ruch w sieciach bez limitu danych jest dozwolony</string>
+    <string name="title_unmetered_blocked">Ruch w sieciach bez limitu danych jest zablokowany</string>
+    <string name="title_unmetered_disabled">Reguły dla sieci bez limitu danych nie są stosowane</string>
+    <string name="title_metered_allowed">Ruch w sieciach z limitem danych jest dozwolony</string>
+    <string name="title_metered_blocked">Ruch w sieciach z limitem danych jest zablokowany</string>
+    <string name="title_metered_disabled">Reguły dla sieci z limitem danych nie są stosowane</string>
     <string name="title_host_allowed">Adres jest dozwolony</string>
     <string name="title_host_blocked">Adres jest blokowany</string>
     <string name="title_interactive_allowed">Pozwól, gdy ekran jest włączony</string>
     <string name="title_roaming_blocked">Blokuj podczas roamingu</string>
-    <string name="title_metered">Domyślnie połączenie Wi-Fi jest uważane za nierozliczone, a połączenie komórkowe za zmierzone</string>
-    <string name="title_rate">Stawka</string>
+    <string name="title_metered">Domyślnie połączenie Wi-Fi jest uważane za sieć bez limitu danych, a połączenie komórkowe za sieć z limitem danych</string>
+    <string name="title_rate">Oceń</string>
     <string name="title_allow">Pozwól</string>
-    <string name="title_block">Blok</string>
+    <string name="title_block">Blokuj</string>
     <string name="title_nobody">nikt</string>
     <string name="title_log_whois">Whois %1$s</string>
     <string name="title_log_port">Port %1$d</string>
-    <string name="title_log_copy">Kopia</string>
+    <string name="title_log_copy">Kopiuj</string>
     <!-- App Overview -->
     <string name="tracked_app_icon">Wyłącz dostęp do Internetu dla tej aplikacji</string>
-    <string name="tracked_app_name">Nazwa wniosku</string>
+    <string name="tracked_app_name">Nazwa aplikacji</string>
     <!-- Dynamic content descriptions for the app-icon Internet toggle in the app list (issue #231) -->
     <string name="toggle_block_internet_description">Zablokuj dostęp do Internetu dla %1$s</string>
     <string name="toggle_allow_internet_description">Zezwól na dostęp do Internetu dla %1$s</string>
@@ -393,28 +393,28 @@ Twój ruch internetowy nie jest wysyłany do zdalnego serwera VPN.</string>
     <string name="accessibility_tracker_blocking_enabled">Blokowanie trackerów włączone</string>
     <string name="accessibility_tracker_blocking_disabled">Blokowanie trackerów wyłączone</string>
     <plurals name="n_companies_found_week">
-        <item quantity="one">aplikacja kontaktowała się z %d firmą w ubiegłym tygodniu</item>
-        <item quantity="few">aplikacja kontaktowała się z %d firmami w ubiegłym tygodniu</item>
-        <item quantity="many">aplikacja kontaktowała się z %d firmami w ubiegłym tygodniu</item>
-        <item quantity="other">aplikacja kontaktowała się z %d firmami w ubiegłym tygodniu</item>
+        <item quantity="one">kontaktowała się z %d firmą w zeszłym tygodniu</item>
+        <item quantity="few">kontaktowała się z %d firmami w zeszłym tygodniu</item>
+        <item quantity="many">kontaktowała się z %d firmami w zeszłym tygodniu</item>
+        <item quantity="other">kontaktowała się z %d firmą w zeszłym tygodniu</item>
     </plurals>
     <plurals name="n_companies_found">
-        <item quantity="one">aplikacja kontaktowała się z %d firmą w ciągu całego czasu</item>
-        <item quantity="few">aplikacja kontaktowała się z %d firmami w ciągu całego czasu</item>
-        <item quantity="many">aplikacja kontaktowała się z %d firmami w ciągu całego czasu</item>
-        <item quantity="other">aplikacja kontaktowała się z %d firmami w ciągu całego czasu</item>
+        <item quantity="one">kontaktowała się z %d firmą w ciągu całego czasu</item>
+        <item quantity="few">kontaktowała się z %d firmami w ciągu całego czasu</item>
+        <item quantity="many">kontaktowała się z %d firmami w ciągu całego czasu</item>
+        <item quantity="other">kontaktowała się z %d firmą w ciągu całego czasu</item>
     </plurals>
-    <string name="confirm_ipinfo_title">Pobierasz informacje o organizacji?</string>
-    <string name="confirm_ipinfo">Skontaktuje się z zewnętrznym serwisem ipinfo.io i udostępnia im dane o kontaktach z adresami IP.</string>
-    <string name="external_servers">Otrzymujesz automatycznie e-mail od dewelopera?</string>
-    <string name="confirm_google_info">Ta aplikacja może automatycznie uzyskać wiadomość e-mail od twórcy aplikacji z Google Play Store za Ciebie.</string>
+    <string name="confirm_ipinfo_title">Pobrać informacje o organizacji?</string>
+    <string name="confirm_ipinfo">Spowoduje to kontakt z zewnętrzną usługą ipinfo.io i udostępnienie jej danych o adresach IP, z którymi nawiązano połączenie.</string>
+    <string name="external_servers">Pobierać automatycznie adres e-mail dewelopera?</string>
+    <string name="confirm_google_info">Ta aplikacja może automatycznie pobrać dla Ciebie adres e-mail twórcy aplikacji ze Sklepu Google Play.</string>
     <string name="ok">OK</string>
     <string name="yes">Tak</string>
     <string name="no">Nie</string>
     <string name="menu_csv">Eksport jako CSV</string>
     <string name="exporting">Eksportowanie..</string>
     <string name="export_failed">Eksport nie powiódł się</string>
-    <string name="exported">Eksportuj do pamięci</string>
+    <string name="exported">Wyeksportowano do pamięci!</string>
     <!-- App Details -->
     <string name="title_activity_detail">Szczegóły</string>
     <string name="tab_trackers">Trackery</string>
@@ -422,35 +422,35 @@ Twój ruch internetowy nie jest wysyłany do zdalnego serwera VPN.</string>
     <string name="tab_actions">Prawa do danych</string>
     <string name="app_info">Zarządzaj aplikacją</string>
     <!-- Actions -->
-    <string name="block_tracking">Trackery blokowe</string>
+    <string name="block_tracking">Blokuj trackery</string>
     <string name="block_tracking_description">Wiele aplikacji wysyła dane do stron trzecich, tzw. trackerów. TrackerControl pozwala na selektywne blokowanie tych transmisji sieciowych. Korzystaj z tego jednak mądrze, ponieważ twórcy aplikacji polegają na tych usługach, a zwłaszcza na reklamie.</string>
-    <string name="personalised_ads">Limit Personalizacja</string>
+    <string name="personalised_ads">Ogranicz personalizację</string>
     <string name="personalised_ads_description">Android oferuje ograniczenie dostępu aplikacji do Google Advertising ID swojego urządzenia. Jednak aplikacje mogą potencjalnie ignorować to ustawienie i nadal używać tego identyfikatora. Mogą one również nadal zbierać ten identyfikator do celów analitycznych, zgodnie z polityką Google. Potrzebujesz zaufania do Google i firmy zbierającej dane.</string>
     <string name="data_managment">Zarządzanie danymi</string>
-    <string name="data_management_description">Ogólne rozporządzenie UE w sprawie ochrony danych (PKBR) pozwala użytkownikom z UE na zarządzanie wszelkimi związanymi z nimi danymi. Aplikacja ta udostępnia szablony wiadomości e-mail, które umożliwiają dotarcie do dewelopera. Deweloper musi odpowiedzieć w ciągu jednego miesiąca.</string>
+    <string name="data_management_description">Ogólne rozporządzenie UE w sprawie ochrony danych (RODO) pozwala użytkownikom z UE na zarządzanie wszelkimi związanymi z nimi danymi. Aplikacja ta udostępnia szablony wiadomości e-mail, które umożliwiają dotarcie do dewelopera. Deweloper musi odpowiedzieć w ciągu jednego miesiąca.</string>
     <string name="contacts">Kontakt </string>
     <string name="contacts_description">Jeśli uważasz, że dana aplikacja narusza zasady ochrony danych osobowych, możesz skontaktować się bezpośrednio z odpowiedzialnymi podmiotami.</string>
     <string name="play_services_required">To jest ustawienie usług Google Play, które nie zostały znalezione na Twoim urządzeniu.</string>
     <string name="no_mail_service">Proszę zainstalować klienta poczty elektronicznej.</string>
     <string name="ad_settings">Zmień teraz</string>
-    <string name="request_data">Dane na żądanie</string>
-    <string name="request_deletion">Wniosek o skreślenie</string>
+    <string name="request_data">Zażądaj danych</string>
+    <string name="request_deletion">Zażądaj usunięcia</string>
     <string name="contact_developer">Deweloper</string>
     <string name="contact_playstore">Google</string>
     <string name="contact_officials">Urzędnicy UE</string>
     <string name="google_dpo_mail">data-protection-office@google.com</string>
     <string name="dpas_overview_url">https://edpb.europa.eu/about-edpb/board/members</string>
-    <string name="subject_request_data">PKBR Przedmiot wniosku o dostęp</string>
+    <string name="subject_request_data">Wniosek o dostęp do danych (RODO)</string>
     <string name="body_request_data"><![CDATA[Do kogo może to dotyczyć:\n
 \n
 \n
-Żądam, jako kontroler danych aplikacji Androida %1$s (ID: %2$s), aby potwierdzić, czy przetwarza dane osobowe o mnie.\n
-Jeśli tak, proszę podać mi wszystkie wymagane informacje określone w art. 15 ogólnego rozporządzenia UE o ochronie danych (KRLD), zawierający:\n
+Zwracam się do Państwa, jako administratora danych aplikacji na Androida %1$s (ID: %2$s), z prośbą o potwierdzenie, czy przetwarza ona dane osobowe, które mnie dotyczą.\n
+Jeśli tak, proszę podać mi wszystkie wymagane informacje określone w art. 15 ogólnego rozporządzenia UE o ochronie danych (RODO), w tym:\n
 \n
 • kopię moich danych osobowych;\n
 • cele przetwarzania;\n
 • kategorie danych osobowych, których to dotyczy;\n
-• odbiorcy, którym ujawniasz moje dane osobowe oraz gwarancje, które zapewniłeś;\n
+• odbiorców, którym ujawniacie moje dane osobowe, oraz stosowane zabezpieczenia;\n
 • okres przechowywania moich danych osobowych lub kryteria użyte do określenia tego okresu;\n
 • informacje o źródle moich danych osobowych; i\n
 • istnienie automatycznego procesu decyzyjnego (w tym profilowanie), i jeśli tak:\n
@@ -459,29 +459,29 @@ Jeśli tak, proszę podać mi wszystkie wymagane informacje określone w art. 15
     - kroki podjęte w celu zapobiegania błędom, stronniczości i dyskryminacji; i\n
     - wyjaśnienie, w jaki sposób mogę wyrazić mój punkt widzenia i zakwestionować decyzję.\n
 \n
-Ta prośba dotyczy przetwarzania moich danych osobowych przez Ciebie, w tym wszelkie podmioty przetwarzające dane osobowe w imieniu Pana.\n
+Prośba dotyczy wszelkiego przetwarzania moich danych osobowych przez Państwa, w tym przez podmioty przetwarzające dane osobowe w Państwa imieniu.\n
 \n
-Prosimy o dostarczenie odpowiedzi za pomocą bezpiecznych środków pocztą elektroniczną. Z niecierpliwością oczekuję odpowiedzi w ciągu miesiąca od otrzymania mojego wniosku.\n
+Proszę o przesłanie odpowiedzi bezpiecznym kanałem, pocztą elektroniczną. Z niecierpliwością oczekuję odpowiedzi w ciągu miesiąca od otrzymania mojego wniosku.\n
 \n
 Z poważaniem,\n\n]]></string>
     <string name="body_delete_data"><![CDATA[Do kogo może to dotyczyć:\n
 \n
 \n
-odwołuję się do mojego prawa do usunięcia danych zgodnie z art. 17 ogólnego rozporządzenia UE o ochronie danych (GKRLD). Proszę, jako kontroler danych aplikacji na Androida %1$s (ID: %2$s), aby usunąć następujące dane osobowe, które przetwarza o mnie bez zbędnej zwłoki:\n
+Powołuję się na przysługujące mi prawo do usunięcia danych, określone w art. 17 ogólnego rozporządzenia UE o ochronie danych (RODO). Zwracam się do Państwa, jako administratora danych aplikacji na Androida %1$s (ID: %2$s), z prośbą o niezwłoczne usunięcie następujących danych osobowych, które przetwarzacie o mnie:\n
 • Wszystkie dane.\n
 \n
-Powodem mojego wniosku o usunięcie danych jest to, że wycofałem lub wycofałem swoją zgodę na przetwarzanie danych osobowych. Wniosek ten dotyczy przetwarzania moich danych osobowych, w tym przetwarzania danych osobowych w imieniu Pana.\n
+Powodem mojego wniosku jest to, że wycofuję lub wycofałem zgodę na przetwarzanie danych osobowych. Wniosek dotyczy wszelkiego przetwarzania moich danych osobowych przez Państwa, w tym przez podmioty przetwarzające dane osobowe w Państwa imieniu.\n
 \n
-Prosimy o dostarczenie odpowiedzi za pomocą bezpiecznych środków pocztą elektroniczną. Z niecierpliwością oczekuję odpowiedzi w ciągu miesiąca od otrzymania mojego wniosku.\n
+Proszę o przesłanie odpowiedzi bezpiecznym kanałem, pocztą elektroniczną. Z niecierpliwością oczekuję odpowiedzi w ciągu miesiąca od otrzymania mojego wniosku.\n
 \n
 Z poważaniem,\n\n]]></string>
-    <string name="crash_dialog_text">Przepraszam. TrackerControl się rozbił… Mógłbyś wysłać nam e-mail ze szczegółami?</string>
+    <string name="crash_dialog_text">Przepraszamy. TrackerControl uległ awarii… Czy możesz wysłać nam e-mail ze szczegółami?</string>
     <string name="crash_dialog_comment">Jakieś uwagi?</string>
     <string name="instructions_monitoring_private_dns">Przełączaj przełącznik i współdziałaj z niektórymi aplikacjami. Prywatny DNS musi być wyłączony.</string>
     <string name="instructions_monitoring">Przełączaj przełącznik i współdziałaj z niektórymi aplikacjami.</string>
     <string name="device_not_supported_title">Urządzenie nieobsługiwane</string>
     <string name="device_not_supported_msg">System operacyjny urządzenia nie pozwala na monitorowanie i filtrowanie komunikacji sieciowej. Jest to wymagane w przypadku systemu TrackerControl.</string>
-    <string name="launch_app">Launch &amp; Znajdź trackery</string>
+    <string name="launch_app">Uruchom &amp; znajdź trackery</string>
     <string name="launch_app_failed">Nie można uruchomić tej aplikacji</string>
     <string name="countries">Kraje docelowe</string>
     <string name="countries_explanation">Dowiedz się, gdzie Twój telefon wysyła dane śledzące.\n\nInformacje są oparte na wyszukiwaniu DNS i informacji IP i mogą być niedokładne.</string>
@@ -566,20 +566,20 @@ Z poważaniem,\n\n]]></string>
     <string name="uninstall">Odinstaluj</string>
     <string name="settings_uninstall">Ustawienia aplikacji &amp; Odinstaluj</string>
     <string name="no_trackers_found_message_disabled">Włączyć przełącznik na głównym ekranie, a następnie uruchomić aplikację w celu znalezienia trackerów</string>
-    <string name="no_trackers_found_message">Uruchomienie aplikacji do wyszukiwania trackerów</string>
-    <string name="no_trackers_found_action">Uruchomienie</string>
+    <string name="no_trackers_found_message">Uruchom aplikację, aby znaleźć trackery</string>
+    <string name="no_trackers_found_action">Uruchom</string>
     <string name="no_internet_message">"Ta aplikacja nie ma dostępu do Internetu. Może nadal śledzić Cię poprzez wymianę danych z innymi aplikacjami."</string>
     <string name="no_internet">Brak dostępu do Internetu</string>
     <string name="bypass_vpn_error">"„Nie można zablokować Internetu, gdy aplikacja omija TrackerControl.”"</string>
     <string name="back">Wróć</string>
-    <string name="forever_free">Na zawsze Wolny</string>
+    <string name="forever_free">Zawsze za darmo</string>
     <string name="your_privacy">Twoja prywatność</string>
-    <string name="tracker_hostlist">Określony Przez Użytkownika</string>
+    <string name="tracker_hostlist">Hosty zdefiniowane przez użytkownika</string>
     <string name="internet_blocked">Zablokowany dostęp do Internetu</string>
     <string name="internet_unblocked">Odblokowany dostęp do Internetu</string>
     <string name="category_unblocked">Dozwolone trackery w kategorii</string>
     <string name="category_unblocked_warning">Dozwolone w tej kategorii — zablokuj kategorię, aby zmienić ustawienia poszczególnych firm.</string>
-    <string name="tracking_detection_failed">Wykrywanie biblioteki tropiciela nie powiodło się.</string>
+    <string name="tracking_detection_failed">Wykrywanie bibliotek trackerów nie powiodło się.</string>
     <string name="tracking_detection_failed_ram">Wykrywanie biblioteki trackerów nie powiodło się. Za mało pamięci RAM.</string>
     <string name="tracking_detection_failed_report">Wykrywanie biblioteki trackerów nie powiodło się. Zgłoś ten problem deweloperowi.</string>
     <string name="detected_trackers">Wykryte biblioteki trackerów: %s</string>
@@ -603,15 +603,15 @@ Z poważaniem,\n\n]]></string>
     <string name="tracker_libraries_source">Witryny z danych o trackerach Exodus Privacy</string>
     <string name="open_tracker_website">Otwórz witrynę %1$s</string>
     <plurals name="libraries_found">
-        <item quantity="one">Znaleziono %d bibliotekę trackera w kodzie aplikacji</item>
+        <item quantity="one">Znaleziono %d bibliotekę trackerów w kodzie aplikacji</item>
         <item quantity="few">Znaleziono %d biblioteki trackerów w kodzie aplikacji</item>
         <item quantity="many">Znaleziono %d bibliotek trackerów w kodzie aplikacji</item>
-        <item quantity="other">Znaleziono %d bibliotek trackerów w kodzie aplikacji</item>
+        <item quantity="other">Znaleziono %d biblioteki trackerów w kodzie aplikacji</item>
     </plurals>
     <string name="analysis_queued">Analiza w kolejce…</string>
     <string name="blocked">ZABLOKOWANE</string>
     <string name="allowed">DOZWOLONE</string>
-    <string name="allowed_shared_ip">Dozwolone — włącz tryb ścisły, aby zablokować</string>
+    <string name="allowed_shared_ip">Dozwolone — współdzielony adres IP; włącz tryb ścisły, aby zablokować</string>
     <string name="tracker_monitored_minimal">Monitorowane — niezablokowane w trybie minimalnym</string>
     <string name="setting_domain_based_blocked">Blokowanie na podstawie domeny</string>
     <string name="summary_domain_based_blocking">Umożliwia bardziej szczegółowe blokowanie. Wciąż w fazie rozwoju.</string>
@@ -674,7 +674,7 @@ Z poważaniem,\n\n]]></string>
         <item quantity="one">w %d aplikacji</item>
         <item quantity="few">w %d aplikacjach</item>
         <item quantity="many">w %d aplikacjach</item>
-        <item quantity="other">w %d aplikacjach</item>
+        <item quantity="other">w %d aplikacji</item>
     </plurals>
     <string name="insights_no_data">Brak danych o śledzeniu. Używaj aplikacji i sprawdź ponownie później!</string>
     <!-- Keep as a string: call-site/API migration and multi-count grammar are intentionally separate. -->
@@ -697,4 +697,47 @@ Z poważaniem,\n\n]]></string>
     <string name="log_connection_blocked">Zablokowane</string>
     <string name="log_connection_other">Inna sieć</string>
     <string name="log_screen_on">Ekran włączony</string>
+    <string name="tab_vpn">VPN</string>
+    <string name="insights_overview_status">%1$s %2$s · %3$s %4$s</string>
+    <string name="insights_overview_status_share">%1$s (%2$s)</string>
+    <string name="timeline_insights_status">%1$s %2$s · %3$s %4$s</string>
+    <string name="dialog_doh_endpoint">Wpisz pełny adres URL HTTPS podany przez dostawcę DNS, wraz ze ścieżką specyficzną dla dostawcy (na przykład https://dns.quad9.net/dns-query). Aplikacje wykluczone z TrackerControl lub korzystające z własnego szyfrowanego DNS omijają to ustawienie.</string>
+    <string name="msg_invalid_doh_endpoint">Wpisz pełny adres URL HTTPS dla DNS-over-HTTPS, wraz ze ścieżką dostawcy (na przykład https://dns.quad9.net/dns-query).</string>
+    <string name="vpn_status_mullvad">Mullvad</string>
+    <string name="vpn_provider_mullvad">Mullvad VPN</string>
+    <string name="vpn_provider_ivpn">IVPN</string>
+    <string name="vpn_intro_mullvad_title">Mullvad</string>
+    <string name="vpn_intro_ivpn_title">IVPN</string>
+    <string name="vpn_intro_proton_title">Proton VPN</string>
+    <string name="vpn_intro_wireguard_title">WireGuard</string>
+    <string name="vpn_mode_mullvad">Mullvad</string>
+    <string name="vpn_mode_ivpn">IVPN</string>
+    <string name="vpn_mode_wireguard">WireGuard</string>
+    <string name="vpn_country_selected">OK</string>
+    <string name="msg_wg_blocked">Dostęp do internetu jest zablokowany, dopóki tunel WireGuard jest niedostępny. Wyłącz ustawienie WireGuard, aby go przywrócić.</string>
+    <string name="msg_wg_blocked_detail">%s Dostęp do internetu pozostanie zablokowany do czasu rozwiązania problemu lub wyłączenia ustawienia WireGuard.</string>
+    <string name="msg_wg_provider_rejected">%1$s odmówił skonfigurowania tego urządzenia: %2$s.</string>
+    <string name="msg_wg_account_expired">%1$s informuje, że na tym koncie nie pozostał żaden czas, więc żaden serwer nie zaakceptuje tunelu, dopóki czas nie zostanie dodany.</string>
+    <string name="msg_wg_recovery_failed">WireGuard przestał odpowiadać, a TrackerControl próbuje połączyć się ponownie.</string>
+    <string name="summary_log_logcat">Tryb badawczy wyłącza blokowanie trackerów. Zidentyfikowane trackery są zapisywane w ADB, a wyodrębnianie SNI jest włączone w celu lepszego wykrywania nazw hostów. Pobierz logi poleceniem adb logcat z tagiem \'TC-Log\'.</string>
+    <string name="msg_research_mode_notice">Tryb badawczy jest włączony. Blokowanie trackerów jest wyłączone. Dotknij, aby zmienić ustawienia.</string>
+    <string name="msg_revoked">TrackerControl został rozłączony, prawdopodobnie przez inną aplikację VPN lub system. Dotknij, aby połączyć ponownie.</string>
+    <string name="accessibility_stat_description">%1$s, %2$s</string>
+    <string name="insights_share_url">TrackerControl.org</string>
+    <string name="title_blocklists">Własne listy blokowania</string>
+    <string name="summary_manage_blocklists">Dodaj listy blokowania w formacie pliku hosts. Są używane, gdy wbudowane listy trackerów nie identyfikują domeny.</string>
+    <string name="title_add_blocklist">Dodaj listę blokowania</string>
+    <string name="title_delete_blocklist">Usuń listę blokowania</string>
+    <string name="msg_delete_blocklist_confirm">Czy na pewno chcesz usunąć tę listę blokowania?</string>
+    <string name="msg_apply_blocklists_failed">Nie udało się zastosować list blokowania</string>
+    <string name="blocklist_format">Wpisz adres URL HTTPS listy blokowania w formacie hosts (na przykład 0.0.0.0 ads.example.com). Reguły filtrów przeglądarki nie są obsługiwane.</string>
+    <string name="blocklist_minimal_notice">Własne listy blokowania są nieaktywne w trybie minimalnym. Aby ich używać, przełącz na tryb standardowy lub ścisły w Ustawieniach.</string>
+    <string name="blocklist_research_notice">Własne listy blokowania są nieaktywne, gdy tryb badawczy jest włączony. Wyłącz Badania w Ustawieniach, aby włączyć blokowanie trackerów.</string>
+    <string name="blocklist_browser_notice">Ochrona przed trackerami w przeglądarkach jest domyślnie wyłączona. Włącz ją na stronie aplikacji przeglądarki, aby używać tam własnych list blokowania.</string>
+    <string name="blocklist_downloading">Pobieranie list blokowania… Oczekiwanie na połączenie, jeśli urządzenie jest offline.</string>
+    <string name="blocklist_not_downloaded">Jeszcze nie pobrano</string>
+    <string name="blocklist_download_failed">Nie udało się pobrać lub zastosować list blokowania. Sprawdź błędy list i spróbuj zaktualizować ponownie.</string>
+    <string name="blocklist_update">Aktualizuj listy blokowania</string>
+    <string name="vpn_enabled_switch_description">VPN</string>
+    <string name="log_connection_wifi">Wi-Fi</string>
 </resources>

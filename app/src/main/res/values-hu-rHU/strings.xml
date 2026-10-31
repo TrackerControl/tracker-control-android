@@ -56,7 +56,7 @@
     <string name="timeline_tracker_blocked">Blokkolva</string>
     <string name="timeline_tracker_allowed">Engedélyezve</string>
     <!-- A blocked/allowed label followed by its share of all tracking attempts. -->
-    <string name="timeline_insights_status"></string>
+    <string name="timeline_insights_status">%1$s %2$s · %3$s %4$s</string>
     <string name="feed_section_last_contact">utolsó kapcsolatfelvétel: %s</string>
     <plurals name="feed_show_more_companies">
         <item quantity="one">Még %d vállalat megjelenítése</item>
@@ -175,7 +175,7 @@
     <string name="warning_beta">Bétafunkció. Előfordulhat, hogy nem a várt módon működik.</string>
     <string name="setting_doh_endpoint">DoH-végpont URL-je</string>
     <string name="summary_doh_endpoint">HTTPS-URL a DNS-over-HTTPS-lekérdezésekhez</string>
-    <string name="dialog_doh_endpoint"></string>
+    <string name="dialog_doh_endpoint">Adja meg a DNS-szolgáltatója által megadott teljes HTTPS URL-t, a szolgáltatóra jellemző útvonallal együtt (például https://dns.quad9.net/dns-query). A TrackerControlból kizárt vagy saját titkosított DNS-t használó alkalmazások megkerülik ezt a beállítást.</string>
     <string name="setting_doh_dns_fallback">DNS-tartalék</string>
     <string name="summary_doh_dns_fallback">Szabványos (titkosítatlan) DNS használata, ha a DoH nem érhető el. A kikapcsolás megakadályozhatja az alkalmazások működését, ha a DoH-kiszolgáló nem elérhető.</string>
     <!-- Block DNS-over-TLS (DoT) -->
@@ -302,7 +302,7 @@
     <string name="msg_started">Nyomkövetők keresése…</string>
     <string name="msg_waiting">Várakozás eseményre</string>
     <string name="msg_disabled">Használja a fenti kapcsolót a TrackerControl engedélyezéséhez.</string>
-    <string name="msg_installed">%1$s gondot okozó alkalmazás?</string>
+    <string name="msg_installed">Problémák a(z) %1$s alkalmazással?</string>
     <string name="msg_installed_description">Engedélyezi az alkalmazás kapcsolatát a társaságokkal</string>
     <!-- Keep as a string: call-site/API migration and multi-count grammar are intentionally separate. -->
     <string name="msg_installed_tracker_libraries_found" tools:ignore="PluralsCandidate">%d nyomkövető könyvtárat tartalmaz</string>
@@ -332,10 +332,10 @@ Az Ön internetes forgalmát nem küldi el egy távoli VPN-kiszolgálóra.</stri
     <string name="msg_system">Az összes (rendszer) alkalmazás kezelése a beállításokban engedélyezhető</string>
     <string name="msg_vpn_cancelled">A VPN kapcsolat meg lett szüntetve.\nBeállít másik VPN kapcsolatot, hogy a VPN csatlakozás állandó legyen?</string>
     <string name="msg_unavailable">Ez a funkció nem érhető el ezen az android verzión</string>
-    <string name="msg_always_on">Másik VPN beállítása állandó VPN-nek</string>
+    <string name="msg_always_on">Egy másik VPN van mindig bekapcsolt VPN-ként beállítva</string>
     <string name="msg_always_on_lockdown">A TrackerControl használatához kapcsolja ki a „Kapcsolatok blokkolása VPN nélkül” lehetőséget az Android VPN-beállításaiban</string>
-    <string name="msg_start_forward">Port forwarding indítás %1$s port %2$d to %3$s:%4$d of \'%5$s\'?</string>
-    <string name="msg_stop_forward">Port forwarding leállítás %1$s port %2$d?</string>
+    <string name="msg_start_forward">Elindítja a továbbítást innen: %1$s, %2$d. port, ide: %3$s:%4$d (\'%5$s\')?</string>
+    <string name="msg_stop_forward">Leállítja a továbbítást: %1$s, %2$d. port?</string>
     <string name="msg_log_logcat">Figyelem: A blokkolás letiltva az ADB naplózás miatt.</string>
     <string-array name="protocolNames">
         <item>UDP</item>
@@ -343,7 +343,7 @@ Az Ön internetes forgalmát nem küldi el egy távoli VPN-kiszolgálóra.</stri
     </string-array>
     <string name="menu_add">Hozzáad</string>
     <string name="menu_delete">Töröl</string>
-    <string name="setting_forwarding">Port forwarding</string>
+    <string name="setting_forwarding">Portátirányítás</string>
     <string name="title_protocol">Protokoll</string>
     <string name="title_dport">Forrás portja</string>
     <string name="title_raddr">Cél címe</string>
@@ -384,12 +384,12 @@ Az Ön internetes forgalmát nem küldi el egy távoli VPN-kiszolgálóra.</stri
     <string name="accessibility_tracker_blocking_enabled">A nyomkövetők blokkolása engedélyezve</string>
     <string name="accessibility_tracker_blocking_disabled">A nyomkövetők blokkolása letiltva</string>
     <plurals name="n_companies_found_week">
-        <item quantity="one">a legutóbbi héten %d kapcsolat a céggel</item>
-        <item quantity="other">a legutóbbi héten %d kapcsolat a cégekkel</item>
+        <item quantity="one">a múlt héten %d céggel került kapcsolatba</item>
+        <item quantity="other">a múlt héten %d céggel került kapcsolatba</item>
     </plurals>
     <plurals name="n_companies_found">
-        <item quantity="one">összesen %d kapcsolat a céggel</item>
-        <item quantity="other">összesen %d kapcsolat a cégekkel</item>
+        <item quantity="one">összesen %d céggel került kapcsolatba</item>
+        <item quantity="other">összesen %d céggel került kapcsolatba</item>
     </plurals>
     <string name="confirm_ipinfo_title">Információ kérése a szervezetről?</string>
     <string name="confirm_ipinfo">Ez kapcsolatba lép az ipinfo.io külső szolgáltatással és megosztja vele a kapcsolat IP címeit.</string>
@@ -663,7 +663,7 @@ Tisztelettel,\n\n]]></string>
     <!-- Retained for Play Store copy; call-site/API migration and multi-count grammar are intentionally separate. -->
     <string name="insights_share">Megosztás barátokkal</string>
     <string name="insights_share_trackers_blocked">Blokkolt nyomkövető-hosztok</string>
-    <string name="insights_share_url"></string>
+    <string name="insights_share_url">TrackerControl.org</string>
     <!-- Keep as a string: call-site/API migration and multi-count grammar are intentionally separate. -->
     <string name="insights_share_message" tools:ignore="PluralsCandidate">Ezen a héten %1$d nyomkövető-hosztot blokkoltam %2$d vállalattól a TrackerControllal! Vegye vissza az adatvédelmét: https://trackercontrol.org</string>
     <!-- Retained for Play Store copy; call-site/API migration and multi-count grammar are intentionally separate. -->
@@ -679,4 +679,43 @@ Tisztelettel,\n\n]]></string>
     <string name="log_connection_blocked">Blokkolva</string>
     <string name="log_connection_other">Egyéb hálózat</string>
     <string name="log_screen_on">Képernyő bekapcsolva</string>
+    <string name="insights_overview_status">%1$s %2$s · %3$s %4$s</string>
+    <string name="insights_overview_status_share">%1$s (%2$s)</string>
+    <string name="msg_invalid_doh_endpoint">Adjon meg egy teljes HTTPS URL-t a DNS-over-HTTPS-hez, a szolgáltató elérési útjával együtt (például: https://dns.quad9.net/dns-query).</string>
+    <string name="vpn_status_mullvad">Mullvad</string>
+    <string name="vpn_provider_mullvad">Mullvad VPN</string>
+    <string name="vpn_provider_ivpn">IVPN</string>
+    <string name="vpn_intro_mullvad_title">Mullvad</string>
+    <string name="vpn_intro_ivpn_title">IVPN</string>
+    <string name="vpn_intro_proton_title">Proton VPN</string>
+    <string name="vpn_intro_wireguard_title">WireGuard</string>
+    <string name="vpn_mode_mullvad">Mullvad</string>
+    <string name="vpn_mode_ivpn">IVPN</string>
+    <string name="vpn_mode_wireguard">WireGuard</string>
+    <string name="vpn_country_selected">OK</string>
+    <string name="msg_wg_blocked">Az internet-hozzáférés le van tiltva, amíg a WireGuard-alagút nem érhető el. A visszaállításhoz kapcsolja ki a WireGuard beállítást.</string>
+    <string name="msg_wg_blocked_detail">%s Az internet-hozzáférés mindaddig le marad tiltva, amíg ez nem oldódik meg, vagy amíg a WireGuard beállítást ki nem kapcsolják.</string>
+    <string name="msg_wg_provider_rejected">A(z) %1$s elutasította az eszköz beállítását: %2$s.</string>
+    <string name="msg_wg_account_expired">A(z) %1$s jelentése szerint ezen a fiókon nincs hátralévő idő, ezért egyetlen szerver sem fogadja el az alagutat, amíg nem kerül rá idő.</string>
+    <string name="msg_wg_recovery_failed">A WireGuard nem válaszol, és a TrackerControl megpróbál újracsatlakozni.</string>
+    <string name="summary_log_logcat">A kutatási mód letiltja a nyomkövetők blokkolását. Az azonosított nyomkövetők naplózásra kerülnek az ADB-ben, és az SNI-kinyerés be van kapcsolva a jobb gazdagépnév-felismeréshez. A naplókat az adb logcat paranccsal kérheti le a \'TC-Log\' címkével.</string>
+    <string name="msg_research_mode_notice">A kutatási mód be van kapcsolva. A nyomkövetők blokkolása le van tiltva. Koppintson a beállítások módosításához.</string>
+    <string name="msg_revoked">A TrackerControl kapcsolata megszakadt, valószínűleg egy másik VPN-alkalmazás vagy a rendszer miatt. Koppintson az újracsatlakozáshoz.</string>
+    <string name="accessibility_stat_description">%1$s, %2$s</string>
+    <string name="title_blocklists">Egyéni tiltólisták</string>
+    <string name="summary_manage_blocklists">Tiltólisták hozzáadása hosts-fájl formátumban. Akkor használatos, ha a beépített nyomkövetőlisták nem azonosítanak egy tartományt.</string>
+    <string name="title_add_blocklist">Tiltólista hozzáadása</string>
+    <string name="title_delete_blocklist">Tiltólista törlése</string>
+    <string name="msg_delete_blocklist_confirm">Biztosan törli ezt a tiltólistát?</string>
+    <string name="msg_apply_blocklists_failed">A tiltólisták alkalmazása sikertelen</string>
+    <string name="blocklist_format">Adjon meg egy HTTPS URL-t egy hosts formátumú tiltólistához (például: 0.0.0.0 ads.example.com). A böngészős szűrőszabályok nem támogatottak.</string>
+    <string name="blocklist_minimal_notice">Az egyéni tiltólisták nem aktívak Minimális módban. Használatukhoz váltson Standard vagy Szigorú módra a Beállításokban.</string>
+    <string name="blocklist_research_notice">Az egyéni tiltólisták nem aktívak, amíg a kutatási mód be van kapcsolva. A nyomkövetők blokkolásához kapcsolja ki a Kutatást a Beállításokban.</string>
+    <string name="blocklist_browser_notice">A böngészők nyomkövető-védelme alapértelmezés szerint ki van kapcsolva. Az egyéni tiltólisták ottani használatához kapcsolja be a böngésző alkalmazásoldalán.</string>
+    <string name="blocklist_downloading">Tiltólisták letöltése… Kapcsolatra várakozás, ha nincs hálózat.</string>
+    <string name="blocklist_not_downloaded">Még nincs letöltve</string>
+    <string name="blocklist_download_failed">A tiltólisták letöltése vagy alkalmazása nem sikerült. Ellenőrizze a lista hibáit, és próbálja újra a frissítést.</string>
+    <string name="blocklist_update">Tiltólisták frissítése</string>
+    <string name="vpn_enabled_switch_description">VPN</string>
+    <string name="log_connection_wifi">Wi-Fi</string>
 </resources>

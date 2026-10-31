@@ -59,7 +59,7 @@
     <plurals name="feed_show_more_companies">
         <item quantity="one">Zobrazit ještě %d společnost</item>
         <item quantity="few">Zobrazit ještě %d společnosti</item>
-        <item quantity="many">Zobrazit ještě %d společností</item>
+        <item quantity="many">Zobrazit ještě %d společnosti</item>
         <item quantity="other">Zobrazit ještě %d společností</item>
     </plurals>
     <string name="feed_allow_company_in_app">Povolit %1$s v aplikaci %2$s</string>
@@ -76,13 +76,13 @@
     <plurals name="timeline_trackers_blocked">
         <item quantity="one">%d tracker zablokován</item>
         <item quantity="few">%d trackery zablokovány</item>
-        <item quantity="many">%d trackerů zablokováno</item>
+        <item quantity="many">%d trackeru zablokováno</item>
         <item quantity="other">%d trackerů zablokováno</item>
     </plurals>
     <plurals name="timeline_trackers_allowed">
         <item quantity="one">%d tracker povolen</item>
         <item quantity="few">%d trackery povoleny</item>
-        <item quantity="many">%d trackerů povoleno</item>
+        <item quantity="many">%d trackeru povoleno</item>
         <item quantity="other">%d trackerů povoleno</item>
     </plurals>
     <string name="troubleshooting_title">Řešení problémů</string>
@@ -127,7 +127,7 @@
     <plurals name="pause">
         <item quantity="one">Pozastavit na %d minutu</item>
         <item quantity="few">Pozastavit na %d minuty</item>
-        <item quantity="many">Pozastavit na %d minut</item>
+        <item quantity="many">Pozastavit na %d minuty</item>
         <item quantity="other">Pozastavit na %d minut</item>
     </plurals>
     <string name="setting_ip6">Povolit IPv6 přenosy</string>
@@ -237,13 +237,13 @@
     <plurals name="msg_wg_profile_imported">
         <item quantity="one">Importován %1$d profil WireGuard</item>
         <item quantity="few">Importovány %1$d profily WireGuard</item>
-        <item quantity="many">Importováno %1$d profilů WireGuard</item>
+        <item quantity="many">Importováno %1$d profilu WireGuard</item>
         <item quantity="other">Importováno %1$d profilů WireGuard</item>
     </plurals>
     <plurals name="msg_wg_profile_import_skipped">
         <item quantity="one">Přeskočen %1$d soubor: nejde o platnou konfiguraci WireGuard</item>
         <item quantity="few">Přeskočeny %1$d soubory: nejde o platné konfigurace WireGuard</item>
-        <item quantity="many">Přeskočeno %1$d souborů: nejde o platné konfigurace WireGuard</item>
+        <item quantity="many">Přeskočeno %1$d souboru: nejde o platné konfigurace WireGuard</item>
         <item quantity="other">Přeskočeno %1$d souborů: nejde o platné konfigurace WireGuard</item>
     </plurals>
     <string name="msg_wg_mullvad_account">Číslo účtu Mullvad</string>
@@ -395,13 +395,13 @@ Váš internetový provoz není odesílán žádnému vzdálenému VPN serveru.<
     <plurals name="n_companies_found_week">
         <item quantity="one">poslední týden kontaktována %d společnost</item>
         <item quantity="few">poslední týden kontaktovány %d společnosti</item>
-        <item quantity="many">poslední týden kontaktováno %d společností</item>
+        <item quantity="many">poslední týden kontaktováno %d společnosti</item>
         <item quantity="other">poslední týden kontaktováno %d společností</item>
     </plurals>
     <plurals name="n_companies_found">
         <item quantity="one">celkově kontaktována %d společnost</item>
         <item quantity="few">celkově kontaktovány %d společnosti</item>
-        <item quantity="many">celkově kontaktováno %d společností</item>
+        <item quantity="many">celkově kontaktováno %d společnosti</item>
         <item quantity="other">celkově kontaktováno %d společností</item>
     </plurals>
     <string name="confirm_ipinfo_title">Získat informace o organizaci?</string>
@@ -437,7 +437,7 @@ Váš internetový provoz není odesílán žádnému vzdálenému VPN serveru.<
     <string name="request_deletion">Žádost o odstranění</string>
     <string name="contact_developer">Vývojář</string>
     <string name="contact_playstore">Google</string>
-    <string name="contact_officials">EU Officials</string>
+    <string name="contact_officials">Úředníci EU</string>
     <string name="google_dpo_mail">data-protection-office@google.com</string>
     <string name="dpas_overview_url">https://edpb.europa.eu/about-edpb/board/members</string>
     <string name="subject_request_data">GDPR Subject Access Request</string>
@@ -470,7 +470,7 @@ S pozdravem,\n\n]]></string>
 Uplatňuji své právo na výmaz podle článku 17 obecného nařízení EU o ochraně osobních údajů (GDPR). Žádám vás jako správce údajů aplikace pro Android %1$s (ID: %2$s), abyste bez zbytečného odkladu vymazali následující osobní údaje, které o mně zpracovává:\n
 • Všechny údaje.\n
 \n
-Důvodem mé žádosti o odstranění je odvolání nebo odvolání mého souhlasu se zpracováním osobních údajů. Tato žádost se týká jakéhokoli zpracování mých osobních údajů vámi, včetně zpracovatelů, kteří zpracovávají osobní údaje vaším jménem.\n
+Důvodem mé žádosti o odstranění je, že odvolávám nebo jsem odvolal svůj souhlas se zpracováním osobních údajů. Tato žádost se týká jakéhokoli zpracování mých osobních údajů vámi, včetně zpracovatelů, kteří zpracovávají osobní údaje vaším jménem.\n
 \n
 Svou odpověď prosím zašlete zabezpečeným způsobem e-mailem. Těším se na odpověď do jednoho měsíce od obdržení mé žádosti.\n
 \n
@@ -553,7 +553,7 @@ Privátní DNS musí být vypnutá.</string>
     <plurals name="protection_paused_resumes">
         <item quantity="one">Pozastaveno — obnoví se za %d minutu</item>
         <item quantity="few">Pozastaveno — obnoví se za %d minuty</item>
-        <item quantity="many">Pozastaveno — obnoví se za %d minut</item>
+        <item quantity="many">Pozastaveno — obnoví se za %d minuty</item>
         <item quantity="other">Pozastaveno — obnoví se za %d minut</item>
     </plurals>
     <string name="protection_resume">Obnovit nyní</string>
@@ -569,13 +569,13 @@ Privátní DNS musí být vypnutá.</string>
     <string name="no_trackers_found_message_disabled">Zapni switch v hlavním okně, pak zapni aplikaci pro nalezení trackerů</string>
     <string name="no_trackers_found_message">Spustit aplikaci a najít trackery</string>
     <string name="no_trackers_found_action">Spustit</string>
-    <string name="no_internet_message">"Bez přístupu k síti. Může jen trackovat sdílením dat s jinými aplikacemi."</string>
+    <string name="no_internet_message">"Tato aplikace nemá přístup k internetu. Stále vás může sledovat výměnou dat s jinými aplikacemi."</string>
     <string name="no_internet">Není připojení k Internetu</string>
     <string name="bypass_vpn_error">"\"Internet nelze blokovat, pokud aplikace obchází TrackerControl.\""</string>
     <string name="back">Zpět</string>
     <string name="forever_free">Navždy zdarma</string>
     <string name="your_privacy">Vaše soukromí</string>
-    <string name="tracker_hostlist">User-Defined Hosts</string>
+    <string name="tracker_hostlist">Hostitelé definovaní uživatelem</string>
     <string name="internet_blocked">Přístup k síti zablokován</string>
     <string name="internet_unblocked">Přístup k síti povolen</string>
     <string name="category_unblocked">Trackery v kategorii povoleny</string>
@@ -604,9 +604,9 @@ Privátní DNS musí být vypnutá.</string>
     <string name="tracker_libraries_source">Weby s údaji o trackerech z Exodus Privacy</string>
     <string name="open_tracker_website">Otevřít web %1$s</string>
     <plurals name="libraries_found">
-        <item quantity="one">V kódu aplikace nalezena %d knihovna trackeru</item>
+        <item quantity="one">V kódu aplikace nalezena %d knihovna trackerů</item>
         <item quantity="few">V kódu aplikace nalezeny %d knihovny trackerů</item>
-        <item quantity="many">V kódu aplikace nalezeno %d knihoven trackerů</item>
+        <item quantity="many">V kódu aplikace nalezeno %d knihovny trackerů</item>
         <item quantity="other">V kódu aplikace nalezeno %d knihoven trackerů</item>
     </plurals>
     <string name="analysis_queued">Analýza ve frontě…</string>
@@ -674,7 +674,7 @@ Privátní DNS musí být vypnutá.</string>
     <plurals name="insights_apps_count">
         <item quantity="one">v %d aplikaci</item>
         <item quantity="few">ve %d aplikacích</item>
-        <item quantity="many">v %d aplikacích</item>
+        <item quantity="many">v %d aplikace</item>
         <item quantity="other">v %d aplikacích</item>
     </plurals>
     <string name="insights_no_data">Zatím žádná data o sledování. Používejte aplikace a vraťte se později!</string>
@@ -698,4 +698,47 @@ Privátní DNS musí být vypnutá.</string>
     <string name="log_connection_blocked">Zablokováno</string>
     <string name="log_connection_other">Jiná síť</string>
     <string name="log_screen_on">Obrazovka zapnutá</string>
+    <string name="insights_overview_status">%1$s %2$s · %3$s %4$s</string>
+    <string name="insights_overview_status_share">%1$s (%2$s)</string>
+    <string name="timeline_insights_status">%1$s %2$s · %3$s %4$s</string>
+    <string name="vpn_status_mullvad">Mullvad</string>
+    <string name="vpn_provider_mullvad">Mullvad VPN</string>
+    <string name="vpn_provider_ivpn">IVPN</string>
+    <string name="vpn_intro_mullvad_title">Mullvad</string>
+    <string name="vpn_intro_ivpn_title">IVPN</string>
+    <string name="vpn_intro_proton_title">Proton VPN</string>
+    <string name="vpn_intro_wireguard_title">WireGuard</string>
+    <string name="vpn_mode_mullvad">Mullvad</string>
+    <string name="vpn_mode_ivpn">IVPN</string>
+    <string name="vpn_mode_wireguard">WireGuard</string>
+    <string name="tab_vpn">VPN</string>
+    <string name="vpn_enabled_switch_description">VPN</string>
+    <string name="log_connection_wifi">Wi-Fi</string>
+    <string name="accessibility_stat_description">%1$s, %2$s</string>
+    <string name="insights_share_url">TrackerControl.org</string>
+    <string name="vpn_country_selected">OK</string>
+    <string name="dialog_doh_endpoint">Zadejte úplnou adresu HTTPS URL od svého poskytovatele DNS včetně cesty specifické pro poskytovatele (například https://dns.quad9.net/dns-query). Aplikace vyloučené z TrackerControl nebo používající vlastní šifrované DNS toto nastavení obcházejí.</string>
+    <string name="msg_invalid_doh_endpoint">Zadejte úplnou adresu HTTPS URL pro DNS-over-HTTPS včetně cesty poskytovatele (například https://dns.quad9.net/dns-query).</string>
+    <string name="msg_wg_blocked">Přístup k internetu je blokován, dokud je tunel WireGuard nedostupný. Obnovíte jej vypnutím nastavení WireGuard.</string>
+    <string name="msg_wg_blocked_detail">%s Přístup k internetu zůstane blokován, dokud se problém nevyřeší nebo dokud nevypnete nastavení WireGuard.</string>
+    <string name="msg_wg_provider_rejected">%1$s odmítl nastavit toto zařízení: %2$s.</string>
+    <string name="msg_wg_account_expired">%1$s hlásí, že na tomto účtu nezbývá žádný čas, takže žádný server tunel nepřijme, dokud čas nedoplníte.</string>
+    <string name="msg_wg_recovery_failed">WireGuard přestal reagovat a TrackerControl se pokouší o opětovné připojení.</string>
+    <string name="summary_log_logcat">Režim výzkumu vypíná blokování trackerů. Zjištěné trackery se zaznamenávají do ADB a zapíná se extrakce SNI pro lepší rozpoznání názvů hostitelů. Záznamy získáte příkazem adb logcat se značkou \'TC-Log\'.</string>
+    <string name="msg_research_mode_notice">Režim výzkumu je zapnutý. Blokování trackerů je vypnuté. Klepnutím změníte nastavení.</string>
+    <string name="msg_revoked">TrackerControl byl odpojen, pravděpodobně jinou aplikací VPN nebo systémem. Klepnutím se znovu připojíte.</string>
+    <string name="title_blocklists">Vlastní blocklisty</string>
+    <string name="summary_manage_blocklists">Přidejte blocklisty ve formátu souboru hosts. Použijí se, když vestavěné seznamy trackerů doménu nerozpoznají.</string>
+    <string name="title_add_blocklist">Přidat blocklist</string>
+    <string name="title_delete_blocklist">Smazat blocklist</string>
+    <string name="msg_delete_blocklist_confirm">Opravdu chcete tento blocklist smazat?</string>
+    <string name="msg_apply_blocklists_failed">Použití blocklistů se nezdařilo</string>
+    <string name="blocklist_format">Zadejte adresu HTTPS URL blocklistu ve formátu hosts (například 0.0.0.0 ads.example.com). Pravidla filtrů prohlížeče nejsou podporována.</string>
+    <string name="blocklist_minimal_notice">Vlastní blocklisty jsou v minimálním režimu neaktivní. Chcete-li je používat, přepněte v Nastavení na Standardní nebo Přísný.</string>
+    <string name="blocklist_research_notice">Vlastní blocklisty jsou neaktivní, dokud je zapnutý režim výzkumu. Chcete-li zapnout blokování trackerů, vypněte v Nastavení Výzkum.</string>
+    <string name="blocklist_browser_notice">Ochrana před trackery v prohlížeči je ve výchozím stavu vypnutá. Chcete-li zde používat vlastní blocklisty, zapněte ji na stránce aplikace prohlížeče.</string>
+    <string name="blocklist_downloading">Stahují se blocklisty… Pokud jste offline, čeká se na připojení.</string>
+    <string name="blocklist_not_downloaded">Zatím nestaženo</string>
+    <string name="blocklist_download_failed">Blocklisty se nepodařilo stáhnout nebo použít. Zkontrolujte chyby seznamů a zkuste aktualizaci znovu.</string>
+    <string name="blocklist_update">Aktualizovat blocklisty</string>
 </resources>

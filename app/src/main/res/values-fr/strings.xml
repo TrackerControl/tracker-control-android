@@ -59,6 +59,7 @@
     <string name="feed_section_last_contact">dernier contact %s</string>
     <plurals name="feed_show_more_companies">
         <item quantity="one">Afficher %d entreprise supplémentaire</item>
+        <item quantity="many">Afficher %d d’entreprises supplémentaires</item>
         <item quantity="other">Afficher %d entreprises supplémentaires</item>
     </plurals>
     <string name="feed_allow_company_in_app">Autoriser %1$s dans %2$s</string>
@@ -74,10 +75,12 @@
     <string name="timeline_summary_mixed" tools:ignore="PluralsCandidate">%1$d bloqués · %2$d autorisés</string>
     <plurals name="timeline_trackers_blocked">
         <item quantity="one">%d tracker bloqué</item>
+        <item quantity="many">%d de trackers bloqués</item>
         <item quantity="other">%d trackers bloqués</item>
     </plurals>
     <plurals name="timeline_trackers_allowed">
         <item quantity="one">%d tracker autorisé</item>
+        <item quantity="many">%d de trackers autorisés</item>
         <item quantity="other">%d trackers autorisés</item>
     </plurals>
     <string name="troubleshooting_title">Diagnostic des anomalies</string>
@@ -85,7 +88,7 @@
     <string name="troubleshooting_battery_desc">Si TrackerControl cesse de fonctionner en arrière-plan, désactivez l\'optimisation de la batterie d\'Android pour TrackerControl. Sélectionnez « Toutes les applications », appuyez sur TrackerControl, puis sélectionnez « Ne pas optimiser ».</string>
     <string name="troubleshooting_battery_action">Désactiver l\'optimisation de la batterie</string>
     <string name="troubleshooting_battery_ok">L\'optimisation de la batterie est déjà désactivée.</string>
-    <string name="troubleshooting_datasaver_title">Sauvegarde des données</string>
+    <string name="troubleshooting_datasaver_title">Économiseur de données</string>
     <string name="troubleshooting_datasaver_desc">Si TrackerControl ne peut pas se connecter lorsque l\'économiseur de données est activé, autoriser l\'utilisation sans restriction des données pour TrackerControl. Activez \"Données en arrière-plan\" et \"Utilisation illimitée des données\".</string>
     <string name="troubleshooting_datasaver_action">Autoriser les données illimitées</string>
     <string name="troubleshooting_datasaver_ok">L\'économiseur de données ne limite pas TrackerControl.</string>
@@ -98,7 +101,7 @@
     <string name="troubleshooting_categories_title">Bloquer des catégories de traqueurs spécifiques</string>
     <string name="troubleshooting_categories_desc">Vous pouvez affiner le blocage pour chaque application en la touchant et en basculant les catégories individuelles de traqueurs (par exemple Analytics, Pubs) sur l\'onglet Traqueurs.</string>
     <string name="troubleshooting_alwayson_title">VPN permanent</string>
-    <string name="troubleshooting_alwayson_desc">Si \"Bloquer les connexions sans VPN\" (verrouillage) est activé dans les paramètres VPN d\'Android, TrackerControl ne peut pas fonctionner correctement. Désactiver cette option. Une notification apparaîtra si elle est détectée.</string>
+    <string name="troubleshooting_alwayson_desc">Si \"Bloquer les connexions sans VPN\" (verrouillage) est activé dans les paramètres VPN d\'Android, TrackerControl ne peut pas fonctionner correctement. Désactivez cette option.</string>
     <string name="troubleshooting_alwayson_action">Ouvrir les paramètres VPN</string>
     <string name="menu_apps">Autres applications</string>
     <string name="menu_protocol_other">Autres</string>
@@ -121,7 +124,8 @@
     <string name="setting_update">Vérifier les mises à jour</string>
     <plurals name="pause">
         <item quantity="one">Suspendre pendant %d min</item>
-        <item quantity="other">Pause pour %d mins</item>
+        <item quantity="many">Suspendre pendant %d min</item>
+        <item quantity="other">Suspendre pendant %d min</item>
     </plurals>
     <string name="setting_ip6">Activer le trafic IPv6</string>
     <string name="setting_call">Désactiver lors des appels</string>
@@ -139,7 +143,7 @@
     <string name="setting_include_all_tracking">Inclure toutes les applications dans le suivi</string>
     <string name="summary_include_all_tracking">Réactive la surveillance des trackers pour toutes les applications.</string>
     <string name="setting_block_domains">Activer le fichier hosts</string>
-    <string name="setting_rcode">Ces hôtes bloquent la réponse: %s</string>
+    <string name="setting_rcode">Réponse de blocage des hôtes : %s</string>
     <string name="setting_vpn4">VPN IPv4: %s</string>
     <string name="setting_vpn6">VPN IPv6 : %s</string>
     <string name="setting_dns">VPN DNS : %s</string>
@@ -172,7 +176,7 @@
     <string name="setting_doh_enabled">DNS sécurisé (DoH)</string>
     <string name="summary_doh_enabled">Chiffre les requêtes DNS avec DNS-over-HTTPS. Se met automatiquement en pause lorsque WireGuard est actif, car ces requêtes utilisent alors le tunnel WireGuard.</string>
     <string name="warning_beta">Fonctionnalité bêta. Peut ne pas fonctionner comme attendu.</string>
-    <string name="setting_doh_endpoint">DoH Endpoint URL</string>
+    <string name="setting_doh_endpoint">URL du point de terminaison DoH</string>
     <string name="summary_doh_endpoint">URL HTTPS pour les requêtes DNS-sur-HTTPS</string>
     <string name="setting_doh_dns_fallback">DNS de secours</string>
     <!-- Block DNS-over-TLS (DoT) -->
@@ -217,7 +221,7 @@
     <string name="msg_wg_profile_empty">Aucun profil</string>
     <string name="msg_wg_profile_active">Actif</string>
     <string name="msg_wg_profile_set_active">Définir comme actif</string>
-    <string name="msg_wg_profile_config_hint" tools:ignore="TypographyEllipsis">[Interface]\nClé Privée = ...\nAdresse = ...\n\n[Pair]\nClé publique = ...\nIP autorisées = 0.0.0.0/0, ::/0\nPoint de terminaison = ...</string>
+    <string name="msg_wg_profile_config_hint" tools:ignore="TypographyEllipsis">[Interface]\nPrivateKey = ...\nAddress = ...\n\n[Peer]\nPublicKey = ...\nAllowedIPs = 0.0.0.0/0, ::/0\nEndpoint = ...</string>
     <string name="msg_wg_profile_delete_confirm">Supprimer ce profil WireGuard ?</string>
     <string name="msg_wg_profile_scan_hint">Pointez la caméra vers le code QR WireGuard affiché par votre fournisseur VPN. Le scan s’effectue sur votre appareil.</string>
     <string name="msg_wg_profile_scan_no_camera">Cet appareil ne possède pas de caméra pour effectuer un scan</string>
@@ -228,10 +232,12 @@
     <string name="msg_wg_profile_import_failed">Impossible de lire le fichier sélectionné : %1$s</string>
     <plurals name="msg_wg_profile_imported">
         <item quantity="one">%1$d profil WireGuard importé</item>
+        <item quantity="many">%1$d de profils WireGuard importés</item>
         <item quantity="other">%1$d profils WireGuard importés</item>
     </plurals>
     <plurals name="msg_wg_profile_import_skipped">
         <item quantity="one">%1$d fichier ignoré : configuration WireGuard non valide</item>
+        <item quantity="many">%1$d de fichiers ignorés : configurations WireGuard non valides</item>
         <item quantity="other">%1$d fichiers ignorés : configurations WireGuard non valides</item>
     </plurals>
     <string name="msg_wg_mullvad_account">Numéro de compte Mullvad</string>
@@ -277,7 +283,7 @@
     <string name="vpn_get_mullvad_account">Obtenez un compte Mullvad</string>
     <string name="vpn_get_ivpn_account">Obtenez un compte IVPN</string>
     <string name="vpn_account_hint">Numéro de compte Mullvad</string>
-    <string name="vpn_ivpn_intro">Saisir votre ID de compte IVPN Il est enregistré sur cet appareil.</string>
+    <string name="vpn_ivpn_intro">Saisissez votre ID de compte IVPN. Il est enregistré sur cet appareil.</string>
     <string name="vpn_ivpn_captcha_intro">IVPN a besoin d\'une vérification CAPTCHA avant de créer une session WireGuard.</string>
     <string name="vpn_ivpn_account_hint">ID du compte IVPN</string>
     <string name="vpn_ivpn_captcha_hint">Texte de CAPTCHA</string>
@@ -325,7 +331,7 @@ Votre trafic internet n\'est pas envoyé vers un serveur VPN distant.</string>
     <string name="msg_native_fd_error">Le VPN n’a plus de descripteurs de fichiers. Fermez les applications inutilisées ou redémarrez votre appareil, puis redémarrez la protection.</string>
     <string name="msg_vpn_replacement_recovery_exhausted">TrackerControl n’a pas pu rétablir le VPN. Le trafic est bloqué.</string>
     <string name="msg_doh_unreachable">Le DNS sécurisé (DoH) ne peut pas être atteint alors que vous avez une connexion internet active. Si cela se produit à plusieurs reprises, envisagez de le désactiver dans les paramètres du réseau.</string>
-    <string name="msg_start_failed">Android vient refuser de démarrer le VPN. Ceci est probablement dû à un bogue dans votre version d\'Android.</string>
+    <string name="msg_start_failed">Android a refusé de démarrer le service VPN pour le moment. Ceci est probablement dû à un bogue dans votre version d\'Android.</string>
     <string name="msg_try">Essayez TrackerControl</string>
     <string name="msg_log_disabled">La journalisation du trafic est désactivée, utilisez l\'interrupteur ci-dessus pour activer la journalisation. La journalisation du trafic peut entraîner une surconsommation de la batterie.</string>
     <string name="msg_clear_activity">Supprime l’activité enregistrée pour cette application. Les paramètres de blocage ou d’autorisation par tracker sont conservés.</string>
@@ -360,7 +366,7 @@ Votre trafic internet n\'est pas envoyé vers un serveur VPN distant.</string>
     <string name="title_unmetered_blocked">Le trafic illimité est bloqué</string>
     <string name="title_unmetered_disabled">Les règles illimitées ne sont pas appliquées</string>
     <string name="title_metered_allowed">Le trafic limité est autorisé</string>
-    <string name="title_metered_blocked">Le trafic est bloqué</string>
+    <string name="title_metered_blocked">Le trafic limité est bloqué</string>
     <string name="title_metered_disabled">Les règles limitées ne sont pas appliquées</string>
     <string name="title_host_allowed">L\'adresse est autorisée</string>
     <string name="title_host_blocked">L\'adresse est bloquée</string>
@@ -390,12 +396,14 @@ Votre trafic internet n\'est pas envoyé vers un serveur VPN distant.</string>
     <string name="accessibility_tracker_blocking_enabled">Blocage des trackers activé</string>
     <string name="accessibility_tracker_blocking_disabled">Blocage des trackers désactivé</string>
     <plurals name="n_companies_found_week">
-        <item quantity="one">a contacté %d société la semaine dernière</item>
-        <item quantity="other">a contacté %d sociétés la semaine dernière</item>
+        <item quantity="one">a contacté %d entreprise la semaine dernière</item>
+        <item quantity="many">a contacté %d d’entreprises la semaine dernière</item>
+        <item quantity="other">a contacté %d entreprises la semaine dernière</item>
     </plurals>
     <plurals name="n_companies_found">
-        <item quantity="one">a contacté %d entreprise</item>
-        <item quantity="other">a contacté %d entreprises</item>
+        <item quantity="one">a contacté %d entreprise depuis le début</item>
+        <item quantity="many">a contacté %d d’entreprises depuis le début</item>
+        <item quantity="other">a contacté %d entreprises depuis le début</item>
     </plurals>
     <string name="confirm_ipinfo_title">Récupérer les informations sur l\'organisation?</string>
     <string name="confirm_ipinfo">Ceci contactera le service externe ipinfo.io, et partagera des données sur les adresses IP avec eux.</string>
@@ -433,12 +441,12 @@ Votre trafic internet n\'est pas envoyé vers un serveur VPN distant.</string>
     <string name="contact_officials">Représentants de l\'UE</string>
     <string name="google_dpo_mail">data-protection-office@google.com</string>
     <string name="dpas_overview_url">https://edpb.europa.eu/about-edpb/board/members</string>
-    <string name="subject_request_data">Demande d\'accès au données RGPD</string>
+    <string name="subject_request_data">Demande d\'accès aux données RGPD</string>
     <string name="body_request_data"><![CDATA[À la personne responsable :\n
 \n
 \n
 Je vous demande, en tant que responsable du traitement des données de l\'application Android %1$s (ID : %2$s), de confirmer le traitement des données personnelles me concernant.\n
-Si tel est le cas, veuillez me fournir toutes les informations requises stipulées dans l\'article 15 du règlement général de l\'UE sur la protection des données (RPDG), y compris :\n
+Si tel est le cas, veuillez me fournir toutes les informations requises stipulées dans l\'article 15 du règlement général de l\'UE sur la protection des données (RGPD), y compris :\n
 \n
 - une copie de mes données personnelles ;\n
 - les finalités du traitement ;\n
@@ -460,7 +468,7 @@ Cordialement,\n\n]]></string>
     <string name="body_delete_data"><![CDATA[À la personne responsable :\n
 \n
 \n
-J\'invoque mon droit à l\'effacement tel que spécifié à l\'article 17 du règlement général de l\'UE sur la protection des données (RPDG). Je vous demande, en tant que responsable du traitement des données de l\'application Android %1$s (ID : %2$s), d\'effacer sans délai les données personnelles me concernant :\n
+J\'invoque mon droit à l\'effacement tel que spécifié à l\'article 17 du règlement général de l\'UE sur la protection des données (RGPD). Je vous demande, en tant que responsable du traitement des données de l\'application Android %1$s (ID : %2$s), d\'effacer sans délai les données personnelles me concernant :\n
 - Toutes les données :\n
 \n
 La raison de ma demande de retrait est que je retire ou ai retiré mon consentement au traitement des données à caractère personnel. Cette demande concerne tout traitement de mes données à caractère personnel par vous, y compris par tout responsable du traitement des données à caractère personnel en votre nom.\n
@@ -544,6 +552,7 @@ Cordialement,\n\n]]></string>
     <string name="protection_app_not_working">L’application ne fonctionne pas ? Touchez ici</string>
     <plurals name="protection_paused_resumes">
         <item quantity="one">En pause — reprend dans %d min</item>
+        <item quantity="many">En pause — reprend dans %d min</item>
         <item quantity="other">En pause — reprend dans %d min</item>
     </plurals>
     <string name="protection_resume">Reprendre maintenant</string>
@@ -568,7 +577,7 @@ Cordialement,\n\n]]></string>
     <string name="tracker_hostlist">Hôtes définis par l\'utilisateur</string>
     <string name="internet_blocked">Accès à Internet bloqué</string>
     <string name="internet_unblocked">Accès à Internet débloqué</string>
-    <string name="category_unblocked">Traceurs dans la catégorie bloqués</string>
+    <string name="category_unblocked">Traqueurs de la catégorie autorisés</string>
     <string name="category_unblocked_warning">Autorisé avec cette catégorie — bloquez la catégorie pour modifier les entreprises individuelles.</string>
     <string name="tracking_detection_failed">La détection de la librairie de traceur a échoué.</string>
     <string name="tracking_detection_failed_ram">La détection de la librairie de traceur a échoué. Pas assez de RAM.</string>
@@ -595,6 +604,7 @@ Cordialement,\n\n]]></string>
     <string name="open_tracker_website">Ouvrir le site web de %1$s</string>
     <plurals name="libraries_found">
         <item quantity="one">%d bibliothèque de trackers trouvée dans le code de l’application</item>
+        <item quantity="many">%d de bibliothèques de trackers trouvées dans le code de l’application</item>
         <item quantity="other">%d bibliothèques de trackers trouvées dans le code de l’application</item>
     </plurals>
     <string name="analysis_queued">Analyse en attente…</string>
@@ -656,11 +666,12 @@ Cordialement,\n\n]]></string>
     <string name="insights_pervasive_trackers">Trackers les plus répandus</string>
     <string name="insights_top_domains">Principaux domaines de trackers</string>
     <!-- Joins the alternative domain names of one tracker, e.g. "example.com or example.net". Keep the surrounding spaces. -->
-    <string name="insights_domain_alias_separator">"« ou »"</string>
+    <string name="insights_domain_alias_separator">" ou "</string>
     <!-- Keep as a string: call-site/API migration and multi-count grammar are intentionally separate. -->
     <string name="insights_in_apps" tools:ignore="PluralsCandidate">dans %d applications</string>
     <plurals name="insights_apps_count">
         <item quantity="one">dans %d application</item>
+        <item quantity="many">dans %d d’applications</item>
         <item quantity="other">dans %d applications</item>
     </plurals>
     <string name="insights_no_data">Aucune donnée de traqueur pour le moment. Utilisez vos applications et revenez plus tard !</string>
@@ -685,4 +696,37 @@ Cordialement,\n\n]]></string>
     <string name="log_connection_blocked">Bloqué</string>
     <string name="log_connection_other">Autre réseau</string>
     <string name="log_screen_on">Écran allumé</string>
+    <string name="insights_overview_status">%1$s %2$s · %3$s %4$s</string>
+    <string name="insights_overview_status_share">%1$s (%2$s)</string>
+    <string name="timeline_insights_status">%1$s %2$s · %3$s %4$s</string>
+    <string name="dialog_doh_endpoint">Saisissez l’URL HTTPS complète fournie par votre fournisseur DNS, y compris le chemin propre à ce fournisseur (par exemple, https://dns.quad9.net/dns-query). Les applications exclues de TrackerControl, ou qui utilisent leur propre DNS chiffré, ignorent ce paramètre.</string>
+    <string name="summary_doh_dns_fallback">Utilise le DNS standard (non chiffré) lorsque DoH échoue. Le DNS de secours peut passer par un autre fournisseur DNS. Le désactiver peut empêcher des applications de fonctionner si le serveur DoH est hors service.</string>
+    <string name="msg_invalid_doh_endpoint">Saisissez une URL HTTPS complète pour DNS-over-HTTPS, y compris le chemin du fournisseur (par exemple, https://dns.quad9.net/dns-query).</string>
+    <string name="vpn_intro_proton_title">Proton VPN</string>
+    <string name="msg_wg_blocked">L’accès à Internet est bloqué tant que le tunnel WireGuard est indisponible. Désactivez le paramètre WireGuard pour le rétablir.</string>
+    <string name="msg_wg_blocked_detail">%s L’accès à Internet reste bloqué jusqu’à la résolution du problème, ou jusqu’à la désactivation du paramètre WireGuard.</string>
+    <string name="msg_wg_provider_rejected">%1$s a refusé de configurer cet appareil : %2$s.</string>
+    <string name="msg_wg_account_expired">%1$s signale qu’il ne reste plus de temps sur ce compte ; aucun serveur n’acceptera donc le tunnel tant que du temps n’aura pas été ajouté.</string>
+    <string name="msg_wg_recovery_failed">WireGuard ne répond plus et TrackerControl tente de se reconnecter.</string>
+    <string name="summary_log_logcat">Le mode Recherche désactive le blocage des trackers. Les trackers identifiés sont consignés dans ADB et l’extraction SNI est activée pour une meilleure détection des noms d’hôte. Récupérez les journaux avec adb logcat en utilisant la balise \'TC-Log\'.</string>
+    <string name="msg_research_mode_notice">Le mode Recherche est activé. Le blocage des trackers est désactivé. Touchez pour modifier les paramètres.</string>
+    <string name="msg_revoked">TrackerControl a été déconnecté, probablement par une autre application VPN ou par le système. Touchez pour vous reconnecter.</string>
+    <string name="title_version">Version %1$d</string>
+    <string name="accessibility_stat_description">%1$s, %2$s</string>
+    <string name="title_blocklists">Listes de blocage personnalisées</string>
+    <string name="summary_manage_blocklists">Ajoutez des listes de blocage au format fichier hosts. Elles sont utilisées lorsque les listes de trackers intégrées n’identifient pas un domaine.</string>
+    <string name="title_add_blocklist">Ajouter une liste de blocage</string>
+    <string name="title_delete_blocklist">Supprimer la liste de blocage</string>
+    <string name="msg_delete_blocklist_confirm">Voulez-vous vraiment supprimer cette liste de blocage ?</string>
+    <string name="msg_apply_blocklists_failed">Échec de l’application des listes de blocage</string>
+    <string name="blocklist_format">Saisissez une URL HTTPS pour une liste de blocage au format hosts (par exemple, 0.0.0.0 ads.example.com). Les règles de filtrage des navigateurs ne sont pas prises en charge.</string>
+    <string name="blocklist_minimal_notice">Les listes de blocage personnalisées sont inactives en mode Minimal. Passez en mode Standard ou Strict dans les paramètres pour les utiliser.</string>
+    <string name="blocklist_research_notice">Les listes de blocage personnalisées sont inactives tant que le mode Recherche est activé. Désactivez Recherche dans les paramètres pour activer le blocage des trackers.</string>
+    <string name="blocklist_browser_notice">La protection contre les trackers du navigateur est désactivée par défaut. Activez-la sur la page de l’application du navigateur pour y utiliser des listes de blocage personnalisées.</string>
+    <string name="blocklist_downloading">Téléchargement des listes de blocage… En attente d’une connexion si l’appareil est hors ligne.</string>
+    <string name="blocklist_not_downloaded">Pas encore téléchargée</string>
+    <string name="blocklist_download_failed">Impossible de télécharger ou d’appliquer les listes de blocage. Vérifiez les erreurs des listes et réessayez la mise à jour.</string>
+    <string name="blocklist_update">Mettre à jour les listes de blocage</string>
+    <string name="vpn_enabled_switch_description">VPN</string>
+    <string name="log_connection_wifi">Wi-Fi</string>
 </resources>
