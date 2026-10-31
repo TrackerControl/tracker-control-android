@@ -119,7 +119,7 @@
     <string name="setting_update">Søg efter opdateringer</string>
     <plurals name="pause">
         <item quantity="one">Sæt på pause i %d min</item>
-        <item quantity="other">Sæt på pause i %d minutter</item>
+        <item quantity="other">Sæt på pause i %d min</item>
     </plurals>
     <string name="setting_ip6">Aktivér IPv6-trafik</string>
     <string name="setting_call">Deaktiver ved opkald</string>
@@ -517,7 +517,7 @@ Med venlig hilsen,\n\n]]></string>
     <string name="protection_app_not_working">Virker appen ikke? Tryk her</string>
     <plurals name="protection_paused_resumes">
         <item quantity="one">Sat på pause — genoptages om %d min</item>
-        <item quantity="other">Sat på pause — genoptages om %d minutter</item>
+        <item quantity="other">Sat på pause — genoptages om %d min</item>
     </plurals>
     <string name="protection_resume">Genoptag nu</string>
     <string name="protection_pause_shared_uid">Når denne app sættes på pause, sættes %1$s også på pause, fordi de deler et Android-bruger-id.</string>
@@ -657,4 +657,65 @@ Med venlig hilsen,\n\n]]></string>
     <string name="log_connection_blocked">Blokeret</string>
     <string name="log_connection_other">Andet netværk</string>
     <string name="log_screen_on">Skærm tændt</string>
+    <string name="insights_overview_status">%1$s %2$s · %3$s %4$s</string>
+    <string name="insights_overview_status_share">%1$s (%2$s)</string>
+    <string name="timeline_insights_status">%1$s %2$s · %3$s %4$s</string>
+    <string name="vpn_status_mullvad">Mullvad</string>
+    <string name="vpn_provider_mullvad">Mullvad VPN</string>
+    <string name="vpn_provider_ivpn">IVPN</string>
+    <string name="vpn_intro_mullvad_title">Mullvad</string>
+    <string name="vpn_intro_ivpn_title">IVPN</string>
+    <string name="vpn_intro_proton_title">Proton VPN</string>
+    <string name="vpn_intro_wireguard_title">WireGuard</string>
+    <string name="vpn_mode_mullvad">Mullvad</string>
+    <string name="vpn_mode_ivpn">IVPN</string>
+    <string name="vpn_mode_wireguard">WireGuard</string>
+    <string name="tab_vpn">VPN</string>
+    <string name="vpn_enabled_switch_description">VPN</string>
+    <string name="log_connection_wifi">Wi-Fi</string>
+    <string name="accessibility_stat_description">%1$s, %2$s</string>
+    <string name="insights_share_url">TrackerControl.org</string>
+    <string name="google_dpo_mail">data-protection-office@google.com</string>
+    <string name="dpas_overview_url">https://edpb.europa.eu/about-edpb/board/members</string>
+    <string name="contact_playstore">Google</string>
+    <string name="vpn_country_selected">OK</string>
+    <string name="setting_vpn4">VPN IPv4: %s</string>
+    <string name="setting_vpn6">VPN IPv6: %s</string>
+    <string name="setting_wg_status">Status</string>
+    <string name="title_version">Version %1$d</string>
+    <string name="title_log_whois">Whois %1$s</string>
+    <string name="title_log_port">Port %1$d</string>
+    <string name="blocking_mode_minimal">Minimal</string>
+    <string name="blocking_mode_standard">Standard</string>
+    <string name="onboarding_blockingmode_standard_label">Standard</string>
+    <string name="tab_apps">Apps</string>
+    <string name="dialog_doh_endpoint">Angiv den fulde HTTPS-URL fra din DNS-udbyder, inklusive udbyderens egen sti (f.eks. https://dns.quad9.net/dns-query). Apps, der er udelukket fra TrackerControl eller bruger deres egen krypterede DNS, omgår denne indstilling.</string>
+    <string name="msg_invalid_doh_endpoint">Angiv en komplet HTTPS-URL til DNS-over-HTTPS, inklusive udbyderens sti (f.eks. https://dns.quad9.net/dns-query).</string>
+    <string name="msg_wg_blocked">Internetadgang er blokeret, mens WireGuard-tunnelen er utilgængelig. Deaktiver WireGuard-indstillingen for at gendanne den.</string>
+    <string name="msg_wg_blocked_detail">%s Internetadgang forbliver blokeret, indtil problemet er løst, eller indtil WireGuard-indstillingen deaktiveres.</string>
+    <string name="msg_wg_provider_rejected">%1$s nægtede at konfigurere denne enhed: %2$s.</string>
+    <string name="msg_wg_account_expired">%1$s oplyser, at der ikke er mere tid på denne konto, så ingen server vil acceptere tunnelen, før der tilføjes tid.</string>
+    <string name="msg_wg_recovery_failed">WireGuard holdt op med at svare, og TrackerControl forsøger at genoprette forbindelsen.</string>
+    <string name="summary_log_logcat">Forskningstilstand deaktiverer blokering af trackere. Identificerede trackere logges til ADB, og SNI-udtrækning aktiveres for bedre registrering af værtsnavne. Hent logfiler med adb logcat med tagget \'TC-Log\'.</string>
+    <string name="msg_research_mode_notice">Forskningstilstand er slået til. Blokering af trackere er deaktiveret. Tryk for at ændre indstillinger.</string>
+    <string name="msg_revoked">TrackerControl blev afbrudt, sandsynligvis af en anden VPN-app eller systemet. Tryk for at oprette forbindelse igen.</string>
+    <string name="tracker_cryptomining">Kryptomining</string>
+    <string name="title_blocklists">Brugerdefinerede blokeringslister</string>
+    <string name="summary_manage_blocklists">Tilføj blokeringslister i hosts-filformat. Bruges, når de indbyggede trackerlister ikke identificerer et domæne.</string>
+    <string name="title_add_blocklist">Tilføj blokeringsliste</string>
+    <string name="title_delete_blocklist">Slet blokeringsliste</string>
+    <string name="msg_delete_blocklist_confirm">Er du sikker på, at du vil slette denne blokeringsliste?</string>
+    <string name="msg_apply_blocklists_failed">Blokeringslisterne kunne ikke anvendes</string>
+    <string name="blocklist_format">Angiv en HTTPS-URL til en blokeringsliste i hosts-format (f.eks. 0.0.0.0 ads.example.com). Browserfilterregler understøttes ikke.</string>
+    <string name="blocklist_minimal_notice">Brugerdefinerede blokeringslister er inaktive i tilstanden Minimal. Skift til Standard eller Streng i Indstillinger for at bruge dem.</string>
+    <string name="blocklist_research_notice">Brugerdefinerede blokeringslister er inaktive, mens forskningstilstand er slået til. Slå Forskning fra i Indstillinger for at aktivere blokering af trackere.</string>
+    <string name="blocklist_browser_notice">Trackerbeskyttelse i browsere er som standard slået fra. Aktiver den på browserens app-side for at bruge brugerdefinerede blokeringslister der.</string>
+    <string name="blocklist_downloading">Henter blokeringslister… Venter på forbindelse, hvis du er offline.</string>
+    <string name="blocklist_not_downloaded">Ikke hentet endnu</string>
+    <string name="blocklist_download_failed">Blokeringslisterne kunne ikke hentes eller anvendes. Tjek listefejlene, og prøv at opdatere igen.</string>
+    <string name="blocklist_update">Opdater blokeringslister</string>
+    <string-array name="protocolNames">
+        <item>UDP</item>
+        <item>TCP</item>
+    </string-array>
 </resources>

@@ -74,16 +74,16 @@
     <!-- Keep as a string: call-site/API migration and multi-count grammar are intentionally separate. -->
     <string name="timeline_summary_mixed" tools:ignore="PluralsCandidate">%1$d заблокировано ·  %2$d разрешено</string>
     <plurals name="timeline_trackers_blocked">
-        <item quantity="one">%d трекер заблокировано</item>
-        <item quantity="few">%d трекеры заблокировано</item>
-        <item quantity="many">%d трекеров заблокировано</item>
-        <item quantity="other">%d трекеров заблокировано</item>
+        <item quantity="one">Заблокирован %d трекер</item>
+        <item quantity="few">Заблокировано %d трекера</item>
+        <item quantity="many">Заблокировано %d трекеров</item>
+        <item quantity="other">Заблокировано %d трекера</item>
     </plurals>
     <plurals name="timeline_trackers_allowed">
-        <item quantity="one">%d трекер разрешено</item>
-        <item quantity="few">%d трекеры разрешено</item>
-        <item quantity="many">%d трекеров разрешено</item>
-        <item quantity="other">%d трекеров разрешено</item>
+        <item quantity="one">Разрешён %d трекер</item>
+        <item quantity="few">Разрешено %d трекера</item>
+        <item quantity="many">Разрешено %d трекеров</item>
+        <item quantity="other">Разрешено %d трекера</item>
     </plurals>
     <string name="troubleshooting_title">Устранение неполадок</string>
     <string name="troubleshooting_battery_title">Оптимизация батареи</string>
@@ -234,14 +234,14 @@
     <string name="msg_wg_profile_import_failed">Не удалось прочитать выбранный файл: %1$s</string>
     <plurals name="msg_wg_profile_imported">
         <item quantity="one">Импортирован %1$d профиль WireGuard</item>
-        <item quantity="few">%1$d профили</item>
-        <item quantity="many">%1$d профилей</item>
+        <item quantity="few">Импортировано %1$d профиля WireGuard</item>
+        <item quantity="many">Импортировано %1$d профилей WireGuard</item>
         <item quantity="other">Импортировано профилей WireGuard: %1$d</item>
     </plurals>
     <plurals name="msg_wg_profile_import_skipped">
         <item quantity="one">Пропущен %1$d файл: недопустимая конфигурация WireGuard</item>
-        <item quantity="few">%1$d приложения</item>
-        <item quantity="many">%1$d приложений</item>
+        <item quantity="few">Пропущено %1$d файла: недопустимые конфигурации WireGuard</item>
+        <item quantity="many">Пропущено %1$d файлов: недопустимые конфигурации WireGuard</item>
         <item quantity="other">Пропущено файлов: %1$d — недопустимые конфигурации WireGuard</item>
     </plurals>
     <string name="msg_wg_mullvad_account">Номер учётной записи Mullvad</string>
@@ -549,8 +549,8 @@
     <string name="protection_app_not_working">Приложение не работает? Нажмите здесь</string>
     <plurals name="protection_paused_resumes">
         <item quantity="one">Приостановлено — возобновится через %d мин.</item>
-        <item quantity="few">%d минуты</item>
-        <item quantity="many">%d минут</item>
+        <item quantity="few">Приостановлено — возобновится через %d мин.</item>
+        <item quantity="many">Приостановлено — возобновится через %d мин.</item>
         <item quantity="other">Приостановлено — возобновится через %d мин.</item>
     </plurals>
     <string name="protection_resume">Возобновить сейчас</string>
@@ -602,8 +602,8 @@
     <string name="open_tracker_website">Открыть сайт %1$s</string>
     <plurals name="libraries_found">
         <item quantity="one">В коде приложения найдена %d библиотека трекеров</item>
-        <item quantity="few">%d библиотеки</item>
-        <item quantity="many">%d библиотек</item>
+        <item quantity="few">В коде приложения найдено %d библиотеки трекеров</item>
+        <item quantity="many">В коде приложения найдено %d библиотек трекеров</item>
         <item quantity="other">В коде приложения найдено библиотек трекеров: %d</item>
     </plurals>
     <string name="analysis_queued">Анализ в очереди…</string>
@@ -670,8 +670,8 @@
     <string name="insights_in_apps" tools:ignore="PluralsCandidate">в %d приложениях</string>
     <plurals name="insights_apps_count">
         <item quantity="one">в %d приложении</item>
-        <item quantity="few">%d приложения</item>
-        <item quantity="many">%d приложений</item>
+        <item quantity="few">в %d приложениях</item>
+        <item quantity="many">в %d приложениях</item>
         <item quantity="other">в %d приложениях</item>
     </plurals>
     <string name="insights_no_data">Пока нет отслеживаемых данных. Используйте свои приложения и проверьте снова!</string>
@@ -696,4 +696,47 @@
     <string name="log_connection_blocked">Заблокировано</string>
     <string name="log_connection_other">Другая сеть</string>
     <string name="log_screen_on">Экран включён</string>
+    <string name="tab_vpn">VPN</string>
+    <string name="insights_overview_status">%1$s %2$s · %3$s %4$s</string>
+    <string name="insights_overview_status_share">%1$s (%2$s)</string>
+    <string name="timeline_insights_status">%1$s %2$s · %3$s %4$s</string>
+    <string name="dialog_doh_endpoint">Введите полный HTTPS-адрес, предоставленный вашим DNS-провайдером, включая путь, специфичный для провайдера (например, https://dns.quad9.net/dns-query). Приложения, исключённые из TrackerControl или использующие собственный зашифрованный DNS, обходят эту настройку.</string>
+    <string name="summary_doh_dns_fallback">Использовать обычный (незашифрованный) DNS, если DoH не работает. Резервный вариант может использовать другого DNS-провайдера. Отключение может нарушить работу приложений, если сервер DoH недоступен.</string>
+    <string name="msg_invalid_doh_endpoint">Введите полный HTTPS-адрес для DNS-over-HTTPS, включая путь провайдера (например, https://dns.quad9.net/dns-query).</string>
+    <string name="summary_wg_config">Paste a [Interface] / [Peer] config from your provider</string>
+    <string name="vpn_status_mullvad">Mullvad</string>
+    <string name="vpn_provider_mullvad">Mullvad VPN</string>
+    <string name="vpn_provider_ivpn">IVPN</string>
+    <string name="vpn_intro_mullvad_title">Mullvad</string>
+    <string name="vpn_intro_ivpn_title">IVPN</string>
+    <string name="vpn_intro_proton_title">Proton VPN</string>
+    <string name="vpn_intro_wireguard_title">WireGuard</string>
+    <string name="vpn_mode_mullvad">Mullvad</string>
+    <string name="vpn_mode_ivpn">IVPN</string>
+    <string name="vpn_mode_wireguard">WireGuard</string>
+    <string name="msg_wg_blocked">Доступ в интернет заблокирован, пока туннель WireGuard недоступен. Отключите настройку WireGuard, чтобы восстановить доступ.</string>
+    <string name="msg_wg_blocked_detail">%s Доступ в интернет остаётся заблокированным, пока проблема не будет устранена или пока настройка WireGuard не будет отключена.</string>
+    <string name="msg_wg_provider_rejected">%1$s отказался настраивать это устройство: %2$s.</string>
+    <string name="msg_wg_account_expired">%1$s сообщает, что на этой учётной записи не осталось времени, поэтому ни один сервер не примет туннель, пока время не будет добавлено.</string>
+    <string name="msg_wg_recovery_failed">WireGuard перестал отвечать, и TrackerControl пытается переподключиться.</string>
+    <string name="summary_log_logcat">Режим исследования отключает блокировку трекеров. Обнаруженные трекеры записываются в ADB, а извлечение SNI включается для лучшего определения имён хостов. Получите журналы командой adb logcat с тегом \'TC-Log\'.</string>
+    <string name="msg_research_mode_notice">Режим исследования включён. Блокировка трекеров отключена. Нажмите, чтобы изменить настройки.</string>
+    <string name="msg_revoked">TrackerControl был отключён, вероятно, другим VPN-приложением или системой. Нажмите, чтобы подключиться снова.</string>
+    <string name="accessibility_stat_description">%1$s, %2$s</string>
+    <string name="title_blocklists">Собственные списки блокировки</string>
+    <string name="summary_manage_blocklists">Добавляйте списки блокировки в формате файла hosts. Используются, если встроенные списки трекеров не определяют домен.</string>
+    <string name="title_add_blocklist">Добавить список блокировки</string>
+    <string name="title_delete_blocklist">Удалить список блокировки</string>
+    <string name="msg_delete_blocklist_confirm">Вы уверены, что хотите удалить этот список блокировки?</string>
+    <string name="msg_apply_blocklists_failed">Не удалось применить списки блокировки</string>
+    <string name="blocklist_format">Введите HTTPS-адрес списка блокировки в формате hosts (например, 0.0.0.0 ads.example.com). Правила фильтрации для браузеров не поддерживаются.</string>
+    <string name="blocklist_minimal_notice">Собственные списки блокировки неактивны в минимальном режиме. Чтобы использовать их, выберите стандартный или строгий режим в настройках.</string>
+    <string name="blocklist_research_notice">Собственные списки блокировки неактивны, пока включён режим исследования. Отключите исследование в настройках, чтобы включить блокировку трекеров.</string>
+    <string name="blocklist_browser_notice">Защита от трекеров в браузере по умолчанию отключена. Включите её на странице приложения браузера, чтобы использовать там собственные списки блокировки.</string>
+    <string name="blocklist_downloading">Загрузка списков блокировки… Если вы не в сети, ожидается подключение.</string>
+    <string name="blocklist_not_downloaded">Ещё не загружено</string>
+    <string name="blocklist_download_failed">Не удалось загрузить или применить списки блокировки. Проверьте ошибки в списках и попробуйте обновить снова.</string>
+    <string name="blocklist_update">Обновить списки блокировки</string>
+    <string name="vpn_enabled_switch_description">VPN</string>
+    <string name="log_connection_wifi">Wi-Fi</string>
 </resources>

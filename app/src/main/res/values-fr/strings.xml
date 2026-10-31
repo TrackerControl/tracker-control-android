@@ -59,6 +59,7 @@
     <string name="feed_section_last_contact">dernier contact %s</string>
     <plurals name="feed_show_more_companies">
         <item quantity="one">Afficher %d entreprise supplémentaire</item>
+        <item quantity="many">Afficher %d d’entreprises supplémentaires</item>
         <item quantity="other">Afficher %d entreprises supplémentaires</item>
     </plurals>
     <string name="feed_allow_company_in_app">Autoriser %1$s dans %2$s</string>
@@ -74,10 +75,12 @@
     <string name="timeline_summary_mixed" tools:ignore="PluralsCandidate">%1$d bloqués · %2$d autorisés</string>
     <plurals name="timeline_trackers_blocked">
         <item quantity="one">%d tracker bloqué</item>
+        <item quantity="many">%d de trackers bloqués</item>
         <item quantity="other">%d trackers bloqués</item>
     </plurals>
     <plurals name="timeline_trackers_allowed">
         <item quantity="one">%d tracker autorisé</item>
+        <item quantity="many">%d de trackers autorisés</item>
         <item quantity="other">%d trackers autorisés</item>
     </plurals>
     <string name="troubleshooting_title">Diagnostic des anomalies</string>
@@ -121,7 +124,8 @@
     <string name="setting_update">Vérifier les mises à jour</string>
     <plurals name="pause">
         <item quantity="one">Suspendre pendant %d min</item>
-        <item quantity="other">Pause pour %d mins</item>
+        <item quantity="many">Suspendre pendant %d min</item>
+        <item quantity="other">Suspendre pendant %d min</item>
     </plurals>
     <string name="setting_ip6">Activer le trafic IPv6</string>
     <string name="setting_call">Désactiver lors des appels</string>
@@ -228,10 +232,12 @@
     <string name="msg_wg_profile_import_failed">Impossible de lire le fichier sélectionné : %1$s</string>
     <plurals name="msg_wg_profile_imported">
         <item quantity="one">%1$d profil WireGuard importé</item>
+        <item quantity="many">%1$d de profils WireGuard importés</item>
         <item quantity="other">%1$d profils WireGuard importés</item>
     </plurals>
     <plurals name="msg_wg_profile_import_skipped">
         <item quantity="one">%1$d fichier ignoré : configuration WireGuard non valide</item>
+        <item quantity="many">%1$d de fichiers ignorés : configurations WireGuard non valides</item>
         <item quantity="other">%1$d fichiers ignorés : configurations WireGuard non valides</item>
     </plurals>
     <string name="msg_wg_mullvad_account">Numéro de compte Mullvad</string>
@@ -390,11 +396,13 @@ Votre trafic internet n\'est pas envoyé vers un serveur VPN distant.</string>
     <string name="accessibility_tracker_blocking_enabled">Blocage des trackers activé</string>
     <string name="accessibility_tracker_blocking_disabled">Blocage des trackers désactivé</string>
     <plurals name="n_companies_found_week">
-        <item quantity="one">a contacté %d société la semaine dernière</item>
-        <item quantity="other">a contacté %d sociétés la semaine dernière</item>
+        <item quantity="one">a contacté %d entreprise la semaine dernière</item>
+        <item quantity="many">a contacté %d d’entreprises la semaine dernière</item>
+        <item quantity="other">a contacté %d entreprises la semaine dernière</item>
     </plurals>
     <plurals name="n_companies_found">
         <item quantity="one">a contacté %d entreprise depuis le début</item>
+        <item quantity="many">a contacté %d d’entreprises depuis le début</item>
         <item quantity="other">a contacté %d entreprises depuis le début</item>
     </plurals>
     <string name="confirm_ipinfo_title">Récupérer les informations sur l\'organisation?</string>
@@ -544,6 +552,7 @@ Cordialement,\n\n]]></string>
     <string name="protection_app_not_working">L’application ne fonctionne pas ? Touchez ici</string>
     <plurals name="protection_paused_resumes">
         <item quantity="one">En pause — reprend dans %d min</item>
+        <item quantity="many">En pause — reprend dans %d min</item>
         <item quantity="other">En pause — reprend dans %d min</item>
     </plurals>
     <string name="protection_resume">Reprendre maintenant</string>
@@ -595,6 +604,7 @@ Cordialement,\n\n]]></string>
     <string name="open_tracker_website">Ouvrir le site web de %1$s</string>
     <plurals name="libraries_found">
         <item quantity="one">%d bibliothèque de trackers trouvée dans le code de l’application</item>
+        <item quantity="many">%d de bibliothèques de trackers trouvées dans le code de l’application</item>
         <item quantity="other">%d bibliothèques de trackers trouvées dans le code de l’application</item>
     </plurals>
     <string name="analysis_queued">Analyse en attente…</string>
@@ -661,6 +671,7 @@ Cordialement,\n\n]]></string>
     <string name="insights_in_apps" tools:ignore="PluralsCandidate">dans %d applications</string>
     <plurals name="insights_apps_count">
         <item quantity="one">dans %d application</item>
+        <item quantity="many">dans %d d’applications</item>
         <item quantity="other">dans %d applications</item>
     </plurals>
     <string name="insights_no_data">Aucune donnée de traqueur pour le moment. Utilisez vos applications et revenez plus tard !</string>
@@ -685,4 +696,37 @@ Cordialement,\n\n]]></string>
     <string name="log_connection_blocked">Bloqué</string>
     <string name="log_connection_other">Autre réseau</string>
     <string name="log_screen_on">Écran allumé</string>
+    <string name="insights_overview_status">%1$s %2$s · %3$s %4$s</string>
+    <string name="insights_overview_status_share">%1$s (%2$s)</string>
+    <string name="timeline_insights_status">%1$s %2$s · %3$s %4$s</string>
+    <string name="dialog_doh_endpoint">Saisissez l’URL HTTPS complète fournie par votre fournisseur DNS, y compris le chemin propre à ce fournisseur (par exemple, https://dns.quad9.net/dns-query). Les applications exclues de TrackerControl, ou qui utilisent leur propre DNS chiffré, ignorent ce paramètre.</string>
+    <string name="summary_doh_dns_fallback">Utilise le DNS standard (non chiffré) lorsque DoH échoue. Le DNS de secours peut passer par un autre fournisseur DNS. Le désactiver peut empêcher des applications de fonctionner si le serveur DoH est hors service.</string>
+    <string name="msg_invalid_doh_endpoint">Saisissez une URL HTTPS complète pour DNS-over-HTTPS, y compris le chemin du fournisseur (par exemple, https://dns.quad9.net/dns-query).</string>
+    <string name="vpn_intro_proton_title">Proton VPN</string>
+    <string name="msg_wg_blocked">L’accès à Internet est bloqué tant que le tunnel WireGuard est indisponible. Désactivez le paramètre WireGuard pour le rétablir.</string>
+    <string name="msg_wg_blocked_detail">%s L’accès à Internet reste bloqué jusqu’à la résolution du problème, ou jusqu’à la désactivation du paramètre WireGuard.</string>
+    <string name="msg_wg_provider_rejected">%1$s a refusé de configurer cet appareil : %2$s.</string>
+    <string name="msg_wg_account_expired">%1$s signale qu’il ne reste plus de temps sur ce compte ; aucun serveur n’acceptera donc le tunnel tant que du temps n’aura pas été ajouté.</string>
+    <string name="msg_wg_recovery_failed">WireGuard ne répond plus et TrackerControl tente de se reconnecter.</string>
+    <string name="summary_log_logcat">Le mode Recherche désactive le blocage des trackers. Les trackers identifiés sont consignés dans ADB et l’extraction SNI est activée pour une meilleure détection des noms d’hôte. Récupérez les journaux avec adb logcat en utilisant la balise \'TC-Log\'.</string>
+    <string name="msg_research_mode_notice">Le mode Recherche est activé. Le blocage des trackers est désactivé. Touchez pour modifier les paramètres.</string>
+    <string name="msg_revoked">TrackerControl a été déconnecté, probablement par une autre application VPN ou par le système. Touchez pour vous reconnecter.</string>
+    <string name="title_version">Version %1$d</string>
+    <string name="accessibility_stat_description">%1$s, %2$s</string>
+    <string name="title_blocklists">Listes de blocage personnalisées</string>
+    <string name="summary_manage_blocklists">Ajoutez des listes de blocage au format fichier hosts. Elles sont utilisées lorsque les listes de trackers intégrées n’identifient pas un domaine.</string>
+    <string name="title_add_blocklist">Ajouter une liste de blocage</string>
+    <string name="title_delete_blocklist">Supprimer la liste de blocage</string>
+    <string name="msg_delete_blocklist_confirm">Voulez-vous vraiment supprimer cette liste de blocage ?</string>
+    <string name="msg_apply_blocklists_failed">Échec de l’application des listes de blocage</string>
+    <string name="blocklist_format">Saisissez une URL HTTPS pour une liste de blocage au format hosts (par exemple, 0.0.0.0 ads.example.com). Les règles de filtrage des navigateurs ne sont pas prises en charge.</string>
+    <string name="blocklist_minimal_notice">Les listes de blocage personnalisées sont inactives en mode Minimal. Passez en mode Standard ou Strict dans les paramètres pour les utiliser.</string>
+    <string name="blocklist_research_notice">Les listes de blocage personnalisées sont inactives tant que le mode Recherche est activé. Désactivez Recherche dans les paramètres pour activer le blocage des trackers.</string>
+    <string name="blocklist_browser_notice">La protection contre les trackers du navigateur est désactivée par défaut. Activez-la sur la page de l’application du navigateur pour y utiliser des listes de blocage personnalisées.</string>
+    <string name="blocklist_downloading">Téléchargement des listes de blocage… En attente d’une connexion si l’appareil est hors ligne.</string>
+    <string name="blocklist_not_downloaded">Pas encore téléchargée</string>
+    <string name="blocklist_download_failed">Impossible de télécharger ou d’appliquer les listes de blocage. Vérifiez les erreurs des listes et réessayez la mise à jour.</string>
+    <string name="blocklist_update">Mettre à jour les listes de blocage</string>
+    <string name="vpn_enabled_switch_description">VPN</string>
+    <string name="log_connection_wifi">Wi-Fi</string>
 </resources>

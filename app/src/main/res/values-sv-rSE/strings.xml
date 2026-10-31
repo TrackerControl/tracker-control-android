@@ -680,4 +680,16 @@ Med vänlig hälsning,\n\n]]></string>
     <string name="log_connection_wifi">Wi-Fi</string>
     <string name="log_connection_other">Annat nätverk</string>
     <string name="log_screen_on">Skärmen på</string>
+    <string name="dialog_doh_endpoint">Ange den fullständiga HTTPS-adressen från din DNS-leverantör, inklusive leverantörens specifika sökväg (till exempel https://dns.quad9.net/dns-query). Appar som är undantagna från TrackerControl eller som använder egen krypterad DNS går förbi den här inställningen.</string>
+    <string name="msg_invalid_doh_endpoint">Ange en fullständig HTTPS-adress för DNS-over-HTTPS, inklusive leverantörens sökväg (till exempel https://dns.quad9.net/dns-query).</string>
+    <string name="msg_wg_account_expired">%1$s rapporterar att det inte finns någon tid kvar på det här kontot, så ingen server accepterar tunneln förrän tid har lagts till.</string>
+    <string name="msg_research_mode_notice">Forskningsläget är på. Spårarblockering är inaktiverad. Tryck för att ändra inställningar.</string>
+    <string name="blocklist_format">Ange en HTTPS-adress till en blockeringslista i hosts-format (till exempel 0.0.0.0 ads.example.com). Webbläsarens filterregler stöds inte.</string>
+    <string name="blocklist_minimal_notice">Anpassade blockeringslistor är inaktiva i läget Minimalt. Byt till Standard eller Strikt i Inställningar för att använda dem.</string>
+    <string name="blocklist_research_notice">Anpassade blockeringslistor är inaktiva medan forskningsläget är på. Stäng av Forskning i Inställningar för att aktivera spårarblockering.</string>
+    <string name="blocklist_browser_notice">Spårarskydd i webbläsare är avstängt som standard. Aktivera det på webbläsarens appsida för att använda anpassade blockeringslistor där.</string>
+    <string name="blocklist_downloading">Laddar ner blockeringslistor… Väntar på anslutning om du är offline.</string>
+    <string name="blocklist_not_downloaded">Inte nedladdad än</string>
+    <string name="blocklist_download_failed">Det gick inte att ladda ner eller tillämpa blockeringslistorna. Kontrollera listfelen och försök uppdatera igen.</string>
+    <string name="blocklist_update">Uppdatera blockeringslistor</string>
 </resources>

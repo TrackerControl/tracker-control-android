@@ -57,6 +57,7 @@
     <string name="feed_section_last_contact">último contato %s</string>
     <plurals name="feed_show_more_companies">
         <item quantity="one">Mostrar mais %d empresa</item>
+        <item quantity="many">Mostrar mais %d de empresas</item>
         <item quantity="other">Mostrar mais %d empresas</item>
     </plurals>
     <string name="feed_allow_company_in_app">Permitir %1$s em %2$s</string>
@@ -72,10 +73,12 @@
     <string name="timeline_summary_mixed" tools:ignore="PluralsCandidate">%1$d bloqueado · %2$d permitido</string>
     <plurals name="timeline_trackers_blocked">
         <item quantity="one">%d rastreador bloqueado</item>
+        <item quantity="many">%d de rastreadores bloqueados</item>
         <item quantity="other">%d rastreadores bloqueados</item>
     </plurals>
     <plurals name="timeline_trackers_allowed">
         <item quantity="one">%d rastreador permitido</item>
+        <item quantity="many">%d de rastreadores permitidos</item>
         <item quantity="other">%d rastreadores permitidos</item>
     </plurals>
     <string name="troubleshooting_title">Soluções</string>
@@ -119,7 +122,8 @@
     <string name="setting_update">Verificar se há atualizações</string>
     <plurals name="pause">
         <item quantity="one">Pausar por %d min</item>
-        <item quantity="other">Pausar por %d mins</item>
+        <item quantity="many">Pausar por %d min</item>
+        <item quantity="other">Pausar por %d min</item>
     </plurals>
     <string name="setting_ip6">Habilitar tráfego IPv6</string>
     <string name="setting_call">Desativar durante ligações</string>
@@ -225,10 +229,12 @@
     <string name="msg_wg_profile_import_failed">Não foi possível ler o arquivo selecionado: %1$s</string>
     <plurals name="msg_wg_profile_imported">
         <item quantity="one">%1$d perfil do WireGuard importado</item>
+        <item quantity="many">%1$d de perfis do WireGuard importados</item>
         <item quantity="other">%1$d perfis do WireGuard importados</item>
     </plurals>
     <plurals name="msg_wg_profile_import_skipped">
         <item quantity="one">%1$d arquivo ignorado: não é uma configuração válida do WireGuard</item>
+        <item quantity="many">%1$d de arquivos ignorados: não são configurações válidas do WireGuard</item>
         <item quantity="other">%1$d arquivos ignorados: não são configurações válidas do WireGuard</item>
     </plurals>
     <string name="msg_wg_mullvad_account">Número da conta Mullvad</string>
@@ -378,11 +384,13 @@ O seu tráfego de internet não está sendo enviado para um servidor VPN remoto.
     <string name="accessibility_tracker_blocking_disabled">Bloqueio de rastreadores desativado</string>
     <plurals name="n_companies_found_week">
         <item quantity="one">contactou %d empresa na semana passada</item>
+        <item quantity="many">contactou %d de empresas na semana passada</item>
         <item quantity="other">contactou %d empresas na semana passada</item>
     </plurals>
     <plurals name="n_companies_found">
-        <item quantity="one">contatou %d empresa o tempo todo</item>
-        <item quantity="other">contatou %d empresas o tempo todo</item>
+        <item quantity="one">contatou %d empresa desde sempre</item>
+        <item quantity="many">contatou %d de empresas desde sempre</item>
+        <item quantity="other">contatou %d empresas desde sempre</item>
     </plurals>
     <string name="confirm_ipinfo_title">Obter informações da organização?</string>
     <string name="confirm_ipinfo">Entrará em contato com o serviço externo ipinfo.io, e compartilhará dados sobre endereços IP contactados com eles.</string>
@@ -499,6 +507,7 @@ O seu tráfego de internet não está sendo enviado para um servidor VPN remoto.
     <string name="protection_app_not_working">O app não funciona? Toque aqui</string>
     <plurals name="protection_paused_resumes">
         <item quantity="one">Pausado — retoma em %d min</item>
+        <item quantity="many">Pausado — retoma em %d min</item>
         <item quantity="other">Pausado — retoma em %d min</item>
     </plurals>
     <string name="protection_resume">Retomar agora</string>
@@ -550,6 +559,7 @@ O seu tráfego de internet não está sendo enviado para um servidor VPN remoto.
     <string name="open_tracker_website">Abrir o site de %1$s</string>
     <plurals name="libraries_found">
         <item quantity="one">%d biblioteca de rastreador encontrada no código do app</item>
+        <item quantity="many">%d de bibliotecas de rastreadores encontradas no código do app</item>
         <item quantity="other">%d bibliotecas de rastreadores encontradas no código do app</item>
     </plurals>
     <string name="analysis_queued">Análise na fila…</string>
@@ -616,6 +626,7 @@ O seu tráfego de internet não está sendo enviado para um servidor VPN remoto.
     <string name="insights_in_apps" tools:ignore="PluralsCandidate">em %d apps</string>
     <plurals name="insights_apps_count">
         <item quantity="one">em %d app</item>
+        <item quantity="many">em %d de apps</item>
         <item quantity="other">em %d apps</item>
     </plurals>
     <string name="insights_no_data">Ainda não há dados de rastreamento. Use seus apps e tente novamente!</string>
@@ -640,4 +651,50 @@ O seu tráfego de internet não está sendo enviado para um servidor VPN remoto.
     <string name="log_connection_blocked">Bloqueado</string>
     <string name="log_connection_other">Outra rede</string>
     <string name="log_screen_on">Tela ligada</string>
+    <string name="tab_apps">Apps</string>
+    <string name="tab_vpn">VPN</string>
+    <string name="insights_overview_status">%1$s %2$s · %3$s %4$s</string>
+    <string name="insights_overview_status_share">%1$s (%2$s)</string>
+    <string name="timeline_insights_status">%1$s %2$s · %3$s %4$s</string>
+    <string name="setting_wg_status">Status</string>
+    <string name="dialog_doh_endpoint">Digite o URL HTTPS completo fornecido pelo seu provedor de DNS, incluindo o caminho específico do provedor (por exemplo, https://dns.quad9.net/dns-query). Apps excluídos do TrackerControl, ou que usam o próprio DNS criptografado, ignoram esta configuração.</string>
+    <string name="summary_doh_dns_fallback">Usa o DNS padrão (não criptografado) quando o DoH falha. A alternativa pode usar um provedor de DNS diferente. Desativar pode quebrar apps se o servidor DoH estiver fora do ar.</string>
+    <string name="msg_invalid_doh_endpoint">Digite um URL HTTPS completo para DNS-over-HTTPS, incluindo o caminho do provedor (por exemplo, https://dns.quad9.net/dns-query).</string>
+    <string name="vpn_status_mullvad">Mullvad</string>
+    <string name="vpn_status_relay">Relé: %s</string>
+    <string name="vpn_provider_mullvad">Mullvad VPN</string>
+    <string name="vpn_provider_ivpn">IVPN</string>
+    <string name="vpn_intro_mullvad_title">Mullvad</string>
+    <string name="vpn_intro_ivpn_title">IVPN</string>
+    <string name="vpn_intro_proton_title">Proton VPN</string>
+    <string name="vpn_intro_wireguard_title">WireGuard</string>
+    <string name="vpn_mode_mullvad">Mullvad</string>
+    <string name="vpn_mode_ivpn">IVPN</string>
+    <string name="vpn_mode_wireguard">WireGuard</string>
+    <string name="vpn_country_selected">OK</string>
+    <string name="msg_wg_blocked">O acesso à internet fica bloqueado enquanto o túnel WireGuard estiver indisponível. Desative a configuração do WireGuard para restaurá-lo.</string>
+    <string name="msg_wg_blocked_detail">%s O acesso à internet continua bloqueado até que isso seja resolvido ou até que a configuração do WireGuard seja desativada.</string>
+    <string name="msg_wg_provider_rejected">%1$s recusou configurar este dispositivo: %2$s.</string>
+    <string name="msg_wg_account_expired">%1$s informa que não há mais tempo nesta conta, então nenhum servidor aceitará o túnel até que seja adicionado mais tempo.</string>
+    <string name="msg_wg_recovery_failed">O WireGuard parou de responder e o TrackerControl está tentando se reconectar.</string>
+    <string name="summary_log_logcat">O modo de pesquisa desativa o bloqueio de rastreadores. Os rastreadores identificados são registrados no ADB e a extração de SNI é ativada para melhor detecção de nomes de host. Recupere os logs com adb logcat usando a tag \'TC-Log\'.</string>
+    <string name="msg_research_mode_notice">O modo de pesquisa está ativado. O bloqueio de rastreadores está desativado. Toque para alterar as configurações.</string>
+    <string name="msg_revoked">O TrackerControl foi desconectado, provavelmente por outro app de VPN ou pelo sistema. Toque para reconectar.</string>
+    <string name="accessibility_stat_description">%1$s, %2$s</string>
+    <string name="title_blocklists">Listas de bloqueio personalizadas</string>
+    <string name="summary_manage_blocklists">Adicione listas de bloqueio no formato de arquivo hosts. Usadas quando as listas de rastreadores integradas não identificam um domínio.</string>
+    <string name="title_add_blocklist">Adicionar lista de bloqueio</string>
+    <string name="title_delete_blocklist">Excluir lista de bloqueio</string>
+    <string name="msg_delete_blocklist_confirm">Tem certeza de que deseja excluir esta lista de bloqueio?</string>
+    <string name="msg_apply_blocklists_failed">Falha ao aplicar as listas de bloqueio</string>
+    <string name="blocklist_format">Digite um URL HTTPS de uma lista de bloqueio no formato hosts (por exemplo, 0.0.0.0 ads.example.com). Regras de filtro de navegador não são compatíveis.</string>
+    <string name="blocklist_minimal_notice">As listas de bloqueio personalizadas ficam inativas no modo Mínimo. Mude para Padrão ou Rigoroso nas Configurações para usá-las.</string>
+    <string name="blocklist_research_notice">As listas de bloqueio personalizadas ficam inativas enquanto o modo de pesquisa está ativado. Desative Pesquisa nas Configurações para ativar o bloqueio de rastreadores.</string>
+    <string name="blocklist_browser_notice">A proteção contra rastreadores em navegadores vem desativada por padrão. Ative-a na página do app do navegador para usar listas de bloqueio personalizadas nele.</string>
+    <string name="blocklist_downloading">Baixando listas de bloqueio… Aguardando conexão se estiver offline.</string>
+    <string name="blocklist_not_downloaded">Ainda não baixada</string>
+    <string name="blocklist_download_failed">Não foi possível baixar ou aplicar as listas de bloqueio. Verifique os erros das listas e tente atualizar novamente.</string>
+    <string name="blocklist_update">Atualizar listas de bloqueio</string>
+    <string name="vpn_enabled_switch_description">VPN</string>
+    <string name="log_connection_wifi">Wi-Fi</string>
 </resources>

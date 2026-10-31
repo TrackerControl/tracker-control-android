@@ -72,12 +72,12 @@
     <!-- Keep as a string: call-site/API migration and multi-count grammar are intentionally separate. -->
     <string name="timeline_summary_mixed" tools:ignore="PluralsCandidate">%1$d blokeatuta · %2$d baimenduta</string>
     <plurals name="timeline_trackers_blocked">
-        <item quantity="one">%d jarraitzailea blokeatuta</item>
-        <item quantity="other">%d jarraitzaileak blokeatuta</item>
+        <item quantity="one">%d jarraitzaile blokeatuta</item>
+        <item quantity="other">%d jarraitzaile blokeatuta</item>
     </plurals>
     <plurals name="timeline_trackers_allowed">
-        <item quantity="one">%d jarraitzailea baimenduta</item>
-        <item quantity="other">%d jarraitzaileak baimenduta</item>
+        <item quantity="one">%d jarraitzaile baimenduta</item>
+        <item quantity="other">%d jarraitzaile baimenduta</item>
     </plurals>
     <string name="troubleshooting_title">Arazoen konponketa</string>
     <string name="troubleshooting_battery_title">Bateriaren optimizazioa</string>
@@ -379,11 +379,11 @@ Zure internet trafikoa ez da kanpo VPN zerbitzari batera bidaltzen.</string>
     <string name="accessibility_tracker_blocking_enabled">Jarraitzailea blokeatzea gaituta</string>
     <string name="accessibility_tracker_blocking_disabled">Jarraitzailea blokeatzea desgaituta</string>
     <plurals name="n_companies_found_week">
-        <item quantity="one">konpainia %d kontaktatu du azken astean</item>
+        <item quantity="one">%d konpainia kontaktatu du azken astean</item>
         <item quantity="other">%d konpainia kontaktatu ditu azken astean</item>
     </plurals>
     <plurals name="n_companies_found">
-        <item quantity="one">konpainia %d kontaktatu du denbora guztian</item>
+        <item quantity="one">%d konpainia kontaktatu du denbora guztian</item>
         <item quantity="other">%d konpainia kontaktatu ditu denbora guztian</item>
     </plurals>
     <string name="confirm_ipinfo_title">Erakundearen informazioa ekarri?</string>
@@ -587,7 +587,7 @@ Sincerely,\n\n]]></string>
     <string name="tracker_libraries_source">Webguneak Exodus Privacy-ren jarraitzaile-datuetatik</string>
     <string name="open_tracker_website">Ireki %1$s webgunea</string>
     <plurals name="libraries_found">
-        <item quantity="one">Jarraitzaile-liburutegi %d aurkitu da aplikazioaren kodean</item>
+        <item quantity="one">%d jarraitzaile-liburutegi aurkitu da aplikazioaren kodean</item>
         <item quantity="other">%d jarraitzaile-liburutegi aurkitu dira aplikazioaren kodean</item>
     </plurals>
     <string name="analysis_queued">Analisia ilaran…</string>
@@ -653,7 +653,7 @@ Sincerely,\n\n]]></string>
     <!-- Keep as a string: call-site/API migration and multi-count grammar are intentionally separate. -->
     <string name="insights_in_apps" tools:ignore="PluralsCandidate">%d aplikaziotan</string>
     <plurals name="insights_apps_count">
-        <item quantity="one">aplikazio %d-n</item>
+        <item quantity="one">%d aplikaziotan</item>
         <item quantity="other">%d aplikaziotan</item>
     </plurals>
     <string name="insights_no_data">Oraindik ez dago jarraipen-daturik. Erabili zure aplikazioak eta itzuli geroago!</string>
@@ -678,4 +678,48 @@ Sincerely,\n\n]]></string>
     <string name="log_connection_blocked">Blokeatuta</string>
     <string name="log_connection_other">Beste sare bat</string>
     <string name="log_screen_on">Pantaila piztuta</string>
+    <string name="tab_vpn">VPN</string>
+    <string name="insights_overview_status">%1$s %2$s · %3$s %4$s</string>
+    <string name="insights_overview_status_share">%1$s (%2$s)</string>
+    <string name="timeline_insights_status">%1$s %2$s · %3$s %4$s</string>
+    <string name="setting_doh_enabled">DNS segurua (DoH)</string>
+    <string name="setting_doh_endpoint">DoH amaiera-puntuaren URLa</string>
+    <string name="dialog_doh_endpoint">Sartu zure DNS hornitzaileak emandako HTTPS URL osoa, hornitzailearen bide espezifikoa barne (adibidez, https://dns.quad9.net/dns-query). TrackerControl-etik kanpo utzitako aplikazioek edo beren DNS zifratua erabiltzen dutenek ezarpen hau saihesten dute.</string>
+    <string name="msg_invalid_doh_endpoint">Sartu DNS-over-HTTPS-rako HTTPS URL oso bat, hornitzailearen bidea barne (adibidez, https://dns.quad9.net/dns-query).</string>
+    <string name="summary_wg_config">Itsatsi zure hornitzaileak emandako [Interface] / [Peer] konfigurazioa</string>
+    <string name="vpn_status_mullvad">Mullvad</string>
+    <string name="vpn_provider_mullvad">Mullvad VPN</string>
+    <string name="vpn_provider_ivpn">IVPN</string>
+    <string name="vpn_intro_mullvad_title">Mullvad</string>
+    <string name="vpn_intro_ivpn_title">IVPN</string>
+    <string name="vpn_intro_proton_title">Proton VPN</string>
+    <string name="vpn_intro_wireguard_title">WireGuard</string>
+    <string name="vpn_mode_mullvad">Mullvad</string>
+    <string name="vpn_mode_ivpn">IVPN</string>
+    <string name="vpn_mode_wireguard">WireGuard</string>
+    <string name="msg_wg_blocked">Interneterako sarbidea blokeatuta dago WireGuard tunela erabilgarri ez dagoen bitartean. Desgaitu WireGuard ezarpena berreskuratzeko.</string>
+    <string name="msg_wg_blocked_detail">%s Interneterako sarbidea blokeatuta jarraituko du hau konpondu arte edo WireGuard ezarpena desgaitu arte.</string>
+    <string name="msg_wg_provider_rejected">%1$s(e)k uko egin dio gailu hau konfiguratzeari: %2$s.</string>
+    <string name="msg_wg_account_expired">%1$s(e)k jakinarazi du kontu honetan ez dela denborarik geratzen, beraz, ez da zerbitzaririk onartuko tunela denbora gehitu arte.</string>
+    <string name="msg_wg_recovery_failed">WireGuard-ek erantzuteari utzi dio eta TrackerControl berriro konektatzen saiatzen ari da.</string>
+    <string name="summary_log_logcat">Ikerketa moduak jarraitzaileen blokeoa desgaitzen du. Identifikatutako jarraitzaileak ADBra erregistratzen dira eta SNI erauzketa gaitzen da ostalari-izenak hobeto detektatzeko. Eskuratu erregistroak adb logcat bidez, \'TC-Log\' etiketa erabiliz.</string>
+    <string name="msg_research_mode_notice">Ikerketa modua aktibo dago. Jarraitzaileen blokeoa desgaituta dago. Sakatu ezarpenak aldatzeko.</string>
+    <string name="msg_revoked">TrackerControl deskonektatu egin da, ziurrenik beste VPN aplikazio batek edo sistemak. Sakatu berriro konektatzeko.</string>
+    <string name="accessibility_stat_description">%1$s, %2$s</string>
+    <string name="title_blocklists">Blokeo-zerrenda pertsonalizatuak</string>
+    <string name="summary_manage_blocklists">Gehitu blokeo-zerrendak hosts fitxategi formatuan. Integratutako jarraitzaile-zerrendek domeinu bat identifikatzen ez dutenean erabiltzen dira.</string>
+    <string name="title_add_blocklist">Gehitu blokeo-zerrenda</string>
+    <string name="title_delete_blocklist">Ezabatu blokeo-zerrenda</string>
+    <string name="msg_delete_blocklist_confirm">Ziur blokeo-zerrenda hau ezabatu nahi duzula?</string>
+    <string name="msg_apply_blocklists_failed">Ezin izan dira blokeo-zerrendak aplikatu</string>
+    <string name="blocklist_format">Sartu hosts formatuko blokeo-zerrenda baten HTTPS URLa (adibidez, 0.0.0.0 ads.example.com). Ez dira onartzen nabigatzaileen iragazki-arauak.</string>
+    <string name="blocklist_minimal_notice">Blokeo-zerrenda pertsonalizatuak ez daude aktibo Minimo moduan. Aldatu Estandar edo Zorrotz moduara Ezarpenetan erabiltzeko.</string>
+    <string name="blocklist_research_notice">Blokeo-zerrenda pertsonalizatuak ez daude aktibo Ikerketa modua aktibo dagoen bitartean. Desaktibatu Ikerketa Ezarpenetan jarraitzaileen blokeoa gaitzeko.</string>
+    <string name="blocklist_browser_notice">Nabigatzailearen jarraitzaileen babesa desaktibatuta dago modu lehenetsian. Gaitu nabigatzailearen aplikazio-orrian bertan blokeo-zerrenda pertsonalizatuak erabiltzeko.</string>
+    <string name="blocklist_downloading">Blokeo-zerrendak deskargatzen… Konexioaren zain, lineaz kanpo badago.</string>
+    <string name="blocklist_not_downloaded">Oraindik ez da deskargatu</string>
+    <string name="blocklist_download_failed">Ezin izan dira blokeo-zerrendak deskargatu edo aplikatu. Egiaztatu zerrendetako akatsak eta saiatu berriro eguneratzen.</string>
+    <string name="blocklist_update">Eguneratu blokeo-zerrendak</string>
+    <string name="vpn_enabled_switch_description">VPN</string>
+    <string name="log_connection_wifi">Wi-Fi</string>
 </resources>

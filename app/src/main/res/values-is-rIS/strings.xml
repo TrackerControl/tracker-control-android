@@ -101,11 +101,11 @@
     <string name="feed_essential_explainer_blocked">Forrit þurfa á þessu að halda — útilokun þeirra getur skemmt %s</string>
     <string name="timeline_summary_mixed">%1$d útilokað · %2$d leyft</string>
     <plurals name="timeline_trackers_blocked">
-        <item quantity="one">%d rekjari útilokaðir</item>
+        <item quantity="one">%d rekjari útilokaður</item>
         <item quantity="other">%d rekjarar útilokaðir</item>
     </plurals>
     <plurals name="timeline_trackers_allowed">
-        <item quantity="one">%d rekjari leyfðir</item>
+        <item quantity="one">%d rekjari leyfður</item>
         <item quantity="other">%d rekjarar leyfðir</item>
     </plurals>
     <string name="troubleshooting_title">Úrræðaleit</string>
@@ -537,8 +537,8 @@ Með kveðju,\n\n]]></string>
     <string name="protection_route_heading">Fjartengt VPN</string>
     <string name="protection_app_not_working">Virkar forritið ekki? Ýttu hér</string>
     <plurals name="protection_paused_resumes">
-        <item quantity="one">Í hléi — heldur áfram eftir %d mín.</item>
-        <item quantity="other">Í hléi — heldur áfram eftir %d mín.</item>
+        <item quantity="one">Í hléi — heldur áfram eftir %d mínútu</item>
+        <item quantity="other">Í hléi — heldur áfram eftir %d mínútur</item>
     </plurals>
     <string name="protection_resume">Halda áfram nú</string>
     <string name="protection_pause_shared_uid">Að gera hlé á þessu forriti gerir einnig hlé á %1$s því þau deila Android-notandaauðkenni.</string>
@@ -680,4 +680,16 @@ Með kveðju,\n\n]]></string>
         <item>UDP</item>
         <item>TCP</item>
     </string-array>
+    <string name="dialog_doh_endpoint">Settu inn fulla HTTPS-slóð (URL) frá DNS-þjónustuveitunni þinni, þar með talið slóð sem er sértæk fyrir veituna (til dæmis https://dns.quad9.net/dns-query). Forrit sem eru undanskilin TrackerControl, eða nota eigið dulkóðað DNS, sniðganga þessa stillingu.</string>
+    <string name="msg_invalid_doh_endpoint">Settu inn fulla HTTPS-slóð fyrir DNS-over-HTTPS, þar með talið slóð veitunnar (til dæmis https://dns.quad9.net/dns-query).</string>
+    <string name="msg_wg_account_expired">%1$s tilkynnir að enginn tími sé eftir á þessum reikningi, þannig að enginn þjónn tekur við göngunum fyrr en tíma er bætt við.</string>
+    <string name="msg_research_mode_notice">Rannsóknarhamur er í gangi. Lokað er fyrir útilokun rekjara. Ýttu til að breyta stillingum.</string>
+    <string name="blocklist_format">Settu inn HTTPS-slóð fyrir bannlista á hosts-sniði (til dæmis 0.0.0.0 ads.example.com). Síunarreglur vafra eru ekki studdar.</string>
+    <string name="blocklist_minimal_notice">Sérsniðnir bannlistar eru óvirkir í lágmarksham. Skiptu yfir í staðlaðan eða strangan ham í stillingum til að nota þá.</string>
+    <string name="blocklist_research_notice">Sérsniðnir bannlistar eru óvirkir meðan rannsóknarhamur er í gangi. Slökktu á rannsókn í stillingum til að virkja útilokun rekjara.</string>
+    <string name="blocklist_browser_notice">Rekjaravörn vafra er sjálfgefið óvirk. Virkjaðu hana á forritssíðu vafrans til að nota sérsniðna bannlista þar.</string>
+    <string name="blocklist_downloading">Sæki bannlista… Bíð eftir tengingu ef ekkert netsamband er.</string>
+    <string name="blocklist_not_downloaded">Ekki sótt enn</string>
+    <string name="blocklist_download_failed">Ekki tókst að sækja eða beita bannlistum. Athugaðu villur á listunum og reyndu að uppfæra aftur.</string>
+    <string name="blocklist_update">Uppfæra bannlista</string>
 </resources>

@@ -130,9 +130,9 @@
     <string name="setting_update">Перевірити оновлення</string>
     <plurals name="pause">
         <item quantity="one">Призупинити на %d хвилину</item>
-        <item quantity="few">Пауза на %d хвилин</item>
-        <item quantity="many">Пауза на %d хвилин</item>
-        <item quantity="other">Пауза на %d хвилин</item>
+        <item quantity="few">Призупинити на %d хвилини</item>
+        <item quantity="many">Призупинити на %d хвилин</item>
+        <item quantity="other">Призупинити на %d хвилини</item>
     </plurals>
     <string name="setting_ip6">Увімкнути IPv6-трафік</string>
     <string name="setting_call">Вимкнути під час дзвінка</string>
@@ -412,7 +412,7 @@
     <string name="accessibility_tracker_blocking_enabled">Блокування трекерів увімкнено</string>
     <string name="accessibility_tracker_blocking_disabled">Блокування трекерів вимкнено</string>
     <plurals name="n_companies_found_week">
-        <item quantity="one">звернувся до компанії %d минулого тижня</item>
+        <item quantity="one">звернувся до %d компанії минулого тижня</item>
         <item quantity="few">звернувся до %d компаній минулого тижня</item>
         <item quantity="many">звернувся до %d компаній минулого тижня</item>
         <item quantity="other">звернувся до %d компаній минулого тижня</item>
@@ -733,4 +733,9 @@
     <string name="log_connection_wifi">Wi-Fi</string>
     <string name="log_connection_other">Інша мережа</string>
     <string name="log_screen_on">Екран увімкнено</string>
+    <string name="msg_wg_blocked">Доступ до інтернету заблоковано, поки тунель WireGuard недоступний. Вимкніть параметр WireGuard, щоб відновити доступ.</string>
+    <string name="msg_wg_blocked_detail">%s Доступ до інтернету залишатиметься заблокованим, доки це не буде вирішено або доки параметр WireGuard не буде вимкнено.</string>
+    <string name="msg_wg_provider_rejected">%1$s відмовився налаштовувати цей пристрій: %2$s.</string>
+    <string name="msg_wg_account_expired">%1$s повідомляє, що на цьому обліковому записі не залишилося часу, тому жоден сервер не прийме тунель, доки час не буде додано.</string>
+    <string name="msg_wg_recovery_failed">WireGuard перестав відповідати, і TrackerControl намагається перепідключитися.</string>
 </resources>

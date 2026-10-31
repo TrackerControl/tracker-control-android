@@ -57,12 +57,12 @@
     <!-- A blocked/allowed label followed by its share of all tracking attempts. -->
     <string name="feed_section_last_contact">آخر اتصال %s</string>
     <plurals name="feed_show_more_companies">
-        <item quantity="zero">إظهار %d من شركات إضافية</item>
-        <item quantity="one">إظهار %d من شركة إضافية</item>
-        <item quantity="two">إظهار %d من شركات إضافية</item>
-        <item quantity="few">إظهار %d من شركات إضافية</item>
-        <item quantity="many">إظهار %d من شركات إضافية</item>
-        <item quantity="other">إظهار %d من شركات إضافية</item>
+        <item quantity="zero">إظهار %d شركة إضافية</item>
+        <item quantity="one">إظهار شركة إضافية واحدة (%d)</item>
+        <item quantity="two">إظهار شركتين إضافيتين (%d)</item>
+        <item quantity="few">إظهار %d شركات إضافية</item>
+        <item quantity="many">إظهار %d شركة إضافية</item>
+        <item quantity="other">إظهار %d شركة إضافية</item>
     </plurals>
     <string name="feed_allow_company_in_app">السماح بـ %1$s في %2$s</string>
     <string name="feed_block_company_in_app">حظر %1$s في %2$s</string>
@@ -76,20 +76,20 @@
     <!-- Keep as a string: call-site/API migration and multi-count grammar are intentionally separate. -->
     <string name="timeline_summary_mixed" tools:ignore="PluralsCandidate">%1$d محظور · %2$d مسموح</string>
     <plurals name="timeline_trackers_blocked">
-        <item quantity="zero">%d متتبعات محظورة</item>
-        <item quantity="one">%d متتبع محظورة</item>
-        <item quantity="two">%d متتبعات محظورة</item>
-        <item quantity="few">%d متتبعات محظورة</item>
-        <item quantity="many">%d متتبعات محظورة</item>
-        <item quantity="other">%d متتبعات محظورة</item>
+        <item quantity="zero">لا أدوات تتبع محظورة (%d)</item>
+        <item quantity="one">حُظرت أداة تتبع واحدة (%d)</item>
+        <item quantity="two">حُظرت أداتا تتبع (%d)</item>
+        <item quantity="few">حُظرت %d أدوات تتبع</item>
+        <item quantity="many">حُظرت %d أداة تتبع</item>
+        <item quantity="other">حُظرت %d أداة تتبع</item>
     </plurals>
     <plurals name="timeline_trackers_allowed">
-        <item quantity="zero">%d متتبعات مسموحة</item>
-        <item quantity="one">%d متتبع مسموحة</item>
-        <item quantity="two">%d متتبعات مسموحة</item>
-        <item quantity="few">%d متتبعات مسموحة</item>
-        <item quantity="many">%d متتبعات مسموحة</item>
-        <item quantity="other">%d متتبعات مسموحة</item>
+        <item quantity="zero">لا أدوات تتبع مسموحة (%d)</item>
+        <item quantity="one">سُمح بأداة تتبع واحدة (%d)</item>
+        <item quantity="two">سُمح بأداتي تتبع (%d)</item>
+        <item quantity="few">سُمح بـ %d أدوات تتبع</item>
+        <item quantity="many">سُمح بـ %d أداة تتبع</item>
+        <item quantity="other">سُمح بـ %d أداة تتبع</item>
     </plurals>
     <string name="troubleshooting_title">استكشاف الأعطال</string>
     <string name="troubleshooting_battery_title">تحسين البطارية</string>
@@ -240,20 +240,20 @@
     <string name="msg_wg_profile_import_none">لم يُعثر على إعدادات WireGuard في الملف المحدد</string>
     <string name="msg_wg_profile_import_failed">تعذّرت قراءة الملف المحدد: %1$s</string>
     <plurals name="msg_wg_profile_imported">
-        <item quantity="zero">%1$d ملفات تعريف</item>
-        <item quantity="one">تم استيراد %1$d ملف تعريف WireGuard</item>
-        <item quantity="two">%1$d ملفات تعريف</item>
-        <item quantity="few">%1$d ملفات تعريف</item>
-        <item quantity="many">%1$d ملفات تعريف</item>
-        <item quantity="other">تم استيراد %1$d ملفات تعريف WireGuard</item>
+        <item quantity="zero">لم يُستورد أي ملف تعريف WireGuard (%1$d)</item>
+        <item quantity="one">تم استيراد ملف تعريف WireGuard واحد (%1$d)</item>
+        <item quantity="two">تم استيراد ملفَّي تعريف WireGuard (%1$d)</item>
+        <item quantity="few">تم استيراد %1$d ملفات تعريف WireGuard</item>
+        <item quantity="many">تم استيراد %1$d ملف تعريف WireGuard</item>
+        <item quantity="other">تم استيراد %1$d ملف تعريف WireGuard</item>
     </plurals>
     <plurals name="msg_wg_profile_import_skipped">
-        <item quantity="zero">%1$d تطبيقات</item>
-        <item quantity="one">تم تخطي %1$d ملف: ليس إعدادات WireGuard صالحة</item>
-        <item quantity="two">%1$d تطبيقات</item>
-        <item quantity="few">%1$d تطبيقات</item>
-        <item quantity="many">%1$d تطبيقات</item>
-        <item quantity="other">تم تخطي %1$d ملفات: ليست إعدادات WireGuard صالحة</item>
+        <item quantity="zero">لم يُتخطَّ أي ملف (%1$d)</item>
+        <item quantity="one">تم تخطي ملف واحد (%1$d): ليس إعدادات WireGuard صالحة</item>
+        <item quantity="two">تم تخطي ملفين (%1$d): ليسا إعدادات WireGuard صالحة</item>
+        <item quantity="few">تم تخطي %1$d ملفات: ليست إعدادات WireGuard صالحة</item>
+        <item quantity="many">تم تخطي %1$d ملفًا: ليست إعدادات WireGuard صالحة</item>
+        <item quantity="other">تم تخطي %1$d ملف: ليست إعدادات WireGuard صالحة</item>
     </plurals>
     <string name="msg_wg_mullvad_account">رقم حساب Mullvad</string>
     <string name="msg_wg_mullvad_recommended">الموقع الموصى به</string>
@@ -562,12 +562,12 @@
     <!-- Protection state and remote-VPN routing shown together on one row -->
     <string name="protection_app_not_working">التطبيق لا يعمل؟ اضغط هنا</string>
     <plurals name="protection_paused_resumes">
-        <item quantity="zero">%d دقائق</item>
+        <item quantity="zero">متوقف مؤقتًا — يُستأنف خلال %d دقيقة</item>
         <item quantity="one">متوقف مؤقتًا — يُستأنف خلال %d دقيقة</item>
-        <item quantity="two">%d دقائق</item>
-        <item quantity="few">%d دقائق</item>
-        <item quantity="many">%d دقائق</item>
-        <item quantity="other">متوقف مؤقتًا — يُستأنف خلال %d دقائق</item>
+        <item quantity="two">متوقف مؤقتًا — يُستأنف خلال %d دقيقتين</item>
+        <item quantity="few">متوقف مؤقتًا — يُستأنف خلال %d دقائق</item>
+        <item quantity="many">متوقف مؤقتًا — يُستأنف خلال %d دقيقة</item>
+        <item quantity="other">متوقف مؤقتًا — يُستأنف خلال %d دقيقة</item>
     </plurals>
     <string name="protection_resume">استئناف الآن</string>
     <string name="protection_pause_shared_uid">إيقاف هذا التطبيق مؤقتًا يوقف %1$s أيضًا لأنهما يشتركان في معرّف مستخدم Android نفسه.</string>
@@ -617,12 +617,12 @@
     <string name="tracker_libraries_source">مواقع من بيانات أدوات التتبع لدى Exodus Privacy</string>
     <string name="open_tracker_website">فتح موقع %1$s</string>
     <plurals name="libraries_found">
-        <item quantity="zero">%d مكتبات</item>
-        <item quantity="one">تم العثور على %d مكتبة تتبع في كود التطبيق</item>
-        <item quantity="two">%d مكتبات</item>
-        <item quantity="few">%d مكتبات</item>
-        <item quantity="many">%d مكتبات</item>
-        <item quantity="other">تم العثور على %d مكتبات تتبع في كود التطبيق</item>
+        <item quantity="zero">لم يتم العثور على مكتبات تتبع في كود التطبيق (%d)</item>
+        <item quantity="one">تم العثور على مكتبة تتبع واحدة (%d) في كود التطبيق</item>
+        <item quantity="two">تم العثور على مكتبتي تتبع (%d) في كود التطبيق</item>
+        <item quantity="few">تم العثور على %d مكتبات تتبع في كود التطبيق</item>
+        <item quantity="many">تم العثور على %d مكتبة تتبع في كود التطبيق</item>
+        <item quantity="other">تم العثور على %d مكتبة تتبع في كود التطبيق</item>
     </plurals>
     <string name="analysis_queued">التحليل في قائمة الانتظار…</string>
     <string name="blocked">محظور</string>
@@ -687,12 +687,12 @@
     <!-- Keep as a string: call-site/API migration and multi-count grammar are intentionally separate. -->
     <string name="insights_in_apps" tools:ignore="PluralsCandidate">في %d تطبيقات</string>
     <plurals name="insights_apps_count">
-        <item quantity="zero">%d تطبيقات</item>
-        <item quantity="one">%d تطبيق</item>
-        <item quantity="two">%d تطبيقات</item>
-        <item quantity="few">%d تطبيقات</item>
-        <item quantity="many">%d تطبيقات</item>
-        <item quantity="other">%d تطبيقات</item>
+        <item quantity="zero">في %d تطبيق</item>
+        <item quantity="one">في تطبيق واحد (%d)</item>
+        <item quantity="two">في تطبيقين (%d)</item>
+        <item quantity="few">في %d تطبيقات</item>
+        <item quantity="many">في %d تطبيقًا</item>
+        <item quantity="other">في %d تطبيق</item>
     </plurals>
     <string name="insights_no_data">لا توجد بيانات تتبع بعد. استخدم تطبيقاتك وعد لاحقًا!</string>
     <!-- Keep as a string: call-site/API migration and multi-count grammar are intentionally separate. -->
@@ -716,4 +716,48 @@
     <string name="log_connection_blocked">محظور</string>
     <string name="log_connection_other">شبكة أخرى</string>
     <string name="log_screen_on">الشاشة قيد التشغيل</string>
+    <string name="insights_overview_status">%1$s %2$s · %3$s %4$s</string>
+    <string name="insights_overview_status_share">%1$s (%2$s)</string>
+    <string name="timeline_insights_status">%1$s %2$s · %3$s %4$s</string>
+    <string name="vpn_status_mullvad">Mullvad</string>
+    <string name="vpn_provider_mullvad">Mullvad VPN</string>
+    <string name="vpn_provider_ivpn">IVPN</string>
+    <string name="vpn_intro_mullvad_title">Mullvad</string>
+    <string name="vpn_intro_ivpn_title">IVPN</string>
+    <string name="vpn_intro_proton_title">Proton VPN</string>
+    <string name="vpn_intro_wireguard_title">WireGuard</string>
+    <string name="vpn_mode_mullvad">Mullvad</string>
+    <string name="vpn_mode_ivpn">IVPN</string>
+    <string name="vpn_mode_wireguard">WireGuard</string>
+    <string name="tab_vpn">VPN</string>
+    <string name="vpn_enabled_switch_description">VPN</string>
+    <string name="log_connection_wifi">Wi-Fi</string>
+    <string name="accessibility_stat_description">%1$s, %2$s</string>
+    <string name="setting_doh_enabled">DNS الآمن (DoH)</string>
+    <string name="setting_doh_endpoint">عنوان URL لنقطة نهاية DoH</string>
+    <string name="summary_wg_config">الصق إعدادات [Interface] / [Peer] من مزوّدك</string>
+    <string name="dialog_doh_endpoint">أدخل عنوان HTTPS URL الكامل الذي يوفره مزوّد DNS لديك، بما في ذلك المسار الخاص بالمزوّد (مثل https://dns.quad9.net/dns-query). التطبيقات المستثناة من TrackerControl أو التي تستخدم DNS مشفّرًا خاصًا بها تتجاوز هذا الإعداد.</string>
+    <string name="msg_invalid_doh_endpoint">أدخل عنوان HTTPS URL كاملًا لـ DNS-over-HTTPS، بما في ذلك مسار المزوّد (مثل https://dns.quad9.net/dns-query).</string>
+    <string name="msg_wg_blocked">الوصول إلى الإنترنت محظور أثناء عدم توفر نفق WireGuard. عطّل إعداد WireGuard لاستعادته.</string>
+    <string name="msg_wg_blocked_detail">%s يظل الوصول إلى الإنترنت محظورًا حتى تُحَل هذه المشكلة، أو حتى يُعطَّل إعداد WireGuard.</string>
+    <string name="msg_wg_provider_rejected">رفض %1$s إعداد هذا الجهاز: %2$s.</string>
+    <string name="msg_wg_account_expired">أفاد %1$s بأنه لا يوجد وقت متبقٍّ في هذا الحساب، لذا لن يقبل أي خادم النفق حتى يُضاف وقت.</string>
+    <string name="msg_wg_recovery_failed">توقف WireGuard عن الاستجابة، ويحاول TrackerControl إعادة الاتصال.</string>
+    <string name="summary_log_logcat">يعطّل وضع البحث حظر أدوات التتبع. تُسجَّل أدوات التتبع المكتشفة في ADB ويُفعَّل استخراج SNI لتحسين اكتشاف أسماء المضيفين. استرجع السجلات باستخدام adb logcat مع الوسم \'TC-Log\'.</string>
+    <string name="msg_research_mode_notice">وضع البحث قيد التشغيل. حظر أدوات التتبع معطّل. اضغط لتغيير الإعدادات.</string>
+    <string name="msg_revoked">تم فصل TrackerControl، على الأرجح بواسطة تطبيق VPN آخر أو النظام. اضغط لإعادة الاتصال.</string>
+    <string name="title_blocklists">قوائم حظر مخصصة</string>
+    <string name="summary_manage_blocklists">أضف قوائم حظر بتنسيق ملف hosts. تُستخدم عندما لا تحدد قوائم أدوات التتبع المضمّنة نطاقًا ما.</string>
+    <string name="title_add_blocklist">إضافة قائمة حظر</string>
+    <string name="title_delete_blocklist">حذف قائمة الحظر</string>
+    <string name="msg_delete_blocklist_confirm">هل أنت متأكد أنك تريد حذف قائمة الحظر هذه؟</string>
+    <string name="msg_apply_blocklists_failed">تعذّر تطبيق قوائم الحظر</string>
+    <string name="blocklist_format">أدخل عنوان HTTPS URL لقائمة حظر بتنسيق hosts (مثل 0.0.0.0 ads.example.com). قواعد تصفية المتصفح غير مدعومة.</string>
+    <string name="blocklist_minimal_notice">قوائم الحظر المخصصة غير نشطة في الوضع الأدنى. انتقل إلى الوضع القياسي أو الصارم من الإعدادات لاستخدامها.</string>
+    <string name="blocklist_research_notice">قوائم الحظر المخصصة غير نشطة أثناء تشغيل وضع البحث. أوقف البحث من الإعدادات لتفعيل حظر أدوات التتبع.</string>
+    <string name="blocklist_browser_notice">حماية المتصفح من أدوات التتبع معطّلة افتراضيًا. فعّلها من صفحة تطبيق المتصفح لاستخدام قوائم الحظر المخصصة هناك.</string>
+    <string name="blocklist_downloading">جارٍ تنزيل قوائم الحظر… في انتظار الاتصال إذا كنت غير متصل.</string>
+    <string name="blocklist_not_downloaded">لم يتم التنزيل بعد</string>
+    <string name="blocklist_download_failed">تعذّر تنزيل قوائم الحظر أو تطبيقها. تحقق من أخطاء القوائم وحاول التحديث مرة أخرى.</string>
+    <string name="blocklist_update">تحديث قوائم الحظر</string>
 </resources>

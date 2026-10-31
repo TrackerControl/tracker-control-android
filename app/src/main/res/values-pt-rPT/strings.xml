@@ -62,6 +62,7 @@
     <string name="feed_section_last_contact">último contacto %s</string>
     <plurals name="feed_show_more_companies">
         <item quantity="one">Mostrar mais %d empresa</item>
+        <item quantity="many">Mostrar mais %d de empresas</item>
         <item quantity="other">Mostrar mais %d empresas</item>
     </plurals>
     <string name="feed_allow_company_in_app">Permitir %1$s em %2$s</string>
@@ -77,10 +78,12 @@
     <string name="timeline_summary_mixed" tools:ignore="PluralsCandidate">%1$d bloqueados · %2$d permitidos</string>
     <plurals name="timeline_trackers_blocked">
         <item quantity="one">%d rastreador bloqueado</item>
+        <item quantity="many">%d de rastreadores bloqueados</item>
         <item quantity="other">%d rastreadores bloqueados</item>
     </plurals>
     <plurals name="timeline_trackers_allowed">
         <item quantity="one">%d rastreador permitido</item>
+        <item quantity="many">%d de rastreadores permitidos</item>
         <item quantity="other">%d rastreadores permitidos</item>
     </plurals>
     <string name="troubleshooting_title">Resolução de Problemas</string>
@@ -124,7 +127,8 @@
     <string name="setting_update">Verificar por atualizações</string>
     <plurals name="pause">
         <item quantity="one">Pausar por %d min</item>
-        <item quantity="other">Pausar para %d min</item>
+        <item quantity="many">Pausar por %d min</item>
+        <item quantity="other">Pausar por %d min</item>
     </plurals>
     <string name="setting_ip6">Habilitar o tráfego IPv6</string>
     <string name="setting_call">Desativar durante chamadas</string>
@@ -234,10 +238,12 @@
     <string name="msg_wg_profile_import_failed">Não foi possível ler o ficheiro selecionado: %1$s</string>
     <plurals name="msg_wg_profile_imported">
         <item quantity="one">%1$d perfil WireGuard importado</item>
+        <item quantity="many">%1$d de perfis WireGuard importados</item>
         <item quantity="other">%1$d perfis WireGuard importados</item>
     </plurals>
     <plurals name="msg_wg_profile_import_skipped">
         <item quantity="one">%1$d ficheiro ignorado: não é uma configuração WireGuard válida</item>
+        <item quantity="many">%1$d de ficheiros ignorados: não são configurações WireGuard válidas</item>
         <item quantity="other">%1$d ficheiros ignorados: não são configurações WireGuard válidas</item>
     </plurals>
     <string name="msg_wg_mullvad_account">Número da conta Mullvad</string>
@@ -401,10 +407,12 @@ Seu tráfego de Internet não está sendo enviado para um servidor VPN remoto.</
     <string name="accessibility_tracker_blocking_disabled">Bloqueio de rastreadores desativado</string>
     <plurals name="n_companies_found_week">
         <item quantity="one">contactou %d empresa na semana passada</item>
+        <item quantity="many">contactou %d de empresas na semana passada</item>
         <item quantity="other">contactou %d empresas na semana passada</item>
     </plurals>
     <plurals name="n_companies_found">
         <item quantity="one">contactou %d empresa até agora</item>
+        <item quantity="many">contactou %d de empresas até agora</item>
         <item quantity="other">contactou %d empresas até agora</item>
     </plurals>
     <string name="confirm_ipinfo_title">Recuperar informações da organização?</string>
@@ -554,6 +562,7 @@ Com os melhores cumprimentos,\n\n]]></string>
     <string name="protection_app_not_working">A aplicação não funciona? Toque aqui</string>
     <plurals name="protection_paused_resumes">
         <item quantity="one">Em pausa — retoma dentro de %d min</item>
+        <item quantity="many">Em pausa — retoma dentro de %d min</item>
         <item quantity="other">Em pausa — retoma dentro de %d min</item>
     </plurals>
     <string name="protection_resume">Retomar agora</string>
@@ -605,6 +614,7 @@ Com os melhores cumprimentos,\n\n]]></string>
     <string name="open_tracker_website">Abrir o site %1$s</string>
     <plurals name="libraries_found">
         <item quantity="one">%d biblioteca de rastreadores encontrada no código da aplicação</item>
+        <item quantity="many">%d de bibliotecas de rastreadores encontradas no código da aplicação</item>
         <item quantity="other">%d bibliotecas de rastreadores encontradas no código da aplicação</item>
     </plurals>
     <string name="analysis_queued">Análise na fila…</string>
@@ -671,6 +681,7 @@ Com os melhores cumprimentos,\n\n]]></string>
     <string name="insights_in_apps" tools:ignore="PluralsCandidate">em %d aplicações</string>
     <plurals name="insights_apps_count">
         <item quantity="one">em %d aplicação</item>
+        <item quantity="many">em %d de aplicações</item>
         <item quantity="other">em %d aplicações</item>
     </plurals>
     <string name="insights_no_data">Ainda não existem dados de rastreamento. Utilize as suas aplicações e volte a consultar!</string>
@@ -697,4 +708,25 @@ Com os melhores cumprimentos,\n\n]]></string>
     <string name="log_connection_wifi">Wi-Fi</string>
     <string name="log_connection_other">Outra rede</string>
     <string name="log_screen_on">Ecrã ligado</string>
+    <string name="msg_wg_blocked">O acesso à Internet está bloqueado enquanto o túnel WireGuard estiver indisponível. Desative a definição WireGuard para o restaurar.</string>
+    <string name="msg_wg_blocked_detail">%s O acesso à Internet permanece bloqueado até que isto seja resolvido ou até que a definição WireGuard seja desativada.</string>
+    <string name="msg_wg_provider_rejected">%1$s recusou configurar este dispositivo: %2$s.</string>
+    <string name="msg_wg_account_expired">%1$s indica que já não há tempo nesta conta, pelo que nenhum servidor aceitará o túnel até ser adicionado tempo.</string>
+    <string name="msg_wg_recovery_failed">O WireGuard deixou de responder e o TrackerControl está a tentar voltar a ligar.</string>
+    <string name="summary_log_logcat">O modo de investigação desativa o bloqueio de rastreadores. Os rastreadores identificados são registados no ADB e a extração de SNI é ativada para uma melhor deteção de nomes de anfitrião. Obtenha os registos com adb logcat, usando a etiqueta \'TC-Log\'.</string>
+    <string name="msg_research_mode_notice">O modo de investigação está ativado. O bloqueio de rastreadores está desativado. Toque para alterar as definições.</string>
+    <string name="title_blocklists">Listas de bloqueio personalizadas</string>
+    <string name="summary_manage_blocklists">Adicione listas de bloqueio no formato de ficheiro hosts. Utilizadas quando as listas de rastreadores integradas não identificam um domínio.</string>
+    <string name="title_add_blocklist">Adicionar lista de bloqueio</string>
+    <string name="title_delete_blocklist">Eliminar lista de bloqueio</string>
+    <string name="msg_delete_blocklist_confirm">Tem a certeza de que pretende eliminar esta lista de bloqueio?</string>
+    <string name="msg_apply_blocklists_failed">Falha ao aplicar as listas de bloqueio</string>
+    <string name="blocklist_format">Introduza um URL HTTPS de uma lista de bloqueio no formato hosts (por exemplo, 0.0.0.0 ads.example.com). As regras de filtros de navegador não são suportadas.</string>
+    <string name="blocklist_minimal_notice">As listas de bloqueio personalizadas ficam inativas no modo Mínimo. Mude para Padrão ou Rigoroso nas Definições para as utilizar.</string>
+    <string name="blocklist_research_notice">As listas de bloqueio personalizadas ficam inativas enquanto o modo de investigação estiver ativado. Desative Investigação nas Definições para ativar o bloqueio de rastreadores.</string>
+    <string name="blocklist_browser_notice">A proteção contra rastreadores nos navegadores está desativada por predefinição. Ative-a na página da aplicação do navegador para utilizar aí listas de bloqueio personalizadas.</string>
+    <string name="blocklist_downloading">A transferir listas de bloqueio… A aguardar ligação, se estiver offline.</string>
+    <string name="blocklist_not_downloaded">Ainda não transferida</string>
+    <string name="blocklist_download_failed">Não foi possível transferir ou aplicar as listas de bloqueio. Verifique os erros das listas e tente atualizar novamente.</string>
+    <string name="blocklist_update">Atualizar listas de bloqueio</string>
 </resources>
