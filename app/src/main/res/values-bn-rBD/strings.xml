@@ -24,9 +24,9 @@
     <string name="menu_sort_companies">কোম্পানি অনুযায়ী সাজান</string>
     <string name="menu_sort_by_latest_detected_tracker">সর্বশেষ শনাক্ত ট্র্যাকার অনুযায়ী সাজান</string>
     <string name="menu_log">ট্র্যাফিক লগ</string>
-    <string name="menu_settings">সুরসংযোজন</string>
+    <string name="menu_settings">সেটিংস</string>
     <string name="menu_invite">আমন্ত্রণ</string>
-    <string name="menu_legend">কিংবদন্তি</string>
+    <string name="menu_legend">চিহ্নসূচি</string>
     <string name="menu_support">এই এপপ্ কে সাহায্য করুন</string>
     <string name="menu_log_support">ব্যাখ্যা</string>
     <string name="menu_troubleshooting">সমস্যা সমাধান</string>
@@ -108,7 +108,7 @@
     <string name="menu_resolve">নাম সমূহ দেখান</string>
     <string name="menu_organization">সংগঠন দেখান</string>
     <string name="menu_pcap_enabled">PCAP সক্রিয়</string>
-    <string name="menu_pcap_export">PCAP আনয়ন করা</string>
+    <string name="menu_pcap_export">PCAP এক্সপোর্ট</string>
     <string name="menu_clear">সাফ</string>
     <string name="menu_clear_activity">রেকর্ড করা কার্যকলাপ মুছুন</string>
     <string name="menu_export">রপ্তানি</string>
@@ -119,8 +119,8 @@
     <string name="setting_pause">%1$s মিনিট পরে স্বয়ংক্রিয়ভাবে চালু করুন</string>
     <string name="setting_update">হালনাগাদের জন্য পরীক্ষা করুন</string>
     <plurals name="pause">
-        <item quantity="one">%d মিনিট পরে মনে করান</item>
-        <item quantity="other">%d মিনিট পরে মনে করান</item>
+        <item quantity="one">%d মিনিটের জন্য বিরতি</item>
+        <item quantity="other">%d মিনিটের জন্য বিরতি</item>
     </plurals>
     <string name="setting_ip6">IPv6 ট্র্যাফিক চালু করুন</string>
     <string name="setting_call">কলের সময় বন্ধ করুন</string>
@@ -184,11 +184,11 @@
     <string name="setting_hosts_auto_update">hosts স্বয়ংক্রিয়ভাবে আপডেট করুন</string>
     <string name="summary_hosts_auto_update">ব্যাকগ্রাউন্ডে hosts ফাইল স্বয়ংক্রিয়ভাবে আপডেট করুন</string>
     <string name="summary_pause">বিজ্ঞপ্তি থেকে বিরতি দেওয়ার পর, নির্বাচিত সংখ্যক মিনিট পরে TrackerControl স্বয়ংক্রিয়ভাবে আবার চালু করুন (এই বিকল্প বন্ধ করতে ০ লিখুন)।</string>
-    <string name="summary_update">প্রতিদিন ২ বার নতুন এপপ্স এর update চেক করুন</string>
+    <string name="summary_update">GitHub-এ প্রতিদিন দুইবার নতুন রিলিজ আছে কি না পরীক্ষা করুন</string>
     <string name="summary_ip6">IP সংস্করণ ৬-এর ট্র্যাফিক TrackerControl-এ পাঠান, যাতে তা বেছে বেছে অনুমোদন বা ব্লক করা যায়</string>
     <string name="summary_call">ইনকামিং বা আউটগোয়িং ফোন কলের সময় TrackerControl বন্ধ করুন। IP/Wi-Fi কলিংয়ের সমস্যা এড়াতে এটি ব্যবহার করা যায়।</string>
     <string name="summary_log_app">ব্যাটারি ব্যবহার কমাতে বন্ধ করুন। নতুন ট্র্যাকার এখনও ব্লক হবে, কিন্তু দেখানো হবে না।</string>
-    <string name="summary_block_domains">সতর্কতা : Blocked hosts UI এ দেখানো হবেনা </string>
+    <string name="summary_block_domains">সতর্কতা: ব্লক করা hosts UI-তে দেখানো হয় না।</string>
     <string name="summary_rcode">ডিফল্ট মান ৩ (NXDOMAIN), যার অর্থ ‘অস্তিত্বহীন ডোমেন’।</string>
     <string name="summary_validate">পোর্ট ৪৪৩ (https)-এ ইন্টারনেট সংযোগ যাচাই করতে ব্যবহৃত ডোমেন নাম।</string>
     <string name="summary_socks5_enabled">শুধু TCP ট্র্যাফিক প্রক্সি সার্ভারে পাঠানো হবে</string>
@@ -295,7 +295,7 @@
     <!-- Ends in a full stop: msg_wg_blocked_detail appends a sentence after it. -->
     <string name="msg_sure">আপনি কি নিশ্চিত?</string>
     <string name="msg_started">ট্র্যাকার খোঁজা হচ্ছে…</string>
-    <string name="msg_waiting">পুনরায় চেষ্টার অপেক্ষায়</string>
+    <string name="msg_waiting">ইভেন্টের অপেক্ষায়</string>
     <string name="msg_disabled">TrackerControl চালু করতে উপরের সুইচটি ব্যবহার করুন।</string>
     <string name="msg_installed">%1$s-এ সমস্যা হচ্ছে?</string>
     <string name="msg_installed_description">অ্যাপকে কোম্পানিগুলির সঙ্গে যোগাযোগ করতে অনুমতি দিন</string>
@@ -510,7 +510,7 @@ EU General Data Protection Regulation (GDPR)-এর ১৭ অনুচ্ছে
     <string name="app_state_title_minimal">ন্যূনতম ব্লকিং</string>
     <string name="app_state_title_standard">মানক ব্লকিং</string>
     <string name="app_state_title_strict">কঠোর ব্লকিং</string>
-    <string name="app_state_subtitle_misbehaving">অ্যাপ ঠিকমতো কাজ করছে না? এখানে ন্যূনতম ব্লিংয়ে বদলান।</string>
+    <string name="app_state_subtitle_misbehaving">অ্যাপ ঠিকমতো কাজ করছে না? এখানে ন্যূনতম ব্লকিংয়ে বদলান।</string>
     <string name="app_state_protected">সুরক্ষিত</string>
     <string name="app_state_protected_explanation">এই অ্যাপের জন্য ট্র্যাকার ব্লক ও রেকর্ড করা হয়।</string>
     <string name="app_state_essential_only">শুধু ন্যূনতম ব্লকিং</string>
@@ -669,4 +669,57 @@ EU General Data Protection Regulation (GDPR)-এর ১৭ অনুচ্ছে
     <string name="log_connection_blocked">ব্লক করা</string>
     <string name="log_connection_other">অন্য নেটওয়ার্ক</string>
     <string name="log_screen_on">স্ক্রিন চালু</string>
+    <string name="insights_overview_status">%1$s %2$s · %3$s %4$s</string>
+    <string name="insights_overview_status_share">%1$s (%2$s)</string>
+    <string name="timeline_insights_status">%1$s %2$s · %3$s %4$s</string>
+    <string name="vpn_status_mullvad">Mullvad</string>
+    <string name="vpn_provider_mullvad">Mullvad VPN</string>
+    <string name="vpn_provider_ivpn">IVPN</string>
+    <string name="vpn_intro_mullvad_title">Mullvad</string>
+    <string name="vpn_intro_ivpn_title">IVPN</string>
+    <string name="vpn_intro_proton_title">Proton VPN</string>
+    <string name="vpn_intro_wireguard_title">WireGuard</string>
+    <string name="vpn_mode_mullvad">Mullvad</string>
+    <string name="vpn_mode_ivpn">IVPN</string>
+    <string name="vpn_mode_wireguard">WireGuard</string>
+    <string name="tab_vpn">VPN</string>
+    <string name="vpn_enabled_switch_description">VPN</string>
+    <string name="log_connection_wifi">Wi-Fi</string>
+    <string name="accessibility_stat_description">%1$s, %2$s</string>
+    <string name="insights_share_url">TrackerControl.org</string>
+    <string name="google_dpo_mail">data-protection-office@google.com</string>
+    <string name="dpas_overview_url">https://edpb.europa.eu/about-edpb/board/members</string>
+    <string name="contact_playstore">Google</string>
+    <string name="setting_vpn4">VPN IPv4: %s</string>
+    <string name="setting_vpn6">VPN IPv6: %s</string>
+    <string name="setting_dns">VPN DNS: %s</string>
+    <string name="dialog_doh_endpoint">আপনার DNS প্রদানকারীর দেওয়া সম্পূর্ণ HTTPS URL লিখুন, প্রদানকারী-নির্দিষ্ট পাথসহ (যেমন, https://dns.quad9.net/dns-query)। TrackerControl থেকে বাদ দেওয়া অ্যাপ, বা যেসব অ্যাপ নিজস্ব এনক্রিপ্টেড DNS ব্যবহার করে, সেগুলো এই সেটিং এড়িয়ে যায়।</string>
+    <string name="msg_invalid_doh_endpoint">DNS-over-HTTPS-এর জন্য প্রদানকারীর পাথসহ একটি সম্পূর্ণ HTTPS URL লিখুন (যেমন, https://dns.quad9.net/dns-query)।</string>
+    <string name="msg_wg_blocked">WireGuard টানেল অনুপলব্ধ থাকাকালীন ইন্টারনেট অ্যাক্সেস ব্লক করা আছে। এটি পুনরুদ্ধার করতে WireGuard সেটিং বন্ধ করুন।</string>
+    <string name="msg_wg_blocked_detail">%s এটি সমাধান না হওয়া পর্যন্ত, অথবা WireGuard সেটিং বন্ধ না করা পর্যন্ত ইন্টারনেট অ্যাক্সেস ব্লক থাকবে।</string>
+    <string name="msg_wg_provider_rejected">%1$s এই ডিভাইসটি সেট আপ করতে অস্বীকার করেছে: %2$s।</string>
+    <string name="msg_wg_account_expired">%1$s জানাচ্ছে এই অ্যাকাউন্টে কোনো সময় অবশিষ্ট নেই, তাই সময় যোগ না করা পর্যন্ত কোনো সার্ভার টানেল গ্রহণ করবে না।</string>
+    <string name="msg_wg_recovery_failed">WireGuard সাড়া দেওয়া বন্ধ করেছে এবং TrackerControl পুনরায় সংযোগ করার চেষ্টা করছে।</string>
+    <string name="summary_log_logcat">গবেষণা মোড ট্র্যাকার ব্লকিং বন্ধ করে দেয়। শনাক্ত করা ট্র্যাকার ADB-তে লগ করা হয় এবং হোস্টনেম আরও ভালোভাবে শনাক্ত করতে SNI এক্সট্র্যাকশন চালু হয়। \'TC-Log\' ট্যাগ দিয়ে adb logcat-এর মাধ্যমে লগ সংগ্রহ করুন।</string>
+    <string name="msg_research_mode_notice">গবেষণা মোড চালু আছে। ট্র্যাকার ব্লকিং বন্ধ। সেটিংস পরিবর্তন করতে ট্যাপ করুন।</string>
+    <string name="msg_revoked">TrackerControl সংযোগ বিচ্ছিন্ন হয়েছে, সম্ভবত অন্য কোনো VPN অ্যাপ বা সিস্টেমের কারণে। পুনরায় সংযোগ করতে ট্যাপ করুন।</string>
+    <string name="title_nobody">কেউ নয়</string>
+    <string name="title_blocklists">কাস্টম ব্লকলিস্ট</string>
+    <string name="summary_manage_blocklists">hosts-ফাইল ফরম্যাটে ব্লকলিস্ট যোগ করুন। অন্তর্নির্মিত ট্র্যাকার তালিকা কোনো ডোমেইন শনাক্ত করতে না পারলে এগুলো ব্যবহৃত হয়।</string>
+    <string name="title_add_blocklist">ব্লকলিস্ট যোগ করুন</string>
+    <string name="title_delete_blocklist">ব্লকলিস্ট মুছুন</string>
+    <string name="msg_delete_blocklist_confirm">আপনি কি নিশ্চিত যে এই ব্লকলিস্টটি মুছতে চান?</string>
+    <string name="msg_apply_blocklists_failed">ব্লকলিস্ট প্রয়োগ করা যায়নি</string>
+    <string name="blocklist_format">hosts ফরম্যাটের ব্লকলিস্টের জন্য একটি HTTPS URL লিখুন (যেমন, 0.0.0.0 ads.example.com)। ব্রাউজার ফিল্টার নিয়ম সমর্থিত নয়।</string>
+    <string name="blocklist_minimal_notice">ন্যূনতম মোডে কাস্টম ব্লকলিস্ট নিষ্ক্রিয় থাকে। এগুলো ব্যবহার করতে সেটিংসে গিয়ে মানক বা কঠোর মোডে যান।</string>
+    <string name="blocklist_research_notice">গবেষণা মোড চালু থাকলে কাস্টম ব্লকলিস্ট নিষ্ক্রিয় থাকে। ট্র্যাকার ব্লকিং চালু করতে সেটিংসে গবেষণা বন্ধ করুন।</string>
+    <string name="blocklist_browser_notice">ব্রাউজারে ট্র্যাকার সুরক্ষা ডিফল্টরূপে বন্ধ থাকে। সেখানে কাস্টম ব্লকলিস্ট ব্যবহার করতে ব্রাউজারের অ্যাপ পৃষ্ঠায় এটি চালু করুন।</string>
+    <string name="blocklist_downloading">ব্লকলিস্ট ডাউনলোড হচ্ছে… অফলাইন থাকলে সংযোগের জন্য অপেক্ষা করা হচ্ছে।</string>
+    <string name="blocklist_not_downloaded">এখনও ডাউনলোড হয়নি</string>
+    <string name="blocklist_download_failed">ব্লকলিস্ট ডাউনলোড বা প্রয়োগ করা যায়নি। তালিকার ত্রুটিগুলো দেখে আবার আপডেট করার চেষ্টা করুন।</string>
+    <string name="blocklist_update">ব্লকলিস্ট আপডেট করুন</string>
+    <string-array name="protocolNames">
+        <item>UDP</item>
+        <item>TCP</item>
+    </string-array>
 </resources>

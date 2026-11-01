@@ -329,7 +329,7 @@
     <string name="msg_always_on_lockdown">TrackerControl-ஐப் பயன்படுத்த Android VPN அமைப்புகளில் “VPN இல்லாத இணைப்புகளைத் தடு” என்பதை முடக்கவும்</string>
     <string name="msg_start_forward">%1$s போர்ட் %2$d-இலிருந்து \'%5$s\'-இன் %3$s:%4$d-க்கு முன்னனுப்பலைத் தொடங்கவா?</string>
     <string name="msg_stop_forward">%1$s போர்ட் %2$d-இன் முன்னனுப்பலை நிறுத்தவா?</string>
-    <string name="msg_log_logcat">எச்சரிக்கை: ADB பதிவேற்றம் காரணமாகத் தடுப்பு முடக்கப்பட்டுள்ளது.</string>
+    <string name="msg_log_logcat">எச்சரிக்கை: ADB பதிவு காரணமாகத் தடுப்பு முடக்கப்பட்டுள்ளது.</string>
     <string name="menu_add">சேர்</string>
     <string name="menu_delete">நீக்கு</string>
     <string name="setting_forwarding">போர்ட் முன்னனுப்பல்</string>
@@ -664,4 +664,56 @@ Android பயன்பாடு %1$s (ID: %2$s)-ன் தரவுக் க�
     <string name="log_connection_blocked">தடுக்கப்பட்டது</string>
     <string name="log_connection_other">பிற நெட்வொர்க்</string>
     <string name="log_screen_on">திரை இயக்கத்தில்</string>
+    <string name="tab_vpn">VPN</string>
+    <string name="insights_overview_status">%1$s %2$s · %3$s %4$s</string>
+    <string name="insights_overview_status_share">%1$s (%2$s)</string>
+    <string name="timeline_insights_status">%1$s %2$s · %3$s %4$s</string>
+    <string name="setting_vpn4">VPN IPv4: %s</string>
+    <string name="setting_vpn6">VPN IPv6: %s</string>
+    <string name="setting_dns">VPN DNS: %s</string>
+    <string name="dialog_doh_endpoint">உங்கள் DNS வழங்குநர் தரும் முழுமையான HTTPS URL-ஐ, அதன் வழங்குநர்-சார்ந்த பாதையுடன் (எடுத்துக்காட்டு: https://dns.quad9.net/dns-query) உள்ளிடவும். TrackerControl-இலிருந்து விலக்கப்பட்ட அல்லது தங்கள் சொந்த மறையாக்கப்பட்ட DNS-ஐப் பயன்படுத்தும் பயன்பாடுகள் இந்த அமைப்பைத் தவிர்க்கும்.</string>
+    <string name="msg_invalid_doh_endpoint">DNS-over-HTTPS-க்கு வழங்குநரின் பாதையுடன் (எடுத்துக்காட்டு: https://dns.quad9.net/dns-query) முழுமையான HTTPS URL-ஐ உள்ளிடவும்.</string>
+    <string name="vpn_status_mullvad">Mullvad</string>
+    <string name="vpn_provider_mullvad">Mullvad VPN</string>
+    <string name="vpn_provider_ivpn">IVPN</string>
+    <string name="vpn_intro_mullvad_title">Mullvad</string>
+    <string name="vpn_intro_ivpn_title">IVPN</string>
+    <string name="vpn_intro_proton_title">Proton VPN</string>
+    <string name="vpn_intro_wireguard_title">WireGuard</string>
+    <string name="vpn_mode_mullvad">Mullvad</string>
+    <string name="vpn_mode_ivpn">IVPN</string>
+    <string name="vpn_mode_wireguard">WireGuard</string>
+    <string name="msg_wg_blocked">WireGuard சுரங்கம் கிடைக்காத வரை இணைய அணுகல் தடுக்கப்பட்டுள்ளது. அதை மீட்டெடுக்க WireGuard அமைப்பை முடக்கவும்.</string>
+    <string name="msg_wg_blocked_detail">%s இது சரிசெய்யப்படும் வரை அல்லது WireGuard அமைப்பு முடக்கப்படும் வரை இணைய அணுகல் தடுக்கப்பட்டே இருக்கும்.</string>
+    <string name="msg_wg_provider_rejected">இந்தச் சாதனத்தை அமைக்க %1$s மறுத்துவிட்டது: %2$s.</string>
+    <string name="msg_wg_account_expired">இந்தக் கணக்கில் நேரம் மீதமில்லை என %1$s தெரிவிக்கிறது; எனவே நேரம் சேர்க்கப்படும் வரை எந்தச் சேவையகமும் சுரங்கத்தை ஏற்காது.</string>
+    <string name="msg_wg_recovery_failed">WireGuard பதிலளிப்பதை நிறுத்தியது; TrackerControl மீண்டும் இணைக்க முயல்கிறது.</string>
+    <string name="summary_log_logcat">ஆய்வுப் பயன்முறை டிராக்கர் தடுப்பை முடக்கும். கண்டறியப்பட்ட டிராக்கர்கள் ADB-இல் பதிவு செய்யப்படும், மேலும் சிறந்த ஹோஸ்ட்பெயர் கண்டறிதலுக்காக SNI பிரித்தெடுப்பு இயக்கப்படும். \'TC-Log\' குறிச்சொல்லுடன் adb logcat மூலம் பதிவுகளைப் பெறலாம்.</string>
+    <string name="msg_research_mode_notice">ஆய்வுப் பயன்முறை இயக்கத்தில் உள்ளது. டிராக்கர் தடுப்பு முடக்கப்பட்டுள்ளது. அமைப்புகளை மாற்றத் தட்டவும்.</string>
+    <string name="msg_revoked">TrackerControl துண்டிக்கப்பட்டது; வேறொரு VPN பயன்பாடு அல்லது கணினியால் இருக்கலாம். மீண்டும் இணைக்கத் தட்டவும்.</string>
+    <string name="accessibility_stat_description">%1$s, %2$s</string>
+    <string name="contact_playstore">Google</string>
+    <string name="google_dpo_mail">data-protection-office@google.com</string>
+    <string name="dpas_overview_url">https://edpb.europa.eu/about-edpb/board/members</string>
+    <string name="insights_share_url">TrackerControl.org</string>
+    <string name="title_blocklists">தனிப்பயன் தடுப்புப் பட்டியல்கள்</string>
+    <string name="summary_manage_blocklists">hosts-கோப்பு வடிவில் தடுப்புப் பட்டியல்களைச் சேர்க்கவும். உள்ளமைந்த டிராக்கர் பட்டியல்கள் ஒரு டொமைனை அடையாளம் காணாதபோது இவை பயன்படுத்தப்படும்.</string>
+    <string name="title_add_blocklist">தடுப்புப் பட்டியலைச் சேர்</string>
+    <string name="title_delete_blocklist">தடுப்புப் பட்டியலை நீக்கு</string>
+    <string name="msg_delete_blocklist_confirm">இந்தத் தடுப்புப் பட்டியலை நிச்சயமாக நீக்க விரும்புகிறீர்களா?</string>
+    <string name="msg_apply_blocklists_failed">தடுப்புப் பட்டியல்களைப் பயன்படுத்த முடியவில்லை</string>
+    <string name="blocklist_format">hosts வடிவிலான தடுப்புப் பட்டியலுக்கான HTTPS URL-ஐ உள்ளிடவும் (எடுத்துக்காட்டு: 0.0.0.0 ads.example.com). உலாவி வடிகட்டி விதிகளுக்கு ஆதரவு இல்லை.</string>
+    <string name="blocklist_minimal_notice">குறைந்தபட்சப் பயன்முறையில் தனிப்பயன் தடுப்புப் பட்டியல்கள் செயலில் இல்லை. அவற்றைப் பயன்படுத்த அமைப்புகளில் தரநிலை அல்லது கடுமையானது என்பதற்கு மாறவும்.</string>
+    <string name="blocklist_research_notice">ஆய்வுப் பயன்முறை இயக்கத்தில் இருக்கும்போது தனிப்பயன் தடுப்புப் பட்டியல்கள் செயலில் இல்லை. டிராக்கர் தடுப்பை இயக்க அமைப்புகளில் ஆய்வை முடக்கவும்.</string>
+    <string name="blocklist_browser_notice">உலாவி டிராக்கர் பாதுகாப்பு இயல்பாக முடக்கப்பட்டுள்ளது. அங்கு தனிப்பயன் தடுப்புப் பட்டியல்களைப் பயன்படுத்த, உலாவியின் பயன்பாட்டுப் பக்கத்தில் அதை இயக்கவும்.</string>
+    <string name="blocklist_downloading">தடுப்புப் பட்டியல்களைப் பதிவிறக்குகிறது… ஆஃப்லைனில் இருந்தால் இணைப்புக்காகக் காத்திருக்கிறது.</string>
+    <string name="blocklist_not_downloaded">இன்னும் பதிவிறக்கப்படவில்லை</string>
+    <string name="blocklist_download_failed">தடுப்புப் பட்டியல்களைப் பதிவிறக்க அல்லது பயன்படுத்த முடியவில்லை. பட்டியல் பிழைகளைச் சரிபார்த்து மீண்டும் புதுப்பிக்க முயலவும்.</string>
+    <string name="blocklist_update">தடுப்புப் பட்டியல்களைப் புதுப்பி</string>
+    <string name="vpn_enabled_switch_description">VPN</string>
+    <string name="log_connection_wifi">Wi-Fi</string>
+    <string-array name="protocolNames">
+        <item>UDP</item>
+        <item>TCP</item>
+    </string-array>
 </resources>

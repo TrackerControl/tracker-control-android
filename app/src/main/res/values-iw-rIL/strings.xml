@@ -19,7 +19,7 @@
     <string name="menu_app_frozen">הצג אפליקציות קפואות</string>
     <string name="menu_sort">מיין אפליקציות</string>
     <string name="menu_sort_name">מיין לפי שם</string>
-    <string name="menu_sort_uid">מיין לפי המזהה שלך</string>
+    <string name="menu_sort_uid">מיין לפי UID</string>
     <string name="menu_sort_companies_week">מיין לפי חברות (שבוע)</string>
     <string name="menu_sort_companies">מיין לפי חברות</string>
     <string name="menu_sort_by_latest_detected_tracker">מיין לפי העוקב האחרון שזוהה</string>
@@ -238,7 +238,7 @@
     <plurals name="msg_wg_profile_import_skipped">
         <item quantity="one">%1$d קובץ דולג: אינו תצורת WireGuard חוקית</item>
         <item quantity="two">%1$d קבצים דולגו: אינם תצורות WireGuard חוקיות</item>
-        <item quantity="other">%1$d קבצים דולגו: אינן תצורות WireGuard חוקיות</item>
+        <item quantity="other">%1$d קבצים דולגו: אינם תצורות WireGuard חוקיות</item>
     </plurals>
     <string name="msg_wg_mullvad_account">מספר חשבון Mullvad</string>
     <string name="msg_wg_mullvad_recommended">מיקום מומלץ</string>
@@ -348,10 +348,10 @@
     <string name="menu_add">הוסף</string>
     <string name="menu_delete">מחק</string>
     <string name="setting_forwarding">העברת פורטים</string>
-    <string name="title_protocol">נוהל</string>
+    <string name="title_protocol">פרוטוקול</string>
     <string name="title_dport">יציאת מקור</string>
     <string name="title_raddr">כתובת יעד</string>
-    <string name="title_rport">נמל היעד</string>
+    <string name="title_rport">יציאת יעד</string>
     <string name="title_ruid">אפליקציית יעד</string>
     <string name="title_external">עבור שרת חיצוני בחר \'אף אחד\'</string>
     <string name="title_unmetered_allowed">תנועה ללא מדידה מותרת</string>
@@ -369,7 +369,7 @@
     <string name="title_allow">אפשר</string>
     <string name="title_block">חסום</string>
     <string name="title_nobody">אף אחד</string>
-    <string name="title_log_whois">מי זה %1$s</string>
+    <string name="title_log_whois">Whois %1$s</string>
     <string name="title_log_port">פורט %1$d</string>
     <string name="title_log_copy">העתק</string>
     <!-- App Overview -->
@@ -388,14 +388,14 @@
     <string name="accessibility_tracker_blocking_enabled">חסימת עוקבים מופעלת</string>
     <string name="accessibility_tracker_blocking_disabled">חסימת עוקבים מושבתת</string>
     <plurals name="n_companies_found_week">
-        <item quantity="one">יצר קשר עם החברה %d בשבוע שעבר</item>
-        <item quantity="two">יצר קשר עם החברות %d בשבוע שעבר</item>
-        <item quantity="other">יצר קשר עם %d החברות בשבוע שעבר</item>
+        <item quantity="one">יצר קשר עם %d חברה בשבוע שעבר</item>
+        <item quantity="two">יצר קשר עם %d חברות בשבוע שעבר</item>
+        <item quantity="other">יצר קשר עם %d חברות בשבוע שעבר</item>
     </plurals>
     <plurals name="n_companies_found">
-        <item quantity="one">יצר קשר עם %d חברה כל הזמן</item>
-        <item quantity="two">יצר קשר עם %d חברות כל הזמן</item>
-        <item quantity="other">יוצרים קשר עם %d החברות כל הזמן</item>
+        <item quantity="one">יצר קשר עם %d חברה בסך הכול</item>
+        <item quantity="two">יצר קשר עם %d חברות בסך הכול</item>
+        <item quantity="other">יצר קשר עם %d חברות בסך הכול</item>
     </plurals>
     <string name="confirm_ipinfo_title">האם לאחזר את פרטי הארגון?</string>
     <string name="confirm_ipinfo">פעולה זו תיצור קשר עם השירות החיצוני ipinfo.io, וישתף איתם נתונים לגבי כתובות IP שאליו יצרו קשר.</string>
@@ -410,7 +410,7 @@
     <string name="exported">ייצא לאמצעי אחסון!</string>
     <!-- App Details -->
     <string name="title_activity_detail">פרטים</string>
-    <string name="tab_trackers">טראקרים</string>
+    <string name="tab_trackers">עוקבים</string>
     <string name="tab_countries">מדינות</string>
     <string name="tab_actions">זכויות נתונים</string>
     <string name="app_info">ניהול אפליקציה</string>
@@ -434,7 +434,7 @@
     <string name="google_dpo_mail">data-protection-office@google.com</string>
     <string name="dpas_overview_url">https://edpb.europa.eu/about-edpb/board/members</string>
     <string name="subject_request_data">בקשת גישה בנושא GDPR</string>
-    <string name="body_request_data"><![CDATA[למי זה עשוי להדאיג:\n \n \n אני מבקש ממך, כבקר הנתונים של אפליקציית אנדרואיד %1$s (מזהה: %2$s), לאשר אם היא מעבדת נתונים אישיים כלשהם עלי.\n אם כן, אנא ספק לי את כל המידע הנדרש הקבוע בסעיף 15 של תקנת הגנת הנתונים הכללית של האיחוד האירופי (GDPR), כולל:\n \n • עותק של הנתונים האישיים שלי;\n • מטרות העיבוד;\n •  קטגוריות הנתונים האישיים הנוגעים בדבר;\n • הנמענים שאתה חושף בפניהם את הנתונים האישיים שלי והאמצעים שאתה מספק;\n • תקופת השמירה לאחסון הנתונים האישיים שלי או הקריטריונים המשמשים לקביעת תקופה זו;\n • מידע על  מקור הנתונים האישיים שלי;  ו\n • קיומה של קבלת החלטות אוטומטית (כולל פרופיל), ואם כן:\n - ההיגיון הכרוך בתהליך קבלת ההחלטות;\n - המשמעות וההשלכות הצפויות עבורי;\n - השלבים  נקטת כדי למנוע טעויות, הטיה ואפליה;  ו\n - הסבר כיצד אני יכול להביע את נקודת המבט שלי ולערער על החלטה.\n \n בקשה זו מתייחסת לכל עיבוד של הנתונים האישיים שלי על ידך, לרבות כל מעבדים המעבדים נתונים אישיים בשמך.\n \n  אנא ספק את תגובתך באמצעים מאובטחים באימייל.  אני מצפה לקבל תשובה תוך חודש מיום קבלת הבקשה שלי.\n \n בכבוד רב,\n\n]]></string>
+    <string name="body_request_data"><![CDATA[למי זה עשוי לעניין:\n \n \n אני מבקש ממך, כבקר הנתונים של אפליקציית אנדרואיד %1$s (מזהה: %2$s), לאשר אם היא מעבדת נתונים אישיים כלשהם עלי.\n אם כן, אנא ספק לי את כל המידע הנדרש הקבוע בסעיף 15 של תקנת הגנת הנתונים הכללית של האיחוד האירופי (GDPR), כולל:\n \n • עותק של הנתונים האישיים שלי;\n • מטרות העיבוד;\n •  קטגוריות הנתונים האישיים הנוגעים בדבר;\n • הנמענים שאתה חושף בפניהם את הנתונים האישיים שלי והאמצעים שאתה מספק;\n • תקופת השמירה לאחסון הנתונים האישיים שלי או הקריטריונים המשמשים לקביעת תקופה זו;\n • מידע על  מקור הנתונים האישיים שלי;  ו\n • קיומה של קבלת החלטות אוטומטית (כולל פרופיל), ואם כן:\n - ההיגיון הכרוך בתהליך קבלת ההחלטות;\n - המשמעות וההשלכות הצפויות עבורי;\n - השלבים שנקטת בהם כדי למנוע טעויות, הטיה ואפליה;  ו\n - הסבר כיצד אני יכול להביע את נקודת המבט שלי ולערער על החלטה.\n \n בקשה זו מתייחסת לכל עיבוד של הנתונים האישיים שלי על ידך, לרבות כל מעבדים המעבדים נתונים אישיים בשמך.\n \n  אנא ספק את תגובתך באמצעים מאובטחים באימייל.  אני מצפה לקבל תשובה תוך חודש מיום קבלת הבקשה שלי.\n \n בכבוד רב,\n\n]]></string>
     <string name="body_delete_data"><![CDATA[למי זה עשוי לעניין:\n
  \n
  \n
@@ -452,7 +452,7 @@
     <string name="instructions_monitoring">החלף את המתג ופעל עם אפליקציות מסוימות.</string>
     <string name="device_not_supported_title">מכשיר לא נתמך</string>
     <string name="device_not_supported_msg">מערכת ההפעלה של המכשיר שלך אינה מאפשרת ניטור וסינון של תקשורת רשת. זה נדרש עבור TrackerControl.</string>
-    <string name="launch_app">הפעל &amp; כדי למצוא עוקבים</string>
+    <string name="launch_app">הפעל ומצא עוקבים</string>
     <string name="launch_app_failed">לא ניתן להפעיל את האפליקציה הזו</string>
     <string name="countries">מדינות יעד</string>
     <string name="countries_explanation">גלה לאן הטלפון שלך שולח נתוני מעקב.\n\nמידע מבוסס על חיפושי DNS ומידע IP, וייתכן שהוא לא מדויק.</string>
@@ -525,7 +525,7 @@
         <item quantity="two">מושהה — יתחדש בעוד %d דקות</item>
         <item quantity="other">מושהה — יתחדש בעוד %d דקות</item>
     </plurals>
-    <string name="protection_resume">חדש עכשיו</string>
+    <string name="protection_resume">המשך עכשיו</string>
     <string name="protection_pause_shared_uid">השהיית אפליקציה זו תשהה גם את %1$s, מכיוון שהן חולקות מזהה משתמש של Android.</string>
     <string name="protection_pause_lockdown_warning">נעילת Android מופעלת. השהיית אפליקציה זו תחסום את החיבורים שלה עד לחידוש ההגנה.</string>
     <string name="protection_lockdown_note">Android אינה חושפת כאן את מצב הנעילה. אם האפשרות &quot;חסום חיבורים ללא VPN&quot; מופעלת, אפליקציה מושהית עלולה לאבד גישה לרשת.</string>
@@ -545,7 +545,7 @@
     <string name="forever_free">לעולם חופשי</string>
     <string name="your_privacy">הפרטיות שלך</string>
     <string name="tracker_hostlist">מארחים בהגדרת משתמש</string>
-    <string name="internet_blocked">הגישה לאינטרנט מוגבלת</string>
+    <string name="internet_blocked">הגישה לאינטרנט נחסמה</string>
     <string name="internet_unblocked">בוטלה חסימת הגישה לאינטרנט</string>
     <string name="category_unblocked">עוקבים בקטגוריה מותרים</string>
     <string name="category_unblocked_warning">מותרת עם קטגוריה זו — חסום את הקטגוריה כדי לשנות חברות בודדות.</string>
@@ -665,4 +665,46 @@
     <string name="log_connection_blocked">נחסם</string>
     <string name="log_connection_other">רשת אחרת</string>
     <string name="log_screen_on">המסך פועל</string>
+    <string name="tab_vpn">VPN</string>
+    <string name="insights_overview_status">%1$s %2$s · %3$s %4$s</string>
+    <string name="insights_overview_status_share">%1$s (%2$s)</string>
+    <string name="timeline_insights_status">%1$s %2$s · %3$s %4$s</string>
+    <string name="dialog_doh_endpoint">הזן את כתובת ה-HTTPS המלאה שסיפק ספק ה-DNS שלך, כולל הנתיב הייחודי לספק (לדוגמה, https://dns.quad9.net/dns-query). אפליקציות שהוחרגו מ-TrackerControl, או שמשתמשות ב-DNS מוצפן משלהן, עוקפות הגדרה זו.</string>
+    <string name="msg_invalid_doh_endpoint">הזן כתובת HTTPS מלאה עבור DNS-over-HTTPS, כולל נתיב הספק (לדוגמה, https://dns.quad9.net/dns-query).</string>
+    <string name="vpn_status_mullvad">Mullvad</string>
+    <string name="vpn_provider_mullvad">Mullvad VPN</string>
+    <string name="vpn_provider_ivpn">IVPN</string>
+    <string name="vpn_intro_mullvad_title">Mullvad</string>
+    <string name="vpn_intro_ivpn_title">IVPN</string>
+    <string name="vpn_intro_proton_title">Proton VPN</string>
+    <string name="vpn_intro_wireguard_title">WireGuard</string>
+    <string name="vpn_mode_mullvad">Mullvad</string>
+    <string name="vpn_mode_ivpn">IVPN</string>
+    <string name="vpn_mode_wireguard">WireGuard</string>
+    <string name="msg_wg_blocked">הגישה לאינטרנט חסומה כל עוד מנהרת WireGuard אינה זמינה. השבת את הגדרת WireGuard כדי לשחזר אותה.</string>
+    <string name="msg_wg_blocked_detail">%s הגישה לאינטרנט תישאר חסומה עד שהבעיה תיפתר, או עד שהגדרת WireGuard תושבת.</string>
+    <string name="msg_wg_provider_rejected">%1$s סירב להגדיר את המכשיר הזה: %2$s.</string>
+    <string name="msg_wg_account_expired">%1$s מדווח שלא נותר זמן בחשבון זה, ולכן אף שרת לא יקבל את המנהרה עד שיתווסף זמן.</string>
+    <string name="msg_wg_recovery_failed">WireGuard הפסיק להגיב ו-TrackerControl מנסה להתחבר מחדש.</string>
+    <string name="summary_log_logcat">מצב מחקר משבית את חסימת העוקבים. עוקבים שזוהו נרשמים ב-ADB, וחילוץ SNI מופעל לזיהוי טוב יותר של שמות מארחים. אחזר יומנים באמצעות adb logcat עם התג \'TC-Log\'.</string>
+    <string name="msg_research_mode_notice">מצב מחקר פעיל. חסימת העוקבים מושבתת. הקש כדי לשנות הגדרות.</string>
+    <string name="msg_revoked">TrackerControl נותק, ככל הנראה על ידי אפליקציית VPN אחרת או על ידי המערכת. הקש כדי להתחבר מחדש.</string>
+    <string name="accessibility_stat_description">%1$s, %2$s</string>
+    <string name="insights_share_url">TrackerControl.org</string>
+    <string name="title_blocklists">רשימות חסימה מותאמות אישית</string>
+    <string name="summary_manage_blocklists">הוסף רשימות חסימה בפורמט קובץ hosts. בשימוש כאשר רשימות העוקבים המובנות אינן מזהות דומיין.</string>
+    <string name="title_add_blocklist">הוסף רשימת חסימה</string>
+    <string name="title_delete_blocklist">מחק רשימת חסימה</string>
+    <string name="msg_delete_blocklist_confirm">האם אתה בטוח שברצונך למחוק את רשימת החסימה הזו?</string>
+    <string name="msg_apply_blocklists_failed">החלת רשימות החסימה נכשלה</string>
+    <string name="blocklist_format">הזן כתובת HTTPS של רשימת חסימה בפורמט hosts (לדוגמה, 0.0.0.0 ads.example.com). כללי סינון של דפדפן אינם נתמכים.</string>
+    <string name="blocklist_minimal_notice">רשימות חסימה מותאמות אישית אינן פעילות במצב מינימלי. עבור להגדרה רגיל או מחמיר בהגדרות כדי להשתמש בהן.</string>
+    <string name="blocklist_research_notice">רשימות חסימה מותאמות אישית אינן פעילות כל עוד מצב מחקר פעיל. כבה את מצב מחקר בהגדרות כדי להפעיל את חסימת העוקבים.</string>
+    <string name="blocklist_browser_notice">הגנת העוקבים בדפדפן כבויה כברירת מחדל. הפעל אותה בעמוד האפליקציה של הדפדפן כדי להשתמש שם ברשימות חסימה מותאמות אישית.</string>
+    <string name="blocklist_downloading">מוריד רשימות חסימה… ממתין לחיבור אם אין חיבור לאינטרנט.</string>
+    <string name="blocklist_not_downloaded">טרם הורד</string>
+    <string name="blocklist_download_failed">לא ניתן להוריד או להחיל את רשימות החסימה. בדוק את שגיאות הרשימה ונסה לעדכן שוב.</string>
+    <string name="blocklist_update">עדכן רשימות חסימה</string>
+    <string name="vpn_enabled_switch_description">VPN</string>
+    <string name="log_connection_wifi">Wi-Fi</string>
 </resources>

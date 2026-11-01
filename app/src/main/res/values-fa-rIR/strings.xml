@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <string name="app_description">.</string>
+    <string name="app_description">TrackerControl به کاربران امکان می‌دهد گردآوری گستردهٔ، مداوم و پنهان داده دربارهٔ رفتار کاربر در برنامه‌های موبایل («ردیابی») را پایش و کنترل کنند.</string>
     <string name="app_copyright">حق نشر \u00A9 ۲۰۱۹–۲۰۲۲ Konrad Kollnig\n\nTrackerControl بر پایهٔ NetGuard ساخته شده است که Marcel Bokhorst (M66B) آن را توسعه داده است.</string>
-    <string name="app_android">TrackerControl requires Android 5.1 or later</string>
+    <string name="app_android">TrackerControl به اندروید ۵٫۱ یا بالاتر نیاز دارد</string>
     <string name="app_xposed">Xposed باعث خرابی‌های زیادی می‌شود و ممکن است باعث حذف TrackerControl از فروشگاه Google Play شود؛ بنابراین تا وقتی Xposed نصب باشد TrackerControl پشتیبانی نمی‌شود.</string>
-    <string name="app_eula">https://github.com/TrackerControl/tracker-control-android#privacy-notice</string>
-    <string name="app_privacy">&lt;a href=\"https://github.com/TrackerControl/tracker-control-android#privacy-notice\"&gt;</string>
+    <string name="app_eula">استفاده از این برنامه بر عهدهٔ خودتان است. هیچ برنامه‌ای نمی‌تواند ۱۰۰٪ محافظت در برابر ردیابی ارائه دهد.</string>
+    <string name="app_privacy"><a href="https://github.com/TrackerControl/tracker-control-android#privacy-notice">سیاست حریم خصوصی</a> <a href="https://github.com/TrackerControl/tracker-control-android#cookie-policy">سیاست کوکی‌ها</a></string>
     <string name="app_ios"><a href="https://ios.trackercontrol.org">TrackerControl برای iOS نیز در دسترس است</a></string>
     <string name="channel_foreground">سرویس‌های در حال اجرا</string>
     <string name="channel_notify">اعلان‌های عمومی</string>
@@ -47,7 +47,7 @@
     <string name="tab_timeline">خط زمانی</string>
     <string name="tab_apps">برنامه‌ها</string>
     <string name="tab_vpn">فیلترشکن</string>
-    <string name="timeline_section_last_hour">١ساعت پیش</string>
+    <string name="timeline_section_last_hour">ساعت گذشته</string>
     <string name="timeline_section_today">امروز</string>
     <string name="timeline_section_yesterday">دیروز</string>
     <string name="timeline_section_this_week">این هفته</string>
@@ -643,7 +643,7 @@
     <string name="insights_pervasive_trackers">فراگیرترین ردیاب‌ها</string>
     <string name="insights_top_domains">برترین دامنه‌های ردیاب</string>
     <!-- Joins the alternative domain names of one tracker, e.g. "example.com or example.net". Keep the surrounding spaces. -->
-    <string name="insights_domain_alias_separator">"« یا »"</string>
+    <string name="insights_domain_alias_separator">" یا "</string>
     <!-- Keep as a string: call-site/API migration and multi-count grammar are intentionally separate. -->
     <string name="insights_in_apps" tools:ignore="PluralsCandidate">در %d برنامه</string>
     <plurals name="insights_apps_count">
@@ -672,4 +672,50 @@
     <string name="log_connection_wifi">Wi‑Fi</string>
     <string name="log_connection_other">شبکهٔ دیگر</string>
     <string name="log_screen_on">صفحه روشن</string>
+    <string name="insights_overview_status">%1$s %2$s · %3$s %4$s</string>
+    <string name="insights_overview_status_share">%1$s (%2$s)</string>
+    <string name="timeline_insights_status">%1$s %2$s · %3$s %4$s</string>
+    <string name="dialog_doh_endpoint">نشانی HTTPS کامل ارائه‌شده توسط ارائه‌دهندهٔ DNS خود را، همراه با مسیر اختصاصی آن ارائه‌دهنده، وارد کنید (برای مثال https://dns.quad9.net/dns-query). برنامه‌هایی که از TrackerControl مستثنا شده‌اند یا از DNS رمزگذاری‌شدهٔ خودشان استفاده می‌کنند، این تنظیم را دور می‌زنند.</string>
+    <string name="msg_invalid_doh_endpoint">یک نشانی HTTPS کامل برای DNS-over-HTTPS، همراه با مسیر ارائه‌دهنده، وارد کنید (برای مثال https://dns.quad9.net/dns-query).</string>
+    <string name="vpn_status_mullvad">Mullvad</string>
+    <string name="vpn_provider_mullvad">Mullvad VPN</string>
+    <string name="vpn_provider_ivpn">IVPN</string>
+    <string name="vpn_intro_mullvad_title">Mullvad</string>
+    <string name="vpn_intro_ivpn_title">IVPN</string>
+    <string name="vpn_intro_proton_title">Proton VPN</string>
+    <string name="vpn_intro_wireguard_title">WireGuard</string>
+    <string name="vpn_mode_mullvad">Mullvad</string>
+    <string name="vpn_mode_ivpn">IVPN</string>
+    <string name="vpn_mode_wireguard">WireGuard</string>
+    <string name="msg_wg_blocked">تا زمانی که تونل WireGuard در دسترس نیست، دسترسی به اینترنت مسدود است. برای بازگرداندن آن، تنظیم WireGuard را غیرفعال کنید.</string>
+    <string name="msg_wg_blocked_detail">%s دسترسی به اینترنت تا رفع این مشکل یا تا غیرفعال شدن تنظیم WireGuard مسدود می‌ماند.</string>
+    <string name="msg_wg_provider_rejected">%1$s از راه‌اندازی این دستگاه خودداری کرد: %2$s.</string>
+    <string name="msg_wg_account_expired">%1$s گزارش می‌دهد که زمانی برای این حساب باقی نمانده است، بنابراین تا زمانی که زمان اضافه نشود هیچ سروری تونل را نخواهد پذیرفت.</string>
+    <string name="msg_wg_recovery_failed">WireGuard دیگر پاسخ نمی‌دهد و TrackerControl در حال تلاش برای اتصال دوباره است.</string>
+    <string name="summary_log_logcat">حالت پژوهش مسدودسازی ردیاب‌ها را غیرفعال می‌کند. ردیاب‌های شناسایی‌شده در ADB ثبت می‌شوند و استخراج SNI برای تشخیص بهتر نام میزبان فعال می‌شود. گزارش‌ها را با adb logcat و برچسب \'TC-Log\' دریافت کنید.</string>
+    <string name="msg_research_mode_notice">حالت پژوهش روشن است. مسدودسازی ردیاب‌ها غیرفعال است. برای تغییر تنظیمات ضربه بزنید.</string>
+    <string name="msg_revoked">اتصال TrackerControl قطع شد، احتمالاً توسط برنامهٔ VPN دیگری یا سیستم. برای اتصال دوباره ضربه بزنید.</string>
+    <string name="contact_playstore">Google</string>
+    <string name="google_dpo_mail">data-protection-office@google.com</string>
+    <string name="dpas_overview_url">https://edpb.europa.eu/about-edpb/board/members</string>
+    <string name="insights_share_url">TrackerControl.org</string>
+    <string name="title_blocklists">فهرست‌های مسدودسازی سفارشی</string>
+    <string name="summary_manage_blocklists">فهرست‌های مسدودسازی را با قالب فایل hosts اضافه کنید. زمانی استفاده می‌شوند که فهرست‌های ردیاب داخلی دامنه‌ای را شناسایی نکنند.</string>
+    <string name="title_add_blocklist">افزودن فهرست مسدودسازی</string>
+    <string name="title_delete_blocklist">حذف فهرست مسدودسازی</string>
+    <string name="msg_delete_blocklist_confirm">آیا مطمئنید که می‌خواهید این فهرست مسدودسازی را حذف کنید؟</string>
+    <string name="msg_apply_blocklists_failed">اعمال فهرست‌های مسدودسازی ناموفق بود</string>
+    <string name="blocklist_format">یک نشانی HTTPS برای فهرست مسدودسازی با قالب hosts وارد کنید (برای مثال 0.0.0.0 ads.example.com). قوانین فیلتر مرورگر پشتیبانی نمی‌شوند.</string>
+    <string name="blocklist_minimal_notice">فهرست‌های مسدودسازی سفارشی در حالت حداقل غیرفعال هستند. برای استفاده از آن‌ها در تنظیمات به حالت استاندارد یا سخت‌گیرانه بروید.</string>
+    <string name="blocklist_research_notice">فهرست‌های مسدودسازی سفارشی تا زمانی که حالت پژوهش روشن است غیرفعال‌اند. برای فعال شدن مسدودسازی ردیاب‌ها، پژوهش را در تنظیمات خاموش کنید.</string>
+    <string name="blocklist_browser_notice">محافظت در برابر ردیاب‌های مرورگر به‌طور پیش‌فرض خاموش است. برای استفاده از فهرست‌های مسدودسازی سفارشی در آنجا، آن را در صفحهٔ برنامهٔ مرورگر فعال کنید.</string>
+    <string name="blocklist_downloading">در حال دانلود فهرست‌های مسدودسازی… در صورت آفلاین بودن، منتظر اتصال می‌ماند.</string>
+    <string name="blocklist_not_downloaded">هنوز دانلود نشده است</string>
+    <string name="blocklist_download_failed">دانلود یا اعمال فهرست‌های مسدودسازی ممکن نشد. خطاهای فهرست‌ها را بررسی کنید و دوباره به‌روزرسانی را امتحان کنید.</string>
+    <string name="blocklist_update">به‌روزرسانی فهرست‌های مسدودسازی</string>
+    <string name="vpn_enabled_switch_description">VPN</string>
+    <string-array name="protocolNames">
+        <item>UDP</item>
+        <item>TCP</item>
+    </string-array>
 </resources>
