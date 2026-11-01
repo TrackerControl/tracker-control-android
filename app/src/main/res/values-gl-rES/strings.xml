@@ -139,8 +139,8 @@
     <string name="summary_include_all_tracking">Reactiva a monitorización de rastrexadores para todas as aplicacións.</string>
     <string name="setting_block_domains">Activar hosts ficheiro</string>
     <string name="setting_rcode">Resposta de bloqueo de hosts: %s</string>
-    <string name="setting_vpn4">VPN IPv4: %s</string>
-    <string name="setting_vpn6">VPN IPv6: %s</string>
+    <string name="setting_vpn4">VPN Elemento4: %s</string>
+    <string name="setting_vpn6">VPN Elemento6: %s</string>
     <string name="setting_validate">Validar en: %s</string>
     <string name="setting_ttl">TTL DNS mínimo: %s s</string>
     <string name="setting_socks5_enabled">Usar proxy SOCKS5</string>
@@ -169,9 +169,12 @@
     <!-- Secure DNS (DoH) -->
     <string name="summary_doh_enabled">Cifra as consultas DNS mediante DNS-sobre-HTTPS. Intérrompese automaticamente cando WireGuard está activo, porque esas consultas usan o túnel de WireGuard.</string>
     <string name="warning_beta">Función beta. Pode non funcionar como se espera.</string>
+    <string name="setting_doh_endpoint">URL do punto final de DoH</string>
     <string name="summary_doh_endpoint">URL HTTPS para as consultas DNS-sobre-HTTPS</string>
+    <string name="dialog_doh_endpoint">Introduza o URL HTTPS completo que lle proporciona o seu provedor de DNS, incluíndo a ruta propia do provedor (por exemplo, https://dns.quad9.net/dns-query). As aplicacións excluídas de TrackerControl, ou que usen o seu propio DNS cifrado, ignoran este axuste.</string>
     <string name="setting_doh_dns_fallback">DNS alternativa</string>
     <string name="summary_doh_dns_fallback">Usa DNS estándar (sen cifrar) cando DoH falla. A alternativa pode usar un provedor de DNS distinto. Se se desactiva, as aplicacións poden deixar de funcionar se o servidor DoH non está dispoñible.</string>
+    <string name="msg_invalid_doh_endpoint">Introduza un URL HTTPS completo para DNS-over-HTTPS, incluíndo a ruta do provedor (por exemplo, https://dns.quad9.net/dns-query).</string>
     <!-- Block DNS-over-TLS (DoT) -->
     <string name="setting_block_dot">Bloquear o DNS privado de Android</string>
     <string name="summary_block_dot">Co DNS privado de Android activado, TC non pode detectar ningún seguimento e non funciona correctamente.</string>
@@ -193,6 +196,7 @@
     <string name="summary_validate">Nome de dominio usado para validar a conexión a internet no porto 443 (https).</string>
     <string name="summary_socks5_enabled">Só irá o tráfico TCP ao servidor proxy</string>
     <string name="summary_wg_enabled">Oculta o IP do dispositivo. Tuneliza o tráfico TCP e UDP de saída. As aplicacións verán erros de rede durante as interrupcións — fallo pechado, sen paso ao tráfico directo. As conexións iniciadas polo servidor cara ao teléfono poden non funcionar mentres o túnel estea inactivo (o keepalive está desactivado para aforrar batería).</string>
+    <string name="summary_wg_config">Pegue unha configuración [Interface] / [Peer] do seu provedor</string>
     <string name="summary_wg_profile">Elixe unha configuración de WireGuard gardada</string>
     <string name="summary_wg_profile_none">Sen perfís gardados</string>
     <string name="summary_wg_profile_manage">Engade, edita ou elimina configuracións de WireGuard personalizadas</string>
@@ -284,18 +288,26 @@
     <string name="vpn_retry">Volver intentar</string>
     <string name="vpn_country_selected">Aceptar</string>
     <string name="msg_wg_blocked_title">Túnel de WireGuard non dispoñible</string>
+    <string name="msg_wg_blocked">O acceso a Internet está bloqueado mentres o túnel de WireGuard non estea dispoñible. Desactive o axuste de WireGuard para restablecelo.</string>
     <!-- The cause comes first so it does not read as a tunnel that never
          started when the detail says it stopped responding. The tail stays
          neutral about recovery: some causes, such as a lapsed subscription,
          never resolve on their own. Each %s already names its own remedy
          where it has one, so this must not repeat it. -->
+    <string name="msg_wg_blocked_detail">%s O acceso a Internet permanecerá bloqueado ata que se resolva isto ou ata que se desactive o axuste de WireGuard.</string>
     <string name="msg_wg_identity_renewed_title">Dispositivo VPN rexistrado de novo</string>
     <string name="msg_wg_identity_renewed">%1$s xa non recoñecía este dispositivo, así que TrackerControl rexistrou un novo e actualizou os perfís de %1$s neste dispositivo.</string>
     <!-- Ends in a full stop: msg_wg_blocked_detail appends a sentence after it. -->
+    <string name="msg_wg_provider_rejected">%1$s negouse a configurar este dispositivo: %2$s.</string>
+    <string name="msg_wg_account_expired">%1$s indica que a esta conta non lle queda tempo, polo que ningún servidor aceptará o túnel ata que se engada tempo.</string>
+    <string name="msg_wg_recovery_failed">WireGuard deixou de responder e TrackerControl está intentando volver conectar.</string>
+    <string name="summary_log_logcat">O modo de investigación desactiva o bloqueo de rastrexadores. Os rastrexadores identificados rexístranse en ADB e actívase a extracción de SNI para detectar mellor os nomes de host. Obteña os rexistros con adb logcat usando a etiqueta \'TC-Log\'.</string>
+    <string name="msg_research_mode_notice">O modo de investigación está activado. O bloqueo de rastrexadores está desactivado. Toque para cambiar os axustes.</string>
     <string name="msg_sure">¿Está seguro?</string>
     <string name="msg_started">Buscando rastreadores…</string>
     <string name="msg_waiting">Agardando por evento</string>
     <string name="msg_disabled">Use o botón de enriba para activar TrackerControl.</string>
+    <string name="msg_revoked">TrackerControl desconectouse, probablemente por outra aplicación de VPN ou polo sistema. Toque para volver conectar.</string>
     <string name="msg_installed">¿Problemas con %1$s?</string>
     <string name="msg_installed_description">Permitir á aplicación contactar con empresas</string>
     <!-- Keep as a string: call-site/API migration and multi-count grammar are intentionally separate. -->
@@ -355,7 +367,7 @@ O seu tráfico de internet non será enviado a ningún servidor VPN remoto.</str
     <string name="title_allow">Permitir</string>
     <string name="title_block">Bloquear</string>
     <string name="title_nobody">ninguén</string>
-    <string name="title_log_whois">Whois %1$s</string>
+    <string name="title_log_whois">Elemento %1$s</string>
     <string name="title_log_port">Porto %1$d</string>
     <string name="title_log_copy">Copiar</string>
     <!-- App Overview -->
@@ -414,7 +426,7 @@ O seu tráfico de internet non será enviado a ningún servidor VPN remoto.</str
     <string name="request_deletion">Solicitude eliminación</string>
     <string name="contact_developer">Programador</string>
     <string name="contact_officials">Autoridades da UE</string>
-    <string name="google_dpo_mail">data-protection-office@google.com</string>
+    <string name="google_dpo_mail">elemento@google.elemento</string>
     <string name="subject_request_data">Solicitude de acceso do interesado segundo o GDPR</string>
     <string name="body_request_data"><![CDATA[A quen corresponda:\n\n\nSolicítolle, como responsable do tratamento da aplicación Android %1$s (ID: %2$s), que confirme se está a tratar algún dato persoal sobre min.\nSe é así, proporcióneme toda a información requirida polo artigo 15 do Regulamento Xeral de Protección de Datos (GDPR) da UE, incluíndo:\n\n• unha copia dos meus datos persoais;\n• os fins do tratamento;\n• as categorías de datos persoais afectadas;\n• os destinatarios aos que comunica os meus datos persoais e as garantías que ofrece;\n• o prazo de conservación dos meus datos persoais ou os criterios utilizados para determinalo;\n• información sobre a orixe dos meus datos persoais; e\n• a existencia de decisións automatizadas (incluída a elaboración de perfís) e, se é así:\n    - a lóxica aplicada no proceso de decisión;\n    - a importancia e as consecuencias previstas para min;\n    - as medidas que tomou para evitar erros, vieses e discriminación; e\n    - explique como podo expresar o meu punto de vista e impugnar unha decisión.\n\nEsta solicitude refírese a calquera tratamento dos meus datos persoais por vostede, incluídos os encargados do tratamento que traten datos persoais en nome seu.\n\nProporcione a súa resposta por medios seguros por correo electrónico. Espero recibir unha resposta nun prazo dun mes desde a recepción da miña solicitude.\n\nAtentamente,\n\n]]></string>
     <string name="body_delete_data"><![CDATA[A quen corresponda:\n\n\nExerzo o meu dereito de supresión segundo o artigo 17 do Regulamento Xeral de Protección de Datos (GDPR) da UE. Solicítolle, como responsable do tratamento da aplicación Android %1$s (ID: %2$s), que suprima sen demora indebida os seguintes datos persoais que trata sobre min:\n• Todos os datos.\n\nO motivo da miña solicitude de supresión é que retiro ou retirei o meu consentimento para o tratamento dos datos persoais. Esta solicitude refírese a calquera tratamento dos meus datos persoais por vostede, incluídos os encargados do tratamento que traten datos persoais en nome seu.\n\nProporcione a súa resposta por medios seguros por correo electrónico. Espero recibir unha resposta nun prazo dun mes desde a recepción da miña solicitude.\n\nAtentamente,\n\n]]></string>
@@ -436,6 +448,7 @@ O seu tráfico de internet non será enviado a ningún servidor VPN remoto.</str
     <string name="tracker_content">Esencial</string>
     <string name="tracker_cryptomining">Minaría de criptomoedas</string>
     <string name="tracker_fingerprinting">Pegada dixital</string>
+    <string name="tracker_social">Redes sociais</string>
     <string name="tracker_email">Correo</string>
     <string name="tracker_consent">Xestión do consentimento</string>
     <string name="tracker_uncategorised">Sen categoría</string>
@@ -618,60 +631,20 @@ O seu tráfico de internet non será enviado a ningún servidor VPN remoto.</str
     <!-- Retained for Play Store copy; call-site/API migration and multi-count grammar are intentionally separate. -->
     <string name="insights_share">Compartir con Amizades</string>
     <string name="insights_share_trackers_blocked">Hosts de rastrexadores bloqueados</string>
-    <string name="insights_share_url">TrackerControl.org</string>
+    <string name="insights_share_url">TrackerControl.elemento</string>
     <!-- Keep as a string: call-site/API migration and multi-count grammar are intentionally separate. -->
     <string name="insights_share_message" tools:ignore="PluralsCandidate">Bloqueei %1$d hosts de rastreadores de %2$d empresas esta semana usando TrackerControl! Recupera a túa privacidade: https://trackercontrol.org</string>
     <!-- Retained for Play Store copy; call-site/API migration and multi-count grammar are intentionally separate. -->
     <string name="insights_see_more">Ver Máis →</string>
     <!-- What's New onboarding slide (not translated) -->
-    <string name="msg_invalid_url">Non válida URL</string>
-    <string name="msg_last_update">Última actualización: %s</string>
-    <!-- Accessibility labels -->
-    <string name="switch_tracker_control_description">Rastreador bloqueo</string>
-    <string name="blocklist_delete_description">Eliminar a lista de bloqueo</string>
-    <string name="blocklist_enable_description">Activar a lista de bloqueo %s</string>
-    <string name="log_connection_allowed">Permitido</string>
-    <string name="log_connection_blocked">Bloqueado</string>
-    <string name="log_connection_other">Outra rede</string>
-    <string name="log_screen_on">Pantalla en</string>
-    <string name="tab_vpn">VPN</string>
-    <string name="insights_overview_status">%1$s %2$s · %3$s %4$s</string>
-    <string name="insights_overview_status_share">%1$s (%2$s)</string>
-    <string name="timeline_insights_status">%1$s %2$s · %3$s %4$s</string>
-    <string name="setting_dns">VPN DNS: %s</string>
-    <string name="setting_doh_enabled">Secure DNS (DoH)</string>
-    <string name="setting_doh_endpoint">URL do punto final de DoH</string>
-    <string name="dialog_doh_endpoint">Introduza o URL HTTPS completo que lle proporciona o seu provedor de DNS, incluíndo a ruta propia do provedor (por exemplo, https://dns.quad9.net/dns-query). As aplicacións excluídas de TrackerControl, ou que usen o seu propio DNS cifrado, ignoran este axuste.</string>
-    <string name="msg_invalid_doh_endpoint">Introduza un URL HTTPS completo para DNS-over-HTTPS, incluíndo a ruta do provedor (por exemplo, https://dns.quad9.net/dns-query).</string>
-    <string name="summary_wg_config">Pegue unha configuración [Interface] / [Peer] do seu provedor</string>
-    <string name="vpn_status_mullvad">Mullvad</string>
-    <string name="vpn_provider_mullvad">Mullvad VPN</string>
-    <string name="vpn_provider_ivpn">IVPN</string>
-    <string name="vpn_intro_mullvad_title">Mullvad</string>
-    <string name="vpn_intro_ivpn_title">IVPN</string>
-    <string name="vpn_intro_proton_title">Proton VPN</string>
-    <string name="vpn_intro_wireguard_title">WireGuard</string>
-    <string name="vpn_mode_mullvad">Mullvad</string>
-    <string name="vpn_mode_ivpn">IVPN</string>
-    <string name="vpn_mode_wireguard">WireGuard</string>
-    <string name="msg_wg_blocked">O acceso a Internet está bloqueado mentres o túnel de WireGuard non estea dispoñible. Desactive o axuste de WireGuard para restablecelo.</string>
-    <string name="msg_wg_blocked_detail">%s O acceso a Internet permanecerá bloqueado ata que se resolva isto ou ata que se desactive o axuste de WireGuard.</string>
-    <string name="msg_wg_provider_rejected">%1$s negouse a configurar este dispositivo: %2$s.</string>
-    <string name="msg_wg_account_expired">%1$s indica que a esta conta non lle queda tempo, polo que ningún servidor aceptará o túnel ata que se engada tempo.</string>
-    <string name="msg_wg_recovery_failed">WireGuard deixou de responder e TrackerControl está intentando volver conectar.</string>
-    <string name="summary_log_logcat">O modo de investigación desactiva o bloqueo de rastrexadores. Os rastrexadores identificados rexístranse en ADB e actívase a extracción de SNI para detectar mellor os nomes de host. Obteña os rexistros con adb logcat usando a etiqueta \'TC-Log\'.</string>
-    <string name="msg_research_mode_notice">O modo de investigación está activado. O bloqueo de rastrexadores está desactivado. Toque para cambiar os axustes.</string>
-    <string name="msg_revoked">TrackerControl desconectouse, probablemente por outra aplicación de VPN ou polo sistema. Toque para volver conectar.</string>
-    <string name="accessibility_stat_description">%1$s, %2$s</string>
-    <string name="contact_playstore">Google</string>
-    <string name="dpas_overview_url">https://edpb.europa.eu/about-edpb/board/members</string>
-    <string name="tracker_social">Redes sociais</string>
     <string name="title_blocklists">Listas de bloqueo personalizadas</string>
     <string name="summary_manage_blocklists">Engada listas de bloqueo en formato de ficheiro hosts. Úsanse cando as listas de rastrexadores integradas non identifican un dominio.</string>
     <string name="title_add_blocklist">Engadir lista de bloqueo</string>
     <string name="title_delete_blocklist">Eliminar lista de bloqueo</string>
     <string name="msg_delete_blocklist_confirm">Está seguro de que quere eliminar esta lista de bloqueo?</string>
+    <string name="msg_invalid_url">Non válida URL</string>
     <string name="msg_apply_blocklists_failed">Produciuse un erro ao aplicar as listas de bloqueo</string>
+    <string name="msg_last_update">Última actualización: %s</string>
     <string name="blocklist_format">Introduza un URL HTTPS para unha lista de bloqueo en formato hosts (por exemplo, 0.0.0.0 ads.example.com). Non se admiten as regras de filtro de navegador.</string>
     <string name="blocklist_minimal_notice">As listas de bloqueo personalizadas están inactivas no modo Mínimo. Cambie a Estándar ou Estrito en Axustes para usalas.</string>
     <string name="blocklist_research_notice">As listas de bloqueo personalizadas están inactivas mentres o modo de investigación está activado. Desactive Investigación en Axustes para activar o bloqueo de rastrexadores.</string>
@@ -680,10 +653,12 @@ O seu tráfico de internet non será enviado a ningún servidor VPN remoto.</str
     <string name="blocklist_not_downloaded">Aínda non descargada</string>
     <string name="blocklist_download_failed">Non se puideron descargar ou aplicar as listas de bloqueo. Revise os erros das listas e probe a actualizar de novo.</string>
     <string name="blocklist_update">Actualizar listas de bloqueo</string>
-    <string name="vpn_enabled_switch_description">VPN</string>
-    <string name="log_connection_wifi">Wi-Fi</string>
-    <string-array name="protocolNames">
-        <item>UDP</item>
-        <item>TCP</item>
-    </string-array>
+    <!-- Accessibility labels -->
+    <string name="switch_tracker_control_description">Rastreador bloqueo</string>
+    <string name="blocklist_delete_description">Eliminar a lista de bloqueo</string>
+    <string name="blocklist_enable_description">Activar a lista de bloqueo %s</string>
+    <string name="log_connection_allowed">Permitido</string>
+    <string name="log_connection_blocked">Bloqueado</string>
+    <string name="log_connection_other">Outra rede</string>
+    <string name="log_screen_on">Pantalla en</string>
 </resources>

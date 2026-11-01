@@ -184,11 +184,15 @@
     <string name="setting_pcap_record_size">حجم سجل PCAP: %s بايت</string>
     <string name="setting_pcap_file_size">الحد الأقصى لحجم ملف PCAP: %s ميجابايت</string>
     <!-- Secure DNS (DoH) -->
+    <string name="setting_doh_enabled">DNS الآمن (DoH)</string>
     <string name="summary_doh_enabled">تشفير استعلامات DNS باستخدام DNS عبر HTTPS. يتوقف تلقائيًا مؤقتًا عند تفعيل WireGuard، لأن تلك الاستعلامات تستخدم نفق WireGuard بدلًا من ذلك.</string>
     <string name="warning_beta">ميزة تجريبية. قد لا تعمل كما هو متوقع.</string>
+    <string name="setting_doh_endpoint">عنوان URL لنقطة نهاية DoH</string>
     <string name="summary_doh_endpoint">عنوان HTTPS URL لاستعلامات DNS عبر HTTPS</string>
+    <string name="dialog_doh_endpoint">أدخل عنوان HTTPS URL الكامل الذي يوفره مزوّد DNS لديك، بما في ذلك المسار الخاص بالمزوّد (مثل https://dns.quad9.net/dns-query). التطبيقات المستثناة من TrackerControl أو التي تستخدم DNS مشفّرًا خاصًا بها تتجاوز هذا الإعداد.</string>
     <string name="setting_doh_dns_fallback">DNS احتياطي</string>
     <string name="summary_doh_dns_fallback">استخدام DNS القياسي (غير المشفّر) عند فشل DoH. قد يستخدم الخيار الاحتياطي مزوّد DNS مختلفًا. قد يؤدي التعطيل إلى تعطل التطبيقات إذا كان خادم DoH متوقفًا.</string>
+    <string name="msg_invalid_doh_endpoint">أدخل عنوان HTTPS URL كاملًا لـ DNS-over-HTTPS، بما في ذلك مسار المزوّد (مثل https://dns.quad9.net/dns-query).</string>
     <!-- Block DNS-over-TLS (DoT) -->
     <string name="setting_block_dot">حظر DNS الخاص في Android</string>
     <string name="summary_block_dot">عند تفعيل DNS الخاص في Android، لا يستطيع TC اكتشاف أي تتبع ولا يعمل بشكل صحيح.</string>
@@ -210,6 +214,7 @@
     <string name="summary_validate">اسم المجال المستخدم للتحقق من صحة الاتصال بالإنترنت على المنفذ 443 (https).</string>
     <string name="summary_socks5_enabled">سيتم إرسال حركة مرور TCP فقط إلى خادم الوكيل</string>
     <string name="summary_wg_enabled">يخفي عنوان IP للجهاز. ينقل خروج TCP وUDP عبر النفق. سترى التطبيقات أخطاء شبكة أثناء الانقطاعات — إغلاق عند الفشل دون الرجوع إلى الاتصال المباشر. قد لا تعمل الاتصالات التي يبدؤها الخادم نحو الهاتف أثناء خمول النفق (تم تعطيل keepalive لتوفير البطارية).</string>
+    <string name="summary_wg_config">الصق إعدادات [Interface] / [Peer] من مزوّدك</string>
     <string name="summary_wg_profile">اختيار إعدادات WireGuard محفوظة</string>
     <string name="summary_wg_profile_none">لا توجد ملفات تعريف محفوظة</string>
     <string name="summary_wg_profile_manage">إضافة إعدادات WireGuard المخصصة أو تحريرها أو حذفها</string>
@@ -309,18 +314,26 @@
     <string name="vpn_retry">إعادة المحاولة</string>
     <string name="vpn_country_selected">موافق</string>
     <string name="msg_wg_blocked_title">نفق WireGuard غير متاح</string>
+    <string name="msg_wg_blocked">الوصول إلى الإنترنت محظور أثناء عدم توفر نفق WireGuard. عطّل إعداد WireGuard لاستعادته.</string>
     <!-- The cause comes first so it does not read as a tunnel that never
          started when the detail says it stopped responding. The tail stays
          neutral about recovery: some causes, such as a lapsed subscription,
          never resolve on their own. Each %s already names its own remedy
          where it has one, so this must not repeat it. -->
+    <string name="msg_wg_blocked_detail">%s يظل الوصول إلى الإنترنت محظورًا حتى تُحَل هذه المشكلة، أو حتى يُعطَّل إعداد WireGuard.</string>
     <string name="msg_wg_identity_renewed_title">أُعيد تسجيل جهاز VPN</string>
     <string name="msg_wg_identity_renewed">لم يعد %1$s يعرف هذا الجهاز، لذا سجّل TrackerControl جهازًا جديدًا وحدّث ملفات تعريف %1$s على هذا الجهاز.</string>
     <!-- Ends in a full stop: msg_wg_blocked_detail appends a sentence after it. -->
+    <string name="msg_wg_provider_rejected">رفض %1$s إعداد هذا الجهاز: %2$s.</string>
+    <string name="msg_wg_account_expired">أفاد %1$s بأنه لا يوجد وقت متبقٍّ في هذا الحساب، لذا لن يقبل أي خادم النفق حتى يُضاف وقت.</string>
+    <string name="msg_wg_recovery_failed">توقف WireGuard عن الاستجابة، ويحاول TrackerControl إعادة الاتصال.</string>
+    <string name="summary_log_logcat">يعطّل وضع البحث حظر أدوات التتبع. تُسجَّل أدوات التتبع المكتشفة في ADB ويُفعَّل استخراج SNI لتحسين اكتشاف أسماء المضيفين. استرجع السجلات باستخدام adb logcat مع الوسم \'TC-Log\'.</string>
+    <string name="msg_research_mode_notice">وضع البحث قيد التشغيل. حظر أدوات التتبع معطّل. اضغط لتغيير الإعدادات.</string>
     <string name="msg_sure">هل أنت متأكد؟</string>
     <string name="msg_started">البحث عن أدوات التتبع…</string>
     <string name="msg_waiting">انتظار الحدث</string>
     <string name="msg_disabled">استخدم المفتاح أعلاه لتمكين التحكم في التتبع.</string>
+    <string name="msg_revoked">تم فصل TrackerControl، على الأرجح بواسطة تطبيق VPN آخر أو النظام. اضغط لإعادة الاتصال.</string>
     <string name="msg_installed">هل هناك مشاكل مع %1$s؟</string>
     <string name="msg_installed_description">السماح للتطبيق بالاتصال بالشركات</string>
     <!-- Keep as a string: call-site/API migration and multi-count grammar are intentionally separate. -->
@@ -700,58 +713,20 @@
     <!-- Retained for Play Store copy; call-site/API migration and multi-count grammar are intentionally separate. -->
     <string name="insights_share">شارك مع الأصدقاء</string>
     <string name="insights_share_trackers_blocked">مضيفو أدوات التتبع المحظورون</string>
-    <string name="insights_share_url">TrackerControl.org</string>
+    <string name="insights_share_url">TrackerControl.عنصر</string>
     <!-- Keep as a string: call-site/API migration and multi-count grammar are intentionally separate. -->
     <string name="insights_share_message" tools:ignore="PluralsCandidate">حظرت %1$d من مضيفي أدوات التتبع لدى %2$d شركة هذا الأسبوع باستخدام TrackerControl! استعد خصوصيتك: https://trackercontrol.org</string>
     <!-- Retained for Play Store copy; call-site/API migration and multi-count grammar are intentionally separate. -->
     <string name="insights_see_more">عرض المزيد →</string>
     <!-- What's New onboarding slide (not translated) -->
-    <string name="msg_invalid_url">عنوان URL غير صالح</string>
-    <string name="msg_last_update">آخر تحديث: %s</string>
-    <!-- Accessibility labels -->
-    <string name="switch_tracker_control_description">حظر أدوات التتبع</string>
-    <string name="blocklist_delete_description">حذف قائمة الحظر</string>
-    <string name="blocklist_enable_description">تفعيل قائمة الحظر %s</string>
-    <string name="log_connection_allowed">مسموح</string>
-    <string name="log_connection_blocked">محظور</string>
-    <string name="log_connection_other">شبكة أخرى</string>
-    <string name="log_screen_on">الشاشة قيد التشغيل</string>
-    <string name="insights_overview_status">%1$s %2$s · %3$s %4$s</string>
-    <string name="insights_overview_status_share">%1$s (%2$s)</string>
-    <string name="timeline_insights_status">%1$s %2$s · %3$s %4$s</string>
-    <string name="vpn_status_mullvad">Mullvad</string>
-    <string name="vpn_provider_mullvad">Mullvad VPN</string>
-    <string name="vpn_provider_ivpn">IVPN</string>
-    <string name="vpn_intro_mullvad_title">Mullvad</string>
-    <string name="vpn_intro_ivpn_title">IVPN</string>
-    <string name="vpn_intro_proton_title">Proton VPN</string>
-    <string name="vpn_intro_wireguard_title">WireGuard</string>
-    <string name="vpn_mode_mullvad">Mullvad</string>
-    <string name="vpn_mode_ivpn">IVPN</string>
-    <string name="vpn_mode_wireguard">WireGuard</string>
-    <string name="tab_vpn">VPN</string>
-    <string name="vpn_enabled_switch_description">VPN</string>
-    <string name="log_connection_wifi">Wi-Fi</string>
-    <string name="accessibility_stat_description">%1$s, %2$s</string>
-    <string name="setting_doh_enabled">DNS الآمن (DoH)</string>
-    <string name="setting_doh_endpoint">عنوان URL لنقطة نهاية DoH</string>
-    <string name="summary_wg_config">الصق إعدادات [Interface] / [Peer] من مزوّدك</string>
-    <string name="dialog_doh_endpoint">أدخل عنوان HTTPS URL الكامل الذي يوفره مزوّد DNS لديك، بما في ذلك المسار الخاص بالمزوّد (مثل https://dns.quad9.net/dns-query). التطبيقات المستثناة من TrackerControl أو التي تستخدم DNS مشفّرًا خاصًا بها تتجاوز هذا الإعداد.</string>
-    <string name="msg_invalid_doh_endpoint">أدخل عنوان HTTPS URL كاملًا لـ DNS-over-HTTPS، بما في ذلك مسار المزوّد (مثل https://dns.quad9.net/dns-query).</string>
-    <string name="msg_wg_blocked">الوصول إلى الإنترنت محظور أثناء عدم توفر نفق WireGuard. عطّل إعداد WireGuard لاستعادته.</string>
-    <string name="msg_wg_blocked_detail">%s يظل الوصول إلى الإنترنت محظورًا حتى تُحَل هذه المشكلة، أو حتى يُعطَّل إعداد WireGuard.</string>
-    <string name="msg_wg_provider_rejected">رفض %1$s إعداد هذا الجهاز: %2$s.</string>
-    <string name="msg_wg_account_expired">أفاد %1$s بأنه لا يوجد وقت متبقٍّ في هذا الحساب، لذا لن يقبل أي خادم النفق حتى يُضاف وقت.</string>
-    <string name="msg_wg_recovery_failed">توقف WireGuard عن الاستجابة، ويحاول TrackerControl إعادة الاتصال.</string>
-    <string name="summary_log_logcat">يعطّل وضع البحث حظر أدوات التتبع. تُسجَّل أدوات التتبع المكتشفة في ADB ويُفعَّل استخراج SNI لتحسين اكتشاف أسماء المضيفين. استرجع السجلات باستخدام adb logcat مع الوسم \'TC-Log\'.</string>
-    <string name="msg_research_mode_notice">وضع البحث قيد التشغيل. حظر أدوات التتبع معطّل. اضغط لتغيير الإعدادات.</string>
-    <string name="msg_revoked">تم فصل TrackerControl، على الأرجح بواسطة تطبيق VPN آخر أو النظام. اضغط لإعادة الاتصال.</string>
     <string name="title_blocklists">قوائم حظر مخصصة</string>
     <string name="summary_manage_blocklists">أضف قوائم حظر بتنسيق ملف hosts. تُستخدم عندما لا تحدد قوائم أدوات التتبع المضمّنة نطاقًا ما.</string>
     <string name="title_add_blocklist">إضافة قائمة حظر</string>
     <string name="title_delete_blocklist">حذف قائمة الحظر</string>
     <string name="msg_delete_blocklist_confirm">هل أنت متأكد أنك تريد حذف قائمة الحظر هذه؟</string>
+    <string name="msg_invalid_url">عنوان URL غير صالح</string>
     <string name="msg_apply_blocklists_failed">تعذّر تطبيق قوائم الحظر</string>
+    <string name="msg_last_update">آخر تحديث: %s</string>
     <string name="blocklist_format">أدخل عنوان HTTPS URL لقائمة حظر بتنسيق hosts (مثل 0.0.0.0 ads.example.com). قواعد تصفية المتصفح غير مدعومة.</string>
     <string name="blocklist_minimal_notice">قوائم الحظر المخصصة غير نشطة في الوضع الأدنى. انتقل إلى الوضع القياسي أو الصارم من الإعدادات لاستخدامها.</string>
     <string name="blocklist_research_notice">قوائم الحظر المخصصة غير نشطة أثناء تشغيل وضع البحث. أوقف البحث من الإعدادات لتفعيل حظر أدوات التتبع.</string>
@@ -760,4 +735,12 @@
     <string name="blocklist_not_downloaded">لم يتم التنزيل بعد</string>
     <string name="blocklist_download_failed">تعذّر تنزيل قوائم الحظر أو تطبيقها. تحقق من أخطاء القوائم وحاول التحديث مرة أخرى.</string>
     <string name="blocklist_update">تحديث قوائم الحظر</string>
+    <!-- Accessibility labels -->
+    <string name="switch_tracker_control_description">حظر أدوات التتبع</string>
+    <string name="blocklist_delete_description">حذف قائمة الحظر</string>
+    <string name="blocklist_enable_description">تفعيل قائمة الحظر %s</string>
+    <string name="log_connection_allowed">مسموح</string>
+    <string name="log_connection_blocked">محظور</string>
+    <string name="log_connection_other">شبكة أخرى</string>
+    <string name="log_screen_on">الشاشة قيد التشغيل</string>
 </resources>

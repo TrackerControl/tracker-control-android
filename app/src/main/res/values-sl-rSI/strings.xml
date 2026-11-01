@@ -231,7 +231,7 @@
     <string name="msg_wg_profile_empty">Noben profil še ni bil ustvarjen.</string>
     <string name="msg_wg_profile_active">Dejaven</string>
     <string name="msg_wg_profile_set_active">Nastavi kot dejaven</string>
-    <string name="msg_wg_profile_config_hint" tools:ignore="TypographyEllipsis">[Interface]\nPrivateKey = ...\nAddress = ...\n\n[Peer]\nPublicKey = ...\nAllowedIPs = 0.0.0.0/0, ::/0\nEndpoint = ...</string>
+    <string name="msg_wg_profile_config_hint" tools:ignore="TypographyEllipsis">[Interface]\nZasebni ključ = …\nNaslov = …\n\n[Peer]\nJavni ključ = …\nDovoljeni IP-ji = 0.0.0.0/0, ::/0\nKončna točka = …</string>
     <string name="msg_wg_profile_delete_confirm">Ali želite izbrisati ta profil WireGuard?</string>
     <string name="msg_wg_profile_scan_hint">Usmerite fotoaparat v kodo WireGuard, ki jo prikazuje vaš ponudnik VPN-a.  Branje se izvede na vaši napravi.</string>
     <string name="msg_wg_profile_scan_no_camera">Ta naprava nima fotoaparata, s katerim bi bilo mogoče brati.</string>
@@ -316,14 +316,19 @@
     <string name="vpn_retry">Poizkusi znova</string>
     <string name="vpn_country_selected">V redu</string>
     <string name="msg_wg_blocked_title">Prehod WireGuard ni na voljo.</string>
+    <string name="msg_wg_blocked">Dostop do interneta je blokiran, dokler predor WireGuard ni na voljo. Izklopite nastavitev WireGuard, da ga obnovite.</string>
     <!-- The cause comes first so it does not read as a tunnel that never
          started when the detail says it stopped responding. The tail stays
          neutral about recovery: some causes, such as a lapsed subscription,
          never resolve on their own. Each %s already names its own remedy
          where it has one, so this must not repeat it. -->
+    <string name="msg_wg_blocked_detail">%s Dostop do interneta ostane blokiran, dokler težava ni odpravljena ali dokler nastavitev WireGuard ni izklopljena.</string>
     <string name="msg_wg_identity_renewed_title">Naprava VPN je bila ponovno vpisana.</string>
     <string name="msg_wg_identity_renewed">%1$s ni več prepoznal te naprave, tako da je TrackerControl vpisal novo in na tej napravi posodobil profile %1$s.</string>
     <!-- Ends in a full stop: msg_wg_blocked_detail appends a sentence after it. -->
+    <string name="msg_wg_provider_rejected">%1$s je zavrnil nastavitev te naprave: %2$s.</string>
+    <string name="msg_wg_account_expired">%1$s sporoča, da v tem računu ni več preostalega časa, zato noben strežnik ne bo sprejel predora, dokler ne dodate časa.</string>
+    <string name="msg_wg_recovery_failed">WireGuard se je prenehal odzivati, TrackerControl pa se poskuša znova povezati.</string>
     <string name="summary_log_logcat">Raziskovani način onemogoči blokiranje sledilcev.  Prepoznani sledilci se beležijo v ADB in izločitev SNI je omogočena zaradi boljšega zaznavanja gostiteljskih imen.  Dnevnike lahko pridobite z \'adb logcat\' z uporabo oznake \'TC-Log\'.</string>
     <string name="msg_research_mode_notice">Raziskovalni način je omogočen.  Blokiranje sledilcev je onemogočeno.  Dotaknite se, če želite spremeniti nastavitve.</string>
     <string name="msg_sure">Ali ste prepričani?</string>
@@ -735,9 +740,4 @@ S spoštovanjem,\n\n]]></string>
     <string name="log_connection_wifi">Wi-Fi</string>
     <string name="log_connection_other">Drugo omrežje</string>
     <string name="log_screen_on">Zaslon je vkl.</string>
-    <string name="msg_wg_blocked">Dostop do interneta je blokiran, dokler predor WireGuard ni na voljo. Izklopite nastavitev WireGuard, da ga obnovite.</string>
-    <string name="msg_wg_blocked_detail">%s Dostop do interneta ostane blokiran, dokler težava ni odpravljena ali dokler nastavitev WireGuard ni izklopljena.</string>
-    <string name="msg_wg_provider_rejected">%1$s je zavrnil nastavitev te naprave: %2$s.</string>
-    <string name="msg_wg_account_expired">%1$s sporoča, da v tem računu ni več preostalega časa, zato noben strežnik ne bo sprejel predora, dokler ne dodate časa.</string>
-    <string name="msg_wg_recovery_failed">WireGuard se je prenehal odzivati, TrackerControl pa se poskuša znova povezati.</string>
 </resources>

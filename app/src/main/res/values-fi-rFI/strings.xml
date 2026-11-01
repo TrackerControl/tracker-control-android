@@ -4,7 +4,7 @@
     <string name="app_copyright">Copyright \u00A9 2019–2025 Konrad Kollnig\n\nTrackerControl perustuu Marcel Bokhorstin (M66B) kehittämään NetGuardiin.</string>
     <string name="app_android">TrackerControl vaatii Android 5,1 tai uudemman</string>
     <string name="app_xposed">Xposed aiheuttaa liikaa kaatumisia, mikä voi johtaa TrackerControlin poistamiseen Google Play kaupasta, joten TrackerControlia ei tueta, kun Xposed on asennettu</string>
-    <string name="app_eula">Tämän sovelluksen käyttö on omalla vastuullasi. Mikään sovellus ei voi tarjota 100% suojaa seurantaa vastaan.</string>
+    <string name="app_eula">Tämän sovelluksen käyttö on omalla vastuullasi. Mikään sovellus ei voi tarjota 100%% suojaa seurantaa vastaan.</string>
     <string name="app_privacy"><a href="https://github.com/TrackerControl/tracker-control-android#privacy-notice">Yksityisyydensuoja</a> <a href="https://github.com/TrackerControl/tracker-control-android#cookie-policy">Evästekäytäntö</a></string>
     <string name="app_ios"><a href="https://ios.trackercontrol.org">TrackerControl on saatavilla myös iOS:lle</a></string>
     <string name="channel_foreground">Käynnissä olevat palvelut</string>
@@ -173,8 +173,10 @@
     <string name="warning_beta">Beta-ominaisuus. Ei välttämättä toimi odotetusti.</string>
     <string name="setting_doh_endpoint">DoH-palvelimen URL</string>
     <string name="summary_doh_endpoint">HTTPS URL DNS-over-HTTPS kyselyille</string>
+    <string name="dialog_doh_endpoint">Anna DNS-palveluntarjoajasi antama täydellinen HTTPS-osoite, mukaan lukien palveluntarjoajakohtainen polku (esimerkiksi https://dns.quad9.net/dns-query). TrackerControlista poissuljetut sovellukset tai omaa salattua DNS:ää käyttävät sovellukset ohittavat tämän asetuksen.</string>
     <string name="setting_doh_dns_fallback">DNS-varavaihtoehto</string>
     <string name="summary_doh_dns_fallback">Käytä tavallista (salaamatonta) DNS:ää, kun DoH epäonnistuu. Varavaihtoehto voi käyttää eri DNS-palveluntarjoajaa. Käytöstä poistaminen voi rikkoa sovelluksia, jos DoH-palvelin ei ole käytettävissä.</string>
+    <string name="msg_invalid_doh_endpoint">Anna täydellinen HTTPS-osoite DNS-over-HTTPS:ää varten, mukaan lukien palveluntarjoajan polku (esimerkiksi https://dns.quad9.net/dns-query).</string>
     <!-- Block DNS-over-TLS (DoT) -->
     <string name="setting_block_dot">Estä Androidin yksityinen DNS</string>
     <string name="summary_block_dot">Kun Androidin yksityinen DNS on käytössä, TC ei voi havaita mitään seurantaa eikä toimi kunnolla.</string>
@@ -196,6 +198,7 @@
     <string name="summary_validate">Verkkotunnus, jota käytetään internet-yhteyden vahvistamiseen portissa 443 (https).</string>
     <string name="summary_socks5_enabled">Vain TCP-liikenne lähetetään välityspalvelimeen</string>
     <string name="summary_wg_enabled">Piilottaa laitteen IP-osoitteen. Tunneloi TCP- ja UDP-liikenteen ulos. Sovellukset näkevät verkkovirheitä katkosten aikana – virhetilassa suljettu, ei paluuta suoraan yhteyteen. Palvelimen aloittamat yhteydet puhelimeen eivät välttämättä toimi, kun tunneli on joutilaana (keepalive on poistettu käytöstä akun säästämiseksi).</string>
+    <string name="summary_wg_config">Liitä palveluntarjoajasi [Interface] / [Peer] -määritys</string>
     <string name="summary_wg_profile">Valitse tallennettu WireGuard-määritys</string>
     <string name="summary_wg_profile_none">Ei tallennettuja profiileja</string>
     <string name="summary_wg_profile_manage">Lisää, muokkaa tai poista mukautettuja WireGuard-määrityksiä</string>
@@ -285,20 +288,28 @@
     <string name="vpn_generating">Luodaan WireGuard-profiilia…</string>
     <string name="vpn_generation_failed">VPN:n määritys epäonnistui: %s</string>
     <string name="vpn_retry">Yritä uudelleen</string>
-    <string name="vpn_country_selected">OK</string>
+    <string name="vpn_country_selected">Asia</string>
     <string name="msg_wg_blocked_title">WireGuard-tunneli ei ole käytettävissä</string>
+    <string name="msg_wg_blocked">Internet-yhteys on estetty, kun WireGuard-tunneli ei ole käytettävissä. Palauta yhteys poistamalla WireGuard-asetus käytöstä.</string>
     <!-- The cause comes first so it does not read as a tunnel that never
          started when the detail says it stopped responding. The tail stays
          neutral about recovery: some causes, such as a lapsed subscription,
          never resolve on their own. Each %s already names its own remedy
          where it has one, so this must not repeat it. -->
+    <string name="msg_wg_blocked_detail">%s Internet-yhteys pysyy estettynä, kunnes tämä on ratkaistu tai WireGuard-asetus poistetaan käytöstä.</string>
     <string name="msg_wg_identity_renewed_title">VPN-laite rekisteröitiin uudelleen</string>
     <string name="msg_wg_identity_renewed">%1$s ei enää tuntenut tätä laitetta, joten TrackerControl rekisteröi uuden ja päivitti tämän laitteen %1$s-profiilit.</string>
     <!-- Ends in a full stop: msg_wg_blocked_detail appends a sentence after it. -->
+    <string name="msg_wg_provider_rejected">%1$s kieltäytyi määrittämästä tätä laitetta: %2$s.</string>
+    <string name="msg_wg_account_expired">%1$s ilmoittaa, ettei tilillä ole aikaa jäljellä, joten mikään palvelin ei hyväksy tunnelia, ennen kuin aikaa lisätään.</string>
+    <string name="msg_wg_recovery_failed">WireGuard lakkasi vastaamasta ja TrackerControl yrittää muodostaa yhteyden uudelleen.</string>
+    <string name="summary_log_logcat">Tutkimustila poistaa seuraajien eston käytöstä. Tunnistetut seuraajat kirjataan ADB:hen ja SNI-poiminta otetaan käyttöön palvelinnimien parempaa tunnistusta varten. Hae lokit komennolla adb logcat käyttäen tunnistetta \'TC-Log\'.</string>
+    <string name="msg_research_mode_notice">Tutkimustila on päällä. Seuraajien esto on pois käytöstä. Muuta asetuksia napauttamalla.</string>
     <string name="msg_sure">Oletko varma?</string>
     <string name="msg_started">Etsitään seuraimia…</string>
     <string name="msg_waiting">Odottaa tapahtumaa</string>
     <string name="msg_disabled">Ota yllä olevalla kytkimellä TrackerControl käyttöön.</string>
+    <string name="msg_revoked">TrackerControlin yhteys katkesi, todennäköisesti toisen VPN-sovelluksen tai järjestelmän vuoksi. Yhdistä uudelleen napauttamalla.</string>
     <string name="msg_installed">Ongelmia %1$s kanssa?</string>
     <string name="msg_installed_description">Salli sovelluksen ottaa yhteyttä yrityksiin</string>
     <!-- Keep as a string: call-site/API migration and multi-count grammar are intentionally separate. -->
@@ -666,48 +677,14 @@ Ystävällisin terveisin,\n\n]]></string>
     <!-- Retained for Play Store copy; call-site/API migration and multi-count grammar are intentionally separate. -->
     <string name="insights_see_more">Katso lisää →</string>
     <!-- What's New onboarding slide (not translated) -->
-    <string name="msg_invalid_url">Virheellinen URL-osoite</string>
-    <string name="msg_last_update">Päivitetty viimeksi: %s</string>
-    <!-- Accessibility labels -->
-    <string name="switch_tracker_control_description">Seurainten esto</string>
-    <string name="blocklist_delete_description">Poista estolista</string>
-    <string name="blocklist_enable_description">Ota estolista %s käyttöön</string>
-    <string name="log_connection_allowed">Sallittu</string>
-    <string name="log_connection_blocked">Estetty</string>
-    <string name="log_connection_other">Muu verkko</string>
-    <string name="log_screen_on">Näyttö päällä</string>
-    <string name="tab_vpn">VPN</string>
-    <string name="insights_overview_status">%1$s %2$s · %3$s %4$s</string>
-    <string name="insights_overview_status_share">%1$s (%2$s)</string>
-    <string name="timeline_insights_status">%1$s %2$s · %3$s %4$s</string>
-    <string name="dialog_doh_endpoint">Anna DNS-palveluntarjoajasi antama täydellinen HTTPS-osoite, mukaan lukien palveluntarjoajakohtainen polku (esimerkiksi https://dns.quad9.net/dns-query). TrackerControlista poissuljetut sovellukset tai omaa salattua DNS:ää käyttävät sovellukset ohittavat tämän asetuksen.</string>
-    <string name="msg_invalid_doh_endpoint">Anna täydellinen HTTPS-osoite DNS-over-HTTPS:ää varten, mukaan lukien palveluntarjoajan polku (esimerkiksi https://dns.quad9.net/dns-query).</string>
-    <string name="summary_wg_config">Liitä palveluntarjoajasi [Interface] / [Peer] -määritys</string>
-    <string name="vpn_status_mullvad">Mullvad</string>
-    <string name="vpn_provider_mullvad">Mullvad VPN</string>
-    <string name="vpn_provider_ivpn">IVPN</string>
-    <string name="vpn_intro_mullvad_title">Mullvad</string>
-    <string name="vpn_intro_ivpn_title">IVPN</string>
-    <string name="vpn_intro_proton_title">Proton VPN</string>
-    <string name="vpn_intro_wireguard_title">WireGuard</string>
-    <string name="vpn_mode_mullvad">Mullvad</string>
-    <string name="vpn_mode_ivpn">IVPN</string>
-    <string name="vpn_mode_wireguard">WireGuard</string>
-    <string name="msg_wg_blocked">Internet-yhteys on estetty, kun WireGuard-tunneli ei ole käytettävissä. Palauta yhteys poistamalla WireGuard-asetus käytöstä.</string>
-    <string name="msg_wg_blocked_detail">%s Internet-yhteys pysyy estettynä, kunnes tämä on ratkaistu tai WireGuard-asetus poistetaan käytöstä.</string>
-    <string name="msg_wg_provider_rejected">%1$s kieltäytyi määrittämästä tätä laitetta: %2$s.</string>
-    <string name="msg_wg_account_expired">%1$s ilmoittaa, ettei tilillä ole aikaa jäljellä, joten mikään palvelin ei hyväksy tunnelia, ennen kuin aikaa lisätään.</string>
-    <string name="msg_wg_recovery_failed">WireGuard lakkasi vastaamasta ja TrackerControl yrittää muodostaa yhteyden uudelleen.</string>
-    <string name="summary_log_logcat">Tutkimustila poistaa seuraajien eston käytöstä. Tunnistetut seuraajat kirjataan ADB:hen ja SNI-poiminta otetaan käyttöön palvelinnimien parempaa tunnistusta varten. Hae lokit komennolla adb logcat käyttäen tunnistetta \'TC-Log\'.</string>
-    <string name="msg_research_mode_notice">Tutkimustila on päällä. Seuraajien esto on pois käytöstä. Muuta asetuksia napauttamalla.</string>
-    <string name="msg_revoked">TrackerControlin yhteys katkesi, todennäköisesti toisen VPN-sovelluksen tai järjestelmän vuoksi. Yhdistä uudelleen napauttamalla.</string>
-    <string name="accessibility_stat_description">%1$s, %2$s</string>
     <string name="title_blocklists">Mukautetut estolistat</string>
     <string name="summary_manage_blocklists">Lisää estolistoja hosts-tiedostomuodossa. Niitä käytetään, kun sisäänrakennetut seuraajalistat eivät tunnista verkkotunnusta.</string>
     <string name="title_add_blocklist">Lisää estolista</string>
     <string name="title_delete_blocklist">Poista estolista</string>
     <string name="msg_delete_blocklist_confirm">Haluatko varmasti poistaa tämän estolistan?</string>
+    <string name="msg_invalid_url">Virheellinen URL-osoite</string>
     <string name="msg_apply_blocklists_failed">Estolistojen käyttöönotto epäonnistui</string>
+    <string name="msg_last_update">Päivitetty viimeksi: %s</string>
     <string name="blocklist_format">Anna hosts-muotoisen estolistan HTTPS-osoite (esimerkiksi 0.0.0.0 ads.example.com). Selaimen suodatussääntöjä ei tueta.</string>
     <string name="blocklist_minimal_notice">Mukautetut estolistat eivät ole käytössä vähimmäistilassa. Ota ne käyttöön vaihtamalla Asetuksissa vakio- tai tiukkaan tilaan.</string>
     <string name="blocklist_research_notice">Mukautetut estolistat eivät ole käytössä, kun tutkimustila on päällä. Ota seuraajien esto käyttöön poistamalla Tutkimus käytöstä Asetuksissa.</string>
@@ -716,6 +693,12 @@ Ystävällisin terveisin,\n\n]]></string>
     <string name="blocklist_not_downloaded">Ei vielä ladattu</string>
     <string name="blocklist_download_failed">Estolistojen lataaminen tai käyttöönotto ei onnistunut. Tarkista listojen virheet ja yritä päivittää uudelleen.</string>
     <string name="blocklist_update">Päivitä estolistat</string>
-    <string name="vpn_enabled_switch_description">VPN</string>
-    <string name="log_connection_wifi">Wi-Fi</string>
+    <!-- Accessibility labels -->
+    <string name="switch_tracker_control_description">Seurainten esto</string>
+    <string name="blocklist_delete_description">Poista estolista</string>
+    <string name="blocklist_enable_description">Ota estolista %s käyttöön</string>
+    <string name="log_connection_allowed">Sallittu</string>
+    <string name="log_connection_blocked">Estetty</string>
+    <string name="log_connection_other">Muu verkko</string>
+    <string name="log_screen_on">Näyttö päällä</string>
 </resources>
