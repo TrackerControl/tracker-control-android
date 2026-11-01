@@ -298,14 +298,21 @@
     <string name="vpn_retry">重试</string>
     <string name="vpn_country_selected">好</string>
     <string name="msg_wg_blocked_title">WireGuard 隧道不可用</string>
+    <string name="msg_wg_blocked">WireGuard隧道不可用时，互联网访问将被拦截。禁用WireGuard设置以恢复它。</string>
     <!-- The cause comes first so it does not read as a tunnel that never
          started when the detail says it stopped responding. The tail stays
          neutral about recovery: some causes, such as a lapsed subscription,
          never resolve on their own. Each %s already names its own remedy
          where it has one, so this must not repeat it. -->
+    <string name="msg_wg_blocked_detail">%s 将一直无法联网直至这个问题被解决或 WireGuard 设置被禁用。</string>
     <string name="msg_wg_identity_renewed_title">VPN 设备已重新注册</string>
     <string name="msg_wg_identity_renewed">%1$s 不再知道此设备，所以TrackerControl注册了一个新设备，并更新了此设备上的 %1$s 配置文件。</string>
     <!-- Ends in a full stop: msg_wg_blocked_detail appends a sentence after it. -->
+    <string name="msg_wg_provider_rejected">%1$s 拒绝设置此设备： %2$s。</string>
+    <string name="msg_wg_account_expired">%1$s 报告此账户没有剩余时间，所以在添加时间之前，没有服务器会接受该隧道。</string>
+    <string name="msg_wg_recovery_failed">WireGuard已停止响应，TrackerControl 正在尝试重新连接。</string>
+    <string name="summary_log_logcat">研究模式禁用跟踪器屏蔽。已识别的跟踪器将记录到 ADB并启用SNI 提取以更好地检测主机名。 使用 TC-Log 标签通过 adb logcat 获取日志。</string>
+    <string name="msg_research_mode_notice">研究模式已开启。禁用了跟踪器屏蔽。轻按更改设置。</string>
     <string name="msg_sure">你确定吗？</string>
     <string name="msg_started">正在查找追踪器…</string>
     <string name="msg_waiting">等待事件</string>
@@ -673,8 +680,22 @@
     <!-- Retained for Play Store copy; call-site/API migration and multi-count grammar are intentionally separate. -->
     <string name="insights_see_more">查看更多 →</string>
     <!-- What's New onboarding slide (not translated) -->
+    <string name="title_blocklists">自定义黑名单</string>
+    <string name="summary_manage_blocklists">添加主机文件格式的黑名单。当内置跟踪器列表无法识别域名时使用。</string>
+    <string name="title_add_blocklist">添加黑名单</string>
+    <string name="title_delete_blocklist">删除黑名单</string>
+    <string name="msg_delete_blocklist_confirm">确定要删除该黑名单？</string>
     <string name="msg_invalid_url">URL 无效</string>
+    <string name="msg_apply_blocklists_failed">应用黑名单失败</string>
     <string name="msg_last_update">上次更新：%s</string>
+    <string name="blocklist_format">输入主机格式黑名单的 HTTPS URL(例如，0.0.0.0 ads.example.com)。不支持浏览器过滤规则。</string>
+    <string name="blocklist_minimal_notice">自定义块列表在最小模式下处于非活动状态。在设置中切换到标准或严格模式使用它们。</string>
+    <string name="blocklist_research_notice">研究模式开启时自定义黑名单列表处于非活动状态。在设置中关闭研究以启用跟踪器屏蔽。</string>
+    <string name="blocklist_browser_notice">浏览器跟踪器保护默认关闭。请在浏览器的应用页面上启用它以在那里使用自定义的黑名单。</string>
+    <string name="blocklist_downloading">正在下载黑名单… 如果离线则等待连接。</string>
+    <string name="blocklist_not_downloaded">尚未下载</string>
+    <string name="blocklist_download_failed">无法下载或应用黑名单。请检查列表错误，然后尝试再次更新。</string>
+    <string name="blocklist_update">更新黑名单</string>
     <!-- Accessibility labels -->
     <string name="switch_tracker_control_description">跟踪器拦截</string>
     <string name="vpn_enabled_switch_description">VPN</string>
