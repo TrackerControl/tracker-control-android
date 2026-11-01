@@ -181,7 +181,10 @@
     <string name="warning_beta">Бета-функция. Может работать не так, как ожидалось.</string>
     <string name="setting_doh_endpoint">DoH Endpoint URL</string>
     <string name="summary_doh_endpoint">HTTPS URL для DNS-over-HTTPS запросов</string>
+    <string name="dialog_doh_endpoint">Введите полный HTTPS-адрес, предоставленный вашим DNS-провайдером, включая путь, специфичный для провайдера (например, https://dns.quad9.net/dns-query). Приложения, исключённые из TrackerControl или использующие собственный зашифрованный DNS, обходят эту настройку.</string>
     <string name="setting_doh_dns_fallback">Резервный DNS</string>
+    <string name="summary_doh_dns_fallback">Использовать обычный (незашифрованный) DNS, если DoH не работает. Резервный вариант может использовать другого DNS-провайдера. Отключение может нарушить работу приложений, если сервер DoH недоступен.</string>
+    <string name="msg_invalid_doh_endpoint">Введите полный HTTPS-адрес для DNS-over-HTTPS, включая путь провайдера (например, https://dns.quad9.net/dns-query).</string>
     <!-- Block DNS-over-TLS (DoT) -->
     <string name="setting_block_dot">Заблокировать приватный DNS Android</string>
     <string name="summary_block_dot">При включенном приватном DNS, TC не может обнаружить отслеживание и работает неправильно.</string>
@@ -296,20 +299,28 @@
     <string name="vpn_generating">Создание профиля WireGuard…</string>
     <string name="vpn_generation_failed">Не удалось настроить VPN: %s</string>
     <string name="vpn_retry">Повторить</string>
-    <string name="vpn_country_selected">OK</string>
+    <string name="vpn_country_selected">Элемент</string>
     <string name="msg_wg_blocked_title">Туннель WireGuard недоступен</string>
+    <string name="msg_wg_blocked">Доступ в интернет заблокирован, пока туннель WireGuard недоступен. Отключите настройку WireGuard, чтобы восстановить доступ.</string>
     <!-- The cause comes first so it does not read as a tunnel that never
          started when the detail says it stopped responding. The tail stays
          neutral about recovery: some causes, such as a lapsed subscription,
          never resolve on their own. Each %s already names its own remedy
          where it has one, so this must not repeat it. -->
+    <string name="msg_wg_blocked_detail">%s Доступ в интернет остаётся заблокированным, пока проблема не будет устранена или пока настройка WireGuard не будет отключена.</string>
     <string name="msg_wg_identity_renewed_title">Устройство VPN зарегистрировано заново</string>
     <string name="msg_wg_identity_renewed">%1$s больше не распознавал это устройство, поэтому TrackerControl зарегистрировал новое и обновил профили %1$s на этом устройстве.</string>
     <!-- Ends in a full stop: msg_wg_blocked_detail appends a sentence after it. -->
+    <string name="msg_wg_provider_rejected">%1$s отказался настраивать это устройство: %2$s.</string>
+    <string name="msg_wg_account_expired">%1$s сообщает, что на этой учётной записи не осталось времени, поэтому ни один сервер не примет туннель, пока время не будет добавлено.</string>
+    <string name="msg_wg_recovery_failed">WireGuard перестал отвечать, и TrackerControl пытается переподключиться.</string>
+    <string name="summary_log_logcat">Режим исследования отключает блокировку трекеров. Обнаруженные трекеры записываются в ADB, а извлечение SNI включается для лучшего определения имён хостов. Получите журналы командой adb logcat с тегом \'TC-Log\'.</string>
+    <string name="msg_research_mode_notice">Режим исследования включён. Блокировка трекеров отключена. Нажмите, чтобы изменить настройки.</string>
     <string name="msg_sure">Вы уверены?</string>
     <string name="msg_started">Поиск трекеров…</string>
     <string name="msg_waiting">Ожидание события</string>
     <string name="msg_disabled">Для включения TrackerControl используйте переключатель выше.</string>
+    <string name="msg_revoked">TrackerControl был отключён, вероятно, другим VPN-приложением или системой. Нажмите, чтобы подключиться снова.</string>
     <string name="msg_installed">Проблемы с %1$s?</string>
     <string name="msg_installed_description">Разрешить приложению связываться с компаниями</string>
     <!-- Keep as a string: call-site/API migration and multi-count grammar are intentionally separate. -->
@@ -686,49 +697,14 @@
     <!-- Retained for Play Store copy; call-site/API migration and multi-count grammar are intentionally separate. -->
     <string name="insights_see_more">Показать еще →</string>
     <!-- What's New onboarding slide (not translated) -->
-    <string name="msg_invalid_url">Недопустимый URL</string>
-    <string name="msg_last_update">Последнее обновление: %s</string>
-    <!-- Accessibility labels -->
-    <string name="switch_tracker_control_description">Блокировка трекеров</string>
-    <string name="blocklist_delete_description">Удалить список блокировки</string>
-    <string name="blocklist_enable_description">Включить список блокировки %s</string>
-    <string name="log_connection_allowed">Разрешено</string>
-    <string name="log_connection_blocked">Заблокировано</string>
-    <string name="log_connection_other">Другая сеть</string>
-    <string name="log_screen_on">Экран включён</string>
-    <string name="tab_vpn">VPN</string>
-    <string name="insights_overview_status">%1$s %2$s · %3$s %4$s</string>
-    <string name="insights_overview_status_share">%1$s (%2$s)</string>
-    <string name="timeline_insights_status">%1$s %2$s · %3$s %4$s</string>
-    <string name="dialog_doh_endpoint">Введите полный HTTPS-адрес, предоставленный вашим DNS-провайдером, включая путь, специфичный для провайдера (например, https://dns.quad9.net/dns-query). Приложения, исключённые из TrackerControl или использующие собственный зашифрованный DNS, обходят эту настройку.</string>
-    <string name="summary_doh_dns_fallback">Использовать обычный (незашифрованный) DNS, если DoH не работает. Резервный вариант может использовать другого DNS-провайдера. Отключение может нарушить работу приложений, если сервер DoH недоступен.</string>
-    <string name="msg_invalid_doh_endpoint">Введите полный HTTPS-адрес для DNS-over-HTTPS, включая путь провайдера (например, https://dns.quad9.net/dns-query).</string>
-    <string name="summary_wg_config">Paste a [Interface] / [Peer] config from your provider</string>
-    <string name="vpn_status_mullvad">Mullvad</string>
-    <string name="vpn_provider_mullvad">Mullvad VPN</string>
-    <string name="vpn_provider_ivpn">IVPN</string>
-    <string name="vpn_intro_mullvad_title">Mullvad</string>
-    <string name="vpn_intro_ivpn_title">IVPN</string>
-    <string name="vpn_intro_proton_title">Proton VPN</string>
-    <string name="vpn_intro_wireguard_title">WireGuard</string>
-    <string name="vpn_mode_mullvad">Mullvad</string>
-    <string name="vpn_mode_ivpn">IVPN</string>
-    <string name="vpn_mode_wireguard">WireGuard</string>
-    <string name="msg_wg_blocked">Доступ в интернет заблокирован, пока туннель WireGuard недоступен. Отключите настройку WireGuard, чтобы восстановить доступ.</string>
-    <string name="msg_wg_blocked_detail">%s Доступ в интернет остаётся заблокированным, пока проблема не будет устранена или пока настройка WireGuard не будет отключена.</string>
-    <string name="msg_wg_provider_rejected">%1$s отказался настраивать это устройство: %2$s.</string>
-    <string name="msg_wg_account_expired">%1$s сообщает, что на этой учётной записи не осталось времени, поэтому ни один сервер не примет туннель, пока время не будет добавлено.</string>
-    <string name="msg_wg_recovery_failed">WireGuard перестал отвечать, и TrackerControl пытается переподключиться.</string>
-    <string name="summary_log_logcat">Режим исследования отключает блокировку трекеров. Обнаруженные трекеры записываются в ADB, а извлечение SNI включается для лучшего определения имён хостов. Получите журналы командой adb logcat с тегом \'TC-Log\'.</string>
-    <string name="msg_research_mode_notice">Режим исследования включён. Блокировка трекеров отключена. Нажмите, чтобы изменить настройки.</string>
-    <string name="msg_revoked">TrackerControl был отключён, вероятно, другим VPN-приложением или системой. Нажмите, чтобы подключиться снова.</string>
-    <string name="accessibility_stat_description">%1$s, %2$s</string>
     <string name="title_blocklists">Собственные списки блокировки</string>
     <string name="summary_manage_blocklists">Добавляйте списки блокировки в формате файла hosts. Используются, если встроенные списки трекеров не определяют домен.</string>
     <string name="title_add_blocklist">Добавить список блокировки</string>
     <string name="title_delete_blocklist">Удалить список блокировки</string>
     <string name="msg_delete_blocklist_confirm">Вы уверены, что хотите удалить этот список блокировки?</string>
+    <string name="msg_invalid_url">Недопустимый URL</string>
     <string name="msg_apply_blocklists_failed">Не удалось применить списки блокировки</string>
+    <string name="msg_last_update">Последнее обновление: %s</string>
     <string name="blocklist_format">Введите HTTPS-адрес списка блокировки в формате hosts (например, 0.0.0.0 ads.example.com). Правила фильтрации для браузеров не поддерживаются.</string>
     <string name="blocklist_minimal_notice">Собственные списки блокировки неактивны в минимальном режиме. Чтобы использовать их, выберите стандартный или строгий режим в настройках.</string>
     <string name="blocklist_research_notice">Собственные списки блокировки неактивны, пока включён режим исследования. Отключите исследование в настройках, чтобы включить блокировку трекеров.</string>
@@ -737,6 +713,12 @@
     <string name="blocklist_not_downloaded">Ещё не загружено</string>
     <string name="blocklist_download_failed">Не удалось загрузить или применить списки блокировки. Проверьте ошибки в списках и попробуйте обновить снова.</string>
     <string name="blocklist_update">Обновить списки блокировки</string>
-    <string name="vpn_enabled_switch_description">VPN</string>
-    <string name="log_connection_wifi">Wi-Fi</string>
+    <!-- Accessibility labels -->
+    <string name="switch_tracker_control_description">Блокировка трекеров</string>
+    <string name="blocklist_delete_description">Удалить список блокировки</string>
+    <string name="blocklist_enable_description">Включить список блокировки %s</string>
+    <string name="log_connection_allowed">Разрешено</string>
+    <string name="log_connection_blocked">Заблокировано</string>
+    <string name="log_connection_other">Другая сеть</string>
+    <string name="log_screen_on">Экран включён</string>
 </resources>

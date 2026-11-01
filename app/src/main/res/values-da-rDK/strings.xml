@@ -4,7 +4,7 @@
     <string name="app_copyright">Copyright \u00A9 2019–2022 Konrad Kollnig\n\nTrackerControl er baseret på NetGuard, udviklet af Marcel Bokhorst (M66B).</string>
     <string name="app_android">TrackerControl kræver Android 5.1 eller nyere</string>
     <string name="app_xposed">Xposed forårsager for mange nedbrud, hvilket kan medføre, at TrackerControl fjernes fra Google Play Butik. Derfor understøttes TrackerControl ikke, mens Xposed er installeret</string>
-    <string name="app_eula">Brugen af denne app er på eget ansvar. Ingen app kan tilbyde 100% beskyttelse mod sporing.</string>
+    <string name="app_eula">Brugen af denne app er på eget ansvar. Ingen app kan tilbyde 100%% beskyttelse mod sporing.</string>
     <string name="app_privacy"><a href="https://github.com/TrackerControl/tracker-control-android#privacy-notice">Privatlivspolitik</a> <a href="https://github.com/TrackerControl/tracker-control-android#cookie-policy">Cookie-politik</a></string>
     <string name="app_ios"><a href="https://ios.trackercontrol.org">TrackerControl fås også til iOS</a></string>
     <string name="channel_foreground">Kørende tjenester</string>
@@ -169,8 +169,10 @@
     <string name="warning_beta">Betafunktion. Fungerer muligvis ikke som forventet.</string>
     <string name="setting_doh_endpoint">DoH-slutpunkt-URL</string>
     <string name="summary_doh_endpoint">HTTPS-URL til DNS-over-HTTPS-forespørgsler</string>
+    <string name="dialog_doh_endpoint">Angiv den fulde HTTPS-URL fra din DNS-udbyder, inklusive udbyderens egen sti (f.eks. https://dns.quad9.net/dns-query). Apps, der er udelukket fra TrackerControl eller bruger deres egen krypterede DNS, omgår denne indstilling.</string>
     <string name="setting_doh_dns_fallback">DNS-fallback</string>
     <string name="summary_doh_dns_fallback">Brug standard-DNS (ukrypteret), når DoH ikke er tilgængelig. Deaktivering kan få apps til at holde op med at virke, hvis DoH-serveren er nede.</string>
+    <string name="msg_invalid_doh_endpoint">Angiv en komplet HTTPS-URL til DNS-over-HTTPS, inklusive udbyderens sti (f.eks. https://dns.quad9.net/dns-query).</string>
     <!-- Block DNS-over-TLS (DoT) -->
     <string name="setting_block_dot">Bloker Androids Private DNS</string>
     <string name="summary_block_dot">Når Androids Private DNS er aktiveret, kan TC ikke registrere sporing og fungerer ikke korrekt.</string>
@@ -283,18 +285,26 @@
     <string name="vpn_generation_failed">VPN-konfiguration mislykkedes: %s</string>
     <string name="vpn_retry">Prøv igen</string>
     <string name="msg_wg_blocked_title">WireGuard-tunnel utilgængelig</string>
+    <string name="msg_wg_blocked">Internetadgang er blokeret, mens WireGuard-tunnelen er utilgængelig. Deaktiver WireGuard-indstillingen for at gendanne den.</string>
     <!-- The cause comes first so it does not read as a tunnel that never
          started when the detail says it stopped responding. The tail stays
          neutral about recovery: some causes, such as a lapsed subscription,
          never resolve on their own. Each %s already names its own remedy
          where it has one, so this must not repeat it. -->
+    <string name="msg_wg_blocked_detail">%s Internetadgang forbliver blokeret, indtil problemet er løst, eller indtil WireGuard-indstillingen deaktiveres.</string>
     <string name="msg_wg_identity_renewed_title">VPN-enhed registreret igen</string>
     <string name="msg_wg_identity_renewed">%1$s kendte ikke længere denne enhed, så TrackerControl registrerede en ny og opdaterede %1$s-profilerne på denne enhed.</string>
     <!-- Ends in a full stop: msg_wg_blocked_detail appends a sentence after it. -->
+    <string name="msg_wg_provider_rejected">%1$s nægtede at konfigurere denne enhed: %2$s.</string>
+    <string name="msg_wg_account_expired">%1$s oplyser, at der ikke er mere tid på denne konto, så ingen server vil acceptere tunnelen, før der tilføjes tid.</string>
+    <string name="msg_wg_recovery_failed">WireGuard holdt op med at svare, og TrackerControl forsøger at genoprette forbindelsen.</string>
+    <string name="summary_log_logcat">Forskningstilstand deaktiverer blokering af trackere. Identificerede trackere logges til ADB, og SNI-udtrækning aktiveres for bedre registrering af værtsnavne. Hent logfiler med adb logcat med tagget \'TC-Log\'.</string>
+    <string name="msg_research_mode_notice">Forskningstilstand er slået til. Blokering af trackere er deaktiveret. Tryk for at ændre indstillinger.</string>
     <string name="msg_sure">Er du sikker?</string>
     <string name="msg_started">Leder efter trackere…</string>
     <string name="msg_waiting">Venter på hændelse</string>
     <string name="msg_disabled">Brug knappen ovenfor for at aktivere TrackerControl.</string>
+    <string name="msg_revoked">TrackerControl blev afbrudt, sandsynligvis af en anden VPN-app eller systemet. Tryk for at oprette forbindelse igen.</string>
     <string name="msg_installed">Problemer med %1$s?</string>
     <string name="msg_installed_description">Tillad appen at kontakte virksomheder</string>
     <!-- Keep as a string: call-site/API migration and multi-count grammar are intentionally separate. -->
@@ -461,6 +471,7 @@ Med venlig hilsen,\n\n]]></string>
     <string name="tracker_advertising">Annoncering</string>
     <string name="tracker_analytics">Analyse</string>
     <string name="tracker_content">Væsentlig</string>
+    <string name="tracker_cryptomining">Kryptomining</string>
     <string name="tracker_fingerprinting">Fingeraftryk</string>
     <string name="tracker_social">Sociale medier</string>
     <string name="tracker_email">E-mail</string>
@@ -647,65 +658,14 @@ Med venlig hilsen,\n\n]]></string>
     <!-- Retained for Play Store copy; call-site/API migration and multi-count grammar are intentionally separate. -->
     <string name="insights_see_more">Se mere →</string>
     <!-- What's New onboarding slide (not translated) -->
-    <string name="msg_invalid_url">Ugyldig URL</string>
-    <string name="msg_last_update">Seneste opdatering: %s</string>
-    <!-- Accessibility labels -->
-    <string name="switch_tracker_control_description">Trackerblokering</string>
-    <string name="blocklist_delete_description">Slet blokeringsliste</string>
-    <string name="blocklist_enable_description">Aktivér blokeringsliste %s</string>
-    <string name="log_connection_allowed">Tilladt</string>
-    <string name="log_connection_blocked">Blokeret</string>
-    <string name="log_connection_other">Andet netværk</string>
-    <string name="log_screen_on">Skærm tændt</string>
-    <string name="insights_overview_status">%1$s %2$s · %3$s %4$s</string>
-    <string name="insights_overview_status_share">%1$s (%2$s)</string>
-    <string name="timeline_insights_status">%1$s %2$s · %3$s %4$s</string>
-    <string name="vpn_status_mullvad">Mullvad</string>
-    <string name="vpn_provider_mullvad">Mullvad VPN</string>
-    <string name="vpn_provider_ivpn">IVPN</string>
-    <string name="vpn_intro_mullvad_title">Mullvad</string>
-    <string name="vpn_intro_ivpn_title">IVPN</string>
-    <string name="vpn_intro_proton_title">Proton VPN</string>
-    <string name="vpn_intro_wireguard_title">WireGuard</string>
-    <string name="vpn_mode_mullvad">Mullvad</string>
-    <string name="vpn_mode_ivpn">IVPN</string>
-    <string name="vpn_mode_wireguard">WireGuard</string>
-    <string name="tab_vpn">VPN</string>
-    <string name="vpn_enabled_switch_description">VPN</string>
-    <string name="log_connection_wifi">Wi-Fi</string>
-    <string name="accessibility_stat_description">%1$s, %2$s</string>
-    <string name="insights_share_url">TrackerControl.org</string>
-    <string name="google_dpo_mail">data-protection-office@google.com</string>
-    <string name="dpas_overview_url">https://edpb.europa.eu/about-edpb/board/members</string>
-    <string name="contact_playstore">Google</string>
-    <string name="vpn_country_selected">OK</string>
-    <string name="setting_vpn4">VPN IPv4: %s</string>
-    <string name="setting_vpn6">VPN IPv6: %s</string>
-    <string name="setting_wg_status">Status</string>
-    <string name="title_version">Version %1$d</string>
-    <string name="title_log_whois">Whois %1$s</string>
-    <string name="title_log_port">Port %1$d</string>
-    <string name="blocking_mode_minimal">Minimal</string>
-    <string name="blocking_mode_standard">Standard</string>
-    <string name="onboarding_blockingmode_standard_label">Standard</string>
-    <string name="tab_apps">Apps</string>
-    <string name="dialog_doh_endpoint">Angiv den fulde HTTPS-URL fra din DNS-udbyder, inklusive udbyderens egen sti (f.eks. https://dns.quad9.net/dns-query). Apps, der er udelukket fra TrackerControl eller bruger deres egen krypterede DNS, omgår denne indstilling.</string>
-    <string name="msg_invalid_doh_endpoint">Angiv en komplet HTTPS-URL til DNS-over-HTTPS, inklusive udbyderens sti (f.eks. https://dns.quad9.net/dns-query).</string>
-    <string name="msg_wg_blocked">Internetadgang er blokeret, mens WireGuard-tunnelen er utilgængelig. Deaktiver WireGuard-indstillingen for at gendanne den.</string>
-    <string name="msg_wg_blocked_detail">%s Internetadgang forbliver blokeret, indtil problemet er løst, eller indtil WireGuard-indstillingen deaktiveres.</string>
-    <string name="msg_wg_provider_rejected">%1$s nægtede at konfigurere denne enhed: %2$s.</string>
-    <string name="msg_wg_account_expired">%1$s oplyser, at der ikke er mere tid på denne konto, så ingen server vil acceptere tunnelen, før der tilføjes tid.</string>
-    <string name="msg_wg_recovery_failed">WireGuard holdt op med at svare, og TrackerControl forsøger at genoprette forbindelsen.</string>
-    <string name="summary_log_logcat">Forskningstilstand deaktiverer blokering af trackere. Identificerede trackere logges til ADB, og SNI-udtrækning aktiveres for bedre registrering af værtsnavne. Hent logfiler med adb logcat med tagget \'TC-Log\'.</string>
-    <string name="msg_research_mode_notice">Forskningstilstand er slået til. Blokering af trackere er deaktiveret. Tryk for at ændre indstillinger.</string>
-    <string name="msg_revoked">TrackerControl blev afbrudt, sandsynligvis af en anden VPN-app eller systemet. Tryk for at oprette forbindelse igen.</string>
-    <string name="tracker_cryptomining">Kryptomining</string>
     <string name="title_blocklists">Brugerdefinerede blokeringslister</string>
     <string name="summary_manage_blocklists">Tilføj blokeringslister i hosts-filformat. Bruges, når de indbyggede trackerlister ikke identificerer et domæne.</string>
     <string name="title_add_blocklist">Tilføj blokeringsliste</string>
     <string name="title_delete_blocklist">Slet blokeringsliste</string>
     <string name="msg_delete_blocklist_confirm">Er du sikker på, at du vil slette denne blokeringsliste?</string>
+    <string name="msg_invalid_url">Ugyldig URL</string>
     <string name="msg_apply_blocklists_failed">Blokeringslisterne kunne ikke anvendes</string>
+    <string name="msg_last_update">Seneste opdatering: %s</string>
     <string name="blocklist_format">Angiv en HTTPS-URL til en blokeringsliste i hosts-format (f.eks. 0.0.0.0 ads.example.com). Browserfilterregler understøttes ikke.</string>
     <string name="blocklist_minimal_notice">Brugerdefinerede blokeringslister er inaktive i tilstanden Minimal. Skift til Standard eller Streng i Indstillinger for at bruge dem.</string>
     <string name="blocklist_research_notice">Brugerdefinerede blokeringslister er inaktive, mens forskningstilstand er slået til. Slå Forskning fra i Indstillinger for at aktivere blokering af trackere.</string>
@@ -714,8 +674,12 @@ Med venlig hilsen,\n\n]]></string>
     <string name="blocklist_not_downloaded">Ikke hentet endnu</string>
     <string name="blocklist_download_failed">Blokeringslisterne kunne ikke hentes eller anvendes. Tjek listefejlene, og prøv at opdatere igen.</string>
     <string name="blocklist_update">Opdater blokeringslister</string>
-    <string-array name="protocolNames">
-        <item>UDP</item>
-        <item>TCP</item>
-    </string-array>
+    <!-- Accessibility labels -->
+    <string name="switch_tracker_control_description">Trackerblokering</string>
+    <string name="blocklist_delete_description">Slet blokeringsliste</string>
+    <string name="blocklist_enable_description">Aktivér blokeringsliste %s</string>
+    <string name="log_connection_allowed">Tilladt</string>
+    <string name="log_connection_blocked">Blokeret</string>
+    <string name="log_connection_other">Andet netværk</string>
+    <string name="log_screen_on">Skærm tændt</string>
 </resources>
